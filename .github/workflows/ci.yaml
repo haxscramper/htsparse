@@ -1,0 +1,30 @@
+name:
+  build
+on:
+  push
+jobs:
+  build:
+    if: |
+      !contains(github.event.head_commit.message, '>>>')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: alaviss/setup-nim@master
+        with:
+          path: '../nim'
+          version: 'version-1-4'
+      - run: |
+          wget https://github.com/tree-sitter/tree-sitter/archive/$TS_VERSION.tar.gz && \
+          tar -xvf $TS_VERSION.tar.gz && \
+          cd tree-sitter-$TS_VERSION && \
+          sudo make install PREFIX=/usr
+        env:
+          TS_VERSION: "0.17.3"
+
+      - run: "nimble -y test && nimble install -y"
+      # - run: "hmisc-putils docgen"
+      # - uses: crazy-max/ghaction-github-pages@v1
+      #   with:
+      #     build_dir: docs
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
