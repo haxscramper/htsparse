@@ -1,8 +1,15 @@
 import std/[sugar, strutils, sequtils, strformat, unittest]
-import htsparse/toml/toml
+import htsparse/[
+  toml/toml,
+  cpp/cpp
+]
+
+# {.passl: "-ltree-sitter".}
+# {.passl: "-lstdc++".}
+
 
 suite "Main":
-  test "test":
+  test "toml":
     let parser = newTomlParser()
     let str = """
 [servers]
@@ -14,3 +21,16 @@ suite "Main":
 """
     echo parser.parseString(str).treeRepr(str)
 
+  test "cpp":
+    let parser = newCppParser()
+    let str = """
+// Your First C++ Program
+
+#include <iostream>
+
+int main() {
+    std::cout << "Hello World!";
+    return 0;
+}
+"""
+    echo parser.parseString(str).treeRepr(str)
