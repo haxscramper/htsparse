@@ -1,12 +1,12 @@
 import std/[sugar, strutils, sequtils, strformat, unittest]
 import htsparse/[
   toml/toml,
-  cpp/cpp
+  cpp/cpp,
+  java/java
 ]
 
 # {.passl: "-ltree-sitter".}
 # {.passl: "-lstdc++".}
-
 
 suite "Main":
   test "toml":
@@ -25,12 +25,18 @@ suite "Main":
     let parser = newCppParser()
     let str = """
 // Your First C++ Program
-
 #include <iostream>
+int main() {}
+"""
+    echo parser.parseString(str).treeRepr(str)
 
-int main() {
-    std::cout << "Hello World!";
-    return 0;
+  test "java":
+    let parser = newJavaParser()
+    let str = """
+class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
 }
 """
     echo parser.parseString(str).treeRepr(str)
