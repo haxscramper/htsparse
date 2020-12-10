@@ -92,7 +92,7 @@ proc fennelCompile*() =
 
 proc goCompile*() =
   build("go",
-    Url("tree-sitter/tree-sitter-go/master/grammar.js")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-go/master/grammar.js")
   )
 
 proc htmlCompile*() =
@@ -273,6 +273,13 @@ proc kotlinCompile*() =
     Url("https://raw.githubusercontent.com/fwcd/tree-sitter-kotlin/master/grammar.js")
   )
 
+proc zigCompile*() =
+  build(
+    "zig",
+    Url("https://raw.githubusercontent.com/GrayJack/tree-sitter-zig/master/grammar.js")
+  )
+
+
 
 proc totalCompile*() =
   let startDir = cwd()
@@ -285,6 +292,7 @@ proc totalCompile*() =
     cssCompile,
     enoCompile,
     embeddedTemplateCompile,
+    goCompile,
     fennelCompile,
     htmlCompile,
     javaCompile,
@@ -306,7 +314,8 @@ proc totalCompile*() =
     juliaCompile,
     nixCompile,
     scalaCompile,
-    kotlinCompile
+    kotlinCompile,
+    zigCompile
   ]:
     cd startDir
     pr()
@@ -321,6 +330,7 @@ when isMainModule:
     [cssCompile],
     [enoCompile],
     [embeddedTemplateCompile],
+    [goCompile],
     [fennelCompile],
     [htmlCompile],
     [javaCompile],
@@ -343,6 +353,9 @@ when isMainModule:
     [nixCompile],
     [scalaCompile],
     [kotlinCompile],
+    [zigCompile],
 
     [totalCompile]
   )
+
+# TODO add `zig` grammar
