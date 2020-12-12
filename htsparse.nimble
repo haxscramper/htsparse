@@ -13,6 +13,12 @@ requires "nim >= 1.4.0"
 requires "hmisc >= 0.9.0"
 requires "hparse"
 
+task docgen, "Generate documentation":
+  exec("hmisc-putils docgen")
+
+task dockerdocgen, "Generate documentation in docker container":
+  exec("hmisc-putils dockerdocgen -lcligen -lhmisc -lhasts -lhnimast -lhdrawing -lhpprint -lhparse")
+
 task dockertest, "Run tests in docker container":
   exec("""
 hmisc-putils dockertest --projectDir:$(pwd) \

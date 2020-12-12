@@ -22,10 +22,9 @@ jobs:
           TS_VERSION: "0.17.3"
 
       - run: "nimble -y test && nimble install -y"
-
-      # - run: "hmisc-putils docgen"
-      # - uses: crazy-max/ghaction-github-pages@v1
-      #   with:
-      #     build_dir: docs
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: "nimble docgen"
+      - uses: crazy-max/ghaction-github-pages@v1
+        with:
+          build_dir: docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
