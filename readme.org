@@ -12,12 +12,12 @@
 
 - [[https://nimble.directory/pkg/htsparse][nimble package]]
 - [[https://discord.gg/hjfYJCU][discord server]]
-- [[https://github.com/haxscramper/hparse][github]]
+- [[https://github.com/haxscramper/htsparse][github]]
 - [[https://haxscramper.github.io/htsparse/src/htsparse.html][API documentation]]
 
 ** Usage
 
-#+begin_src nim
+#+begin_src nim :exports both
 import htsparse/cpp/cpp
 
 let str = """
