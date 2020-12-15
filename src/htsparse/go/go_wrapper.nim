@@ -87,51 +87,51 @@ type
     goVarSpec,              ## var_spec
     goVariadicArgument,     ## variadic_argument
     goVariadicParameterDeclaration, ## variadic_parameter_declaration
-    goSingleNewlineTok,     ## 
+    goNewlineTok,           ## 
                              ## 
-    goSingleExclamationTok, ## !
-    goSingleExclamationSingleEqualTok, ## !=
-    goSingleQuoteTok,       ## "
-    goSinglePercentTok,     ## %
-    goSinglePercentSingleEqualTok, ## %=
-    goSingleAmpersandTok,   ## &
+    goExclamationTok,       ## !
+    goExclamationEqualTok,  ## !=
+    goQuoteTok,             ## "
+    goPercentTok,           ## %
+    goPercentEqualTok,      ## %=
+    goAmpersandTok,         ## &
     goDoubleAmpersandTok,   ## &&
-    goSingleAmpersandSingleEqualTok, ## &=
-    goSingleAmpersandSingleAccentTok, ## &^
-    goSingleAmpersandSingleAccentSingleEqualTok, ## &^=
-    goSingleLParTok,        ## (
-    goSingleRParTok,        ## )
-    goSingleAsteriskTok,    ## *
-    goSingleAsteriskSingleEqualTok, ## *=
-    goSinglePlusTok,        ## +
+    goAmpersandEqualTok,    ## &=
+    goAmpersandAccentTok,   ## &^
+    goAmpersandAccentEqualTok, ## &^=
+    goLParTok,              ## (
+    goRParTok,              ## )
+    goAsteriskTok,          ## *
+    goAsteriskEqualTok,     ## *=
+    goPlusTok,              ## +
     goDoublePlusTok,        ## ++
-    goSinglePlusSingleEqualTok, ## +=
-    goSingleCommaTok,       ## ,
-    goSingleMinusTok,       ## -
+    goPlusEqualTok,         ## +=
+    goCommaTok,             ## ,
+    goMinusTok,             ## -
     goDoubleMinusTok,       ## --
-    goSingleMinusSingleEqualTok, ## -=
-    goSingleDotTok,         ## .
+    goMinusEqualTok,        ## -=
+    goDotTok,               ## .
     goTripleDotTok,         ## ...
-    goSingleSlashTok,       ## /
-    goSingleSlashSingleEqualTok, ## /=
-    goSingleColonTok,       ## :
-    goSingleColonSingleEqualTok, ## :=
-    goSingleSemicolonTok,   ## ;
-    goSingleLessThanTok,    ## <
-    goSingleLessThanSingleMinusTok, ## <-
+    goSlashTok,             ## /
+    goSlashEqualTok,        ## /=
+    goColonTok,             ## :
+    goColonEqualTok,        ## :=
+    goSemicolonTok,         ## ;
+    goLessThanTok,          ## <
+    goLessThanMinusTok,     ## <-
     goDoubleLessThanTok,    ## <<
-    goDoubleLessThanSingleEqualTok, ## <<=
-    goSingleLessThanSingleEqualTok, ## <=
-    goSingleEqualTok,       ## =
+    goDoubleLessThanEqualTok, ## <<=
+    goLessThanEqualTok,     ## <=
+    goEqualTok,             ## =
     goDoubleEqualTok,       ## ==
-    goSingleGreaterThanTok, ## >
-    goSingleGreaterThanSingleEqualTok, ## >=
+    goGreaterThanTok,       ## >
+    goGreaterThanEqualTok,  ## >=
     goDoubleGreaterThanTok, ## >>
-    goDoubleGreaterThanSingleEqualTok, ## >>=
-    goSingleLBrackTok,      ## [
-    goSingleRBrackTok,      ## ]
-    goSingleAccentTok,      ## ^
-    goSingleAccentSingleEqualTok, ## ^=
+    goDoubleGreaterThanEqualTok, ## >>=
+    goLBrackTok,            ## [
+    goRBrackTok,            ## ]
+    goAccentTok,            ## ^
+    goAccentEqualTok,       ## ^=
     goBlankIdentifier,      ## blank_identifier
     goBreakTok,             ## break
     goCaseTok,              ## case
@@ -173,11 +173,11 @@ type
     goTypeTok,              ## type
     goTypeIdentifier,       ## type_identifier
     goVarTok,               ## var
-    goSingleLCurlyTok,      ## {
-    goSinglePipeTok,        ## |
-    goSinglePipeSingleEqualTok, ## |=
+    goLCurlyTok,            ## {
+    goPipeTok,              ## |
+    goPipeEqualTok,         ## |=
     goDoublePipeTok,        ## ||
-    goSingleRCurlyTok,      ## }
+    goRCurlyTok,            ## }
     goSyntaxError            ## Tree-sitter parser syntax error
 type
   GoNode* = distinct TSNode
@@ -354,93 +354,93 @@ proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
     of "variadic_parameter_declaration":
       goVariadicParameterDeclaration
     of "\n":
-      goSingleNewlineTok
+      goNewlineTok
     of "!":
-      goSingleExclamationTok
+      goExclamationTok
     of "!=":
-      goSingleExclamationSingleEqualTok
+      goExclamationEqualTok
     of "\"":
-      goSingleQuoteTok
+      goQuoteTok
     of "%":
-      goSinglePercentTok
+      goPercentTok
     of "%=":
-      goSinglePercentSingleEqualTok
+      goPercentEqualTok
     of "&":
-      goSingleAmpersandTok
+      goAmpersandTok
     of "&&":
       goDoubleAmpersandTok
     of "&=":
-      goSingleAmpersandSingleEqualTok
+      goAmpersandEqualTok
     of "&^":
-      goSingleAmpersandSingleAccentTok
+      goAmpersandAccentTok
     of "&^=":
-      goSingleAmpersandSingleAccentSingleEqualTok
+      goAmpersandAccentEqualTok
     of "(":
-      goSingleLParTok
+      goLParTok
     of ")":
-      goSingleRParTok
+      goRParTok
     of "*":
-      goSingleAsteriskTok
+      goAsteriskTok
     of "*=":
-      goSingleAsteriskSingleEqualTok
+      goAsteriskEqualTok
     of "+":
-      goSinglePlusTok
+      goPlusTok
     of "++":
       goDoublePlusTok
     of "+=":
-      goSinglePlusSingleEqualTok
+      goPlusEqualTok
     of ",":
-      goSingleCommaTok
+      goCommaTok
     of "-":
-      goSingleMinusTok
+      goMinusTok
     of "--":
       goDoubleMinusTok
     of "-=":
-      goSingleMinusSingleEqualTok
+      goMinusEqualTok
     of ".":
-      goSingleDotTok
+      goDotTok
     of "...":
       goTripleDotTok
     of "/":
-      goSingleSlashTok
+      goSlashTok
     of "/=":
-      goSingleSlashSingleEqualTok
+      goSlashEqualTok
     of ":":
-      goSingleColonTok
+      goColonTok
     of ":=":
-      goSingleColonSingleEqualTok
+      goColonEqualTok
     of ";":
-      goSingleSemicolonTok
+      goSemicolonTok
     of "<":
-      goSingleLessThanTok
+      goLessThanTok
     of "<-":
-      goSingleLessThanSingleMinusTok
+      goLessThanMinusTok
     of "<<":
       goDoubleLessThanTok
     of "<<=":
-      goDoubleLessThanSingleEqualTok
+      goDoubleLessThanEqualTok
     of "<=":
-      goSingleLessThanSingleEqualTok
+      goLessThanEqualTok
     of "=":
-      goSingleEqualTok
+      goEqualTok
     of "==":
       goDoubleEqualTok
     of ">":
-      goSingleGreaterThanTok
+      goGreaterThanTok
     of ">=":
-      goSingleGreaterThanSingleEqualTok
+      goGreaterThanEqualTok
     of ">>":
       goDoubleGreaterThanTok
     of ">>=":
-      goDoubleGreaterThanSingleEqualTok
+      goDoubleGreaterThanEqualTok
     of "[":
-      goSingleLBrackTok
+      goLBrackTok
     of "]":
-      goSingleRBrackTok
+      goRBrackTok
     of "^":
-      goSingleAccentTok
+      goAccentTok
     of "^=":
-      goSingleAccentSingleEqualTok
+      goAccentEqualTok
     of "blank_identifier":
       goBlankIdentifier
     of "break":
@@ -524,15 +524,15 @@ proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
     of "var":
       goVarTok
     of "{":
-      goSingleLCurlyTok
+      goLCurlyTok
     of "|":
-      goSinglePipeTok
+      goPipeTok
     of "|=":
-      goSinglePipeSingleEqualTok
+      goPipeEqualTok
     of "||":
       goDoublePipeTok
     of "}":
-      goSingleRCurlyTok
+      goRCurlyTok
     of "ERROR":
       goSyntaxError
     else:
@@ -549,6 +549,10 @@ proc newGoParser*(): GoParser =
 proc parseString*(parser: GoParser; str: string): GoNode =
   GoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseGoString*(str: string): GoNode =
+  let parser = newGoParser()
+  return parseString(parser, str)
 
 func `[]`*(node: GoNode; idx: int; withUnnamed: bool = false): GoNode =
   if withUnnamed:

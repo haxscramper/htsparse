@@ -99,67 +99,67 @@ type
     rubyWhile,              ## while
     rubyWhileModifier,      ## while_modifier
     rubyYield,              ## yield
-    rubySingleExclamationTok, ## !
-    rubySingleExclamationSingleEqualTok, ## !=
-    rubySingleExclamationSingleTildeTok, ## !~
-    rubySingleQuoteTok,     ## "
-    rubySingleHashSingleLCurlyTok, ## #{
-    rubySinglePercentTok,   ## %
-    rubySinglePercentSingleEqualTok, ## %=
-    rubySinglePercentiSingleLParTok, ## %i(
-    rubySinglePercentwSingleLParTok, ## %w(
-    rubySingleAmpersandTok, ## &
+    rubyExclamationTok,     ## !
+    rubyExclamationEqualTok, ## !=
+    rubyExclamationTildeTok, ## !~
+    rubyQuoteTok,           ## "
+    rubyHashLCurlyTok,      ## #{
+    rubyPercentTok,         ## %
+    rubyPercentEqualTok,    ## %=
+    rubyPercentiLParTok,    ## %i(
+    rubyPercentwLParTok,    ## %w(
+    rubyAmpersandTok,       ## &
     rubyDoubleAmpersandTok, ## &&
-    rubyDoubleAmpersandSingleEqualTok, ## &&=
-    rubySingleAmpersandSingleDotTok, ## &.
-    rubySingleAmpersandSingleEqualTok, ## &=
-    rubySingleLParTok,      ## (
-    rubySingleRParTok,      ## )
-    rubySingleAsteriskTok,  ## *
+    rubyDoubleAmpersandEqualTok, ## &&=
+    rubyAmpersandDotTok,    ## &.
+    rubyAmpersandEqualTok,  ## &=
+    rubyLParTok,            ## (
+    rubyRParTok,            ## )
+    rubyAsteriskTok,        ## *
     rubyDoubleAsteriskTok,  ## **
-    rubyDoubleAsteriskSingleEqualTok, ## **=
-    rubySingleAsteriskSingleEqualTok, ## *=
-    rubySinglePlusTok,      ## +
-    rubySinglePlusSingleEqualTok, ## +=
-    rubySinglePlusSingleAtTok, ## +@
-    rubySingleCommaTok,     ## ,
-    rubySingleMinusTok,     ## -
-    rubySingleMinusSingleEqualTok, ## -=
-    rubySingleMinusSingleGreaterThanTok, ## ->
-    rubySingleMinusSingleAtTok, ## -@
-    rubySingleDotTok,       ## .
+    rubyDoubleAsteriskEqualTok, ## **=
+    rubyAsteriskEqualTok,   ## *=
+    rubyPlusTok,            ## +
+    rubyPlusEqualTok,       ## +=
+    rubyPlusAtTok,          ## +@
+    rubyCommaTok,           ## ,
+    rubyMinusTok,           ## -
+    rubyMinusEqualTok,      ## -=
+    rubyMinusGreaterThanTok, ## ->
+    rubyMinusAtTok,         ## -@
+    rubyDotTok,             ## .
     rubyDoubleDotTok,       ## ..
     rubyTripleDotTok,       ## ...
-    rubySingleSlashTok,     ## /
-    rubySingleSlashSingleEqualTok, ## /=
-    rubySingleColonTok,     ## :
-    rubySingleColonSingleQuoteTok, ## :"
+    rubySlashTok,           ## /
+    rubySlashEqualTok,      ## /=
+    rubyColonTok,           ## :
+    rubyColonQuoteTok,      ## :"
     rubyDoubleColonTok,     ## ::
-    rubySingleSemicolonTok, ## ;
-    rubySingleLessThanTok,  ## <
+    rubySemicolonTok,       ## ;
+    rubyLessThanTok,        ## <
     rubyDoubleLessThanTok,  ## <<
-    rubyDoubleLessThanSingleEqualTok, ## <<=
-    rubySingleLessThanSingleEqualTok, ## <=
-    rubySingleLessThanSingleEqualSingleGreaterThanTok, ## <=>
-    rubySingleEqualTok,     ## =
+    rubyDoubleLessThanEqualTok, ## <<=
+    rubyLessThanEqualTok,   ## <=
+    rubyLessThanEqualGreaterThanTok, ## <=>
+    rubyEqualTok,           ## =
     rubyDoubleEqualTok,     ## ==
     rubyTripleEqualTok,     ## ===
-    rubySingleEqualSingleGreaterThanTok, ## =>
-    rubySingleEqualSingleTildeTok, ## =~
-    rubySingleGreaterThanTok, ## >
-    rubySingleGreaterThanSingleEqualTok, ## >=
+    rubyEqualGreaterThanTok, ## =>
+    rubyEqualTildeTok,      ## =~
+    rubyGreaterThanTok,     ## >
+    rubyGreaterThanEqualTok, ## >=
     rubyDoubleGreaterThanTok, ## >>
-    rubyDoubleGreaterThanSingleEqualTok, ## >>=
-    rubySingleQuestionTok,  ## ?
+    rubyDoubleGreaterThanEqualTok, ## >>=
+    rubyQuestionTok,        ## ?
     rubyBEGINTok,           ## BEGIN
     rubyENDTok,             ## END
-    rubySingleLBrackTok,    ## [
-    rubySingleLBrackSingleRBrackTok, ## []
-    rubySingleLBrackSingleRBrackSingleEqualTok, ## []=
-    rubySingleRBrackTok,    ## ]
-    rubySingleAccentTok,    ## ^
-    rubySingleAccentSingleEqualTok, ## ^=
-    rubySingleBacktickTok,  ## `
+    rubyLBrackTok,          ## [
+    rubyLBrackRBrackTok,    ## []
+    rubyLBrackRBrackEqualTok, ## []=
+    rubyRBrackTok,          ## ]
+    rubyAccentTok,          ## ^
+    rubyAccentEqualTok,     ## ^=
+    rubyBacktickTok,        ## `
     rubyAliasTok,           ## alias
     rubyAndTok,             ## and
     rubyBeginTok,           ## begin
@@ -172,7 +172,7 @@ type
     rubyComplex,            ## complex
     rubyConstant,           ## constant
     rubyDefTok,             ## def
-    rubyDefinedSingleQuestionTok, ## defined?
+    rubyDefinedQuestionTok, ## defined?
     rubyDoTok,              ## do
     rubyElseTok,            ## else
     rubyElsifTok,           ## elsif
@@ -213,13 +213,13 @@ type
     rubyWhenTok,            ## when
     rubyWhileTok,           ## while
     rubyYieldTok,           ## yield
-    rubySingleLCurlyTok,    ## {
-    rubySinglePipeTok,      ## |
-    rubySinglePipeSingleEqualTok, ## |=
+    rubyLCurlyTok,          ## {
+    rubyPipeTok,            ## |
+    rubyPipeEqualTok,       ## |=
     rubyDoublePipeTok,      ## ||
-    rubyDoublePipeSingleEqualTok, ## ||=
-    rubySingleRCurlyTok,    ## }
-    rubySingleTildeTok,     ## ~
+    rubyDoublePipeEqualTok, ## ||=
+    rubyRCurlyTok,          ## }
+    rubyTildeTok,           ## ~
     rubySyntaxError          ## Tree-sitter parser syntax error
 type
   RubyExternalTok* = enum
@@ -249,396 +249,397 @@ type
 type
   RubyParser* = distinct PtsParser
 proc tsNodeType*(node: RubyNode): string
-proc kind*(node: RubyNode): RubyNodeKind =
-  case node.tsNodeType
-  of "_arg":
-    rubyArg
-  of "_lhs":
-    rubyLhs
-  of "_method_name":
-    rubyMethodName
-  of "_primary":
-    rubyPrimary
-  of "_statement":
-    rubyStatement
-  of "_variable":
-    rubyVariable
-  of "alias":
-    rubyAlias
-  of "argument_list":
-    rubyArgumentList
-  of "array":
-    rubyArray
-  of "assignment":
-    rubyAssignment
-  of "bare_string":
-    rubyBareString
-  of "bare_symbol":
-    rubyBareSymbol
-  of "begin":
-    rubyBegin
-  of "begin_block":
-    rubyBeginBlock
-  of "binary":
-    rubyBinary
-  of "block":
-    rubyBlock
-  of "block_argument":
-    rubyBlockArgument
-  of "block_parameter":
-    rubyBlockParameter
-  of "block_parameters":
-    rubyBlockParameters
-  of "break":
-    rubyBreak
-  of "call":
-    rubyCall
-  of "case":
-    rubyCase
-  of "chained_string":
-    rubyChainedString
-  of "class":
-    rubyClass
-  of "conditional":
-    rubyConditional
-  of "destructured_left_assignment":
-    rubyDestructuredLeftAssignment
-  of "destructured_parameter":
-    rubyDestructuredParameter
-  of "do":
-    rubyDo
-  of "do_block":
-    rubyDoBlock
-  of "element_reference":
-    rubyElementReference
-  of "else":
-    rubyElse
-  of "elsif":
-    rubyElsif
-  of "empty_statement":
-    rubyEmptyStatement
-  of "end_block":
-    rubyEndBlock
-  of "ensure":
-    rubyEnsure
-  of "exception_variable":
-    rubyExceptionVariable
-  of "exceptions":
-    rubyExceptions
-  of "for":
-    rubyFor
-  of "hash":
-    rubyHash
-  of "hash_splat_argument":
-    rubyHashSplatArgument
-  of "hash_splat_parameter":
-    rubyHashSplatParameter
-  of "heredoc_body":
-    rubyHeredocBody
-  of "if":
-    rubyIf
-  of "if_modifier":
-    rubyIfModifier
-  of "in":
-    rubyIn
-  of "interpolation":
-    rubyInterpolation
-  of "keyword_parameter":
-    rubyKeywordParameter
-  of "lambda":
-    rubyLambda
-  of "lambda_parameters":
-    rubyLambdaParameters
-  of "left_assignment_list":
-    rubyLeftAssignmentList
-  of "method":
-    rubyMethod
-  of "method_call":
-    rubyMethodCall
-  of "method_parameters":
-    rubyMethodParameters
-  of "module":
-    rubyModule
-  of "next":
-    rubyNext
-  of "operator":
-    rubyOperator
-  of "operator_assignment":
-    rubyOperatorAssignment
-  of "optional_parameter":
-    rubyOptionalParameter
-  of "pair":
-    rubyPair
-  of "parenthesized_statements":
-    rubyParenthesizedStatements
-  of "pattern":
-    rubyPattern
-  of "program":
-    rubyProgram
-  of "range":
-    rubyRange
-  of "rational":
-    rubyRational
-  of "redo":
-    rubyRedo
-  of "regex":
-    rubyRegex
-  of "rescue":
-    rubyRescue
-  of "rescue_modifier":
-    rubyRescueModifier
-  of "rest_assignment":
-    rubyRestAssignment
-  of "retry":
-    rubyRetry
-  of "return":
-    rubyReturn
-  of "right_assignment_list":
-    rubyRightAssignmentList
-  of "scope_resolution":
-    rubyScopeResolution
-  of "setter":
-    rubySetter
-  of "singleton_class":
-    rubySingletonClass
-  of "singleton_method":
-    rubySingletonMethod
-  of "splat_argument":
-    rubySplatArgument
-  of "splat_parameter":
-    rubySplatParameter
-  of "string":
-    rubyString
-  of "string_array":
-    rubyStringArray
-  of "subshell":
-    rubySubshell
-  of "superclass":
-    rubySuperclass
-  of "symbol":
-    rubySymbol
-  of "symbol_array":
-    rubySymbolArray
-  of "then":
-    rubyThen
-  of "unary":
-    rubyUnary
-  of "undef":
-    rubyUndef
-  of "unless":
-    rubyUnless
-  of "unless_modifier":
-    rubyUnlessModifier
-  of "until":
-    rubyUntil
-  of "until_modifier":
-    rubyUntilModifier
-  of "when":
-    rubyWhen
-  of "while":
-    rubyWhile
-  of "while_modifier":
-    rubyWhileModifier
-  of "yield":
-    rubyYield
-  of "!":
-    rubySingleExclamationTok
-  of "!=":
-    rubySingleExclamationSingleEqualTok
-  of "!~":
-    rubySingleExclamationSingleTildeTok
-  of "\"":
-    rubySingleQuoteTok
-  of "#{":
-    rubySingleHashSingleLCurlyTok
-  of "%":
-    rubySinglePercentTok
-  of "%=":
-    rubySinglePercentSingleEqualTok
-  of "%i(":
-    rubySinglePercentiSingleLParTok
-  of "%w(":
-    rubySinglePercentwSingleLParTok
-  of "&":
-    rubySingleAmpersandTok
-  of "&&":
-    rubyDoubleAmpersandTok
-  of "&&=":
-    rubyDoubleAmpersandSingleEqualTok
-  of "&.":
-    rubySingleAmpersandSingleDotTok
-  of "&=":
-    rubySingleAmpersandSingleEqualTok
-  of "(":
-    rubySingleLParTok
-  of ")":
-    rubySingleRParTok
-  of "*":
-    rubySingleAsteriskTok
-  of "**":
-    rubyDoubleAsteriskTok
-  of "**=":
-    rubyDoubleAsteriskSingleEqualTok
-  of "*=":
-    rubySingleAsteriskSingleEqualTok
-  of "+":
-    rubySinglePlusTok
-  of "+=":
-    rubySinglePlusSingleEqualTok
-  of "+@":
-    rubySinglePlusSingleAtTok
-  of ",":
-    rubySingleCommaTok
-  of "-":
-    rubySingleMinusTok
-  of "-=":
-    rubySingleMinusSingleEqualTok
-  of "->":
-    rubySingleMinusSingleGreaterThanTok
-  of "-@":
-    rubySingleMinusSingleAtTok
-  of ".":
-    rubySingleDotTok
-  of "..":
-    rubyDoubleDotTok
-  of "...":
-    rubyTripleDotTok
-  of "/":
-    rubySingleSlashTok
-  of "/=":
-    rubySingleSlashSingleEqualTok
-  of ":":
-    rubySingleColonTok
-  of ":\"":
-    rubySingleColonSingleQuoteTok
-  of "::":
-    rubyDoubleColonTok
-  of ";":
-    rubySingleSemicolonTok
-  of "<":
-    rubySingleLessThanTok
-  of "<<":
-    rubyDoubleLessThanTok
-  of "<<=":
-    rubyDoubleLessThanSingleEqualTok
-  of "<=":
-    rubySingleLessThanSingleEqualTok
-  of "<=>":
-    rubySingleLessThanSingleEqualSingleGreaterThanTok
-  of "=":
-    rubySingleEqualTok
-  of "==":
-    rubyDoubleEqualTok
-  of "===":
-    rubyTripleEqualTok
-  of "=>":
-    rubySingleEqualSingleGreaterThanTok
-  of "=~":
-    rubySingleEqualSingleTildeTok
-  of ">":
-    rubySingleGreaterThanTok
-  of ">=":
-    rubySingleGreaterThanSingleEqualTok
-  of ">>":
-    rubyDoubleGreaterThanTok
-  of ">>=":
-    rubyDoubleGreaterThanSingleEqualTok
-  of "?":
-    rubySingleQuestionTok
-  of "BEGIN":
-    rubyBEGINTok
-  of "END":
-    rubyENDTok
-  of "[":
-    rubySingleLBrackTok
-  of "[]":
-    rubySingleLBrackSingleRBrackTok
-  of "[]=":
-    rubySingleLBrackSingleRBrackSingleEqualTok
-  of "]":
-    rubySingleRBrackTok
-  of "^":
-    rubySingleAccentTok
-  of "^=":
-    rubySingleAccentSingleEqualTok
-  of "__END__":
-    rubyENDTok
-  of "`":
-    rubySingleBacktickTok
-  of "and":
-    rubyAndTok
-  of "character":
-    rubyCharacter
-  of "class_variable":
-    rubyClassVariable
-  of "comment":
-    rubyComment
-  of "complex":
-    rubyComplex
-  of "constant":
-    rubyConstant
-  of "def":
-    rubyDefTok
-  of "defined?":
-    rubyDefinedSingleQuestionTok
-  of "end":
-    rubyEndTok
-  of "escape_sequence":
-    rubyEscapeSequence
-  of "false":
-    rubyFalse
-  of "float":
-    rubyFloat
-  of "global_variable":
-    rubyGlobalVariable
-  of "heredoc_beginning":
-    rubyHeredocBeginning
-  of "heredoc_content":
-    rubyHeredocContent
-  of "heredoc_end":
-    rubyHeredocEnd
-  of "identifier":
-    rubyIdentifier
-  of "instance_variable":
-    rubyInstanceVariable
-  of "integer":
-    rubyInteger
-  of "nil":
-    rubyNil
-  of "not":
-    rubyNotTok
-  of "or":
-    rubyOrTok
-  of "r":
-    rubyRTok
-  of "self":
-    rubySelf
-  of "string_content":
-    rubyStringContent
-  of "super":
-    rubySuper
-  of "true":
-    rubyTrue
-  of "uninterpreted":
-    rubyUninterpreted
-  of "{":
-    rubySingleLCurlyTok
-  of "|":
-    rubySinglePipeTok
-  of "|=":
-    rubySinglePipeSingleEqualTok
-  of "||":
-    rubyDoublePipeTok
-  of "||=":
-    rubyDoublePipeSingleEqualTok
-  of "}":
-    rubySingleRCurlyTok
-  of "~":
-    rubySingleTildeTok
-  of "ERROR":
-    rubySyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_arg":
+      rubyArg
+    of "_lhs":
+      rubyLhs
+    of "_method_name":
+      rubyMethodName
+    of "_primary":
+      rubyPrimary
+    of "_statement":
+      rubyStatement
+    of "_variable":
+      rubyVariable
+    of "alias":
+      rubyAlias
+    of "argument_list":
+      rubyArgumentList
+    of "array":
+      rubyArray
+    of "assignment":
+      rubyAssignment
+    of "bare_string":
+      rubyBareString
+    of "bare_symbol":
+      rubyBareSymbol
+    of "begin":
+      rubyBegin
+    of "begin_block":
+      rubyBeginBlock
+    of "binary":
+      rubyBinary
+    of "block":
+      rubyBlock
+    of "block_argument":
+      rubyBlockArgument
+    of "block_parameter":
+      rubyBlockParameter
+    of "block_parameters":
+      rubyBlockParameters
+    of "break":
+      rubyBreak
+    of "call":
+      rubyCall
+    of "case":
+      rubyCase
+    of "chained_string":
+      rubyChainedString
+    of "class":
+      rubyClass
+    of "conditional":
+      rubyConditional
+    of "destructured_left_assignment":
+      rubyDestructuredLeftAssignment
+    of "destructured_parameter":
+      rubyDestructuredParameter
+    of "do":
+      rubyDo
+    of "do_block":
+      rubyDoBlock
+    of "element_reference":
+      rubyElementReference
+    of "else":
+      rubyElse
+    of "elsif":
+      rubyElsif
+    of "empty_statement":
+      rubyEmptyStatement
+    of "end_block":
+      rubyEndBlock
+    of "ensure":
+      rubyEnsure
+    of "exception_variable":
+      rubyExceptionVariable
+    of "exceptions":
+      rubyExceptions
+    of "for":
+      rubyFor
+    of "hash":
+      rubyHash
+    of "hash_splat_argument":
+      rubyHashSplatArgument
+    of "hash_splat_parameter":
+      rubyHashSplatParameter
+    of "heredoc_body":
+      rubyHeredocBody
+    of "if":
+      rubyIf
+    of "if_modifier":
+      rubyIfModifier
+    of "in":
+      rubyIn
+    of "interpolation":
+      rubyInterpolation
+    of "keyword_parameter":
+      rubyKeywordParameter
+    of "lambda":
+      rubyLambda
+    of "lambda_parameters":
+      rubyLambdaParameters
+    of "left_assignment_list":
+      rubyLeftAssignmentList
+    of "method":
+      rubyMethod
+    of "method_call":
+      rubyMethodCall
+    of "method_parameters":
+      rubyMethodParameters
+    of "module":
+      rubyModule
+    of "next":
+      rubyNext
+    of "operator":
+      rubyOperator
+    of "operator_assignment":
+      rubyOperatorAssignment
+    of "optional_parameter":
+      rubyOptionalParameter
+    of "pair":
+      rubyPair
+    of "parenthesized_statements":
+      rubyParenthesizedStatements
+    of "pattern":
+      rubyPattern
+    of "program":
+      rubyProgram
+    of "range":
+      rubyRange
+    of "rational":
+      rubyRational
+    of "redo":
+      rubyRedo
+    of "regex":
+      rubyRegex
+    of "rescue":
+      rubyRescue
+    of "rescue_modifier":
+      rubyRescueModifier
+    of "rest_assignment":
+      rubyRestAssignment
+    of "retry":
+      rubyRetry
+    of "return":
+      rubyReturn
+    of "right_assignment_list":
+      rubyRightAssignmentList
+    of "scope_resolution":
+      rubyScopeResolution
+    of "setter":
+      rubySetter
+    of "singleton_class":
+      rubySingletonClass
+    of "singleton_method":
+      rubySingletonMethod
+    of "splat_argument":
+      rubySplatArgument
+    of "splat_parameter":
+      rubySplatParameter
+    of "string":
+      rubyString
+    of "string_array":
+      rubyStringArray
+    of "subshell":
+      rubySubshell
+    of "superclass":
+      rubySuperclass
+    of "symbol":
+      rubySymbol
+    of "symbol_array":
+      rubySymbolArray
+    of "then":
+      rubyThen
+    of "unary":
+      rubyUnary
+    of "undef":
+      rubyUndef
+    of "unless":
+      rubyUnless
+    of "unless_modifier":
+      rubyUnlessModifier
+    of "until":
+      rubyUntil
+    of "until_modifier":
+      rubyUntilModifier
+    of "when":
+      rubyWhen
+    of "while":
+      rubyWhile
+    of "while_modifier":
+      rubyWhileModifier
+    of "yield":
+      rubyYield
+    of "!":
+      rubyExclamationTok
+    of "!=":
+      rubyExclamationEqualTok
+    of "!~":
+      rubyExclamationTildeTok
+    of "\"":
+      rubyQuoteTok
+    of "#{":
+      rubyHashLCurlyTok
+    of "%":
+      rubyPercentTok
+    of "%=":
+      rubyPercentEqualTok
+    of "%i(":
+      rubyPercentiLParTok
+    of "%w(":
+      rubyPercentwLParTok
+    of "&":
+      rubyAmpersandTok
+    of "&&":
+      rubyDoubleAmpersandTok
+    of "&&=":
+      rubyDoubleAmpersandEqualTok
+    of "&.":
+      rubyAmpersandDotTok
+    of "&=":
+      rubyAmpersandEqualTok
+    of "(":
+      rubyLParTok
+    of ")":
+      rubyRParTok
+    of "*":
+      rubyAsteriskTok
+    of "**":
+      rubyDoubleAsteriskTok
+    of "**=":
+      rubyDoubleAsteriskEqualTok
+    of "*=":
+      rubyAsteriskEqualTok
+    of "+":
+      rubyPlusTok
+    of "+=":
+      rubyPlusEqualTok
+    of "+@":
+      rubyPlusAtTok
+    of ",":
+      rubyCommaTok
+    of "-":
+      rubyMinusTok
+    of "-=":
+      rubyMinusEqualTok
+    of "->":
+      rubyMinusGreaterThanTok
+    of "-@":
+      rubyMinusAtTok
+    of ".":
+      rubyDotTok
+    of "..":
+      rubyDoubleDotTok
+    of "...":
+      rubyTripleDotTok
+    of "/":
+      rubySlashTok
+    of "/=":
+      rubySlashEqualTok
+    of ":":
+      rubyColonTok
+    of ":\"":
+      rubyColonQuoteTok
+    of "::":
+      rubyDoubleColonTok
+    of ";":
+      rubySemicolonTok
+    of "<":
+      rubyLessThanTok
+    of "<<":
+      rubyDoubleLessThanTok
+    of "<<=":
+      rubyDoubleLessThanEqualTok
+    of "<=":
+      rubyLessThanEqualTok
+    of "<=>":
+      rubyLessThanEqualGreaterThanTok
+    of "=":
+      rubyEqualTok
+    of "==":
+      rubyDoubleEqualTok
+    of "===":
+      rubyTripleEqualTok
+    of "=>":
+      rubyEqualGreaterThanTok
+    of "=~":
+      rubyEqualTildeTok
+    of ">":
+      rubyGreaterThanTok
+    of ">=":
+      rubyGreaterThanEqualTok
+    of ">>":
+      rubyDoubleGreaterThanTok
+    of ">>=":
+      rubyDoubleGreaterThanEqualTok
+    of "?":
+      rubyQuestionTok
+    of "BEGIN":
+      rubyBEGINTok
+    of "END":
+      rubyENDTok
+    of "[":
+      rubyLBrackTok
+    of "[]":
+      rubyLBrackRBrackTok
+    of "[]=":
+      rubyLBrackRBrackEqualTok
+    of "]":
+      rubyRBrackTok
+    of "^":
+      rubyAccentTok
+    of "^=":
+      rubyAccentEqualTok
+    of "__END__":
+      rubyENDTok
+    of "`":
+      rubyBacktickTok
+    of "and":
+      rubyAndTok
+    of "character":
+      rubyCharacter
+    of "class_variable":
+      rubyClassVariable
+    of "comment":
+      rubyComment
+    of "complex":
+      rubyComplex
+    of "constant":
+      rubyConstant
+    of "def":
+      rubyDefTok
+    of "defined?":
+      rubyDefinedQuestionTok
+    of "end":
+      rubyEndTok
+    of "escape_sequence":
+      rubyEscapeSequence
+    of "false":
+      rubyFalse
+    of "float":
+      rubyFloat
+    of "global_variable":
+      rubyGlobalVariable
+    of "heredoc_beginning":
+      rubyHeredocBeginning
+    of "heredoc_content":
+      rubyHeredocContent
+    of "heredoc_end":
+      rubyHeredocEnd
+    of "identifier":
+      rubyIdentifier
+    of "instance_variable":
+      rubyInstanceVariable
+    of "integer":
+      rubyInteger
+    of "nil":
+      rubyNil
+    of "not":
+      rubyNotTok
+    of "or":
+      rubyOrTok
+    of "r":
+      rubyRTok
+    of "self":
+      rubySelf
+    of "string_content":
+      rubyStringContent
+    of "super":
+      rubySuper
+    of "true":
+      rubyTrue
+    of "uninterpreted":
+      rubyUninterpreted
+    of "{":
+      rubyLCurlyTok
+    of "|":
+      rubyPipeTok
+    of "|=":
+      rubyPipeEqualTok
+    of "||":
+      rubyDoublePipeTok
+    of "||=":
+      rubyDoublePipeEqualTok
+    of "}":
+      rubyRCurlyTok
+    of "~":
+      rubyTildeTok
+    of "ERROR":
+      rubySyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_ruby(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: RubyNode): string =
@@ -651,6 +652,10 @@ proc newRubyParser*(): RubyParser =
 proc parseString*(parser: RubyParser; str: string): RubyNode =
   RubyNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseRubyString*(str: string): RubyNode =
+  let parser = newRubyParser()
+  return parseString(parser, str)
 
 func `[]`*(node: RubyNode; idx: int; withUnnamed: bool = false): RubyNode =
   if withUnnamed:
@@ -671,8 +676,9 @@ iterator items*(node: RubyNode; withUnnamed: bool = false): RubyNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: RubyNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: RubyNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: RubyNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: RubyNode; level: int): seq[string] =

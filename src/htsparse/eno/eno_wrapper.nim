@@ -46,62 +46,63 @@ type
 type
   EnoParser* = distinct PtsParser
 proc tsNodeType*(node: EnoNode): string
-proc kind*(node: EnoNode): EnoNodeKind =
-  case node.tsNodeType
-  of "comment":
-    enoComment
-  of "continuation":
-    enoContinuation
-  of "document":
-    enoDocument
-  of "element":
-    enoElement
-  of "empty":
-    enoEmpty
-  of "entry":
-    enoEntry
-  of "field":
-    enoField
-  of "fieldset":
-    enoFieldset
-  of "item":
-    enoItem
-  of "list":
-    enoList
-  of "section":
-    enoSection
-  of "value":
-    enoValue
-  of "commentOperator":
-    enoCommentOperator
-  of "copyOperator":
-    enoCopyOperator
-  of "deepCopyOperator":
-    enoDeepCopyOperator
-  of "directContinuationOperator":
-    enoDirectContinuationOperator
-  of "elementOperator":
-    enoElementOperator
-  of "entryOperator":
-    enoEntryOperator
-  of "escapeOperator":
-    enoEscapeOperator
-  of "itemOperator":
-    enoItemOperator
-  of "key":
-    enoKey
-  of "multilineFieldOperator":
-    enoMultilineFieldOperator
-  of "sectionOperator":
-    enoSectionOperator
-  of "spacedContinuationOperator":
-    enoSpacedContinuationOperator
-  of "template":
-    enoTemplate
-  of "ERROR":
-    enoSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: EnoNode): EnoNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "comment":
+      enoComment
+    of "continuation":
+      enoContinuation
+    of "document":
+      enoDocument
+    of "element":
+      enoElement
+    of "empty":
+      enoEmpty
+    of "entry":
+      enoEntry
+    of "field":
+      enoField
+    of "fieldset":
+      enoFieldset
+    of "item":
+      enoItem
+    of "list":
+      enoList
+    of "section":
+      enoSection
+    of "value":
+      enoValue
+    of "commentOperator":
+      enoCommentOperator
+    of "copyOperator":
+      enoCopyOperator
+    of "deepCopyOperator":
+      enoDeepCopyOperator
+    of "directContinuationOperator":
+      enoDirectContinuationOperator
+    of "elementOperator":
+      enoElementOperator
+    of "entryOperator":
+      enoEntryOperator
+    of "escapeOperator":
+      enoEscapeOperator
+    of "itemOperator":
+      enoItemOperator
+    of "key":
+      enoKey
+    of "multilineFieldOperator":
+      enoMultilineFieldOperator
+    of "sectionOperator":
+      enoSectionOperator
+    of "spacedContinuationOperator":
+      enoSpacedContinuationOperator
+    of "template":
+      enoTemplate
+    of "ERROR":
+      enoSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_eno(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: EnoNode): string =
@@ -114,6 +115,10 @@ proc newEnoParser*(): EnoParser =
 proc parseString*(parser: EnoParser; str: string): EnoNode =
   EnoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseEnoString*(str: string): EnoNode =
+  let parser = newEnoParser()
+  return parseString(parser, str)
 
 func `[]`*(node: EnoNode; idx: int; withUnnamed: bool = false): EnoNode =
   if withUnnamed:
@@ -134,8 +139,9 @@ iterator items*(node: EnoNode; withUnnamed: bool = false): EnoNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: EnoNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: EnoNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: EnoNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: EnoNode; level: int): seq[string] =

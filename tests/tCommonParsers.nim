@@ -24,11 +24,10 @@ suite "Main":
   test "cpp":
     let parser = newCppParser()
     let str = """
-// Your First C++ Program
-#include <iostream>
 int main() {}
 """
     echo parser.parseString(str).treeRepr(str)
+    echo parser.parseString(str).treeRepr(str, true)
 
   test "java":
     let parser = newJavaParser()

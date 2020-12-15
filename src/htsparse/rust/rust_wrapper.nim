@@ -145,54 +145,54 @@ type
     rustWherePredicate,     ## where_predicate
     rustWhileExpression,    ## while_expression
     rustWhileLetExpression, ## while_let_expression
-    rustSingleExclamationTok, ## !
-    rustSingleExclamationSingleEqualTok, ## !=
-    rustSingleQuoteTok,     ## "
-    rustSingleHashTok,      ## #
-    rustSingleDollarTok,    ## $
-    rustSinglePercentTok,   ## %
-    rustSinglePercentSingleEqualTok, ## %=
-    rustSingleAmpersandTok, ## &
+    rustExclamationTok,     ## !
+    rustExclamationEqualTok, ## !=
+    rustQuoteTok,           ## "
+    rustHashTok,            ## #
+    rustDollarTok,          ## $
+    rustPercentTok,         ## %
+    rustPercentEqualTok,    ## %=
+    rustAmpersandTok,       ## &
     rustDoubleAmpersandTok, ## &&
-    rustSingleAmpersandSingleEqualTok, ## &=
-    rustSingleApostropheTok, ## '
-    rustSingleLParTok,      ## (
-    rustSingleRParTok,      ## )
-    rustSingleAsteriskTok,  ## *
-    rustSingleAsteriskSingleEqualTok, ## *=
-    rustSinglePlusTok,      ## +
-    rustSinglePlusSingleEqualTok, ## +=
-    rustSingleCommaTok,     ## ,
-    rustSingleMinusTok,     ## -
-    rustSingleMinusSingleEqualTok, ## -=
-    rustSingleMinusSingleGreaterThanTok, ## ->
-    rustSingleDotTok,       ## .
+    rustAmpersandEqualTok,  ## &=
+    rustApostropheTok,      ## '
+    rustLParTok,            ## (
+    rustRParTok,            ## )
+    rustAsteriskTok,        ## *
+    rustAsteriskEqualTok,   ## *=
+    rustPlusTok,            ## +
+    rustPlusEqualTok,       ## +=
+    rustCommaTok,           ## ,
+    rustMinusTok,           ## -
+    rustMinusEqualTok,      ## -=
+    rustMinusGreaterThanTok, ## ->
+    rustDotTok,             ## .
     rustDoubleDotTok,       ## ..
     rustTripleDotTok,       ## ...
-    rustDoubleDotSingleEqualTok, ## ..=
-    rustSingleSlashTok,     ## /
-    rustSingleSlashSingleEqualTok, ## /=
-    rustSingleColonTok,     ## :
+    rustDoubleDotEqualTok,  ## ..=
+    rustSlashTok,           ## /
+    rustSlashEqualTok,      ## /=
+    rustColonTok,           ## :
     rustDoubleColonTok,     ## ::
-    rustSingleSemicolonTok, ## ;
-    rustSingleLessThanTok,  ## <
+    rustSemicolonTok,       ## ;
+    rustLessThanTok,        ## <
     rustDoubleLessThanTok,  ## <<
-    rustDoubleLessThanSingleEqualTok, ## <<=
-    rustSingleLessThanSingleEqualTok, ## <=
-    rustSingleEqualTok,     ## =
+    rustDoubleLessThanEqualTok, ## <<=
+    rustLessThanEqualTok,   ## <=
+    rustEqualTok,           ## =
     rustDoubleEqualTok,     ## ==
-    rustSingleEqualSingleGreaterThanTok, ## =>
-    rustSingleGreaterThanTok, ## >
-    rustSingleGreaterThanSingleEqualTok, ## >=
+    rustEqualGreaterThanTok, ## =>
+    rustGreaterThanTok,     ## >
+    rustGreaterThanEqualTok, ## >=
     rustDoubleGreaterThanTok, ## >>
-    rustDoubleGreaterThanSingleEqualTok, ## >>=
-    rustSingleQuestionTok,  ## ?
-    rustSingleAtTok,        ## @
-    rustSingleLBrackTok,    ## [
-    rustSingleRBrackTok,    ## ]
-    rustSingleAccentTok,    ## ^
-    rustSingleAccentSingleEqualTok, ## ^=
-    rustSingleUnderscoreTok, ## _
+    rustDoubleGreaterThanEqualTok, ## >>=
+    rustQuestionTok,        ## ?
+    rustAtTok,              ## @
+    rustLBrackTok,          ## [
+    rustRBrackTok,          ## ]
+    rustAccentTok,          ## ^
+    rustAccentEqualTok,     ## ^=
+    rustUnderscoreTok,      ## _
     rustAsTok,              ## as
     rustAsyncTok,           ## async
     rustAwaitTok,           ## await
@@ -227,7 +227,7 @@ type
     rustLineComment,        ## line_comment
     rustLiteralTok,         ## literal
     rustLoopTok,            ## loop
-    rustMacroSingleUnderscorerulesSingleExclamationTok, ## macro_rules!
+    rustMacroUnderscorerulesExclamationTok, ## macro_rules!
     rustMatchTok,           ## match
     rustMetaTok,            ## meta
     rustMetavariable,       ## metavariable
@@ -259,11 +259,11 @@ type
     rustVisTok,             ## vis
     rustWhereTok,           ## where
     rustWhileTok,           ## while
-    rustSingleLCurlyTok,    ## {
-    rustSinglePipeTok,      ## |
-    rustSinglePipeSingleEqualTok, ## |=
+    rustLCurlyTok,          ## {
+    rustPipeTok,            ## |
+    rustPipeEqualTok,       ## |=
     rustDoublePipeTok,      ## ||
-    rustSingleRCurlyTok,    ## }
+    rustRCurlyTok,          ## }
     rustSyntaxError          ## Tree-sitter parser syntax error
 type
   RustExternalTok* = enum
@@ -276,528 +276,529 @@ type
 type
   RustParser* = distinct PtsParser
 proc tsNodeType*(node: RustNode): string
-proc kind*(node: RustNode): RustNodeKind =
-  case node.tsNodeType
-  of "_declaration_statement":
-    rustDeclarationStatement
-  of "_expression":
-    rustExpression
-  of "_literal":
-    rustLiteral
-  of "_literal_pattern":
-    rustLiteralPattern
-  of "_pattern":
-    rustPattern
-  of "_type":
-    rustType
-  of "abstract_type":
-    rustAbstractType
-  of "arguments":
-    rustArguments
-  of "array_expression":
-    rustArrayExpression
-  of "array_type":
-    rustArrayType
-  of "assignment_expression":
-    rustAssignmentExpression
-  of "associated_type":
-    rustAssociatedType
-  of "async_block":
-    rustAsyncBlock
-  of "attribute_item":
-    rustAttributeItem
-  of "await_expression":
-    rustAwaitExpression
-  of "base_field_initializer":
-    rustBaseFieldInitializer
-  of "binary_expression":
-    rustBinaryExpression
-  of "block":
-    rustBlock
-  of "boolean_literal":
-    rustBooleanLiteral
-  of "bounded_type":
-    rustBoundedType
-  of "bracketed_type":
-    rustBracketedType
-  of "break_expression":
-    rustBreakExpression
-  of "call_expression":
-    rustCallExpression
-  of "captured_pattern":
-    rustCapturedPattern
-  of "closure_expression":
-    rustClosureExpression
-  of "closure_parameters":
-    rustClosureParameters
-  of "compound_assignment_expr":
-    rustCompoundAssignmentExpr
-  of "const_item":
-    rustConstItem
-  of "const_parameter":
-    rustConstParameter
-  of "constrained_type_parameter":
-    rustConstrainedTypeParameter
-  of "continue_expression":
-    rustContinueExpression
-  of "declaration_list":
-    rustDeclarationList
-  of "dynamic_type":
-    rustDynamicType
-  of "else_clause":
-    rustElseClause
-  of "empty_statement":
-    rustEmptyStatement
-  of "empty_type":
-    rustEmptyType
-  of "enum_item":
-    rustEnumItem
-  of "enum_variant":
-    rustEnumVariant
-  of "enum_variant_list":
-    rustEnumVariantList
-  of "extern_crate_declaration":
-    rustExternCrateDeclaration
-  of "extern_modifier":
-    rustExternModifier
-  of "field_declaration":
-    rustFieldDeclaration
-  of "field_declaration_list":
-    rustFieldDeclarationList
-  of "field_expression":
-    rustFieldExpression
-  of "field_initializer":
-    rustFieldInitializer
-  of "field_initializer_list":
-    rustFieldInitializerList
-  of "field_pattern":
-    rustFieldPattern
-  of "for_expression":
-    rustForExpression
-  of "for_lifetimes":
-    rustForLifetimes
-  of "foreign_mod_item":
-    rustForeignModItem
-  of "fragment_specifier":
-    rustFragmentSpecifier
-  of "function_item":
-    rustFunctionItem
-  of "function_modifiers":
-    rustFunctionModifiers
-  of "function_signature_item":
-    rustFunctionSignatureItem
-  of "function_type":
-    rustFunctionType
-  of "generic_function":
-    rustGenericFunction
-  of "generic_type":
-    rustGenericType
-  of "generic_type_with_turbofish":
-    rustGenericTypeWithTurbofish
-  of "higher_ranked_trait_bound":
-    rustHigherRankedTraitBound
-  of "if_expression":
-    rustIfExpression
-  of "if_let_expression":
-    rustIfLetExpression
-  of "impl_item":
-    rustImplItem
-  of "index_expression":
-    rustIndexExpression
-  of "inner_attribute_item":
-    rustInnerAttributeItem
-  of "let_declaration":
-    rustLetDeclaration
-  of "lifetime":
-    rustLifetime
-  of "loop_expression":
-    rustLoopExpression
-  of "loop_label":
-    rustLoopLabel
-  of "macro_definition":
-    rustMacroDefinition
-  of "macro_invocation":
-    rustMacroInvocation
-  of "macro_rule":
-    rustMacroRule
-  of "match_arm":
-    rustMatchArm
-  of "match_block":
-    rustMatchBlock
-  of "match_expression":
-    rustMatchExpression
-  of "match_pattern":
-    rustMatchPattern
-  of "meta_arguments":
-    rustMetaArguments
-  of "meta_item":
-    rustMetaItem
-  of "mod_item":
-    rustModItem
-  of "mut_pattern":
-    rustMutPattern
-  of "negative_literal":
-    rustNegativeLiteral
-  of "optional_type_parameter":
-    rustOptionalTypeParameter
-  of "or_pattern":
-    rustOrPattern
-  of "ordered_field_declaration_list":
-    rustOrderedFieldDeclarationList
-  of "parameter":
-    rustParameter
-  of "parameters":
-    rustParameters
-  of "parenthesized_expression":
-    rustParenthesizedExpression
-  of "pointer_type":
-    rustPointerType
-  of "qualified_type":
-    rustQualifiedType
-  of "range_expression":
-    rustRangeExpression
-  of "range_pattern":
-    rustRangePattern
-  of "ref_pattern":
-    rustRefPattern
-  of "reference_expression":
-    rustReferenceExpression
-  of "reference_pattern":
-    rustReferencePattern
-  of "reference_type":
-    rustReferenceType
-  of "remaining_field_pattern":
-    rustRemainingFieldPattern
-  of "removed_trait_bound":
-    rustRemovedTraitBound
-  of "return_expression":
-    rustReturnExpression
-  of "scoped_identifier":
-    rustScopedIdentifier
-  of "scoped_type_identifier":
-    rustScopedTypeIdentifier
-  of "scoped_use_list":
-    rustScopedUseList
-  of "self_parameter":
-    rustSelfParameter
-  of "shorthand_field_initializer":
-    rustShorthandFieldInitializer
-  of "slice_pattern":
-    rustSlicePattern
-  of "source_file":
-    rustSourceFile
-  of "static_item":
-    rustStaticItem
-  of "string_literal":
-    rustStringLiteral
-  of "struct_expression":
-    rustStructExpression
-  of "struct_item":
-    rustStructItem
-  of "struct_pattern":
-    rustStructPattern
-  of "token_binding_pattern":
-    rustTokenBindingPattern
-  of "token_repetition":
-    rustTokenRepetition
-  of "token_repetition_pattern":
-    rustTokenRepetitionPattern
-  of "token_tree":
-    rustTokenTree
-  of "token_tree_pattern":
-    rustTokenTreePattern
-  of "trait_bounds":
-    rustTraitBounds
-  of "trait_item":
-    rustTraitItem
-  of "try_expression":
-    rustTryExpression
-  of "tuple_expression":
-    rustTupleExpression
-  of "tuple_pattern":
-    rustTuplePattern
-  of "tuple_struct_pattern":
-    rustTupleStructPattern
-  of "tuple_type":
-    rustTupleType
-  of "type_arguments":
-    rustTypeArguments
-  of "type_binding":
-    rustTypeBinding
-  of "type_cast_expression":
-    rustTypeCastExpression
-  of "type_item":
-    rustTypeItem
-  of "type_parameters":
-    rustTypeParameters
-  of "unary_expression":
-    rustUnaryExpression
-  of "union_item":
-    rustUnionItem
-  of "unit_expression":
-    rustUnitExpression
-  of "unit_type":
-    rustUnitType
-  of "unsafe_block":
-    rustUnsafeBlock
-  of "use_as_clause":
-    rustUseAsClause
-  of "use_declaration":
-    rustUseDeclaration
-  of "use_list":
-    rustUseList
-  of "use_wildcard":
-    rustUseWildcard
-  of "variadic_parameter":
-    rustVariadicParameter
-  of "visibility_modifier":
-    rustVisibilityModifier
-  of "where_clause":
-    rustWhereClause
-  of "where_predicate":
-    rustWherePredicate
-  of "while_expression":
-    rustWhileExpression
-  of "while_let_expression":
-    rustWhileLetExpression
-  of "!":
-    rustSingleExclamationTok
-  of "!=":
-    rustSingleExclamationSingleEqualTok
-  of "\"":
-    rustSingleQuoteTok
-  of "#":
-    rustSingleHashTok
-  of "$":
-    rustSingleDollarTok
-  of "%":
-    rustSinglePercentTok
-  of "%=":
-    rustSinglePercentSingleEqualTok
-  of "&":
-    rustSingleAmpersandTok
-  of "&&":
-    rustDoubleAmpersandTok
-  of "&=":
-    rustSingleAmpersandSingleEqualTok
-  of "\'":
-    rustSingleApostropheTok
-  of "(":
-    rustSingleLParTok
-  of ")":
-    rustSingleRParTok
-  of "*":
-    rustSingleAsteriskTok
-  of "*=":
-    rustSingleAsteriskSingleEqualTok
-  of "+":
-    rustSinglePlusTok
-  of "+=":
-    rustSinglePlusSingleEqualTok
-  of ",":
-    rustSingleCommaTok
-  of "-":
-    rustSingleMinusTok
-  of "-=":
-    rustSingleMinusSingleEqualTok
-  of "->":
-    rustSingleMinusSingleGreaterThanTok
-  of ".":
-    rustSingleDotTok
-  of "..":
-    rustDoubleDotTok
-  of "...":
-    rustTripleDotTok
-  of "..=":
-    rustDoubleDotSingleEqualTok
-  of "/":
-    rustSingleSlashTok
-  of "/=":
-    rustSingleSlashSingleEqualTok
-  of ":":
-    rustSingleColonTok
-  of "::":
-    rustDoubleColonTok
-  of ";":
-    rustSingleSemicolonTok
-  of "<":
-    rustSingleLessThanTok
-  of "<<":
-    rustDoubleLessThanTok
-  of "<<=":
-    rustDoubleLessThanSingleEqualTok
-  of "<=":
-    rustSingleLessThanSingleEqualTok
-  of "=":
-    rustSingleEqualTok
-  of "==":
-    rustDoubleEqualTok
-  of "=>":
-    rustSingleEqualSingleGreaterThanTok
-  of ">":
-    rustSingleGreaterThanTok
-  of ">=":
-    rustSingleGreaterThanSingleEqualTok
-  of ">>":
-    rustDoubleGreaterThanTok
-  of ">>=":
-    rustDoubleGreaterThanSingleEqualTok
-  of "?":
-    rustSingleQuestionTok
-  of "@":
-    rustSingleAtTok
-  of "[":
-    rustSingleLBrackTok
-  of "]":
-    rustSingleRBrackTok
-  of "^":
-    rustSingleAccentTok
-  of "^=":
-    rustSingleAccentSingleEqualTok
-  of "_":
-    rustSingleUnderscoreTok
-  of "as":
-    rustAsTok
-  of "async":
-    rustAsyncTok
-  of "await":
-    rustAwaitTok
-  of "block_comment":
-    rustBlockComment
-  of "break":
-    rustBreakTok
-  of "char_literal":
-    rustCharLiteral
-  of "const":
-    rustConstTok
-  of "continue":
-    rustContinueTok
-  of "crate":
-    rustCrate
-  of "default":
-    rustDefaultTok
-  of "dyn":
-    rustDynTok
-  of "else":
-    rustElseTok
-  of "enum":
-    rustEnumTok
-  of "escape_sequence":
-    rustEscapeSequence
-  of "expr":
-    rustExprTok
-  of "extern":
-    rustExternTok
-  of "false":
-    rustFalseTok
-  of "field_identifier":
-    rustFieldIdentifier
-  of "float_literal":
-    rustFloatLiteral
-  of "fn":
-    rustFnTok
-  of "for":
-    rustForTok
-  of "ident":
-    rustIdentTok
-  of "identifier":
-    rustIdentifier
-  of "if":
-    rustIfTok
-  of "impl":
-    rustImplTok
-  of "in":
-    rustInTok
-  of "integer_literal":
-    rustIntegerLiteral
-  of "item":
-    rustItemTok
-  of "let":
-    rustLetTok
-  of "line_comment":
-    rustLineComment
-  of "literal":
-    rustLiteralTok
-  of "loop":
-    rustLoopTok
-  of "macro_rules!":
-    rustMacroSingleUnderscorerulesSingleExclamationTok
-  of "match":
-    rustMatchTok
-  of "meta":
-    rustMetaTok
-  of "metavariable":
-    rustMetavariable
-  of "mod":
-    rustModTok
-  of "move":
-    rustMoveTok
-  of "mutable_specifier":
-    rustMutableSpecifier
-  of "pat":
-    rustPatTok
-  of "path":
-    rustPathTok
-  of "primitive_type":
-    rustPrimitiveType
-  of "pub":
-    rustPubTok
-  of "raw_string_literal":
-    rustRawStringLiteral
-  of "ref":
-    rustRefTok
-  of "return":
-    rustReturnTok
-  of "self":
-    rustSelf
-  of "shorthand_field_identifier":
-    rustShorthandFieldIdentifier
-  of "static":
-    rustStaticTok
-  of "stmt":
-    rustStmtTok
-  of "struct":
-    rustStructTok
-  of "super":
-    rustSuper
-  of "trait":
-    rustTraitTok
-  of "true":
-    rustTrueTok
-  of "tt":
-    rustTtTok
-  of "ty":
-    rustTyTok
-  of "type":
-    rustTypeTok
-  of "type_identifier":
-    rustTypeIdentifier
-  of "union":
-    rustUnionTok
-  of "unsafe":
-    rustUnsafeTok
-  of "use":
-    rustUseTok
-  of "vis":
-    rustVisTok
-  of "where":
-    rustWhereTok
-  of "while":
-    rustWhileTok
-  of "{":
-    rustSingleLCurlyTok
-  of "|":
-    rustSinglePipeTok
-  of "|=":
-    rustSinglePipeSingleEqualTok
-  of "||":
-    rustDoublePipeTok
-  of "}":
-    rustSingleRCurlyTok
-  of "ERROR":
-    rustSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_declaration_statement":
+      rustDeclarationStatement
+    of "_expression":
+      rustExpression
+    of "_literal":
+      rustLiteral
+    of "_literal_pattern":
+      rustLiteralPattern
+    of "_pattern":
+      rustPattern
+    of "_type":
+      rustType
+    of "abstract_type":
+      rustAbstractType
+    of "arguments":
+      rustArguments
+    of "array_expression":
+      rustArrayExpression
+    of "array_type":
+      rustArrayType
+    of "assignment_expression":
+      rustAssignmentExpression
+    of "associated_type":
+      rustAssociatedType
+    of "async_block":
+      rustAsyncBlock
+    of "attribute_item":
+      rustAttributeItem
+    of "await_expression":
+      rustAwaitExpression
+    of "base_field_initializer":
+      rustBaseFieldInitializer
+    of "binary_expression":
+      rustBinaryExpression
+    of "block":
+      rustBlock
+    of "boolean_literal":
+      rustBooleanLiteral
+    of "bounded_type":
+      rustBoundedType
+    of "bracketed_type":
+      rustBracketedType
+    of "break_expression":
+      rustBreakExpression
+    of "call_expression":
+      rustCallExpression
+    of "captured_pattern":
+      rustCapturedPattern
+    of "closure_expression":
+      rustClosureExpression
+    of "closure_parameters":
+      rustClosureParameters
+    of "compound_assignment_expr":
+      rustCompoundAssignmentExpr
+    of "const_item":
+      rustConstItem
+    of "const_parameter":
+      rustConstParameter
+    of "constrained_type_parameter":
+      rustConstrainedTypeParameter
+    of "continue_expression":
+      rustContinueExpression
+    of "declaration_list":
+      rustDeclarationList
+    of "dynamic_type":
+      rustDynamicType
+    of "else_clause":
+      rustElseClause
+    of "empty_statement":
+      rustEmptyStatement
+    of "empty_type":
+      rustEmptyType
+    of "enum_item":
+      rustEnumItem
+    of "enum_variant":
+      rustEnumVariant
+    of "enum_variant_list":
+      rustEnumVariantList
+    of "extern_crate_declaration":
+      rustExternCrateDeclaration
+    of "extern_modifier":
+      rustExternModifier
+    of "field_declaration":
+      rustFieldDeclaration
+    of "field_declaration_list":
+      rustFieldDeclarationList
+    of "field_expression":
+      rustFieldExpression
+    of "field_initializer":
+      rustFieldInitializer
+    of "field_initializer_list":
+      rustFieldInitializerList
+    of "field_pattern":
+      rustFieldPattern
+    of "for_expression":
+      rustForExpression
+    of "for_lifetimes":
+      rustForLifetimes
+    of "foreign_mod_item":
+      rustForeignModItem
+    of "fragment_specifier":
+      rustFragmentSpecifier
+    of "function_item":
+      rustFunctionItem
+    of "function_modifiers":
+      rustFunctionModifiers
+    of "function_signature_item":
+      rustFunctionSignatureItem
+    of "function_type":
+      rustFunctionType
+    of "generic_function":
+      rustGenericFunction
+    of "generic_type":
+      rustGenericType
+    of "generic_type_with_turbofish":
+      rustGenericTypeWithTurbofish
+    of "higher_ranked_trait_bound":
+      rustHigherRankedTraitBound
+    of "if_expression":
+      rustIfExpression
+    of "if_let_expression":
+      rustIfLetExpression
+    of "impl_item":
+      rustImplItem
+    of "index_expression":
+      rustIndexExpression
+    of "inner_attribute_item":
+      rustInnerAttributeItem
+    of "let_declaration":
+      rustLetDeclaration
+    of "lifetime":
+      rustLifetime
+    of "loop_expression":
+      rustLoopExpression
+    of "loop_label":
+      rustLoopLabel
+    of "macro_definition":
+      rustMacroDefinition
+    of "macro_invocation":
+      rustMacroInvocation
+    of "macro_rule":
+      rustMacroRule
+    of "match_arm":
+      rustMatchArm
+    of "match_block":
+      rustMatchBlock
+    of "match_expression":
+      rustMatchExpression
+    of "match_pattern":
+      rustMatchPattern
+    of "meta_arguments":
+      rustMetaArguments
+    of "meta_item":
+      rustMetaItem
+    of "mod_item":
+      rustModItem
+    of "mut_pattern":
+      rustMutPattern
+    of "negative_literal":
+      rustNegativeLiteral
+    of "optional_type_parameter":
+      rustOptionalTypeParameter
+    of "or_pattern":
+      rustOrPattern
+    of "ordered_field_declaration_list":
+      rustOrderedFieldDeclarationList
+    of "parameter":
+      rustParameter
+    of "parameters":
+      rustParameters
+    of "parenthesized_expression":
+      rustParenthesizedExpression
+    of "pointer_type":
+      rustPointerType
+    of "qualified_type":
+      rustQualifiedType
+    of "range_expression":
+      rustRangeExpression
+    of "range_pattern":
+      rustRangePattern
+    of "ref_pattern":
+      rustRefPattern
+    of "reference_expression":
+      rustReferenceExpression
+    of "reference_pattern":
+      rustReferencePattern
+    of "reference_type":
+      rustReferenceType
+    of "remaining_field_pattern":
+      rustRemainingFieldPattern
+    of "removed_trait_bound":
+      rustRemovedTraitBound
+    of "return_expression":
+      rustReturnExpression
+    of "scoped_identifier":
+      rustScopedIdentifier
+    of "scoped_type_identifier":
+      rustScopedTypeIdentifier
+    of "scoped_use_list":
+      rustScopedUseList
+    of "self_parameter":
+      rustSelfParameter
+    of "shorthand_field_initializer":
+      rustShorthandFieldInitializer
+    of "slice_pattern":
+      rustSlicePattern
+    of "source_file":
+      rustSourceFile
+    of "static_item":
+      rustStaticItem
+    of "string_literal":
+      rustStringLiteral
+    of "struct_expression":
+      rustStructExpression
+    of "struct_item":
+      rustStructItem
+    of "struct_pattern":
+      rustStructPattern
+    of "token_binding_pattern":
+      rustTokenBindingPattern
+    of "token_repetition":
+      rustTokenRepetition
+    of "token_repetition_pattern":
+      rustTokenRepetitionPattern
+    of "token_tree":
+      rustTokenTree
+    of "token_tree_pattern":
+      rustTokenTreePattern
+    of "trait_bounds":
+      rustTraitBounds
+    of "trait_item":
+      rustTraitItem
+    of "try_expression":
+      rustTryExpression
+    of "tuple_expression":
+      rustTupleExpression
+    of "tuple_pattern":
+      rustTuplePattern
+    of "tuple_struct_pattern":
+      rustTupleStructPattern
+    of "tuple_type":
+      rustTupleType
+    of "type_arguments":
+      rustTypeArguments
+    of "type_binding":
+      rustTypeBinding
+    of "type_cast_expression":
+      rustTypeCastExpression
+    of "type_item":
+      rustTypeItem
+    of "type_parameters":
+      rustTypeParameters
+    of "unary_expression":
+      rustUnaryExpression
+    of "union_item":
+      rustUnionItem
+    of "unit_expression":
+      rustUnitExpression
+    of "unit_type":
+      rustUnitType
+    of "unsafe_block":
+      rustUnsafeBlock
+    of "use_as_clause":
+      rustUseAsClause
+    of "use_declaration":
+      rustUseDeclaration
+    of "use_list":
+      rustUseList
+    of "use_wildcard":
+      rustUseWildcard
+    of "variadic_parameter":
+      rustVariadicParameter
+    of "visibility_modifier":
+      rustVisibilityModifier
+    of "where_clause":
+      rustWhereClause
+    of "where_predicate":
+      rustWherePredicate
+    of "while_expression":
+      rustWhileExpression
+    of "while_let_expression":
+      rustWhileLetExpression
+    of "!":
+      rustExclamationTok
+    of "!=":
+      rustExclamationEqualTok
+    of "\"":
+      rustQuoteTok
+    of "#":
+      rustHashTok
+    of "$":
+      rustDollarTok
+    of "%":
+      rustPercentTok
+    of "%=":
+      rustPercentEqualTok
+    of "&":
+      rustAmpersandTok
+    of "&&":
+      rustDoubleAmpersandTok
+    of "&=":
+      rustAmpersandEqualTok
+    of "\'":
+      rustApostropheTok
+    of "(":
+      rustLParTok
+    of ")":
+      rustRParTok
+    of "*":
+      rustAsteriskTok
+    of "*=":
+      rustAsteriskEqualTok
+    of "+":
+      rustPlusTok
+    of "+=":
+      rustPlusEqualTok
+    of ",":
+      rustCommaTok
+    of "-":
+      rustMinusTok
+    of "-=":
+      rustMinusEqualTok
+    of "->":
+      rustMinusGreaterThanTok
+    of ".":
+      rustDotTok
+    of "..":
+      rustDoubleDotTok
+    of "...":
+      rustTripleDotTok
+    of "..=":
+      rustDoubleDotEqualTok
+    of "/":
+      rustSlashTok
+    of "/=":
+      rustSlashEqualTok
+    of ":":
+      rustColonTok
+    of "::":
+      rustDoubleColonTok
+    of ";":
+      rustSemicolonTok
+    of "<":
+      rustLessThanTok
+    of "<<":
+      rustDoubleLessThanTok
+    of "<<=":
+      rustDoubleLessThanEqualTok
+    of "<=":
+      rustLessThanEqualTok
+    of "=":
+      rustEqualTok
+    of "==":
+      rustDoubleEqualTok
+    of "=>":
+      rustEqualGreaterThanTok
+    of ">":
+      rustGreaterThanTok
+    of ">=":
+      rustGreaterThanEqualTok
+    of ">>":
+      rustDoubleGreaterThanTok
+    of ">>=":
+      rustDoubleGreaterThanEqualTok
+    of "?":
+      rustQuestionTok
+    of "@":
+      rustAtTok
+    of "[":
+      rustLBrackTok
+    of "]":
+      rustRBrackTok
+    of "^":
+      rustAccentTok
+    of "^=":
+      rustAccentEqualTok
+    of "_":
+      rustUnderscoreTok
+    of "as":
+      rustAsTok
+    of "async":
+      rustAsyncTok
+    of "await":
+      rustAwaitTok
+    of "block_comment":
+      rustBlockComment
+    of "break":
+      rustBreakTok
+    of "char_literal":
+      rustCharLiteral
+    of "const":
+      rustConstTok
+    of "continue":
+      rustContinueTok
+    of "crate":
+      rustCrate
+    of "default":
+      rustDefaultTok
+    of "dyn":
+      rustDynTok
+    of "else":
+      rustElseTok
+    of "enum":
+      rustEnumTok
+    of "escape_sequence":
+      rustEscapeSequence
+    of "expr":
+      rustExprTok
+    of "extern":
+      rustExternTok
+    of "false":
+      rustFalseTok
+    of "field_identifier":
+      rustFieldIdentifier
+    of "float_literal":
+      rustFloatLiteral
+    of "fn":
+      rustFnTok
+    of "for":
+      rustForTok
+    of "ident":
+      rustIdentTok
+    of "identifier":
+      rustIdentifier
+    of "if":
+      rustIfTok
+    of "impl":
+      rustImplTok
+    of "in":
+      rustInTok
+    of "integer_literal":
+      rustIntegerLiteral
+    of "item":
+      rustItemTok
+    of "let":
+      rustLetTok
+    of "line_comment":
+      rustLineComment
+    of "literal":
+      rustLiteralTok
+    of "loop":
+      rustLoopTok
+    of "macro_rules!":
+      rustMacroUnderscorerulesExclamationTok
+    of "match":
+      rustMatchTok
+    of "meta":
+      rustMetaTok
+    of "metavariable":
+      rustMetavariable
+    of "mod":
+      rustModTok
+    of "move":
+      rustMoveTok
+    of "mutable_specifier":
+      rustMutableSpecifier
+    of "pat":
+      rustPatTok
+    of "path":
+      rustPathTok
+    of "primitive_type":
+      rustPrimitiveType
+    of "pub":
+      rustPubTok
+    of "raw_string_literal":
+      rustRawStringLiteral
+    of "ref":
+      rustRefTok
+    of "return":
+      rustReturnTok
+    of "self":
+      rustSelf
+    of "shorthand_field_identifier":
+      rustShorthandFieldIdentifier
+    of "static":
+      rustStaticTok
+    of "stmt":
+      rustStmtTok
+    of "struct":
+      rustStructTok
+    of "super":
+      rustSuper
+    of "trait":
+      rustTraitTok
+    of "true":
+      rustTrueTok
+    of "tt":
+      rustTtTok
+    of "ty":
+      rustTyTok
+    of "type":
+      rustTypeTok
+    of "type_identifier":
+      rustTypeIdentifier
+    of "union":
+      rustUnionTok
+    of "unsafe":
+      rustUnsafeTok
+    of "use":
+      rustUseTok
+    of "vis":
+      rustVisTok
+    of "where":
+      rustWhereTok
+    of "while":
+      rustWhileTok
+    of "{":
+      rustLCurlyTok
+    of "|":
+      rustPipeTok
+    of "|=":
+      rustPipeEqualTok
+    of "||":
+      rustDoublePipeTok
+    of "}":
+      rustRCurlyTok
+    of "ERROR":
+      rustSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_rust(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: RustNode): string =
@@ -810,6 +811,10 @@ proc newRustParser*(): RustParser =
 proc parseString*(parser: RustParser; str: string): RustNode =
   RustNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseRustString*(str: string): RustNode =
+  let parser = newRustParser()
+  return parseString(parser, str)
 
 func `[]`*(node: RustNode; idx: int; withUnnamed: bool = false): RustNode =
   if withUnnamed:
@@ -830,8 +835,9 @@ iterator items*(node: RustNode; withUnnamed: bool = false): RustNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: RustNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: RustNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: RustNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: RustNode; level: int): seq[string] =

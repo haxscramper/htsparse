@@ -147,65 +147,65 @@ type
     cppVirtualFunctionSpecifier, ## virtual_function_specifier
     cppVirtualSpecifier,    ## virtual_specifier
     cppWhileStatement,      ## while_statement
-    cppSingleNewlineTok,    ## 
+    cppNewlineTok,          ## 
                              ## 
-    cppSingleExclamationTok, ## !
-    cppSingleExclamationSingleEqualTok, ## !=
-    cppSingleQuoteTok,      ## "
-    cppSingleHashdefineTok, ## #define
-    cppSingleHashelifTok,   ## #elif
-    cppSingleHashelseTok,   ## #else
-    cppSingleHashendifTok,  ## #endif
-    cppSingleHashifTok,     ## #if
-    cppSingleHashifdefTok,  ## #ifdef
-    cppSingleHashifndefTok, ## #ifndef
-    cppSingleHashincludeTok, ## #include
-    cppSinglePercentTok,    ## %
-    cppSinglePercentSingleEqualTok, ## %=
-    cppSingleAmpersandTok,  ## &
+    cppExclamationTok,      ## !
+    cppExclamationEqualTok, ## !=
+    cppQuoteTok,            ## "
+    cppHashdefineTok,       ## #define
+    cppHashelifTok,         ## #elif
+    cppHashelseTok,         ## #else
+    cppHashendifTok,        ## #endif
+    cppHashifTok,           ## #if
+    cppHashifdefTok,        ## #ifdef
+    cppHashifndefTok,       ## #ifndef
+    cppHashincludeTok,      ## #include
+    cppPercentTok,          ## %
+    cppPercentEqualTok,     ## %=
+    cppAmpersandTok,        ## &
     cppDoubleAmpersandTok,  ## &&
-    cppSingleAmpersandSingleEqualTok, ## &=
-    cppSingleApostropheTok, ## '
-    cppSingleLParTok,       ## (
-    cppSingleRParTok,       ## )
-    cppSingleAsteriskTok,   ## *
-    cppSingleAsteriskSingleEqualTok, ## *=
-    cppSinglePlusTok,       ## +
+    cppAmpersandEqualTok,   ## &=
+    cppApostropheTok,       ## '
+    cppLParTok,             ## (
+    cppRParTok,             ## )
+    cppAsteriskTok,         ## *
+    cppAsteriskEqualTok,    ## *=
+    cppPlusTok,             ## +
     cppDoublePlusTok,       ## ++
-    cppSinglePlusSingleEqualTok, ## +=
-    cppSingleCommaTok,      ## ,
-    cppSingleMinusTok,      ## -
+    cppPlusEqualTok,        ## +=
+    cppCommaTok,            ## ,
+    cppMinusTok,            ## -
     cppDoubleMinusTok,      ## --
-    cppSingleMinusSingleEqualTok, ## -=
-    cppSingleMinusSingleGreaterThanTok, ## ->
-    cppSingleDotTok,        ## .
+    cppMinusEqualTok,       ## -=
+    cppMinusGreaterThanTok, ## ->
+    cppDotTok,              ## .
     cppTripleDotTok,        ## ...
-    cppSingleSlashTok,      ## /
-    cppSingleSlashSingleEqualTok, ## /=
-    cppSingleColonTok,      ## :
+    cppSlashTok,            ## /
+    cppSlashEqualTok,       ## /=
+    cppColonTok,            ## :
     cppDoubleColonTok,      ## ::
-    cppSingleSemicolonTok,  ## ;
-    cppSingleLessThanTok,   ## <
+    cppSemicolonTok,        ## ;
+    cppLessThanTok,         ## <
     cppDoubleLessThanTok,   ## <<
-    cppDoubleLessThanSingleEqualTok, ## <<=
-    cppSingleLessThanSingleEqualTok, ## <=
-    cppSingleEqualTok,      ## =
+    cppDoubleLessThanEqualTok, ## <<=
+    cppLessThanEqualTok,    ## <=
+    cppEqualTok,            ## =
     cppDoubleEqualTok,      ## ==
-    cppSingleGreaterThanTok, ## >
-    cppSingleGreaterThanSingleEqualTok, ## >=
+    cppGreaterThanTok,      ## >
+    cppGreaterThanEqualTok, ## >=
     cppDoubleGreaterThanTok, ## >>
-    cppDoubleGreaterThanSingleEqualTok, ## >>=
-    cppSingleQuestionTok,   ## ?
-    cppLSingleQuoteTok,     ## L"
-    cppLSingleApostropheTok, ## L'
-    cppUSingleQuoteTok,     ## U"
-    cppUSingleApostropheTok, ## U'
-    cppSingleLBrackTok,     ## [
+    cppDoubleGreaterThanEqualTok, ## >>=
+    cppQuestionTok,         ## ?
+    cppLQuoteTok,           ## L"
+    cppLApostropheTok,      ## L'
+    cppUQuoteTok,           ## U"
+    cppUApostropheTok,      ## U'
+    cppLBrackTok,           ## [
     cppDoubleLBrackTok,     ## [[
-    cppSingleRBrackTok,     ## ]
+    cppRBrackTok,           ## ]
     cppDoubleRBrackTok,     ## ]]
-    cppSingleAccentTok,     ## ^
-    cppSingleAccentSingleEqualTok, ## ^=
+    cppAccentTok,           ## ^
+    cppAccentEqualTok,      ## ^=
     cppAtomicTok,           ## _Atomic
     cppAttributeTok,        ## __attribute__
     cppBasedTok,            ## __based
@@ -287,20 +287,20 @@ type
     cppTypeIdentifier,      ## type_identifier
     cppTypedefTok,          ## typedef
     cppTypenameTok,         ## typename
-    cppU8SingleQuoteTok,    ## u8"
-    cppU8SingleApostropheTok, ## u8'
+    cppU8QuoteTok,          ## u8"
+    cppU8ApostropheTok,     ## u8'
     cppUnionTok,            ## union
     cppUnsignedTok,         ## unsigned
     cppUsingTok,            ## using
     cppVirtualTok,          ## virtual
     cppVolatileTok,         ## volatile
     cppWhileTok,            ## while
-    cppSingleLCurlyTok,     ## {
-    cppSinglePipeTok,       ## |
-    cppSinglePipeSingleEqualTok, ## |=
+    cppLCurlyTok,           ## {
+    cppPipeTok,             ## |
+    cppPipeEqualTok,        ## |=
     cppDoublePipeTok,       ## ||
-    cppSingleRCurlyTok,     ## }
-    cppSingleTildeTok,      ## ~
+    cppRCurlyTok,           ## }
+    cppTildeTok,            ## ~
     cppSyntaxError           ## Tree-sitter parser syntax error
 type
   CppExternalTok* = enum
@@ -600,121 +600,121 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "while_statement":
       cppWhileStatement
     of "\n":
-      cppSingleNewlineTok
+      cppNewlineTok
     of "!":
-      cppSingleExclamationTok
+      cppExclamationTok
     of "!=":
-      cppSingleExclamationSingleEqualTok
+      cppExclamationEqualTok
     of "\"":
-      cppSingleQuoteTok
+      cppQuoteTok
     of "#define":
-      cppSingleHashdefineTok
+      cppHashdefineTok
     of "#elif":
-      cppSingleHashelifTok
+      cppHashelifTok
     of "#else":
-      cppSingleHashelseTok
+      cppHashelseTok
     of "#endif":
-      cppSingleHashendifTok
+      cppHashendifTok
     of "#if":
-      cppSingleHashifTok
+      cppHashifTok
     of "#ifdef":
-      cppSingleHashifdefTok
+      cppHashifdefTok
     of "#ifndef":
-      cppSingleHashifndefTok
+      cppHashifndefTok
     of "#include":
-      cppSingleHashincludeTok
+      cppHashincludeTok
     of "%":
-      cppSinglePercentTok
+      cppPercentTok
     of "%=":
-      cppSinglePercentSingleEqualTok
+      cppPercentEqualTok
     of "&":
-      cppSingleAmpersandTok
+      cppAmpersandTok
     of "&&":
       cppDoubleAmpersandTok
     of "&=":
-      cppSingleAmpersandSingleEqualTok
+      cppAmpersandEqualTok
     of "\'":
-      cppSingleApostropheTok
+      cppApostropheTok
     of "(":
-      cppSingleLParTok
+      cppLParTok
     of ")":
-      cppSingleRParTok
+      cppRParTok
     of "*":
-      cppSingleAsteriskTok
+      cppAsteriskTok
     of "*=":
-      cppSingleAsteriskSingleEqualTok
+      cppAsteriskEqualTok
     of "+":
-      cppSinglePlusTok
+      cppPlusTok
     of "++":
       cppDoublePlusTok
     of "+=":
-      cppSinglePlusSingleEqualTok
+      cppPlusEqualTok
     of ",":
-      cppSingleCommaTok
+      cppCommaTok
     of "-":
-      cppSingleMinusTok
+      cppMinusTok
     of "--":
       cppDoubleMinusTok
     of "-=":
-      cppSingleMinusSingleEqualTok
+      cppMinusEqualTok
     of "->":
-      cppSingleMinusSingleGreaterThanTok
+      cppMinusGreaterThanTok
     of ".":
-      cppSingleDotTok
+      cppDotTok
     of "...":
       cppTripleDotTok
     of "/":
-      cppSingleSlashTok
+      cppSlashTok
     of "/=":
-      cppSingleSlashSingleEqualTok
+      cppSlashEqualTok
     of ":":
-      cppSingleColonTok
+      cppColonTok
     of "::":
       cppDoubleColonTok
     of ";":
-      cppSingleSemicolonTok
+      cppSemicolonTok
     of "<":
-      cppSingleLessThanTok
+      cppLessThanTok
     of "<<":
       cppDoubleLessThanTok
     of "<<=":
-      cppDoubleLessThanSingleEqualTok
+      cppDoubleLessThanEqualTok
     of "<=":
-      cppSingleLessThanSingleEqualTok
+      cppLessThanEqualTok
     of "=":
-      cppSingleEqualTok
+      cppEqualTok
     of "==":
       cppDoubleEqualTok
     of ">":
-      cppSingleGreaterThanTok
+      cppGreaterThanTok
     of ">=":
-      cppSingleGreaterThanSingleEqualTok
+      cppGreaterThanEqualTok
     of ">>":
       cppDoubleGreaterThanTok
     of ">>=":
-      cppDoubleGreaterThanSingleEqualTok
+      cppDoubleGreaterThanEqualTok
     of "?":
-      cppSingleQuestionTok
+      cppQuestionTok
     of "L\"":
-      cppLSingleQuoteTok
+      cppLQuoteTok
     of "L\'":
-      cppLSingleApostropheTok
+      cppLApostropheTok
     of "U\"":
-      cppUSingleQuoteTok
+      cppUQuoteTok
     of "U\'":
-      cppUSingleApostropheTok
+      cppUApostropheTok
     of "[":
-      cppSingleLBrackTok
+      cppLBrackTok
     of "[[":
       cppDoubleLBrackTok
     of "]":
-      cppSingleRBrackTok
+      cppRBrackTok
     of "]]":
       cppDoubleRBrackTok
     of "^":
-      cppSingleAccentTok
+      cppAccentTok
     of "^=":
-      cppSingleAccentSingleEqualTok
+      cppAccentEqualTok
     of "_Atomic":
       cppAtomicTok
     of "__attribute__":
@@ -876,13 +876,13 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "typename":
       cppTypenameTok
     of "u\"":
-      cppUSingleQuoteTok
+      cppUQuoteTok
     of "u\'":
-      cppUSingleApostropheTok
+      cppUApostropheTok
     of "u8\"":
-      cppU8SingleQuoteTok
+      cppU8QuoteTok
     of "u8\'":
-      cppU8SingleApostropheTok
+      cppU8ApostropheTok
     of "union":
       cppUnionTok
     of "unsigned":
@@ -896,17 +896,17 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "while":
       cppWhileTok
     of "{":
-      cppSingleLCurlyTok
+      cppLCurlyTok
     of "|":
-      cppSinglePipeTok
+      cppPipeTok
     of "|=":
-      cppSinglePipeSingleEqualTok
+      cppPipeEqualTok
     of "||":
       cppDoublePipeTok
     of "}":
-      cppSingleRCurlyTok
+      cppRCurlyTok
     of "~":
-      cppSingleTildeTok
+      cppTildeTok
     of "ERROR":
       cppSyntaxError
     else:
@@ -923,6 +923,10 @@ proc newCppParser*(): CppParser =
 proc parseString*(parser: CppParser; str: string): CppNode =
   CppNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseCppString*(str: string): CppNode =
+  let parser = newCppParser()
+  return parseString(parser, str)
 
 func `[]`*(node: CppNode; idx: int; withUnnamed: bool = false): CppNode =
   if withUnnamed:

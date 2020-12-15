@@ -8,14 +8,14 @@ type
     embedded_templateDirective, ## directive
     embedded_templateOutputDirective, ## output_directive
     embedded_templateTemplate, ## template
-    embedded_templateSinglePercentSingleGreaterThanTok, ## %>
-    embedded_templateSingleMinusSinglePercentSingleGreaterThanTok, ## -%>
-    embedded_templateSingleLessThanSinglePercentTok, ## <%
-    embedded_templateSingleLessThanSinglePercentSingleHashTok, ## <%#
-    embedded_templateSingleLessThanSinglePercentSingleMinusTok, ## <%-
-    embedded_templateSingleLessThanSinglePercentSingleEqualTok, ## <%=
-    embedded_templateSingleLessThanSinglePercentSingleUnderscoreTok, ## <%_
-    embedded_templateSingleUnderscoreSinglePercentSingleGreaterThanTok, ## _%>
+    embedded_templatePercentGreaterThanTok, ## %>
+    embedded_templateMinusPercentGreaterThanTok, ## -%>
+    embedded_templateLessThanPercentTok, ## <%
+    embedded_templateLessThanPercentHashTok, ## <%#
+    embedded_templateLessThanPercentMinusTok, ## <%-
+    embedded_templateLessThanPercentEqualTok, ## <%=
+    embedded_templateLessThanPercentUnderscoreTok, ## <%_
+    embedded_templateUnderscorePercentGreaterThanTok, ## _%>
     embedded_templateCode,  ## code
     embedded_templateComment, ## comment
     embedded_templateContent, ## content
@@ -29,42 +29,44 @@ type
 type
   Embedded_templateParser* = distinct PtsParser
 proc tsNodeType*(node: Embedded_templateNode): string
-proc kind*(node: Embedded_templateNode): Embedded_templateNodeKind =
-  case node.tsNodeType
-  of "comment_directive":
-    embedded_templateCommentDirective
-  of "directive":
-    embedded_templateDirective
-  of "output_directive":
-    embedded_templateOutputDirective
-  of "template":
-    embedded_templateTemplate
-  of "%>":
-    embedded_templateSinglePercentSingleGreaterThanTok
-  of "-%>":
-    embedded_templateSingleMinusSinglePercentSingleGreaterThanTok
-  of "<%":
-    embedded_templateSingleLessThanSinglePercentTok
-  of "<%#":
-    embedded_templateSingleLessThanSinglePercentSingleHashTok
-  of "<%-":
-    embedded_templateSingleLessThanSinglePercentSingleMinusTok
-  of "<%=":
-    embedded_templateSingleLessThanSinglePercentSingleEqualTok
-  of "<%_":
-    embedded_templateSingleLessThanSinglePercentSingleUnderscoreTok
-  of "_%>":
-    embedded_templateSingleUnderscoreSinglePercentSingleGreaterThanTok
-  of "code":
-    embedded_templateCode
-  of "comment":
-    embedded_templateComment
-  of "content":
-    embedded_templateContent
-  of "ERROR":
-    embedded_templateSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: Embedded_templateNode): Embedded_templateNodeKind {.
+    noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "comment_directive":
+      embedded_templateCommentDirective
+    of "directive":
+      embedded_templateDirective
+    of "output_directive":
+      embedded_templateOutputDirective
+    of "template":
+      embedded_templateTemplate
+    of "%>":
+      embedded_templatePercentGreaterThanTok
+    of "-%>":
+      embedded_templateMinusPercentGreaterThanTok
+    of "<%":
+      embedded_templateLessThanPercentTok
+    of "<%#":
+      embedded_templateLessThanPercentHashTok
+    of "<%-":
+      embedded_templateLessThanPercentMinusTok
+    of "<%=":
+      embedded_templateLessThanPercentEqualTok
+    of "<%_":
+      embedded_templateLessThanPercentUnderscoreTok
+    of "_%>":
+      embedded_templateUnderscorePercentGreaterThanTok
+    of "code":
+      embedded_templateCode
+    of "comment":
+      embedded_templateComment
+    of "content":
+      embedded_templateContent
+    of "ERROR":
+      embedded_templateSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_embedded_template(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: Embedded_templateNode): string =
@@ -78,6 +80,10 @@ proc newEmbedded_templateParser*(): Embedded_templateParser =
 proc parseString*(parser: Embedded_templateParser; str: string): Embedded_templateNode =
   Embedded_templateNode(ts_tree_root_node(ts_parser_parse_string(
       PtsParser(parser), nil, str.cstring, uint32(len(str)))))
+
+proc parseEmbedded_templateString*(str: string): Embedded_templateNode =
+  let parser = newEmbedded_templateParser()
+  return parseString(parser, str)
 
 func `[]`*(node: Embedded_templateNode; idx: int; withUnnamed: bool = false): Embedded_templateNode =
   if withUnnamed:
@@ -98,8 +104,9 @@ iterator items*(node: Embedded_templateNode; withUnnamed: bool = false): Embedde
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: Embedded_templateNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: Embedded_templateNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: Embedded_templateNode; instr: string;
                withUnnamed: bool = false): string =

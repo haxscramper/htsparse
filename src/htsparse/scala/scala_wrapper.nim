@@ -79,26 +79,26 @@ type
     scalaVarDeclaration,    ## var_declaration
     scalaVarDefinition,     ## var_definition
     scalaViewBound,         ## view_bound
-    scalaSingleExclamationTok, ## !
-    scalaSingleHashTok,     ## #
-    scalaSingleDollarTok,   ## $
-    scalaSingleLParTok,     ## (
-    scalaSingleRParTok,     ## )
-    scalaSingleAsteriskTok, ## *
-    scalaSinglePlusTok,     ## +
-    scalaSingleCommaTok,    ## ,
-    scalaSingleMinusTok,    ## -
-    scalaSingleDotTok,      ## .
-    scalaSingleColonTok,    ## :
-    scalaSingleSemicolonTok, ## ;
-    scalaSingleLessThanSinglePercentTok, ## <%
-    scalaSingleLessThanSingleColonTok, ## <:
-    scalaSingleEqualTok,    ## =
-    scalaSingleEqualSingleGreaterThanTok, ## =>
-    scalaSingleGreaterThanSingleColonTok, ## >:
-    scalaSingleAtTok,       ## @
-    scalaSingleLBrackTok,   ## [
-    scalaSingleRBrackTok,   ## ]
+    scalaExclamationTok,    ## !
+    scalaHashTok,           ## #
+    scalaDollarTok,         ## $
+    scalaLParTok,           ## (
+    scalaRParTok,           ## )
+    scalaAsteriskTok,       ## *
+    scalaPlusTok,           ## +
+    scalaCommaTok,          ## ,
+    scalaMinusTok,          ## -
+    scalaDotTok,            ## .
+    scalaColonTok,          ## :
+    scalaSemicolonTok,      ## ;
+    scalaLessThanPercentTok, ## <%
+    scalaLessThanColonTok,  ## <:
+    scalaEqualTok,          ## =
+    scalaEqualGreaterThanTok, ## =>
+    scalaGreaterThanColonTok, ## >:
+    scalaAtTok,             ## @
+    scalaLBrackTok,         ## [
+    scalaRBrackTok,         ## ]
     scalaAbstractTok,       ## abstract
     scalaCaseTok,           ## case
     scalaCatchTok,          ## catch
@@ -132,10 +132,10 @@ type
     scalaVarTok,            ## var
     scalaWildcard,          ## wildcard
     scalaWithTok,           ## with
-    scalaSingleLCurlyTok,   ## {
-    scalaSinglePipeTok,     ## |
-    scalaSingleRCurlyTok,   ## }
-    scalaSingleTildeTok,    ## ~
+    scalaLCurlyTok,         ## {
+    scalaPipeTok,           ## |
+    scalaRCurlyTok,         ## }
+    scalaTildeTok,          ## ~
     scalaSyntaxError         ## Tree-sitter parser syntax error
 type
   ScalaExternalTok* = enum
@@ -152,276 +152,277 @@ type
 type
   ScalaParser* = distinct PtsParser
 proc tsNodeType*(node: ScalaNode): string
-proc kind*(node: ScalaNode): ScalaNodeKind =
-  case node.tsNodeType
-  of "_definition":
-    scalaDefinition
-  of "_expression":
-    scalaExpression
-  of "_pattern":
-    scalaPattern
-  of "alternative_pattern":
-    scalaAlternativePattern
-  of "annotation":
-    scalaAnnotation
-  of "arguments":
-    scalaArguments
-  of "assignment_expression":
-    scalaAssignmentExpression
-  of "block":
-    scalaBlock
-  of "call_expression":
-    scalaCallExpression
-  of "capture_pattern":
-    scalaCapturePattern
-  of "case_block":
-    scalaCaseBlock
-  of "case_class_pattern":
-    scalaCaseClassPattern
-  of "case_clause":
-    scalaCaseClause
-  of "catch_clause":
-    scalaCatchClause
-  of "class_definition":
-    scalaClassDefinition
-  of "class_parameter":
-    scalaClassParameter
-  of "class_parameters":
-    scalaClassParameters
-  of "compilation_unit":
-    scalaCompilationUnit
-  of "compound_type":
-    scalaCompoundType
-  of "context_bound":
-    scalaContextBound
-  of "contravariant_type_parameter":
-    scalaContravariantTypeParameter
-  of "covariant_type_parameter":
-    scalaCovariantTypeParameter
-  of "extends_clause":
-    scalaExtendsClause
-  of "field_expression":
-    scalaFieldExpression
-  of "finally_clause":
-    scalaFinallyClause
-  of "function_declaration":
-    scalaFunctionDeclaration
-  of "function_definition":
-    scalaFunctionDefinition
-  of "function_type":
-    scalaFunctionType
-  of "generic_function":
-    scalaGenericFunction
-  of "generic_type":
-    scalaGenericType
-  of "guard":
-    scalaGuard
-  of "if_expression":
-    scalaIfExpression
-  of "import_declaration":
-    scalaImportDeclaration
-  of "import_selectors":
-    scalaImportSelectors
-  of "infix_expression":
-    scalaInfixExpression
-  of "infix_pattern":
-    scalaInfixPattern
-  of "infix_type":
-    scalaInfixType
-  of "instance_expression":
-    scalaInstanceExpression
-  of "interpolation":
-    scalaInterpolation
-  of "lazy_parameter_type":
-    scalaLazyParameterType
-  of "lower_bound":
-    scalaLowerBound
-  of "match_expression":
-    scalaMatchExpression
-  of "modifiers":
-    scalaModifiers
-  of "object_definition":
-    scalaObjectDefinition
-  of "package_clause":
-    scalaPackageClause
-  of "package_identifier":
-    scalaPackageIdentifier
-  of "package_object":
-    scalaPackageObject
-  of "parameter":
-    scalaParameter
-  of "parameter_types":
-    scalaParameterTypes
-  of "parameters":
-    scalaParameters
-  of "parenthesized_expression":
-    scalaParenthesizedExpression
-  of "prefix_expression":
-    scalaPrefixExpression
-  of "projected_type":
-    scalaProjectedType
-  of "renamed_identifier":
-    scalaRenamedIdentifier
-  of "repeated_parameter_type":
-    scalaRepeatedParameterType
-  of "stable_identifier":
-    scalaStableIdentifier
-  of "stable_type_identifier":
-    scalaStableTypeIdentifier
-  of "string":
-    scalaString
-  of "string_transform_expression":
-    scalaStringTransformExpression
-  of "template_body":
-    scalaTemplateBody
-  of "trait_definition":
-    scalaTraitDefinition
-  of "try_expression":
-    scalaTryExpression
-  of "tuple_expression":
-    scalaTupleExpression
-  of "tuple_pattern":
-    scalaTuplePattern
-  of "tuple_type":
-    scalaTupleType
-  of "type_arguments":
-    scalaTypeArguments
-  of "type_definition":
-    scalaTypeDefinition
-  of "type_parameters":
-    scalaTypeParameters
-  of "typed_pattern":
-    scalaTypedPattern
-  of "upper_bound":
-    scalaUpperBound
-  of "val_declaration":
-    scalaValDeclaration
-  of "val_definition":
-    scalaValDefinition
-  of "var_declaration":
-    scalaVarDeclaration
-  of "var_definition":
-    scalaVarDefinition
-  of "view_bound":
-    scalaViewBound
-  of "!":
-    scalaSingleExclamationTok
-  of "#":
-    scalaSingleHashTok
-  of "$":
-    scalaSingleDollarTok
-  of "(":
-    scalaSingleLParTok
-  of ")":
-    scalaSingleRParTok
-  of "*":
-    scalaSingleAsteriskTok
-  of "+":
-    scalaSinglePlusTok
-  of ",":
-    scalaSingleCommaTok
-  of "-":
-    scalaSingleMinusTok
-  of ".":
-    scalaSingleDotTok
-  of ":":
-    scalaSingleColonTok
-  of ";":
-    scalaSingleSemicolonTok
-  of "<%":
-    scalaSingleLessThanSinglePercentTok
-  of "<:":
-    scalaSingleLessThanSingleColonTok
-  of "=":
-    scalaSingleEqualTok
-  of "=>":
-    scalaSingleEqualSingleGreaterThanTok
-  of ">:":
-    scalaSingleGreaterThanSingleColonTok
-  of "@":
-    scalaSingleAtTok
-  of "[":
-    scalaSingleLBrackTok
-  of "]":
-    scalaSingleRBrackTok
-  of "abstract":
-    scalaAbstractTok
-  of "case":
-    scalaCaseTok
-  of "catch":
-    scalaCatchTok
-  of "class":
-    scalaClassTok
-  of "comment":
-    scalaComment
-  of "def":
-    scalaDefTok
-  of "else":
-    scalaElseTok
-  of "extends":
-    scalaExtendsTok
-  of "final":
-    scalaFinalTok
-  of "finally":
-    scalaFinallyTok
-  of "identifier":
-    scalaIdentifier
-  of "if":
-    scalaIfTok
-  of "implicit":
-    scalaImplicitTok
-  of "import":
-    scalaImportTok
-  of "lazy":
-    scalaLazyTok
-  of "match":
-    scalaMatchTok
-  of "new":
-    scalaNewTok
-  of "number":
-    scalaNumber
-  of "object":
-    scalaObjectTok
-  of "operator_identifier":
-    scalaOperatorIdentifier
-  of "override":
-    scalaOverrideTok
-  of "package":
-    scalaPackageTok
-  of "private":
-    scalaPrivateTok
-  of "protected":
-    scalaProtectedTok
-  of "sealed":
-    scalaSealedTok
-  of "trait":
-    scalaTraitTok
-  of "try":
-    scalaTryTok
-  of "type":
-    scalaTypeTok
-  of "type_identifier":
-    scalaTypeIdentifier
-  of "val":
-    scalaValTok
-  of "var":
-    scalaVarTok
-  of "wildcard":
-    scalaWildcard
-  of "with":
-    scalaWithTok
-  of "{":
-    scalaSingleLCurlyTok
-  of "|":
-    scalaSinglePipeTok
-  of "}":
-    scalaSingleRCurlyTok
-  of "~":
-    scalaSingleTildeTok
-  of "ERROR":
-    scalaSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_definition":
+      scalaDefinition
+    of "_expression":
+      scalaExpression
+    of "_pattern":
+      scalaPattern
+    of "alternative_pattern":
+      scalaAlternativePattern
+    of "annotation":
+      scalaAnnotation
+    of "arguments":
+      scalaArguments
+    of "assignment_expression":
+      scalaAssignmentExpression
+    of "block":
+      scalaBlock
+    of "call_expression":
+      scalaCallExpression
+    of "capture_pattern":
+      scalaCapturePattern
+    of "case_block":
+      scalaCaseBlock
+    of "case_class_pattern":
+      scalaCaseClassPattern
+    of "case_clause":
+      scalaCaseClause
+    of "catch_clause":
+      scalaCatchClause
+    of "class_definition":
+      scalaClassDefinition
+    of "class_parameter":
+      scalaClassParameter
+    of "class_parameters":
+      scalaClassParameters
+    of "compilation_unit":
+      scalaCompilationUnit
+    of "compound_type":
+      scalaCompoundType
+    of "context_bound":
+      scalaContextBound
+    of "contravariant_type_parameter":
+      scalaContravariantTypeParameter
+    of "covariant_type_parameter":
+      scalaCovariantTypeParameter
+    of "extends_clause":
+      scalaExtendsClause
+    of "field_expression":
+      scalaFieldExpression
+    of "finally_clause":
+      scalaFinallyClause
+    of "function_declaration":
+      scalaFunctionDeclaration
+    of "function_definition":
+      scalaFunctionDefinition
+    of "function_type":
+      scalaFunctionType
+    of "generic_function":
+      scalaGenericFunction
+    of "generic_type":
+      scalaGenericType
+    of "guard":
+      scalaGuard
+    of "if_expression":
+      scalaIfExpression
+    of "import_declaration":
+      scalaImportDeclaration
+    of "import_selectors":
+      scalaImportSelectors
+    of "infix_expression":
+      scalaInfixExpression
+    of "infix_pattern":
+      scalaInfixPattern
+    of "infix_type":
+      scalaInfixType
+    of "instance_expression":
+      scalaInstanceExpression
+    of "interpolation":
+      scalaInterpolation
+    of "lazy_parameter_type":
+      scalaLazyParameterType
+    of "lower_bound":
+      scalaLowerBound
+    of "match_expression":
+      scalaMatchExpression
+    of "modifiers":
+      scalaModifiers
+    of "object_definition":
+      scalaObjectDefinition
+    of "package_clause":
+      scalaPackageClause
+    of "package_identifier":
+      scalaPackageIdentifier
+    of "package_object":
+      scalaPackageObject
+    of "parameter":
+      scalaParameter
+    of "parameter_types":
+      scalaParameterTypes
+    of "parameters":
+      scalaParameters
+    of "parenthesized_expression":
+      scalaParenthesizedExpression
+    of "prefix_expression":
+      scalaPrefixExpression
+    of "projected_type":
+      scalaProjectedType
+    of "renamed_identifier":
+      scalaRenamedIdentifier
+    of "repeated_parameter_type":
+      scalaRepeatedParameterType
+    of "stable_identifier":
+      scalaStableIdentifier
+    of "stable_type_identifier":
+      scalaStableTypeIdentifier
+    of "string":
+      scalaString
+    of "string_transform_expression":
+      scalaStringTransformExpression
+    of "template_body":
+      scalaTemplateBody
+    of "trait_definition":
+      scalaTraitDefinition
+    of "try_expression":
+      scalaTryExpression
+    of "tuple_expression":
+      scalaTupleExpression
+    of "tuple_pattern":
+      scalaTuplePattern
+    of "tuple_type":
+      scalaTupleType
+    of "type_arguments":
+      scalaTypeArguments
+    of "type_definition":
+      scalaTypeDefinition
+    of "type_parameters":
+      scalaTypeParameters
+    of "typed_pattern":
+      scalaTypedPattern
+    of "upper_bound":
+      scalaUpperBound
+    of "val_declaration":
+      scalaValDeclaration
+    of "val_definition":
+      scalaValDefinition
+    of "var_declaration":
+      scalaVarDeclaration
+    of "var_definition":
+      scalaVarDefinition
+    of "view_bound":
+      scalaViewBound
+    of "!":
+      scalaExclamationTok
+    of "#":
+      scalaHashTok
+    of "$":
+      scalaDollarTok
+    of "(":
+      scalaLParTok
+    of ")":
+      scalaRParTok
+    of "*":
+      scalaAsteriskTok
+    of "+":
+      scalaPlusTok
+    of ",":
+      scalaCommaTok
+    of "-":
+      scalaMinusTok
+    of ".":
+      scalaDotTok
+    of ":":
+      scalaColonTok
+    of ";":
+      scalaSemicolonTok
+    of "<%":
+      scalaLessThanPercentTok
+    of "<:":
+      scalaLessThanColonTok
+    of "=":
+      scalaEqualTok
+    of "=>":
+      scalaEqualGreaterThanTok
+    of ">:":
+      scalaGreaterThanColonTok
+    of "@":
+      scalaAtTok
+    of "[":
+      scalaLBrackTok
+    of "]":
+      scalaRBrackTok
+    of "abstract":
+      scalaAbstractTok
+    of "case":
+      scalaCaseTok
+    of "catch":
+      scalaCatchTok
+    of "class":
+      scalaClassTok
+    of "comment":
+      scalaComment
+    of "def":
+      scalaDefTok
+    of "else":
+      scalaElseTok
+    of "extends":
+      scalaExtendsTok
+    of "final":
+      scalaFinalTok
+    of "finally":
+      scalaFinallyTok
+    of "identifier":
+      scalaIdentifier
+    of "if":
+      scalaIfTok
+    of "implicit":
+      scalaImplicitTok
+    of "import":
+      scalaImportTok
+    of "lazy":
+      scalaLazyTok
+    of "match":
+      scalaMatchTok
+    of "new":
+      scalaNewTok
+    of "number":
+      scalaNumber
+    of "object":
+      scalaObjectTok
+    of "operator_identifier":
+      scalaOperatorIdentifier
+    of "override":
+      scalaOverrideTok
+    of "package":
+      scalaPackageTok
+    of "private":
+      scalaPrivateTok
+    of "protected":
+      scalaProtectedTok
+    of "sealed":
+      scalaSealedTok
+    of "trait":
+      scalaTraitTok
+    of "try":
+      scalaTryTok
+    of "type":
+      scalaTypeTok
+    of "type_identifier":
+      scalaTypeIdentifier
+    of "val":
+      scalaValTok
+    of "var":
+      scalaVarTok
+    of "wildcard":
+      scalaWildcard
+    of "with":
+      scalaWithTok
+    of "{":
+      scalaLCurlyTok
+    of "|":
+      scalaPipeTok
+    of "}":
+      scalaRCurlyTok
+    of "~":
+      scalaTildeTok
+    of "ERROR":
+      scalaSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_scala(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: ScalaNode): string =
@@ -434,6 +435,10 @@ proc newScalaParser*(): ScalaParser =
 proc parseString*(parser: ScalaParser; str: string): ScalaNode =
   ScalaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseScalaString*(str: string): ScalaNode =
+  let parser = newScalaParser()
+  return parseString(parser, str)
 
 func `[]`*(node: ScalaNode; idx: int; withUnnamed: bool = false): ScalaNode =
   if withUnnamed:
@@ -454,8 +459,9 @@ iterator items*(node: ScalaNode; withUnnamed: bool = false): ScalaNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: ScalaNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: ScalaNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: ScalaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: ScalaNode; level: int): seq[string] =

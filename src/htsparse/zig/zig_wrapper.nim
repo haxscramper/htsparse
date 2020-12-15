@@ -85,43 +85,43 @@ type
     zigVariantDeclaration,  ## variant_declaration
     zigVisibilityModifier,  ## visibility_modifier
     zigWhileExpression,     ## while_expression
-    zigSingleExclamationTok, ## !
-    zigSingleQuoteTok,      ## "
-    zigSinglePercentSingleEqualTok, ## %=
-    zigSingleAmpersandTok,  ## &
-    zigSingleAmpersandSingleEqualTok, ## &=
-    zigSingleApostropheTok, ## '
-    zigSingleLParTok,       ## (
-    zigSingleRParTok,       ## )
-    zigSingleAsteriskTok,   ## *
-    zigSingleAsteriskSinglePercentSingleEqualTok, ## *%=
-    zigSingleAsteriskSingleEqualTok, ## *=
-    zigSinglePlusSinglePercentSingleEqualTok, ## +%=
-    zigSinglePlusSingleEqualTok, ## +=
-    zigSingleCommaTok,      ## ,
-    zigSingleMinusTok,      ## -
-    zigSingleMinusSinglePercentTok, ## -%
-    zigSingleMinusSinglePercentSingleEqualTok, ## -%=
-    zigSingleMinusSingleEqualTok, ## -=
-    zigSingleDotTok,        ## .
-    zigSingleDotSingleAsteriskTok, ## .*
+    zigExclamationTok,      ## !
+    zigQuoteTok,            ## "
+    zigPercentEqualTok,     ## %=
+    zigAmpersandTok,        ## &
+    zigAmpersandEqualTok,   ## &=
+    zigApostropheTok,       ## '
+    zigLParTok,             ## (
+    zigRParTok,             ## )
+    zigAsteriskTok,         ## *
+    zigAsteriskPercentEqualTok, ## *%=
+    zigAsteriskEqualTok,    ## *=
+    zigPlusPercentEqualTok, ## +%=
+    zigPlusEqualTok,        ## +=
+    zigCommaTok,            ## ,
+    zigMinusTok,            ## -
+    zigMinusPercentTok,     ## -%
+    zigMinusPercentEqualTok, ## -%=
+    zigMinusEqualTok,       ## -=
+    zigDotTok,              ## .
+    zigDotAsteriskTok,      ## .*
     zigDoubleDotTok,        ## ..
     zigTripleDotTok,        ## ...
-    zigSingleDotSingleQuestionTok, ## .?
-    zigSingleDotSingleLCurlyTok, ## .{
-    zigSingleSlashSingleEqualTok, ## /=
-    zigSingleColonTok,      ## :
-    zigSingleSemicolonTok,  ## ;
-    zigDoubleLessThanSingleEqualTok, ## <<=
-    zigSingleEqualTok,      ## =
-    zigSingleEqualSingleGreaterThanTok, ## =>
-    zigDoubleGreaterThanSingleEqualTok, ## >>=
-    zigSingleQuestionTok,   ## ?
-    zigSingleAtTok,         ## @
-    zigSingleLBrackTok,     ## [
+    zigDotQuestionTok,      ## .?
+    zigDotLCurlyTok,        ## .{
+    zigSlashEqualTok,       ## /=
+    zigColonTok,            ## :
+    zigSemicolonTok,        ## ;
+    zigDoubleLessThanEqualTok, ## <<=
+    zigEqualTok,            ## =
+    zigEqualGreaterThanTok, ## =>
+    zigDoubleGreaterThanEqualTok, ## >>=
+    zigQuestionTok,         ## ?
+    zigAtTok,               ## @
+    zigLBrackTok,           ## [
     zigDoubleBackslashTok,  ## \\
-    zigSingleRBrackTok,     ## ]
-    zigSingleAccentSingleEqualTok, ## ^=
+    zigRBrackTok,           ## ]
+    zigAccentEqualTok,      ## ^=
     zigAlignTok,            ## align
     zigAllowzeroTok,        ## allowzero
     zigAnyerrorTok,         ## anyerror
@@ -130,7 +130,7 @@ type
     zigBinaryOperator,      ## binary_operator
     zigBoolTok,             ## bool
     zigBreakTok,            ## break
-    zigCSingleQuoteTok,     ## c"
+    zigCQuoteTok,           ## c"
     zigCDoubleBackslashTok, ## c\\
     zigCIntTok,             ## c_int
     zigCLongTok,            ## c_long
@@ -220,11 +220,11 @@ type
     zigVoidTok,             ## void
     zigVolatileTok,         ## volatile
     zigWhileTok,            ## while
-    zigSingleLCurlyTok,     ## {
-    zigSinglePipeTok,       ## |
-    zigSinglePipeSingleEqualTok, ## |=
-    zigSingleRCurlyTok,     ## }
-    zigSingleTildeTok,      ## ~
+    zigLCurlyTok,           ## {
+    zigPipeTok,             ## |
+    zigPipeEqualTok,        ## |=
+    zigRCurlyTok,           ## }
+    zigTildeTok,            ## ~
     zigSyntaxError           ## Tree-sitter parser syntax error
 type
   ZigNode* = distinct TSNode
@@ -397,79 +397,79 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "while_expression":
       zigWhileExpression
     of "!":
-      zigSingleExclamationTok
+      zigExclamationTok
     of "\"":
-      zigSingleQuoteTok
+      zigQuoteTok
     of "%=":
-      zigSinglePercentSingleEqualTok
+      zigPercentEqualTok
     of "&":
-      zigSingleAmpersandTok
+      zigAmpersandTok
     of "&=":
-      zigSingleAmpersandSingleEqualTok
+      zigAmpersandEqualTok
     of "\'":
-      zigSingleApostropheTok
+      zigApostropheTok
     of "(":
-      zigSingleLParTok
+      zigLParTok
     of ")":
-      zigSingleRParTok
+      zigRParTok
     of "*":
-      zigSingleAsteriskTok
+      zigAsteriskTok
     of "*%=":
-      zigSingleAsteriskSinglePercentSingleEqualTok
+      zigAsteriskPercentEqualTok
     of "*=":
-      zigSingleAsteriskSingleEqualTok
+      zigAsteriskEqualTok
     of "+%=":
-      zigSinglePlusSinglePercentSingleEqualTok
+      zigPlusPercentEqualTok
     of "+=":
-      zigSinglePlusSingleEqualTok
+      zigPlusEqualTok
     of ",":
-      zigSingleCommaTok
+      zigCommaTok
     of "-":
-      zigSingleMinusTok
+      zigMinusTok
     of "-%":
-      zigSingleMinusSinglePercentTok
+      zigMinusPercentTok
     of "-%=":
-      zigSingleMinusSinglePercentSingleEqualTok
+      zigMinusPercentEqualTok
     of "-=":
-      zigSingleMinusSingleEqualTok
+      zigMinusEqualTok
     of ".":
-      zigSingleDotTok
+      zigDotTok
     of ".*":
-      zigSingleDotSingleAsteriskTok
+      zigDotAsteriskTok
     of "..":
       zigDoubleDotTok
     of "...":
       zigTripleDotTok
     of ".?":
-      zigSingleDotSingleQuestionTok
+      zigDotQuestionTok
     of ".{":
-      zigSingleDotSingleLCurlyTok
+      zigDotLCurlyTok
     of "/=":
-      zigSingleSlashSingleEqualTok
+      zigSlashEqualTok
     of ":":
-      zigSingleColonTok
+      zigColonTok
     of ";":
-      zigSingleSemicolonTok
+      zigSemicolonTok
     of "<<=":
-      zigDoubleLessThanSingleEqualTok
+      zigDoubleLessThanEqualTok
     of "=":
-      zigSingleEqualTok
+      zigEqualTok
     of "=>":
-      zigSingleEqualSingleGreaterThanTok
+      zigEqualGreaterThanTok
     of ">>=":
-      zigDoubleGreaterThanSingleEqualTok
+      zigDoubleGreaterThanEqualTok
     of "?":
-      zigSingleQuestionTok
+      zigQuestionTok
     of "@":
-      zigSingleAtTok
+      zigAtTok
     of "[":
-      zigSingleLBrackTok
+      zigLBrackTok
     of "\\\\":
       zigDoubleBackslashTok
     of "]":
-      zigSingleRBrackTok
+      zigRBrackTok
     of "^=":
-      zigSingleAccentSingleEqualTok
+      zigAccentEqualTok
     of "align":
       zigAlignTok
     of "allowzero":
@@ -487,7 +487,7 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "break":
       zigBreakTok
     of "c\"":
-      zigCSingleQuoteTok
+      zigCQuoteTok
     of "c\\\\":
       zigCDoubleBackslashTok
     of "c_int":
@@ -667,15 +667,15 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "while":
       zigWhileTok
     of "{":
-      zigSingleLCurlyTok
+      zigLCurlyTok
     of "|":
-      zigSinglePipeTok
+      zigPipeTok
     of "|=":
-      zigSinglePipeSingleEqualTok
+      zigPipeEqualTok
     of "}":
-      zigSingleRCurlyTok
+      zigRCurlyTok
     of "~":
-      zigSingleTildeTok
+      zigTildeTok
     of "ERROR":
       zigSyntaxError
     else:
@@ -692,6 +692,10 @@ proc newZigParser*(): ZigParser =
 proc parseString*(parser: ZigParser; str: string): ZigNode =
   ZigNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseZigString*(str: string): ZigNode =
+  let parser = newZigParser()
+  return parseString(parser, str)
 
 func `[]`*(node: ZigNode; idx: int; withUnnamed: bool = false): ZigNode =
   if withUnnamed:

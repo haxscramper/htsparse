@@ -95,44 +95,44 @@ type
     systemrdlStructLiteralElem, ## struct_literal_elem
     systemrdlStructType,    ## struct_type
     systemrdlUnaryOperator, ## unary_operator
-    systemrdlSingleExclamationTok, ## !
-    systemrdlSingleExclamationSingleEqualTok, ## !=
-    systemrdlSingleQuoteTok, ## "
-    systemrdlSingleHashTok, ## #
-    systemrdlSinglePercentTok, ## %
-    systemrdlSinglePercentSingleEqualTok, ## %=
-    systemrdlSingleAmpersandTok, ## &
+    systemrdlExclamationTok, ## !
+    systemrdlExclamationEqualTok, ## !=
+    systemrdlQuoteTok,      ## "
+    systemrdlHashTok,       ## #
+    systemrdlPercentTok,    ## %
+    systemrdlPercentEqualTok, ## %=
+    systemrdlAmpersandTok,  ## &
     systemrdlDoubleAmpersandTok, ## &&
-    systemrdlSingleApostropheTok, ## '
-    systemrdlSingleApostropheSingleLCurlyTok, ## '{
-    systemrdlSingleLParTok, ## (
-    systemrdlSingleRParTok, ## )
-    systemrdlSingleAsteriskTok, ## *
+    systemrdlApostropheTok, ## '
+    systemrdlApostropheLCurlyTok, ## '{
+    systemrdlLParTok,       ## (
+    systemrdlRParTok,       ## )
+    systemrdlAsteriskTok,   ## *
     systemrdlDoubleAsteriskTok, ## **
-    systemrdlSinglePlusTok, ## +
-    systemrdlSinglePlusSingleEqualTok, ## +=
-    systemrdlSingleCommaTok, ## ,
-    systemrdlSingleMinusTok, ## -
-    systemrdlSingleMinusSingleGreaterThanTok, ## ->
-    systemrdlSingleDotTok,  ## .
-    systemrdlSingleSlashTok, ## /
-    systemrdlSingleColonTok, ## :
+    systemrdlPlusTok,       ## +
+    systemrdlPlusEqualTok,  ## +=
+    systemrdlCommaTok,      ## ,
+    systemrdlMinusTok,      ## -
+    systemrdlMinusGreaterThanTok, ## ->
+    systemrdlDotTok,        ## .
+    systemrdlSlashTok,      ## /
+    systemrdlColonTok,      ## :
     systemrdlDoubleColonTok, ## ::
-    systemrdlSingleSemicolonTok, ## ;
-    systemrdlSingleLessThanTok, ## <
+    systemrdlSemicolonTok,  ## ;
+    systemrdlLessThanTok,   ## <
     systemrdlDoubleLessThanTok, ## <<
-    systemrdlSingleLessThanSingleEqualTok, ## <=
-    systemrdlSingleEqualTok, ## =
+    systemrdlLessThanEqualTok, ## <=
+    systemrdlEqualTok,      ## =
     systemrdlDoubleEqualTok, ## ==
-    systemrdlSingleGreaterThanTok, ## >
-    systemrdlSingleGreaterThanSingleEqualTok, ## >=
+    systemrdlGreaterThanTok, ## >
+    systemrdlGreaterThanEqualTok, ## >=
     systemrdlDoubleGreaterThanTok, ## >>
-    systemrdlSingleQuestionTok, ## ?
-    systemrdlSingleAtTok,   ## @
-    systemrdlSingleLBrackTok, ## [
-    systemrdlSingleRBrackTok, ## ]
-    systemrdlSingleAccentTok, ## ^
-    systemrdlSingleAccentSingleTildeTok, ## ^~
+    systemrdlQuestionTok,   ## ?
+    systemrdlAtTok,         ## @
+    systemrdlLBrackTok,     ## [
+    systemrdlRBrackTok,     ## ]
+    systemrdlAccentTok,     ## ^
+    systemrdlAccentTildeTok, ## ^~
     systemrdlAbstractTok,   ## abstract
     systemrdlAccesstypeTok, ## accesstype
     systemrdlAddressingtypeTok, ## addressingtype
@@ -201,436 +201,435 @@ type
     systemrdlWzcTok,        ## wzc
     systemrdlWzsTok,        ## wzs
     systemrdlWztTok,        ## wzt
-    systemrdlSingleLCurlyTok, ## {
-    systemrdlSinglePipeTok, ## |
+    systemrdlLCurlyTok,     ## {
+    systemrdlPipeTok,       ## |
     systemrdlDoublePipeTok, ## ||
-    systemrdlSingleRCurlyTok, ## }
-    systemrdlSingleTildeTok, ## ~
-    systemrdlSingleTildeSingleAmpersandTok, ## ~&
-    systemrdlSingleTildeSingleAccentTok, ## ~^
-    systemrdlSingleTildeSinglePipeTok, ## ~|
+    systemrdlRCurlyTok,     ## }
+    systemrdlTildeTok,      ## ~
+    systemrdlTildeAmpersandTok, ## ~&
+    systemrdlTildeAccentTok, ## ~^
+    systemrdlTildePipeTok,  ## ~|
     systemrdlSyntaxError     ## Tree-sitter parser syntax error
-type
-  SystemrdlExternalTok* = enum
 type
   SystemrdlNode* = distinct TSNode
 type
   SystemrdlParser* = distinct PtsParser
 proc tsNodeType*(node: SystemrdlNode): string
-proc kind*(node: SystemrdlNode): SystemrdlNodeKind =
-  case node.tsNodeType
-  of "accesstype_literal":
-    systemrdlAccesstypeLiteral
-  of "addressingtype_literal":
-    systemrdlAddressingtypeLiteral
-  of "array":
-    systemrdlArray
-  of "array_literal":
-    systemrdlArrayLiteral
-  of "array_type":
-    systemrdlArrayType
-  of "basic_data_type":
-    systemrdlBasicDataType
-  of "binary_operator":
-    systemrdlBinaryOperator
-  of "boolean_literal":
-    systemrdlBooleanLiteral
-  of "casting_type":
-    systemrdlCastingType
-  of "component_anon_def":
-    systemrdlComponentAnonDef
-  of "component_body":
-    systemrdlComponentBody
-  of "component_body_elem":
-    systemrdlComponentBodyElem
-  of "component_def":
-    systemrdlComponentDef
-  of "component_inst":
-    systemrdlComponentInst
-  of "component_inst_alias":
-    systemrdlComponentInstAlias
-  of "component_inst_array_or_range":
-    systemrdlComponentInstArrayOrRange
-  of "component_inst_type":
-    systemrdlComponentInstType
-  of "component_insts":
-    systemrdlComponentInsts
-  of "component_named_def":
-    systemrdlComponentNamedDef
-  of "component_primary_type":
-    systemrdlComponentPrimaryType
-  of "component_type":
-    systemrdlComponentType
-  of "constant_cast":
-    systemrdlConstantCast
-  of "constant_concatenation":
-    systemrdlConstantConcatenation
-  of "constant_expression":
-    systemrdlConstantExpression
-  of "constant_multiple_concatenation":
-    systemrdlConstantMultipleConcatenation
-  of "constant_primary":
-    systemrdlConstantPrimary
-  of "constraint_body":
-    systemrdlConstraintBody
-  of "constraint_def":
-    systemrdlConstraintDef
-  of "constraint_def_anon":
-    systemrdlConstraintDefAnon
-  of "constraint_def_exp":
-    systemrdlConstraintDefExp
-  of "constraint_elem":
-    systemrdlConstraintElem
-  of "constraint_insts":
-    systemrdlConstraintInsts
-  of "constraint_lhs":
-    systemrdlConstraintLhs
-  of "constraint_prop_assignment":
-    systemrdlConstraintPropAssignment
-  of "constraint_value":
-    systemrdlConstraintValue
-  of "constraint_values":
-    systemrdlConstraintValues
-  of "data_type":
-    systemrdlDataType
-  of "description":
-    systemrdlDescription
-  of "enum_body":
-    systemrdlEnumBody
-  of "enum_def":
-    systemrdlEnumDef
-  of "enum_entry":
-    systemrdlEnumEntry
-  of "enum_property_assignment":
-    systemrdlEnumPropertyAssignment
-  of "enumerator_literal":
-    systemrdlEnumeratorLiteral
-  of "explicit_component_inst":
-    systemrdlExplicitComponentInst
-  of "explicit_encode_assignment":
-    systemrdlExplicitEncodeAssignment
-  of "explicit_or_default_prop_assignment":
-    systemrdlExplicitOrDefaultPropAssignment
-  of "explicit_prop_assignment":
-    systemrdlExplicitPropAssignment
-  of "explicit_prop_modifier":
-    systemrdlExplicitPropModifier
-  of "instance_or_prop_ref":
-    systemrdlInstanceOrPropRef
-  of "instance_ref":
-    systemrdlInstanceRef
-  of "instance_ref_element":
-    systemrdlInstanceRefElement
-  of "integer_type":
-    systemrdlIntegerType
-  of "number":
-    systemrdlNumber
-  of "onreadtype_literal":
-    systemrdlOnreadtypeLiteral
-  of "onwritetype_literal":
-    systemrdlOnwritetypeLiteral
-  of "param_def":
-    systemrdlParamDef
-  of "param_def_elem":
-    systemrdlParamDefElem
-  of "param_elem":
-    systemrdlParamElem
-  of "param_inst":
-    systemrdlParamInst
-  of "param_value":
-    systemrdlParamValue
-  of "post_encode_assignment":
-    systemrdlPostEncodeAssignment
-  of "post_prop_assignment":
-    systemrdlPostPropAssignment
-  of "precedencetype_literal":
-    systemrdlPrecedencetypeLiteral
-  of "primary_literal":
-    systemrdlPrimaryLiteral
-  of "prop_assignment_lhs":
-    systemrdlPropAssignmentLhs
-  of "prop_assignment_rhs":
-    systemrdlPropAssignmentRhs
-  of "prop_keyword":
-    systemrdlPropKeyword
-  of "prop_mod":
-    systemrdlPropMod
-  of "prop_ref":
-    systemrdlPropRef
-  of "property_assignment":
-    systemrdlPropertyAssignment
-  of "property_attribute":
-    systemrdlPropertyAttribute
-  of "property_body":
-    systemrdlPropertyBody
-  of "property_comp_type":
-    systemrdlPropertyCompType
-  of "property_comp_types":
-    systemrdlPropertyCompTypes
-  of "property_constraint":
-    systemrdlPropertyConstraint
-  of "property_data_type":
-    systemrdlPropertyDataType
-  of "property_default":
-    systemrdlPropertyDefault
-  of "property_definition":
-    systemrdlPropertyDefinition
-  of "property_type":
-    systemrdlPropertyType
-  of "property_usage":
-    systemrdlPropertyUsage
-  of "range":
-    systemrdlRange
-  of "simple_type":
-    systemrdlSimpleType
-  of "source_file":
-    systemrdlSourceFile
-  of "string_literal":
-    systemrdlStringLiteral
-  of "struct_body":
-    systemrdlStructBody
-  of "struct_def":
-    systemrdlStructDef
-  of "struct_elem":
-    systemrdlStructElem
-  of "struct_literal":
-    systemrdlStructLiteral
-  of "struct_literal_elem":
-    systemrdlStructLiteralElem
-  of "struct_type":
-    systemrdlStructType
-  of "unary_operator":
-    systemrdlUnaryOperator
-  of "!":
-    systemrdlSingleExclamationTok
-  of "!=":
-    systemrdlSingleExclamationSingleEqualTok
-  of "\"":
-    systemrdlSingleQuoteTok
-  of "#":
-    systemrdlSingleHashTok
-  of "%":
-    systemrdlSinglePercentTok
-  of "%=":
-    systemrdlSinglePercentSingleEqualTok
-  of "&":
-    systemrdlSingleAmpersandTok
-  of "&&":
-    systemrdlDoubleAmpersandTok
-  of "\'":
-    systemrdlSingleApostropheTok
-  of "\'{":
-    systemrdlSingleApostropheSingleLCurlyTok
-  of "(":
-    systemrdlSingleLParTok
-  of ")":
-    systemrdlSingleRParTok
-  of "*":
-    systemrdlSingleAsteriskTok
-  of "**":
-    systemrdlDoubleAsteriskTok
-  of "+":
-    systemrdlSinglePlusTok
-  of "+=":
-    systemrdlSinglePlusSingleEqualTok
-  of ",":
-    systemrdlSingleCommaTok
-  of "-":
-    systemrdlSingleMinusTok
-  of "->":
-    systemrdlSingleMinusSingleGreaterThanTok
-  of ".":
-    systemrdlSingleDotTok
-  of "/":
-    systemrdlSingleSlashTok
-  of ":":
-    systemrdlSingleColonTok
-  of "::":
-    systemrdlDoubleColonTok
-  of ";":
-    systemrdlSingleSemicolonTok
-  of "<":
-    systemrdlSingleLessThanTok
-  of "<<":
-    systemrdlDoubleLessThanTok
-  of "<=":
-    systemrdlSingleLessThanSingleEqualTok
-  of "=":
-    systemrdlSingleEqualTok
-  of "==":
-    systemrdlDoubleEqualTok
-  of ">":
-    systemrdlSingleGreaterThanTok
-  of ">=":
-    systemrdlSingleGreaterThanSingleEqualTok
-  of ">>":
-    systemrdlDoubleGreaterThanTok
-  of "?":
-    systemrdlSingleQuestionTok
-  of "@":
-    systemrdlSingleAtTok
-  of "[":
-    systemrdlSingleLBrackTok
-  of "]":
-    systemrdlSingleRBrackTok
-  of "^":
-    systemrdlSingleAccentTok
-  of "^~":
-    systemrdlSingleAccentSingleTildeTok
-  of "abstract":
-    systemrdlAbstractTok
-  of "accesstype":
-    systemrdlAccesstypeTok
-  of "addressingtype":
-    systemrdlAddressingtypeTok
-  of "addrmap":
-    systemrdlAddrmapTok
-  of "alias":
-    systemrdlAliasTok
-  of "all":
-    systemrdlAllTok
-  of "boolean":
-    systemrdlBooleanTok
-  of "bothedge":
-    systemrdlBothedgeTok
-  of "clr":
-    systemrdlClrTok
-  of "comment":
-    systemrdlComment
-  of "compact":
-    systemrdlCompactTok
-  of "component":
-    systemrdlComponentTok
-  of "constraint":
-    systemrdlConstraintTok
-  of "default":
-    systemrdlDefaultTok
-  of "encode":
-    systemrdlEncodeTok
-  of "enum":
-    systemrdlEnumTok
-  of "external":
-    systemrdlExternalTok
-  of "false":
-    systemrdlFalseTok
-  of "field":
-    systemrdlFieldTok
-  of "fullalign":
-    systemrdlFullalignTok
-  of "hw":
-    systemrdlHwTok
-  of "id":
-    systemrdlId
-  of "inside":
-    systemrdlInsideTok
-  of "integer_atom_type":
-    systemrdlIntegerAtomType
-  of "integer_vector_type":
-    systemrdlIntegerVectorType
-  of "internal":
-    systemrdlInternalTok
-  of "level":
-    systemrdlLevelTok
-  of "mem":
-    systemrdlMemTok
-  of "na":
-    systemrdlNaTok
-  of "negedge":
-    systemrdlNegedgeTok
-  of "nonsticky":
-    systemrdlNonstickyTok
-  of "onreadtype":
-    systemrdlOnreadtypeTok
-  of "onwritetype":
-    systemrdlOnwritetypeTok
-  of "posedge":
-    systemrdlPosedgeTok
-  of "property":
-    systemrdlPropertyTok
-  of "property_constraint_type":
-    systemrdlPropertyConstraintType
-  of "r":
-    systemrdlRTok
-  of "rclr":
-    systemrdlRclrTok
-  of "ref":
-    systemrdlRefTok
-  of "reg":
-    systemrdlRegTok
-  of "regalign":
-    systemrdlRegalignTok
-  of "regfile":
-    systemrdlRegfileTok
-  of "rset":
-    systemrdlRsetTok
-  of "ruser":
-    systemrdlRuserTok
-  of "rw":
-    systemrdlRwTok
-  of "rw1":
-    systemrdlRw1Tok
-  of "signal":
-    systemrdlSignalTok
-  of "signing":
-    systemrdlSigning
-  of "string":
-    systemrdlStringTok
-  of "struct":
-    systemrdlStructTok
-  of "sw":
-    systemrdlSwTok
-  of "template":
-    systemrdlTemplate
-  of "this":
-    systemrdlThisTok
-  of "true":
-    systemrdlTrueTok
-  of "type":
-    systemrdlTypeTok
-  of "w":
-    systemrdlWTok
-  of "w1":
-    systemrdlW1Tok
-  of "wclr":
-    systemrdlWclrTok
-  of "woclr":
-    systemrdlWoclrTok
-  of "woset":
-    systemrdlWosetTok
-  of "wot":
-    systemrdlWotTok
-  of "wr":
-    systemrdlWrTok
-  of "wset":
-    systemrdlWsetTok
-  of "wuser":
-    systemrdlWuserTok
-  of "wzc":
-    systemrdlWzcTok
-  of "wzs":
-    systemrdlWzsTok
-  of "wzt":
-    systemrdlWztTok
-  of "{":
-    systemrdlSingleLCurlyTok
-  of "|":
-    systemrdlSinglePipeTok
-  of "||":
-    systemrdlDoublePipeTok
-  of "}":
-    systemrdlSingleRCurlyTok
-  of "~":
-    systemrdlSingleTildeTok
-  of "~&":
-    systemrdlSingleTildeSingleAmpersandTok
-  of "~^":
-    systemrdlSingleTildeSingleAccentTok
-  of "~|":
-    systemrdlSingleTildeSinglePipeTok
-  of "ERROR":
-    systemrdlSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "accesstype_literal":
+      systemrdlAccesstypeLiteral
+    of "addressingtype_literal":
+      systemrdlAddressingtypeLiteral
+    of "array":
+      systemrdlArray
+    of "array_literal":
+      systemrdlArrayLiteral
+    of "array_type":
+      systemrdlArrayType
+    of "basic_data_type":
+      systemrdlBasicDataType
+    of "binary_operator":
+      systemrdlBinaryOperator
+    of "boolean_literal":
+      systemrdlBooleanLiteral
+    of "casting_type":
+      systemrdlCastingType
+    of "component_anon_def":
+      systemrdlComponentAnonDef
+    of "component_body":
+      systemrdlComponentBody
+    of "component_body_elem":
+      systemrdlComponentBodyElem
+    of "component_def":
+      systemrdlComponentDef
+    of "component_inst":
+      systemrdlComponentInst
+    of "component_inst_alias":
+      systemrdlComponentInstAlias
+    of "component_inst_array_or_range":
+      systemrdlComponentInstArrayOrRange
+    of "component_inst_type":
+      systemrdlComponentInstType
+    of "component_insts":
+      systemrdlComponentInsts
+    of "component_named_def":
+      systemrdlComponentNamedDef
+    of "component_primary_type":
+      systemrdlComponentPrimaryType
+    of "component_type":
+      systemrdlComponentType
+    of "constant_cast":
+      systemrdlConstantCast
+    of "constant_concatenation":
+      systemrdlConstantConcatenation
+    of "constant_expression":
+      systemrdlConstantExpression
+    of "constant_multiple_concatenation":
+      systemrdlConstantMultipleConcatenation
+    of "constant_primary":
+      systemrdlConstantPrimary
+    of "constraint_body":
+      systemrdlConstraintBody
+    of "constraint_def":
+      systemrdlConstraintDef
+    of "constraint_def_anon":
+      systemrdlConstraintDefAnon
+    of "constraint_def_exp":
+      systemrdlConstraintDefExp
+    of "constraint_elem":
+      systemrdlConstraintElem
+    of "constraint_insts":
+      systemrdlConstraintInsts
+    of "constraint_lhs":
+      systemrdlConstraintLhs
+    of "constraint_prop_assignment":
+      systemrdlConstraintPropAssignment
+    of "constraint_value":
+      systemrdlConstraintValue
+    of "constraint_values":
+      systemrdlConstraintValues
+    of "data_type":
+      systemrdlDataType
+    of "description":
+      systemrdlDescription
+    of "enum_body":
+      systemrdlEnumBody
+    of "enum_def":
+      systemrdlEnumDef
+    of "enum_entry":
+      systemrdlEnumEntry
+    of "enum_property_assignment":
+      systemrdlEnumPropertyAssignment
+    of "enumerator_literal":
+      systemrdlEnumeratorLiteral
+    of "explicit_component_inst":
+      systemrdlExplicitComponentInst
+    of "explicit_encode_assignment":
+      systemrdlExplicitEncodeAssignment
+    of "explicit_or_default_prop_assignment":
+      systemrdlExplicitOrDefaultPropAssignment
+    of "explicit_prop_assignment":
+      systemrdlExplicitPropAssignment
+    of "explicit_prop_modifier":
+      systemrdlExplicitPropModifier
+    of "instance_or_prop_ref":
+      systemrdlInstanceOrPropRef
+    of "instance_ref":
+      systemrdlInstanceRef
+    of "instance_ref_element":
+      systemrdlInstanceRefElement
+    of "integer_type":
+      systemrdlIntegerType
+    of "number":
+      systemrdlNumber
+    of "onreadtype_literal":
+      systemrdlOnreadtypeLiteral
+    of "onwritetype_literal":
+      systemrdlOnwritetypeLiteral
+    of "param_def":
+      systemrdlParamDef
+    of "param_def_elem":
+      systemrdlParamDefElem
+    of "param_elem":
+      systemrdlParamElem
+    of "param_inst":
+      systemrdlParamInst
+    of "param_value":
+      systemrdlParamValue
+    of "post_encode_assignment":
+      systemrdlPostEncodeAssignment
+    of "post_prop_assignment":
+      systemrdlPostPropAssignment
+    of "precedencetype_literal":
+      systemrdlPrecedencetypeLiteral
+    of "primary_literal":
+      systemrdlPrimaryLiteral
+    of "prop_assignment_lhs":
+      systemrdlPropAssignmentLhs
+    of "prop_assignment_rhs":
+      systemrdlPropAssignmentRhs
+    of "prop_keyword":
+      systemrdlPropKeyword
+    of "prop_mod":
+      systemrdlPropMod
+    of "prop_ref":
+      systemrdlPropRef
+    of "property_assignment":
+      systemrdlPropertyAssignment
+    of "property_attribute":
+      systemrdlPropertyAttribute
+    of "property_body":
+      systemrdlPropertyBody
+    of "property_comp_type":
+      systemrdlPropertyCompType
+    of "property_comp_types":
+      systemrdlPropertyCompTypes
+    of "property_constraint":
+      systemrdlPropertyConstraint
+    of "property_data_type":
+      systemrdlPropertyDataType
+    of "property_default":
+      systemrdlPropertyDefault
+    of "property_definition":
+      systemrdlPropertyDefinition
+    of "property_type":
+      systemrdlPropertyType
+    of "property_usage":
+      systemrdlPropertyUsage
+    of "range":
+      systemrdlRange
+    of "simple_type":
+      systemrdlSimpleType
+    of "source_file":
+      systemrdlSourceFile
+    of "string_literal":
+      systemrdlStringLiteral
+    of "struct_body":
+      systemrdlStructBody
+    of "struct_def":
+      systemrdlStructDef
+    of "struct_elem":
+      systemrdlStructElem
+    of "struct_literal":
+      systemrdlStructLiteral
+    of "struct_literal_elem":
+      systemrdlStructLiteralElem
+    of "struct_type":
+      systemrdlStructType
+    of "unary_operator":
+      systemrdlUnaryOperator
+    of "!":
+      systemrdlExclamationTok
+    of "!=":
+      systemrdlExclamationEqualTok
+    of "\"":
+      systemrdlQuoteTok
+    of "#":
+      systemrdlHashTok
+    of "%":
+      systemrdlPercentTok
+    of "%=":
+      systemrdlPercentEqualTok
+    of "&":
+      systemrdlAmpersandTok
+    of "&&":
+      systemrdlDoubleAmpersandTok
+    of "\'":
+      systemrdlApostropheTok
+    of "\'{":
+      systemrdlApostropheLCurlyTok
+    of "(":
+      systemrdlLParTok
+    of ")":
+      systemrdlRParTok
+    of "*":
+      systemrdlAsteriskTok
+    of "**":
+      systemrdlDoubleAsteriskTok
+    of "+":
+      systemrdlPlusTok
+    of "+=":
+      systemrdlPlusEqualTok
+    of ",":
+      systemrdlCommaTok
+    of "-":
+      systemrdlMinusTok
+    of "->":
+      systemrdlMinusGreaterThanTok
+    of ".":
+      systemrdlDotTok
+    of "/":
+      systemrdlSlashTok
+    of ":":
+      systemrdlColonTok
+    of "::":
+      systemrdlDoubleColonTok
+    of ";":
+      systemrdlSemicolonTok
+    of "<":
+      systemrdlLessThanTok
+    of "<<":
+      systemrdlDoubleLessThanTok
+    of "<=":
+      systemrdlLessThanEqualTok
+    of "=":
+      systemrdlEqualTok
+    of "==":
+      systemrdlDoubleEqualTok
+    of ">":
+      systemrdlGreaterThanTok
+    of ">=":
+      systemrdlGreaterThanEqualTok
+    of ">>":
+      systemrdlDoubleGreaterThanTok
+    of "?":
+      systemrdlQuestionTok
+    of "@":
+      systemrdlAtTok
+    of "[":
+      systemrdlLBrackTok
+    of "]":
+      systemrdlRBrackTok
+    of "^":
+      systemrdlAccentTok
+    of "^~":
+      systemrdlAccentTildeTok
+    of "abstract":
+      systemrdlAbstractTok
+    of "accesstype":
+      systemrdlAccesstypeTok
+    of "addressingtype":
+      systemrdlAddressingtypeTok
+    of "addrmap":
+      systemrdlAddrmapTok
+    of "alias":
+      systemrdlAliasTok
+    of "all":
+      systemrdlAllTok
+    of "boolean":
+      systemrdlBooleanTok
+    of "bothedge":
+      systemrdlBothedgeTok
+    of "clr":
+      systemrdlClrTok
+    of "comment":
+      systemrdlComment
+    of "compact":
+      systemrdlCompactTok
+    of "component":
+      systemrdlComponentTok
+    of "constraint":
+      systemrdlConstraintTok
+    of "default":
+      systemrdlDefaultTok
+    of "encode":
+      systemrdlEncodeTok
+    of "enum":
+      systemrdlEnumTok
+    of "external":
+      systemrdlExternalTok
+    of "false":
+      systemrdlFalseTok
+    of "field":
+      systemrdlFieldTok
+    of "fullalign":
+      systemrdlFullalignTok
+    of "hw":
+      systemrdlHwTok
+    of "id":
+      systemrdlId
+    of "inside":
+      systemrdlInsideTok
+    of "integer_atom_type":
+      systemrdlIntegerAtomType
+    of "integer_vector_type":
+      systemrdlIntegerVectorType
+    of "internal":
+      systemrdlInternalTok
+    of "level":
+      systemrdlLevelTok
+    of "mem":
+      systemrdlMemTok
+    of "na":
+      systemrdlNaTok
+    of "negedge":
+      systemrdlNegedgeTok
+    of "nonsticky":
+      systemrdlNonstickyTok
+    of "onreadtype":
+      systemrdlOnreadtypeTok
+    of "onwritetype":
+      systemrdlOnwritetypeTok
+    of "posedge":
+      systemrdlPosedgeTok
+    of "property":
+      systemrdlPropertyTok
+    of "property_constraint_type":
+      systemrdlPropertyConstraintType
+    of "r":
+      systemrdlRTok
+    of "rclr":
+      systemrdlRclrTok
+    of "ref":
+      systemrdlRefTok
+    of "reg":
+      systemrdlRegTok
+    of "regalign":
+      systemrdlRegalignTok
+    of "regfile":
+      systemrdlRegfileTok
+    of "rset":
+      systemrdlRsetTok
+    of "ruser":
+      systemrdlRuserTok
+    of "rw":
+      systemrdlRwTok
+    of "rw1":
+      systemrdlRw1Tok
+    of "signal":
+      systemrdlSignalTok
+    of "signing":
+      systemrdlSigning
+    of "string":
+      systemrdlStringTok
+    of "struct":
+      systemrdlStructTok
+    of "sw":
+      systemrdlSwTok
+    of "template":
+      systemrdlTemplate
+    of "this":
+      systemrdlThisTok
+    of "true":
+      systemrdlTrueTok
+    of "type":
+      systemrdlTypeTok
+    of "w":
+      systemrdlWTok
+    of "w1":
+      systemrdlW1Tok
+    of "wclr":
+      systemrdlWclrTok
+    of "woclr":
+      systemrdlWoclrTok
+    of "woset":
+      systemrdlWosetTok
+    of "wot":
+      systemrdlWotTok
+    of "wr":
+      systemrdlWrTok
+    of "wset":
+      systemrdlWsetTok
+    of "wuser":
+      systemrdlWuserTok
+    of "wzc":
+      systemrdlWzcTok
+    of "wzs":
+      systemrdlWzsTok
+    of "wzt":
+      systemrdlWztTok
+    of "{":
+      systemrdlLCurlyTok
+    of "|":
+      systemrdlPipeTok
+    of "||":
+      systemrdlDoublePipeTok
+    of "}":
+      systemrdlRCurlyTok
+    of "~":
+      systemrdlTildeTok
+    of "~&":
+      systemrdlTildeAmpersandTok
+    of "~^":
+      systemrdlTildeAccentTok
+    of "~|":
+      systemrdlTildePipeTok
+    of "ERROR":
+      systemrdlSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_systemrdl(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: SystemrdlNode): string =
@@ -643,6 +642,10 @@ proc newSystemrdlParser*(): SystemrdlParser =
 proc parseString*(parser: SystemrdlParser; str: string): SystemrdlNode =
   SystemrdlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseSystemrdlString*(str: string): SystemrdlNode =
+  let parser = newSystemrdlParser()
+  return parseString(parser, str)
 
 func `[]`*(node: SystemrdlNode; idx: int; withUnnamed: bool = false): SystemrdlNode =
   if withUnnamed:
@@ -663,8 +666,9 @@ iterator items*(node: SystemrdlNode; withUnnamed: bool = false): SystemrdlNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: SystemrdlNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: SystemrdlNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: SystemrdlNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: SystemrdlNode; level: int): seq[string] =

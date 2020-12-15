@@ -39,37 +39,37 @@ type
     fennelVarDefinition,    ## var_definition
     fennelWhenStatement,    ## when_statement
     fennelWhile,            ## while
-    fennelSingleQuoteTok,   ## "
-    fennelSingleHashTok,    ## #
-    fennelSinglePercentTok, ## %
-    fennelSingleApostropheTok, ## '
-    fennelSingleLParTok,    ## (
-    fennelSingleRParTok,    ## )
-    fennelSingleAsteriskTok, ## *
-    fennelSinglePlusTok,    ## +
-    fennelSingleCommaTok,   ## ,
-    fennelSingleMinusTok,   ## -
-    fennelSingleMinusSingleGreaterThanTok, ## ->
-    fennelSingleMinusDoubleGreaterThanTok, ## ->>
-    fennelSingleMinusSingleQuestionSingleGreaterThanTok, ## -?>
-    fennelSingleMinusSingleQuestionDoubleGreaterThanTok, ## -?>>
-    fennelSingleDotTok,     ## .
+    fennelQuoteTok,         ## "
+    fennelHashTok,          ## #
+    fennelPercentTok,       ## %
+    fennelApostropheTok,    ## '
+    fennelLParTok,          ## (
+    fennelRParTok,          ## )
+    fennelAsteriskTok,      ## *
+    fennelPlusTok,          ## +
+    fennelCommaTok,         ## ,
+    fennelMinusTok,         ## -
+    fennelMinusGreaterThanTok, ## ->
+    fennelMinusDoubleGreaterThanTok, ## ->>
+    fennelMinusQuestionGreaterThanTok, ## -?>
+    fennelMinusQuestionDoubleGreaterThanTok, ## -?>>
+    fennelDotTok,           ## .
     fennelDoubleDotTok,     ## ..
     fennelTripleDotTok,     ## ...
-    fennelSingleSlashTok,   ## /
+    fennelSlashTok,         ## /
     fennelDoubleSlashTok,   ## //
-    fennelSingleLessThanTok, ## <
-    fennelSingleLessThanSingleEqualTok, ## <=
-    fennelSingleEqualTok,   ## =
-    fennelSingleGreaterThanTok, ## >
-    fennelSingleGreaterThanSingleEqualTok, ## >=
-    fennelSingleLBrackTok,  ## [
-    fennelSingleRBrackTok,  ## ]
-    fennelSingleAccentTok,  ## ^
+    fennelLessThanTok,      ## <
+    fennelLessThanEqualTok, ## <=
+    fennelEqualTok,         ## =
+    fennelGreaterThanTok,   ## >
+    fennelGreaterThanEqualTok, ## >=
+    fennelLBrackTok,        ## [
+    fennelRBrackTok,        ## ]
+    fennelAccentTok,        ## ^
     fennelENVTok,           ## _ENV
     fennelGTok,             ## _G
     fennelVERSIONTok,       ## _VERSION
-    fennelSingleBacktickTok, ## `
+    fennelBacktickTok,      ## `
     fennelAndTok,           ## and
     fennelArgTok,           ## arg
     fennelAssertTok,        ## assert
@@ -82,7 +82,7 @@ type
     fennelDotoTok,          ## doto
     fennelEachTok,          ## each
     fennelErrorTok,         ## error
-    fennelEvalSingleMinuscompilerTok, ## eval-compiler
+    fennelEvalMinuscompilerTok, ## eval-compiler
     fennelFalseTok,         ## false
     fennelField,            ## field
     fennelFnTok,            ## fn
@@ -92,14 +92,14 @@ type
     fennelGlobalTok,        ## global
     fennelHashfnTok,        ## hashfn
     fennelIfTok,            ## if
-    fennelImportSingleMinusmacrosTok, ## import-macros
-    fennelInSingleMinusscopeSingleQuestionTok, ## in-scope?
+    fennelImportMinusmacrosTok, ## import-macros
+    fennelInMinusscopeQuestionTok, ## in-scope?
     fennelIncludeTok,       ## include
     fennelIpairsTok,        ## ipairs
     fennelLambdaTok,        ## lambda
     fennelLetTok,           ## let
     fennelListTok,          ## list
-    fennelListSingleQuestionTok, ## list?
+    fennelListQuestionTok,  ## list?
     fennelLoadTok,          ## load
     fennelLoadfileTok,      ## loadfile
     fennelLoadstringTok,    ## loadstring
@@ -109,11 +109,11 @@ type
     fennelMacroexpandTok,   ## macroexpand
     fennelMacrosTok,        ## macros
     fennelMatchTok,         ## match
-    fennelMultiSingleMinussymSingleQuestionTok, ## multi-sym?
+    fennelMultiMinussymQuestionTok, ## multi-sym?
     fennelNextTok,          ## next
     fennelNilTok,           ## nil
     fennelNotTok,           ## not
-    fennelNotSingleEqualTok, ## not=
+    fennelNotEqualTok,      ## not=
     fennelNumber,           ## number
     fennelOrTok,            ## or
     fennelPackageTok,       ## package
@@ -125,16 +125,16 @@ type
     fennelRawlenTok,        ## rawlen
     fennelRawsetTok,        ## rawset
     fennelRequireTok,       ## require
-    fennelRequireSingleMinusmacrosTok, ## require-macros
+    fennelRequireMinusmacrosTok, ## require-macros
     fennelSelectTok,        ## select
-    fennelSequenceSingleQuestionTok, ## sequence?
+    fennelSequenceQuestionTok, ## sequence?
     fennelSetTok,           ## set
     fennelSetmetatableTok,  ## setmetatable
     fennelStringTok,        ## string
     fennelSymTok,           ## sym
-    fennelSymSingleQuestionTok, ## sym?
+    fennelSymQuestionTok,   ## sym?
     fennelTableTok,         ## table
-    fennelTableSingleQuestionTok, ## table?
+    fennelTableQuestionTok, ## table?
     fennelTonumberTok,      ## tonumber
     fennelTostringTok,      ## tostring
     fennelTrueTok,          ## true
@@ -142,13 +142,13 @@ type
     fennelTypeTok,          ## type
     fennelUnpackTok,        ## unpack
     fennelVarTok,           ## var
-    fennelVargSingleQuestionTok, ## varg?
+    fennelVargQuestionTok,  ## varg?
     fennelWhenTok,          ## when
     fennelWhileTok,         ## while
     fennelXpcallTok,        ## xpcall
-    fennelSingleLCurlyTok,  ## {
-    fennelSingleRCurlyTok,  ## }
-    fennelSingle蜸ingle籘ok, ## 位
+    fennelLCurlyTok,        ## {
+    fennelRCurlyTok,        ## }
+    fennel位Tok,            ## 位
     fennelSyntaxError        ## Tree-sitter parser syntax error
 type
   FennelExternalTok* = enum
@@ -159,284 +159,285 @@ type
 type
   FennelParser* = distinct PtsParser
 proc tsNodeType*(node: FennelNode): string
-proc kind*(node: FennelNode): FennelNodeKind =
-  case node.tsNodeType
-  of "assignment":
-    fennelAssignment
-  of "assignments":
-    fennelAssignments
-  of "boolean":
-    fennelBoolean
-  of "do_statement":
-    fennelDoStatement
-  of "each":
-    fennelEach
-  of "each_clause":
-    fennelEachClause
-  of "field_expression":
-    fennelFieldExpression
-  of "for":
-    fennelFor
-  of "for_clause":
-    fennelForClause
-  of "function_call":
-    fennelFunctionCall
-  of "function_definition":
-    fennelFunctionDefinition
-  of "global_definition":
-    fennelGlobalDefinition
-  of "hash_function_definition":
-    fennelHashFunctionDefinition
-  of "identifier":
-    fennelIdentifier
-  of "if_statement":
-    fennelIfStatement
-  of "lambda_definition":
-    fennelLambdaDefinition
-  of "let_definition":
-    fennelLetDefinition
-  of "local_definition":
-    fennelLocalDefinition
-  of "match_statement":
-    fennelMatchStatement
-  of "multi_value_assignment":
-    fennelMultiValueAssignment
-  of "nil":
-    fennelNil
-  of "parameters":
-    fennelParameters
-  of "program":
-    fennelProgram
-  of "quoted_value":
-    fennelQuotedValue
-  of "require":
-    fennelRequire
-  of "sequential_table":
-    fennelSequentialTable
-  of "set":
-    fennelSet
-  of "string":
-    fennelString
-  of "table":
-    fennelTable
-  of "tset":
-    fennelTset
-  of "unquoted_value":
-    fennelUnquotedValue
-  of "value_list":
-    fennelValueList
-  of "var_definition":
-    fennelVarDefinition
-  of "when_statement":
-    fennelWhenStatement
-  of "while":
-    fennelWhile
-  of "\"":
-    fennelSingleQuoteTok
-  of "#":
-    fennelSingleHashTok
-  of "%":
-    fennelSinglePercentTok
-  of "\'":
-    fennelSingleApostropheTok
-  of "(":
-    fennelSingleLParTok
-  of ")":
-    fennelSingleRParTok
-  of "*":
-    fennelSingleAsteriskTok
-  of "+":
-    fennelSinglePlusTok
-  of ",":
-    fennelSingleCommaTok
-  of "-":
-    fennelSingleMinusTok
-  of "->":
-    fennelSingleMinusSingleGreaterThanTok
-  of "->>":
-    fennelSingleMinusDoubleGreaterThanTok
-  of "-?>":
-    fennelSingleMinusSingleQuestionSingleGreaterThanTok
-  of "-?>>":
-    fennelSingleMinusSingleQuestionDoubleGreaterThanTok
-  of ".":
-    fennelSingleDotTok
-  of "..":
-    fennelDoubleDotTok
-  of "...":
-    fennelTripleDotTok
-  of "/":
-    fennelSingleSlashTok
-  of "//":
-    fennelDoubleSlashTok
-  of "<":
-    fennelSingleLessThanTok
-  of "<=":
-    fennelSingleLessThanSingleEqualTok
-  of "=":
-    fennelSingleEqualTok
-  of ">":
-    fennelSingleGreaterThanTok
-  of ">=":
-    fennelSingleGreaterThanSingleEqualTok
-  of "[":
-    fennelSingleLBrackTok
-  of "]":
-    fennelSingleRBrackTok
-  of "^":
-    fennelSingleAccentTok
-  of "_ENV":
-    fennelENVTok
-  of "_G":
-    fennelGTok
-  of "_VERSION":
-    fennelVERSIONTok
-  of "`":
-    fennelSingleBacktickTok
-  of "and":
-    fennelAndTok
-  of "arg":
-    fennelArgTok
-  of "assert":
-    fennelAssertTok
-  of "collectgarbage":
-    fennelCollectgarbageTok
-  of "comment":
-    fennelComment
-  of "coroutine":
-    fennelCoroutineTok
-  of "debug":
-    fennelDebugTok
-  of "do":
-    fennelDoTok
-  of "dofile":
-    fennelDofileTok
-  of "doto":
-    fennelDotoTok
-  of "error":
-    fennelErrorTok
-  of "eval-compiler":
-    fennelEvalSingleMinuscompilerTok
-  of "false":
-    fennelFalseTok
-  of "field":
-    fennelField
-  of "fn":
-    fennelFnTok
-  of "gensym":
-    fennelGensymTok
-  of "getmetatable":
-    fennelGetmetatableTok
-  of "global":
-    fennelGlobalTok
-  of "hashfn":
-    fennelHashfnTok
-  of "if":
-    fennelIfTok
-  of "import-macros":
-    fennelImportSingleMinusmacrosTok
-  of "in-scope?":
-    fennelInSingleMinusscopeSingleQuestionTok
-  of "include":
-    fennelIncludeTok
-  of "ipairs":
-    fennelIpairsTok
-  of "lambda":
-    fennelLambdaTok
-  of "let":
-    fennelLetTok
-  of "list":
-    fennelListTok
-  of "list?":
-    fennelListSingleQuestionTok
-  of "load":
-    fennelLoadTok
-  of "loadfile":
-    fennelLoadfileTok
-  of "loadstring":
-    fennelLoadstringTok
-  of "local":
-    fennelLocalTok
-  of "macro":
-    fennelMacroTok
-  of "macrodebug":
-    fennelMacrodebugTok
-  of "macroexpand":
-    fennelMacroexpandTok
-  of "macros":
-    fennelMacrosTok
-  of "match":
-    fennelMatchTok
-  of "multi-sym?":
-    fennelMultiSingleMinussymSingleQuestionTok
-  of "next":
-    fennelNextTok
-  of "not":
-    fennelNotTok
-  of "not=":
-    fennelNotSingleEqualTok
-  of "number":
-    fennelNumber
-  of "or":
-    fennelOrTok
-  of "package":
-    fennelPackageTok
-  of "pairs":
-    fennelPairsTok
-  of "pcall":
-    fennelPcallTok
-  of "print":
-    fennelPrintTok
-  of "rawequal":
-    fennelRawequalTok
-  of "rawget":
-    fennelRawgetTok
-  of "rawlen":
-    fennelRawlenTok
-  of "rawset":
-    fennelRawsetTok
-  of "require-macros":
-    fennelRequireSingleMinusmacrosTok
-  of "select":
-    fennelSelectTok
-  of "sequence?":
-    fennelSequenceSingleQuestionTok
-  of "setmetatable":
-    fennelSetmetatableTok
-  of "sym":
-    fennelSymTok
-  of "sym?":
-    fennelSymSingleQuestionTok
-  of "table?":
-    fennelTableSingleQuestionTok
-  of "tonumber":
-    fennelTonumberTok
-  of "tostring":
-    fennelTostringTok
-  of "true":
-    fennelTrueTok
-  of "type":
-    fennelTypeTok
-  of "unpack":
-    fennelUnpackTok
-  of "var":
-    fennelVarTok
-  of "varg?":
-    fennelVargSingleQuestionTok
-  of "when":
-    fennelWhenTok
-  of "xpcall":
-    fennelXpcallTok
-  of "{":
-    fennelSingleLCurlyTok
-  of "}":
-    fennelSingleRCurlyTok
-  of "位":
-    fennelSingle蜸ingle籘ok
-  of "ERROR":
-    fennelSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: FennelNode): FennelNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "assignment":
+      fennelAssignment
+    of "assignments":
+      fennelAssignments
+    of "boolean":
+      fennelBoolean
+    of "do_statement":
+      fennelDoStatement
+    of "each":
+      fennelEach
+    of "each_clause":
+      fennelEachClause
+    of "field_expression":
+      fennelFieldExpression
+    of "for":
+      fennelFor
+    of "for_clause":
+      fennelForClause
+    of "function_call":
+      fennelFunctionCall
+    of "function_definition":
+      fennelFunctionDefinition
+    of "global_definition":
+      fennelGlobalDefinition
+    of "hash_function_definition":
+      fennelHashFunctionDefinition
+    of "identifier":
+      fennelIdentifier
+    of "if_statement":
+      fennelIfStatement
+    of "lambda_definition":
+      fennelLambdaDefinition
+    of "let_definition":
+      fennelLetDefinition
+    of "local_definition":
+      fennelLocalDefinition
+    of "match_statement":
+      fennelMatchStatement
+    of "multi_value_assignment":
+      fennelMultiValueAssignment
+    of "nil":
+      fennelNil
+    of "parameters":
+      fennelParameters
+    of "program":
+      fennelProgram
+    of "quoted_value":
+      fennelQuotedValue
+    of "require":
+      fennelRequire
+    of "sequential_table":
+      fennelSequentialTable
+    of "set":
+      fennelSet
+    of "string":
+      fennelString
+    of "table":
+      fennelTable
+    of "tset":
+      fennelTset
+    of "unquoted_value":
+      fennelUnquotedValue
+    of "value_list":
+      fennelValueList
+    of "var_definition":
+      fennelVarDefinition
+    of "when_statement":
+      fennelWhenStatement
+    of "while":
+      fennelWhile
+    of "\"":
+      fennelQuoteTok
+    of "#":
+      fennelHashTok
+    of "%":
+      fennelPercentTok
+    of "\'":
+      fennelApostropheTok
+    of "(":
+      fennelLParTok
+    of ")":
+      fennelRParTok
+    of "*":
+      fennelAsteriskTok
+    of "+":
+      fennelPlusTok
+    of ",":
+      fennelCommaTok
+    of "-":
+      fennelMinusTok
+    of "->":
+      fennelMinusGreaterThanTok
+    of "->>":
+      fennelMinusDoubleGreaterThanTok
+    of "-?>":
+      fennelMinusQuestionGreaterThanTok
+    of "-?>>":
+      fennelMinusQuestionDoubleGreaterThanTok
+    of ".":
+      fennelDotTok
+    of "..":
+      fennelDoubleDotTok
+    of "...":
+      fennelTripleDotTok
+    of "/":
+      fennelSlashTok
+    of "//":
+      fennelDoubleSlashTok
+    of "<":
+      fennelLessThanTok
+    of "<=":
+      fennelLessThanEqualTok
+    of "=":
+      fennelEqualTok
+    of ">":
+      fennelGreaterThanTok
+    of ">=":
+      fennelGreaterThanEqualTok
+    of "[":
+      fennelLBrackTok
+    of "]":
+      fennelRBrackTok
+    of "^":
+      fennelAccentTok
+    of "_ENV":
+      fennelENVTok
+    of "_G":
+      fennelGTok
+    of "_VERSION":
+      fennelVERSIONTok
+    of "`":
+      fennelBacktickTok
+    of "and":
+      fennelAndTok
+    of "arg":
+      fennelArgTok
+    of "assert":
+      fennelAssertTok
+    of "collectgarbage":
+      fennelCollectgarbageTok
+    of "comment":
+      fennelComment
+    of "coroutine":
+      fennelCoroutineTok
+    of "debug":
+      fennelDebugTok
+    of "do":
+      fennelDoTok
+    of "dofile":
+      fennelDofileTok
+    of "doto":
+      fennelDotoTok
+    of "error":
+      fennelErrorTok
+    of "eval-compiler":
+      fennelEvalMinuscompilerTok
+    of "false":
+      fennelFalseTok
+    of "field":
+      fennelField
+    of "fn":
+      fennelFnTok
+    of "gensym":
+      fennelGensymTok
+    of "getmetatable":
+      fennelGetmetatableTok
+    of "global":
+      fennelGlobalTok
+    of "hashfn":
+      fennelHashfnTok
+    of "if":
+      fennelIfTok
+    of "import-macros":
+      fennelImportMinusmacrosTok
+    of "in-scope?":
+      fennelInMinusscopeQuestionTok
+    of "include":
+      fennelIncludeTok
+    of "ipairs":
+      fennelIpairsTok
+    of "lambda":
+      fennelLambdaTok
+    of "let":
+      fennelLetTok
+    of "list":
+      fennelListTok
+    of "list?":
+      fennelListQuestionTok
+    of "load":
+      fennelLoadTok
+    of "loadfile":
+      fennelLoadfileTok
+    of "loadstring":
+      fennelLoadstringTok
+    of "local":
+      fennelLocalTok
+    of "macro":
+      fennelMacroTok
+    of "macrodebug":
+      fennelMacrodebugTok
+    of "macroexpand":
+      fennelMacroexpandTok
+    of "macros":
+      fennelMacrosTok
+    of "match":
+      fennelMatchTok
+    of "multi-sym?":
+      fennelMultiMinussymQuestionTok
+    of "next":
+      fennelNextTok
+    of "not":
+      fennelNotTok
+    of "not=":
+      fennelNotEqualTok
+    of "number":
+      fennelNumber
+    of "or":
+      fennelOrTok
+    of "package":
+      fennelPackageTok
+    of "pairs":
+      fennelPairsTok
+    of "pcall":
+      fennelPcallTok
+    of "print":
+      fennelPrintTok
+    of "rawequal":
+      fennelRawequalTok
+    of "rawget":
+      fennelRawgetTok
+    of "rawlen":
+      fennelRawlenTok
+    of "rawset":
+      fennelRawsetTok
+    of "require-macros":
+      fennelRequireMinusmacrosTok
+    of "select":
+      fennelSelectTok
+    of "sequence?":
+      fennelSequenceQuestionTok
+    of "setmetatable":
+      fennelSetmetatableTok
+    of "sym":
+      fennelSymTok
+    of "sym?":
+      fennelSymQuestionTok
+    of "table?":
+      fennelTableQuestionTok
+    of "tonumber":
+      fennelTonumberTok
+    of "tostring":
+      fennelTostringTok
+    of "true":
+      fennelTrueTok
+    of "type":
+      fennelTypeTok
+    of "unpack":
+      fennelUnpackTok
+    of "var":
+      fennelVarTok
+    of "varg?":
+      fennelVargQuestionTok
+    of "when":
+      fennelWhenTok
+    of "xpcall":
+      fennelXpcallTok
+    of "{":
+      fennelLCurlyTok
+    of "}":
+      fennelRCurlyTok
+    of "位":
+      fennel位Tok
+    of "ERROR":
+      fennelSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_fennel(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: FennelNode): string =
@@ -449,6 +450,10 @@ proc newFennelParser*(): FennelParser =
 proc parseString*(parser: FennelParser; str: string): FennelNode =
   FennelNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseFennelString*(str: string): FennelNode =
+  let parser = newFennelParser()
+  return parseString(parser, str)
 
 func `[]`*(node: FennelNode; idx: int; withUnnamed: bool = false): FennelNode =
   if withUnnamed:
@@ -469,8 +474,9 @@ iterator items*(node: FennelNode; withUnnamed: bool = false): FennelNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: FennelNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: FennelNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: FennelNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: FennelNode; level: int): seq[string] =

@@ -1,0 +1,65 @@
+#+title: readme
+# #+property: header-args:nim+ :flags -d:plainStdout --hints:off
+# #+property: header-args:nim
+
+** Installation and setup
+
+#+begin_src sh
+  nimble install htsparse
+#+end_src
+
+** Links
+
+- [[https://nimble.directory/pkg/htsparse][nimble package]]
+- [[https://discord.gg/hjfYJCU][discord server]]
+- [[https://github.com/haxscramper/hparse][github]]
+- [[https://haxscramper.github.io/htsparse/src/htsparse.html][API documentation]]
+
+** Usage
+
+#+begin_src nim
+import htsparse/cpp/cpp
+
+let str = """
+int main () {
+  std::cout << "Hello world";
+}
+"""
+
+let node = parseCppString(str)
+
+echo node[0].kind
+
+echo node.treeRepr(str)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+cppFunctionDefinition
+TranslationUnit
+  FunctionDefinition
+    PrimitiveType int
+    FunctionDeclarator
+      Identifier main
+      ParameterList ()
+    CompoundStatement
+      ExpressionStatement
+        BinaryExpression
+          ScopedIdentifier
+            NamespaceIdentifier std
+            Identifier cout
+          StringLiteral "Hello world"
+#+end_example
+
+** Tree-sitter library
+
+You need to have tree-sitter runtime library installed. For arch linux it
+can be done by installing [[https://www.archlinux.org/packages/community/x86_64/tree-sitter/][tree-sitter]], otherwise you can install it
+manually:
+
+#+begin_src sh
+  wget https://github.com/tree-sitter/tree-sitter/archive/0.17.3.tar.gz
+  tar -xvf 0.17.3.tar.gz && cd tree-sitter-0.17.3
+  sudo make install
+  export LD_LIBRARY_PATH=/usr/local/lib
+#+end_src

@@ -69,23 +69,23 @@ type
     agdaUntypedBinding,     ## untyped_binding
     agdaWhere,              ## where
     agdaWithExpressions,    ## with_expressions
-    agdaSingleHashSingleMinusSingleRCurlyTok, ## #-}
-    agdaSingleLParTok,      ## (
-    agdaSingleLParSinglePipeTok, ## (|
-    agdaSingleRParTok,      ## )
-    agdaSingleMinusTok,     ## -
-    agdaSingleDotTok,       ## .
+    agdaHashMinusRCurlyTok, ## #-}
+    agdaLParTok,            ## (
+    agdaLParPipeTok,        ## (|
+    agdaRParTok,            ## )
+    agdaMinusTok,           ## -
+    agdaDotTok,             ## .
     agdaDoubleDotTok,       ## ..
-    agdaSingleColonTok,     ## :
-    agdaSingleSemicolonTok, ## ;
-    agdaSingleEqualTok,     ## =
-    agdaSingleAtTok,        ## @
+    agdaColonTok,           ## :
+    agdaSemicolonTok,       ## ;
+    agdaEqualTok,           ## =
+    agdaAtTok,              ## @
     agdaCATCHALLTok,        ## CATCHALL
     agdaPropTok,            ## Prop
     agdaPropN,              ## PropN
     agdaSetTok,             ## Set
     agdaSetN,               ## SetN
-    agdaSingleUnderscoreTok, ## _
+    agdaUnderscoreTok,      ## _
     agdaAbstractTok,        ## abstract
     agdaBidTok,             ## bid
     agdaCodataTok,          ## codata
@@ -95,7 +95,7 @@ type
     agdaDataTok,            ## data
     agdaDataNameTok,        ## data_name
     agdaDoTok,              ## do
-    agdaEtaSingleMinusequalityTok, ## eta-equality
+    agdaEtaMinusequalityTok, ## eta-equality
     agdaFieldTok,           ## field
     agdaFieldName,          ## field_name
     agdaHidingTok,          ## hiding
@@ -111,7 +111,7 @@ type
     agdaMacroTok,           ## macro
     agdaModuleTok,          ## module
     agdaMutualTok,          ## mutual
-    agdaNoSingleMinusetaSingleMinusequalityTok, ## no-eta-equality
+    agdaNoMinusetaMinusequalityTok, ## no-eta-equality
     agdaOpenTok,            ## open
     agdaOverlapTok,         ## overlap
     agdaPatternTok,         ## pattern
@@ -138,17 +138,17 @@ type
     agdaVariableTok,        ## variable
     agdaWhereTok,           ## where
     agdaWithTok,            ## with
-    agdaSingleLCurlyTok,    ## {
-    agdaSingleLCurlySingleMinusSingleHashTok, ## {-#
+    agdaLCurlyTok,          ## {
+    agdaLCurlyMinusHashTok, ## {-#
     agdaDoubleLCurlyTok,    ## {{
-    agdaSinglePipeTok,      ## |
-    agdaSinglePipeSingleRParTok, ## |)
-    agdaSingleRCurlyTok,    ## }
+    agdaPipeTok,            ## |
+    agdaPipeRParTok,        ## |)
+    agdaRCurlyTok,          ## }
     agdaDoubleRCurlyTok,    ## }}
-    agdaSingleâSingle¦SingleƒTok, ## â¦ƒ
-    agdaSingleâSingle¦Single„Tok, ## â¦„
-    agdaSingleâSingle¦Single‡Tok, ## â¦‡
-    agdaSingleâSingle¦SingleˆTok, ## â¦ˆ
+    agdaâ¦ƒTok,             ## â¦ƒ
+    agdaâ¦„Tok,             ## â¦„
+    agdaâ¦‡Tok,             ## â¦‡
+    agdaâ¦ˆTok,             ## â¦ˆ
     agdaSyntaxError          ## Tree-sitter parser syntax error
 type
   AgdaExternalTok* = enum
@@ -160,260 +160,261 @@ type
 type
   AgdaParser* = distinct PtsParser
 proc tsNodeType*(node: AgdaNode): string
-proc kind*(node: AgdaNode): AgdaNodeKind =
-  case node.tsNodeType
-  of "abstract":
-    agdaAbstract
-  of "atom":
-    agdaAtom
-  of "attribute":
-    agdaAttribute
-  of "attributes":
-    agdaAttributes
-  of "bid":
-    agdaBid
-  of "catchall_pragma":
-    agdaCatchallPragma
-  of "data":
-    agdaData
-  of "data_name":
-    agdaDataName
-  of "data_signature":
-    agdaDataSignature
-  of "do":
-    agdaDo
-  of "do_where":
-    agdaDoWhere
-  of "expr":
-    agdaExpr
-  of "field_assignment":
-    agdaFieldAssignment
-  of "fields":
-    agdaFields
-  of "forall":
-    agdaForall
-  of "function":
-    agdaFunction
-  of "function_name":
-    agdaFunctionName
-  of "generalize":
-    agdaGeneralize
-  of "hole_name":
-    agdaHoleName
-  of "hole_names":
-    agdaHoleNames
-  of "import_directive":
-    agdaImportDirective
-  of "infix":
-    agdaInfix
-  of "instance":
-    agdaInstance
-  of "integer":
-    agdaInteger
-  of "lambda":
-    agdaLambda
-  of "lambda_clause":
-    agdaLambdaClause
-  of "lambda_clause_absurd":
-    agdaLambdaClauseAbsurd
-  of "let":
-    agdaLet
-  of "lhs":
-    agdaLhs
-  of "literal":
-    agdaLiteral
-  of "macro":
-    agdaMacro
-  of "module":
-    agdaModule
-  of "module_application":
-    agdaModuleApplication
-  of "module_assignment":
-    agdaModuleAssignment
-  of "module_macro":
-    agdaModuleMacro
-  of "module_name":
-    agdaModuleName
-  of "mutual":
-    agdaMutual
-  of "open":
-    agdaOpen
-  of "pattern":
-    agdaPattern
-  of "postulate":
-    agdaPostulate
-  of "primitive":
-    agdaPrimitive
-  of "private":
-    agdaPrivate
-  of "qid":
-    agdaQid
-  of "record":
-    agdaRecord
-  of "record_assignments":
-    agdaRecordAssignments
-  of "record_constructor":
-    agdaRecordConstructor
-  of "record_constructor_instance":
-    agdaRecordConstructorInstance
-  of "record_declarations_block":
-    agdaRecordDeclarationsBlock
-  of "record_eta":
-    agdaRecordEta
-  of "record_induction":
-    agdaRecordInduction
-  of "record_name":
-    agdaRecordName
-  of "record_signature":
-    agdaRecordSignature
-  of "renaming":
-    agdaRenaming
-  of "rewrite_equations":
-    agdaRewriteEquations
-  of "rhs":
-    agdaRhs
-  of "signature":
-    agdaSignature
-  of "source_file":
-    agdaSourceFile
-  of "stmt":
-    agdaStmt
-  of "syntax":
-    agdaSyntax
-  of "type_signature":
-    agdaTypeSignature
-  of "typed_binding":
-    agdaTypedBinding
-  of "unquote_decl":
-    agdaUnquoteDecl
-  of "untyped_binding":
-    agdaUntypedBinding
-  of "where":
-    agdaWhere
-  of "with_expressions":
-    agdaWithExpressions
-  of "#-}":
-    agdaSingleHashSingleMinusSingleRCurlyTok
-  of "(":
-    agdaSingleLParTok
-  of "(|":
-    agdaSingleLParSinglePipeTok
-  of ")":
-    agdaSingleRParTok
-  of "-":
-    agdaSingleMinusTok
-  of ".":
-    agdaSingleDotTok
-  of "..":
-    agdaDoubleDotTok
-  of ":":
-    agdaSingleColonTok
-  of ";":
-    agdaSingleSemicolonTok
-  of "=":
-    agdaSingleEqualTok
-  of "@":
-    agdaSingleAtTok
-  of "CATCHALL":
-    agdaCATCHALLTok
-  of "Prop":
-    agdaPropTok
-  of "PropN":
-    agdaPropN
-  of "Set":
-    agdaSetTok
-  of "SetN":
-    agdaSetN
-  of "_":
-    agdaSingleUnderscoreTok
-  of "codata":
-    agdaCodataTok
-  of "coinductive":
-    agdaCoinductiveTok
-  of "comment":
-    agdaComment
-  of "constructor":
-    agdaConstructorTok
-  of "eta-equality":
-    agdaEtaSingleMinusequalityTok
-  of "field":
-    agdaFieldTok
-  of "field_name":
-    agdaFieldName
-  of "hiding":
-    agdaHidingTok
-  of "id":
-    agdaId
-  of "import":
-    agdaImportTok
-  of "in":
-    agdaInTok
-  of "inductive":
-    agdaInductiveTok
-  of "infixl":
-    agdaInfixlTok
-  of "infixr":
-    agdaInfixrTok
-  of "no-eta-equality":
-    agdaNoSingleMinusetaSingleMinusequalityTok
-  of "overlap":
-    agdaOverlapTok
-  of "pragma":
-    agdaPragma
-  of "public":
-    agdaPublicTok
-  of "quote":
-    agdaQuoteTok
-  of "quoteContext":
-    agdaQuoteContextTok
-  of "quoteGoal":
-    agdaQuoteGoalTok
-  of "quoteTerm":
-    agdaQuoteTermTok
-  of "rewrite":
-    agdaRewriteTok
-  of "tactic":
-    agdaTacticTok
-  of "to":
-    agdaToTok
-  of "unquote":
-    agdaUnquoteTok
-  of "unquoteDecl":
-    agdaUnquoteDeclTok
-  of "unquoteDef":
-    agdaUnquoteDefTok
-  of "using":
-    agdaUsingTok
-  of "variable":
-    agdaVariableTok
-  of "with":
-    agdaWithTok
-  of "{":
-    agdaSingleLCurlyTok
-  of "{-#":
-    agdaSingleLCurlySingleMinusSingleHashTok
-  of "{{":
-    agdaDoubleLCurlyTok
-  of "|":
-    agdaSinglePipeTok
-  of "|)":
-    agdaSinglePipeSingleRParTok
-  of "}":
-    agdaSingleRCurlyTok
-  of "}}":
-    agdaDoubleRCurlyTok
-  of "â¦ƒ":
-    agdaSingleâSingle¦SingleƒTok
-  of "â¦„":
-    agdaSingleâSingle¦Single„Tok
-  of "â¦‡":
-    agdaSingleâSingle¦Single‡Tok
-  of "â¦ˆ":
-    agdaSingleâSingle¦SingleˆTok
-  of "ERROR":
-    agdaSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "abstract":
+      agdaAbstract
+    of "atom":
+      agdaAtom
+    of "attribute":
+      agdaAttribute
+    of "attributes":
+      agdaAttributes
+    of "bid":
+      agdaBid
+    of "catchall_pragma":
+      agdaCatchallPragma
+    of "data":
+      agdaData
+    of "data_name":
+      agdaDataName
+    of "data_signature":
+      agdaDataSignature
+    of "do":
+      agdaDo
+    of "do_where":
+      agdaDoWhere
+    of "expr":
+      agdaExpr
+    of "field_assignment":
+      agdaFieldAssignment
+    of "fields":
+      agdaFields
+    of "forall":
+      agdaForall
+    of "function":
+      agdaFunction
+    of "function_name":
+      agdaFunctionName
+    of "generalize":
+      agdaGeneralize
+    of "hole_name":
+      agdaHoleName
+    of "hole_names":
+      agdaHoleNames
+    of "import_directive":
+      agdaImportDirective
+    of "infix":
+      agdaInfix
+    of "instance":
+      agdaInstance
+    of "integer":
+      agdaInteger
+    of "lambda":
+      agdaLambda
+    of "lambda_clause":
+      agdaLambdaClause
+    of "lambda_clause_absurd":
+      agdaLambdaClauseAbsurd
+    of "let":
+      agdaLet
+    of "lhs":
+      agdaLhs
+    of "literal":
+      agdaLiteral
+    of "macro":
+      agdaMacro
+    of "module":
+      agdaModule
+    of "module_application":
+      agdaModuleApplication
+    of "module_assignment":
+      agdaModuleAssignment
+    of "module_macro":
+      agdaModuleMacro
+    of "module_name":
+      agdaModuleName
+    of "mutual":
+      agdaMutual
+    of "open":
+      agdaOpen
+    of "pattern":
+      agdaPattern
+    of "postulate":
+      agdaPostulate
+    of "primitive":
+      agdaPrimitive
+    of "private":
+      agdaPrivate
+    of "qid":
+      agdaQid
+    of "record":
+      agdaRecord
+    of "record_assignments":
+      agdaRecordAssignments
+    of "record_constructor":
+      agdaRecordConstructor
+    of "record_constructor_instance":
+      agdaRecordConstructorInstance
+    of "record_declarations_block":
+      agdaRecordDeclarationsBlock
+    of "record_eta":
+      agdaRecordEta
+    of "record_induction":
+      agdaRecordInduction
+    of "record_name":
+      agdaRecordName
+    of "record_signature":
+      agdaRecordSignature
+    of "renaming":
+      agdaRenaming
+    of "rewrite_equations":
+      agdaRewriteEquations
+    of "rhs":
+      agdaRhs
+    of "signature":
+      agdaSignature
+    of "source_file":
+      agdaSourceFile
+    of "stmt":
+      agdaStmt
+    of "syntax":
+      agdaSyntax
+    of "type_signature":
+      agdaTypeSignature
+    of "typed_binding":
+      agdaTypedBinding
+    of "unquote_decl":
+      agdaUnquoteDecl
+    of "untyped_binding":
+      agdaUntypedBinding
+    of "where":
+      agdaWhere
+    of "with_expressions":
+      agdaWithExpressions
+    of "#-}":
+      agdaHashMinusRCurlyTok
+    of "(":
+      agdaLParTok
+    of "(|":
+      agdaLParPipeTok
+    of ")":
+      agdaRParTok
+    of "-":
+      agdaMinusTok
+    of ".":
+      agdaDotTok
+    of "..":
+      agdaDoubleDotTok
+    of ":":
+      agdaColonTok
+    of ";":
+      agdaSemicolonTok
+    of "=":
+      agdaEqualTok
+    of "@":
+      agdaAtTok
+    of "CATCHALL":
+      agdaCATCHALLTok
+    of "Prop":
+      agdaPropTok
+    of "PropN":
+      agdaPropN
+    of "Set":
+      agdaSetTok
+    of "SetN":
+      agdaSetN
+    of "_":
+      agdaUnderscoreTok
+    of "codata":
+      agdaCodataTok
+    of "coinductive":
+      agdaCoinductiveTok
+    of "comment":
+      agdaComment
+    of "constructor":
+      agdaConstructorTok
+    of "eta-equality":
+      agdaEtaMinusequalityTok
+    of "field":
+      agdaFieldTok
+    of "field_name":
+      agdaFieldName
+    of "hiding":
+      agdaHidingTok
+    of "id":
+      agdaId
+    of "import":
+      agdaImportTok
+    of "in":
+      agdaInTok
+    of "inductive":
+      agdaInductiveTok
+    of "infixl":
+      agdaInfixlTok
+    of "infixr":
+      agdaInfixrTok
+    of "no-eta-equality":
+      agdaNoMinusetaMinusequalityTok
+    of "overlap":
+      agdaOverlapTok
+    of "pragma":
+      agdaPragma
+    of "public":
+      agdaPublicTok
+    of "quote":
+      agdaQuoteTok
+    of "quoteContext":
+      agdaQuoteContextTok
+    of "quoteGoal":
+      agdaQuoteGoalTok
+    of "quoteTerm":
+      agdaQuoteTermTok
+    of "rewrite":
+      agdaRewriteTok
+    of "tactic":
+      agdaTacticTok
+    of "to":
+      agdaToTok
+    of "unquote":
+      agdaUnquoteTok
+    of "unquoteDecl":
+      agdaUnquoteDeclTok
+    of "unquoteDef":
+      agdaUnquoteDefTok
+    of "using":
+      agdaUsingTok
+    of "variable":
+      agdaVariableTok
+    of "with":
+      agdaWithTok
+    of "{":
+      agdaLCurlyTok
+    of "{-#":
+      agdaLCurlyMinusHashTok
+    of "{{":
+      agdaDoubleLCurlyTok
+    of "|":
+      agdaPipeTok
+    of "|)":
+      agdaPipeRParTok
+    of "}":
+      agdaRCurlyTok
+    of "}}":
+      agdaDoubleRCurlyTok
+    of "â¦ƒ":
+      agdaâ¦ƒTok
+    of "â¦„":
+      agdaâ¦„Tok
+    of "â¦‡":
+      agdaâ¦‡Tok
+    of "â¦ˆ":
+      agdaâ¦ˆTok
+    of "ERROR":
+      agdaSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_agda(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: AgdaNode): string =
@@ -426,6 +427,10 @@ proc newAgdaParser*(): AgdaParser =
 proc parseString*(parser: AgdaParser; str: string): AgdaNode =
   AgdaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseAgdaString*(str: string): AgdaNode =
+  let parser = newAgdaParser()
+  return parseString(parser, str)
 
 func `[]`*(node: AgdaNode; idx: int; withUnnamed: bool = false): AgdaNode =
   if withUnnamed:
@@ -446,8 +451,9 @@ iterator items*(node: AgdaNode; withUnnamed: bool = false): AgdaNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: AgdaNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: AgdaNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: AgdaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: AgdaNode; level: int): seq[string] =

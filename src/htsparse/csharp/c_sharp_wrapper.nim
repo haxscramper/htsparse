@@ -197,60 +197,60 @@ type
     c_sharpWithExpression,  ## with_expression
     c_sharpWithInitializerExpression, ## with_initializer_expression
     c_sharpYieldStatement,  ## yield_statement
-    c_sharpSingleExclamationTok, ## !
-    c_sharpSingleExclamationSingleEqualTok, ## !=
-    c_sharpSingleQuoteTok,  ## "
+    c_sharpExclamationTok,  ## !
+    c_sharpExclamationEqualTok, ## !=
+    c_sharpQuoteTok,        ## "
     c_sharpDoubleQuoteTok,  ## ""
-    c_sharpSingleDollarSingleQuoteTok, ## $"
-    c_sharpSingleDollarSingleAtSingleQuoteTok, ## $@"
-    c_sharpSinglePercentTok, ## %
-    c_sharpSinglePercentSingleEqualTok, ## %=
-    c_sharpSingleAmpersandTok, ## &
+    c_sharpDollarQuoteTok,  ## $"
+    c_sharpDollarAtQuoteTok, ## $@"
+    c_sharpPercentTok,      ## %
+    c_sharpPercentEqualTok, ## %=
+    c_sharpAmpersandTok,    ## &
     c_sharpDoubleAmpersandTok, ## &&
-    c_sharpSingleAmpersandSingleEqualTok, ## &=
-    c_sharpSingleApostropheTok, ## '
-    c_sharpSingleLParTok,   ## (
-    c_sharpSingleRParTok,   ## )
-    c_sharpSingleAsteriskTok, ## *
-    c_sharpSingleAsteriskSingleEqualTok, ## *=
-    c_sharpSinglePlusTok,   ## +
+    c_sharpAmpersandEqualTok, ## &=
+    c_sharpApostropheTok,   ## '
+    c_sharpLParTok,         ## (
+    c_sharpRParTok,         ## )
+    c_sharpAsteriskTok,     ## *
+    c_sharpAsteriskEqualTok, ## *=
+    c_sharpPlusTok,         ## +
     c_sharpDoublePlusTok,   ## ++
-    c_sharpSinglePlusSingleEqualTok, ## +=
-    c_sharpSingleCommaTok,  ## ,
-    c_sharpSingleMinusTok,  ## -
+    c_sharpPlusEqualTok,    ## +=
+    c_sharpCommaTok,        ## ,
+    c_sharpMinusTok,        ## -
     c_sharpDoubleMinusTok,  ## --
-    c_sharpSingleMinusSingleEqualTok, ## -=
-    c_sharpSingleMinusSingleGreaterThanTok, ## ->
-    c_sharpSingleDotTok,    ## .
+    c_sharpMinusEqualTok,   ## -=
+    c_sharpMinusGreaterThanTok, ## ->
+    c_sharpDotTok,          ## .
     c_sharpDoubleDotTok,    ## ..
-    c_sharpSingleSlashTok,  ## /
-    c_sharpSingleSlashSingleEqualTok, ## /=
-    c_sharpSingleColonTok,  ## :
+    c_sharpSlashTok,        ## /
+    c_sharpSlashEqualTok,   ## /=
+    c_sharpColonTok,        ## :
     c_sharpDoubleColonTok,  ## ::
-    c_sharpSingleSemicolonTok, ## ;
-    c_sharpSingleLessThanTok, ## <
+    c_sharpSemicolonTok,    ## ;
+    c_sharpLessThanTok,     ## <
     c_sharpDoubleLessThanTok, ## <<
-    c_sharpDoubleLessThanSingleEqualTok, ## <<=
-    c_sharpSingleLessThanSingleEqualTok, ## <=
-    c_sharpSingleEqualTok,  ## =
+    c_sharpDoubleLessThanEqualTok, ## <<=
+    c_sharpLessThanEqualTok, ## <=
+    c_sharpEqualTok,        ## =
     c_sharpDoubleEqualTok,  ## ==
-    c_sharpSingleEqualSingleGreaterThanTok, ## =>
-    c_sharpSingleGreaterThanTok, ## >
-    c_sharpSingleGreaterThanSingleEqualTok, ## >=
+    c_sharpEqualGreaterThanTok, ## =>
+    c_sharpGreaterThanTok,  ## >
+    c_sharpGreaterThanEqualTok, ## >=
     c_sharpDoubleGreaterThanTok, ## >>
-    c_sharpDoubleGreaterThanSingleEqualTok, ## >>=
-    c_sharpSingleQuestionTok, ## ?
+    c_sharpDoubleGreaterThanEqualTok, ## >>=
+    c_sharpQuestionTok,     ## ?
     c_sharpDoubleQuestionTok, ## ??
-    c_sharpDoubleQuestionSingleEqualTok, ## ??=
-    c_sharpSingleAtSingleDollarSingleQuoteTok, ## @$"
+    c_sharpDoubleQuestionEqualTok, ## ??=
+    c_sharpAtDollarQuoteTok, ## @$"
     c_sharpCdeclTok,        ## Cdecl
     c_sharpFastcallTok,     ## Fastcall
     c_sharpStdcallTok,      ## Stdcall
     c_sharpThiscallTok,     ## Thiscall
-    c_sharpSingleLBrackTok, ## [
-    c_sharpSingleRBrackTok, ## ]
-    c_sharpSingleAccentTok, ## ^
-    c_sharpSingleAccentSingleEqualTok, ## ^=
+    c_sharpLBrackTok,       ## [
+    c_sharpRBrackTok,       ## ]
+    c_sharpAccentTok,       ## ^
+    c_sharpAccentEqualTok,  ## ^=
     c_sharpMakerefTok,      ## __makeref
     c_sharpReftypeTok,      ## __reftype
     c_sharpRefvalueTok,     ## __refvalue
@@ -367,13 +367,13 @@ type
     c_sharpWhileTok,        ## while
     c_sharpWithTok,         ## with
     c_sharpYieldTok,        ## yield
-    c_sharpSingleLCurlyTok, ## {
+    c_sharpLCurlyTok,       ## {
     c_sharpDoubleLCurlyTok, ## {{
-    c_sharpSinglePipeTok,   ## |
-    c_sharpSinglePipeSingleEqualTok, ## |=
+    c_sharpPipeTok,         ## |
+    c_sharpPipeEqualTok,    ## |=
     c_sharpDoublePipeTok,   ## ||
-    c_sharpSingleRCurlyTok, ## }
-    c_sharpSingleTildeTok,  ## ~
+    c_sharpRCurlyTok,       ## }
+    c_sharpTildeTok,        ## ~
     c_sharpSyntaxError       ## Tree-sitter parser syntax error
 type
   C_sharpExternalTok* = enum
@@ -383,750 +383,751 @@ type
 type
   C_sharpParser* = distinct PtsParser
 proc tsNodeType*(node: C_sharpNode): string
-proc kind*(node: C_sharpNode): C_sharpNodeKind =
-  case node.tsNodeType
-  of "_declaration":
-    c_sharpDeclaration
-  of "_expression":
-    c_sharpExpression
-  of "_statement":
-    c_sharpStatement
-  of "_type":
-    c_sharpType
-  of "accessor_declaration":
-    c_sharpAccessorDeclaration
-  of "accessor_list":
-    c_sharpAccessorList
-  of "alias_qualified_name":
-    c_sharpAliasQualifiedName
-  of "anonymous_method_expression":
-    c_sharpAnonymousMethodExpression
-  of "anonymous_object_creation_expression":
-    c_sharpAnonymousObjectCreationExpression
-  of "argument":
-    c_sharpArgument
-  of "argument_list":
-    c_sharpArgumentList
-  of "array_creation_expression":
-    c_sharpArrayCreationExpression
-  of "array_rank_specifier":
-    c_sharpArrayRankSpecifier
-  of "array_type":
-    c_sharpArrayType
-  of "arrow_expression_clause":
-    c_sharpArrowExpressionClause
-  of "assignment_expression":
-    c_sharpAssignmentExpression
-  of "assignment_operator":
-    c_sharpAssignmentOperator
-  of "attribute":
-    c_sharpAttribute
-  of "attribute_argument":
-    c_sharpAttributeArgument
-  of "attribute_argument_list":
-    c_sharpAttributeArgumentList
-  of "attribute_list":
-    c_sharpAttributeList
-  of "attribute_target_specifier":
-    c_sharpAttributeTargetSpecifier
-  of "await_expression":
-    c_sharpAwaitExpression
-  of "base_expression":
-    c_sharpBaseExpression
-  of "base_list":
-    c_sharpBaseList
-  of "binary_expression":
-    c_sharpBinaryExpression
-  of "binary_pattern":
-    c_sharpBinaryPattern
-  of "block":
-    c_sharpBlock
-  of "boolean_literal":
-    c_sharpBooleanLiteral
-  of "bracketed_argument_list":
-    c_sharpBracketedArgumentList
-  of "bracketed_parameter_list":
-    c_sharpBracketedParameterList
-  of "break_statement":
-    c_sharpBreakStatement
-  of "case_pattern_switch_label":
-    c_sharpCasePatternSwitchLabel
-  of "case_switch_label":
-    c_sharpCaseSwitchLabel
-  of "cast_expression":
-    c_sharpCastExpression
-  of "catch_clause":
-    c_sharpCatchClause
-  of "catch_declaration":
-    c_sharpCatchDeclaration
-  of "catch_filter_clause":
-    c_sharpCatchFilterClause
-  of "character_literal":
-    c_sharpCharacterLiteral
-  of "checked_expression":
-    c_sharpCheckedExpression
-  of "checked_statement":
-    c_sharpCheckedStatement
-  of "class_declaration":
-    c_sharpClassDeclaration
-  of "compilation_unit":
-    c_sharpCompilationUnit
-  of "conditional_access_expression":
-    c_sharpConditionalAccessExpression
-  of "conditional_expression":
-    c_sharpConditionalExpression
-  of "constant_pattern":
-    c_sharpConstantPattern
-  of "constructor_constraint":
-    c_sharpConstructorConstraint
-  of "constructor_declaration":
-    c_sharpConstructorDeclaration
-  of "constructor_initializer":
-    c_sharpConstructorInitializer
-  of "continue_statement":
-    c_sharpContinueStatement
-  of "conversion_operator_declaration":
-    c_sharpConversionOperatorDeclaration
-  of "declaration_expression":
-    c_sharpDeclarationExpression
-  of "declaration_list":
-    c_sharpDeclarationList
-  of "declaration_pattern":
-    c_sharpDeclarationPattern
-  of "default_expression":
-    c_sharpDefaultExpression
-  of "default_switch_label":
-    c_sharpDefaultSwitchLabel
-  of "delegate_declaration":
-    c_sharpDelegateDeclaration
-  of "destructor_declaration":
-    c_sharpDestructorDeclaration
-  of "do_statement":
-    c_sharpDoStatement
-  of "element_access_expression":
-    c_sharpElementAccessExpression
-  of "element_binding_expression":
-    c_sharpElementBindingExpression
-  of "empty_statement":
-    c_sharpEmptyStatement
-  of "enum_declaration":
-    c_sharpEnumDeclaration
-  of "enum_member_declaration":
-    c_sharpEnumMemberDeclaration
-  of "enum_member_declaration_list":
-    c_sharpEnumMemberDeclarationList
-  of "equals_value_clause":
-    c_sharpEqualsValueClause
-  of "event_declaration":
-    c_sharpEventDeclaration
-  of "event_field_declaration":
-    c_sharpEventFieldDeclaration
-  of "explicit_interface_specifier":
-    c_sharpExplicitInterfaceSpecifier
-  of "expression_statement":
-    c_sharpExpressionStatement
-  of "extern_alias_directive":
-    c_sharpExternAliasDirective
-  of "field_declaration":
-    c_sharpFieldDeclaration
-  of "finally_clause":
-    c_sharpFinallyClause
-  of "fixed_statement":
-    c_sharpFixedStatement
-  of "for_each_statement":
-    c_sharpForEachStatement
-  of "for_statement":
-    c_sharpForStatement
-  of "from_clause":
-    c_sharpFromClause
-  of "function_pointer_calling_convention":
-    c_sharpFunctionPointerCallingConvention
-  of "function_pointer_parameter":
-    c_sharpFunctionPointerParameter
-  of "function_pointer_type":
-    c_sharpFunctionPointerType
-  of "function_pointer_unmanaged_calling_convention":
-    c_sharpFunctionPointerUnmanagedCallingConvention
-  of "function_pointer_unmanaged_calling_convention_list":
-    c_sharpFunctionPointerUnmanagedCallingConventionList
-  of "generic_name":
-    c_sharpGenericName
-  of "global":
-    c_sharpGlobal
-  of "global_attribute_list":
-    c_sharpGlobalAttributeList
-  of "global_statement":
-    c_sharpGlobalStatement
-  of "goto_statement":
-    c_sharpGotoStatement
-  of "group_clause":
-    c_sharpGroupClause
-  of "identifier":
-    c_sharpIdentifier
-  of "if_statement":
-    c_sharpIfStatement
-  of "implicit_array_creation_expression":
-    c_sharpImplicitArrayCreationExpression
-  of "implicit_object_creation_expression":
-    c_sharpImplicitObjectCreationExpression
-  of "implicit_stack_alloc_array_creation_expression":
-    c_sharpImplicitStackAllocArrayCreationExpression
-  of "implicit_type":
-    c_sharpImplicitType
-  of "indexer_declaration":
-    c_sharpIndexerDeclaration
-  of "initializer_expression":
-    c_sharpInitializerExpression
-  of "interface_declaration":
-    c_sharpInterfaceDeclaration
-  of "interpolated_string_expression":
-    c_sharpInterpolatedStringExpression
-  of "interpolated_string_text":
-    c_sharpInterpolatedStringText
-  of "interpolated_verbatim_string_text":
-    c_sharpInterpolatedVerbatimStringText
-  of "interpolation":
-    c_sharpInterpolation
-  of "interpolation_alignment_clause":
-    c_sharpInterpolationAlignmentClause
-  of "interpolation_format_clause":
-    c_sharpInterpolationFormatClause
-  of "invocation_expression":
-    c_sharpInvocationExpression
-  of "is_pattern_expression":
-    c_sharpIsPatternExpression
-  of "join_clause":
-    c_sharpJoinClause
-  of "join_into_clause":
-    c_sharpJoinIntoClause
-  of "label_name":
-    c_sharpLabelName
-  of "labeled_statement":
-    c_sharpLabeledStatement
-  of "lambda_expression":
-    c_sharpLambdaExpression
-  of "let_clause":
-    c_sharpLetClause
-  of "local_declaration_statement":
-    c_sharpLocalDeclarationStatement
-  of "local_function_statement":
-    c_sharpLocalFunctionStatement
-  of "lock_statement":
-    c_sharpLockStatement
-  of "make_ref_expression":
-    c_sharpMakeRefExpression
-  of "member_access_expression":
-    c_sharpMemberAccessExpression
-  of "member_binding_expression":
-    c_sharpMemberBindingExpression
-  of "method_declaration":
-    c_sharpMethodDeclaration
-  of "modifier":
-    c_sharpModifier
-  of "name_colon":
-    c_sharpNameColon
-  of "name_equals":
-    c_sharpNameEquals
-  of "namespace_declaration":
-    c_sharpNamespaceDeclaration
-  of "negated_pattern":
-    c_sharpNegatedPattern
-  of "nullable_type":
-    c_sharpNullableType
-  of "object_creation_expression":
-    c_sharpObjectCreationExpression
-  of "operator_declaration":
-    c_sharpOperatorDeclaration
-  of "order_by_clause":
-    c_sharpOrderByClause
-  of "parameter":
-    c_sharpParameter
-  of "parameter_array":
-    c_sharpParameterArray
-  of "parameter_list":
-    c_sharpParameterList
-  of "parameter_modifier":
-    c_sharpParameterModifier
-  of "parenthesized_expression":
-    c_sharpParenthesizedExpression
-  of "parenthesized_pattern":
-    c_sharpParenthesizedPattern
-  of "parenthesized_variable_designation":
-    c_sharpParenthesizedVariableDesignation
-  of "pointer_type":
-    c_sharpPointerType
-  of "positional_pattern_clause":
-    c_sharpPositionalPatternClause
-  of "postfix_unary_expression":
-    c_sharpPostfixUnaryExpression
-  of "prefix_unary_expression":
-    c_sharpPrefixUnaryExpression
-  of "preprocessor_call":
-    c_sharpPreprocessorCall
-  of "primary_constructor_base_type":
-    c_sharpPrimaryConstructorBaseType
-  of "property_declaration":
-    c_sharpPropertyDeclaration
-  of "property_pattern_clause":
-    c_sharpPropertyPatternClause
-  of "qualified_name":
-    c_sharpQualifiedName
-  of "query_continuation":
-    c_sharpQueryContinuation
-  of "query_expression":
-    c_sharpQueryExpression
-  of "range_expression":
-    c_sharpRangeExpression
-  of "record_declaration":
-    c_sharpRecordDeclaration
-  of "recursive_pattern":
-    c_sharpRecursivePattern
-  of "ref_expression":
-    c_sharpRefExpression
-  of "ref_type_expression":
-    c_sharpRefTypeExpression
-  of "ref_value_expression":
-    c_sharpRefValueExpression
-  of "relational_pattern":
-    c_sharpRelationalPattern
-  of "return_statement":
-    c_sharpReturnStatement
-  of "select_clause":
-    c_sharpSelectClause
-  of "simple_assignment_expression":
-    c_sharpSimpleAssignmentExpression
-  of "size_of_expression":
-    c_sharpSizeOfExpression
-  of "stack_alloc_array_creation_expression":
-    c_sharpStackAllocArrayCreationExpression
-  of "string_literal":
-    c_sharpStringLiteral
-  of "struct_declaration":
-    c_sharpStructDeclaration
-  of "subpattern":
-    c_sharpSubpattern
-  of "switch_body":
-    c_sharpSwitchBody
-  of "switch_expression":
-    c_sharpSwitchExpression
-  of "switch_expression_arm":
-    c_sharpSwitchExpressionArm
-  of "switch_section":
-    c_sharpSwitchSection
-  of "switch_statement":
-    c_sharpSwitchStatement
-  of "this_expression":
-    c_sharpThisExpression
-  of "throw_expression":
-    c_sharpThrowExpression
-  of "throw_statement":
-    c_sharpThrowStatement
-  of "try_statement":
-    c_sharpTryStatement
-  of "tuple_element":
-    c_sharpTupleElement
-  of "tuple_expression":
-    c_sharpTupleExpression
-  of "tuple_pattern":
-    c_sharpTuplePattern
-  of "tuple_type":
-    c_sharpTupleType
-  of "type_argument_list":
-    c_sharpTypeArgumentList
-  of "type_constraint":
-    c_sharpTypeConstraint
-  of "type_of_expression":
-    c_sharpTypeOfExpression
-  of "type_parameter":
-    c_sharpTypeParameter
-  of "type_parameter_constraint":
-    c_sharpTypeParameterConstraint
-  of "type_parameter_constraints_clause":
-    c_sharpTypeParameterConstraintsClause
-  of "type_parameter_list":
-    c_sharpTypeParameterList
-  of "type_pattern":
-    c_sharpTypePattern
-  of "unsafe_statement":
-    c_sharpUnsafeStatement
-  of "using_directive":
-    c_sharpUsingDirective
-  of "using_statement":
-    c_sharpUsingStatement
-  of "var_pattern":
-    c_sharpVarPattern
-  of "variable_declaration":
-    c_sharpVariableDeclaration
-  of "variable_declarator":
-    c_sharpVariableDeclarator
-  of "when_clause":
-    c_sharpWhenClause
-  of "where_clause":
-    c_sharpWhereClause
-  of "while_statement":
-    c_sharpWhileStatement
-  of "with_expression":
-    c_sharpWithExpression
-  of "with_initializer_expression":
-    c_sharpWithInitializerExpression
-  of "yield_statement":
-    c_sharpYieldStatement
-  of "!":
-    c_sharpSingleExclamationTok
-  of "!=":
-    c_sharpSingleExclamationSingleEqualTok
-  of "\"":
-    c_sharpSingleQuoteTok
-  of "\"\"":
-    c_sharpDoubleQuoteTok
-  of "$\"":
-    c_sharpSingleDollarSingleQuoteTok
-  of "$@\"":
-    c_sharpSingleDollarSingleAtSingleQuoteTok
-  of "%":
-    c_sharpSinglePercentTok
-  of "%=":
-    c_sharpSinglePercentSingleEqualTok
-  of "&":
-    c_sharpSingleAmpersandTok
-  of "&&":
-    c_sharpDoubleAmpersandTok
-  of "&=":
-    c_sharpSingleAmpersandSingleEqualTok
-  of "\'":
-    c_sharpSingleApostropheTok
-  of "(":
-    c_sharpSingleLParTok
-  of ")":
-    c_sharpSingleRParTok
-  of "*":
-    c_sharpSingleAsteriskTok
-  of "*=":
-    c_sharpSingleAsteriskSingleEqualTok
-  of "+":
-    c_sharpSinglePlusTok
-  of "++":
-    c_sharpDoublePlusTok
-  of "+=":
-    c_sharpSinglePlusSingleEqualTok
-  of ",":
-    c_sharpSingleCommaTok
-  of "-":
-    c_sharpSingleMinusTok
-  of "--":
-    c_sharpDoubleMinusTok
-  of "-=":
-    c_sharpSingleMinusSingleEqualTok
-  of "->":
-    c_sharpSingleMinusSingleGreaterThanTok
-  of ".":
-    c_sharpSingleDotTok
-  of "..":
-    c_sharpDoubleDotTok
-  of "/":
-    c_sharpSingleSlashTok
-  of "/=":
-    c_sharpSingleSlashSingleEqualTok
-  of ":":
-    c_sharpSingleColonTok
-  of "::":
-    c_sharpDoubleColonTok
-  of ";":
-    c_sharpSingleSemicolonTok
-  of "<":
-    c_sharpSingleLessThanTok
-  of "<<":
-    c_sharpDoubleLessThanTok
-  of "<<=":
-    c_sharpDoubleLessThanSingleEqualTok
-  of "<=":
-    c_sharpSingleLessThanSingleEqualTok
-  of "=":
-    c_sharpSingleEqualTok
-  of "==":
-    c_sharpDoubleEqualTok
-  of "=>":
-    c_sharpSingleEqualSingleGreaterThanTok
-  of ">":
-    c_sharpSingleGreaterThanTok
-  of ">=":
-    c_sharpSingleGreaterThanSingleEqualTok
-  of ">>":
-    c_sharpDoubleGreaterThanTok
-  of ">>=":
-    c_sharpDoubleGreaterThanSingleEqualTok
-  of "?":
-    c_sharpSingleQuestionTok
-  of "??":
-    c_sharpDoubleQuestionTok
-  of "??=":
-    c_sharpDoubleQuestionSingleEqualTok
-  of "@$\"":
-    c_sharpSingleAtSingleDollarSingleQuoteTok
-  of "Cdecl":
-    c_sharpCdeclTok
-  of "Fastcall":
-    c_sharpFastcallTok
-  of "Stdcall":
-    c_sharpStdcallTok
-  of "Thiscall":
-    c_sharpThiscallTok
-  of "[":
-    c_sharpSingleLBrackTok
-  of "]":
-    c_sharpSingleRBrackTok
-  of "^":
-    c_sharpSingleAccentTok
-  of "^=":
-    c_sharpSingleAccentSingleEqualTok
-  of "__makeref":
-    c_sharpMakerefTok
-  of "__reftype":
-    c_sharpReftypeTok
-  of "__refvalue":
-    c_sharpRefvalueTok
-  of "abstract":
-    c_sharpAbstractTok
-  of "add":
-    c_sharpAddTok
-  of "alias":
-    c_sharpAliasTok
-  of "and":
-    c_sharpAndTok
-  of "as":
-    c_sharpAsTok
-  of "ascending":
-    c_sharpAscendingTok
-  of "assembly":
-    c_sharpAssemblyTok
-  of "async":
-    c_sharpAsyncTok
-  of "await":
-    c_sharpAwaitTok
-  of "base":
-    c_sharpBaseTok
-  of "break":
-    c_sharpBreakTok
-  of "by":
-    c_sharpByTok
-  of "case":
-    c_sharpCaseTok
-  of "catch":
-    c_sharpCatchTok
-  of "checked":
-    c_sharpCheckedTok
-  of "class":
-    c_sharpClassTok
-  of "comment":
-    c_sharpComment
-  of "const":
-    c_sharpConstTok
-  of "continue":
-    c_sharpContinueTok
-  of "default":
-    c_sharpDefaultTok
-  of "delegate":
-    c_sharpDelegateTok
-  of "descending":
-    c_sharpDescendingTok
-  of "discard":
-    c_sharpDiscard
-  of "do":
-    c_sharpDoTok
-  of "dynamic":
-    c_sharpDynamicTok
-  of "else":
-    c_sharpElseTok
-  of "enum":
-    c_sharpEnumTok
-  of "equals":
-    c_sharpEqualsTok
-  of "escape_sequence":
-    c_sharpEscapeSequence
-  of "event":
-    c_sharpEventTok
-  of "explicit":
-    c_sharpExplicitTok
-  of "extern":
-    c_sharpExternTok
-  of "false":
-    c_sharpFalseTok
-  of "field":
-    c_sharpFieldTok
-  of "finally":
-    c_sharpFinallyTok
-  of "fixed":
-    c_sharpFixedTok
-  of "for":
-    c_sharpForTok
-  of "foreach":
-    c_sharpForeachTok
-  of "from":
-    c_sharpFromTok
-  of "get":
-    c_sharpGetTok
-  of "goto":
-    c_sharpGotoTok
-  of "group":
-    c_sharpGroupTok
-  of "if":
-    c_sharpIfTok
-  of "implicit":
-    c_sharpImplicitTok
-  of "in":
-    c_sharpInTok
-  of "init":
-    c_sharpInitTok
-  of "integer_literal":
-    c_sharpIntegerLiteral
-  of "interface":
-    c_sharpInterfaceTok
-  of "internal":
-    c_sharpInternalTok
-  of "into":
-    c_sharpIntoTok
-  of "is":
-    c_sharpIsTok
-  of "join":
-    c_sharpJoinTok
-  of "let":
-    c_sharpLetTok
-  of "lock":
-    c_sharpLockTok
-  of "managed":
-    c_sharpManagedTok
-  of "method":
-    c_sharpMethodTok
-  of "module":
-    c_sharpModuleTok
-  of "nameof":
-    c_sharpNameofTok
-  of "namespace":
-    c_sharpNamespaceTok
-  of "new":
-    c_sharpNewTok
-  of "not":
-    c_sharpNotTok
-  of "notnull":
-    c_sharpNotnullTok
-  of "null_literal":
-    c_sharpNullLiteral
-  of "on":
-    c_sharpOnTok
-  of "operator":
-    c_sharpOperatorTok
-  of "or":
-    c_sharpOrTok
-  of "orderby":
-    c_sharpOrderbyTok
-  of "out":
-    c_sharpOutTok
-  of "override":
-    c_sharpOverrideTok
-  of "param":
-    c_sharpParamTok
-  of "params":
-    c_sharpParamsTok
-  of "partial":
-    c_sharpPartialTok
-  of "predefined_type":
-    c_sharpPredefinedType
-  of "preprocessor_directive":
-    c_sharpPreprocessorDirective
-  of "private":
-    c_sharpPrivateTok
-  of "property":
-    c_sharpPropertyTok
-  of "protected":
-    c_sharpProtectedTok
-  of "public":
-    c_sharpPublicTok
-  of "readonly":
-    c_sharpReadonlyTok
-  of "real_literal":
-    c_sharpRealLiteral
-  of "record":
-    c_sharpRecordTok
-  of "ref":
-    c_sharpRefTok
-  of "remove":
-    c_sharpRemoveTok
-  of "return":
-    c_sharpReturnTok
-  of "sealed":
-    c_sharpSealedTok
-  of "select":
-    c_sharpSelectTok
-  of "set":
-    c_sharpSetTok
-  of "sizeof":
-    c_sharpSizeofTok
-  of "stackalloc":
-    c_sharpStackallocTok
-  of "static":
-    c_sharpStaticTok
-  of "struct":
-    c_sharpStructTok
-  of "switch":
-    c_sharpSwitchTok
-  of "this":
-    c_sharpThisTok
-  of "throw":
-    c_sharpThrowTok
-  of "true":
-    c_sharpTrueTok
-  of "try":
-    c_sharpTryTok
-  of "type":
-    c_sharpTypeTok
-  of "typeof":
-    c_sharpTypeofTok
-  of "unchecked":
-    c_sharpUncheckedTok
-  of "unmanaged":
-    c_sharpUnmanagedTok
-  of "unsafe":
-    c_sharpUnsafeTok
-  of "using":
-    c_sharpUsingTok
-  of "var":
-    c_sharpVarTok
-  of "verbatim_string_literal":
-    c_sharpVerbatimStringLiteral
-  of "virtual":
-    c_sharpVirtualTok
-  of "void_keyword":
-    c_sharpVoidKeyword
-  of "volatile":
-    c_sharpVolatileTok
-  of "when":
-    c_sharpWhenTok
-  of "where":
-    c_sharpWhereTok
-  of "while":
-    c_sharpWhileTok
-  of "with":
-    c_sharpWithTok
-  of "yield":
-    c_sharpYieldTok
-  of "{":
-    c_sharpSingleLCurlyTok
-  of "{{":
-    c_sharpDoubleLCurlyTok
-  of "|":
-    c_sharpSinglePipeTok
-  of "|=":
-    c_sharpSinglePipeSingleEqualTok
-  of "||":
-    c_sharpDoublePipeTok
-  of "}":
-    c_sharpSingleRCurlyTok
-  of "~":
-    c_sharpSingleTildeTok
-  of "ERROR":
-    c_sharpSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_declaration":
+      c_sharpDeclaration
+    of "_expression":
+      c_sharpExpression
+    of "_statement":
+      c_sharpStatement
+    of "_type":
+      c_sharpType
+    of "accessor_declaration":
+      c_sharpAccessorDeclaration
+    of "accessor_list":
+      c_sharpAccessorList
+    of "alias_qualified_name":
+      c_sharpAliasQualifiedName
+    of "anonymous_method_expression":
+      c_sharpAnonymousMethodExpression
+    of "anonymous_object_creation_expression":
+      c_sharpAnonymousObjectCreationExpression
+    of "argument":
+      c_sharpArgument
+    of "argument_list":
+      c_sharpArgumentList
+    of "array_creation_expression":
+      c_sharpArrayCreationExpression
+    of "array_rank_specifier":
+      c_sharpArrayRankSpecifier
+    of "array_type":
+      c_sharpArrayType
+    of "arrow_expression_clause":
+      c_sharpArrowExpressionClause
+    of "assignment_expression":
+      c_sharpAssignmentExpression
+    of "assignment_operator":
+      c_sharpAssignmentOperator
+    of "attribute":
+      c_sharpAttribute
+    of "attribute_argument":
+      c_sharpAttributeArgument
+    of "attribute_argument_list":
+      c_sharpAttributeArgumentList
+    of "attribute_list":
+      c_sharpAttributeList
+    of "attribute_target_specifier":
+      c_sharpAttributeTargetSpecifier
+    of "await_expression":
+      c_sharpAwaitExpression
+    of "base_expression":
+      c_sharpBaseExpression
+    of "base_list":
+      c_sharpBaseList
+    of "binary_expression":
+      c_sharpBinaryExpression
+    of "binary_pattern":
+      c_sharpBinaryPattern
+    of "block":
+      c_sharpBlock
+    of "boolean_literal":
+      c_sharpBooleanLiteral
+    of "bracketed_argument_list":
+      c_sharpBracketedArgumentList
+    of "bracketed_parameter_list":
+      c_sharpBracketedParameterList
+    of "break_statement":
+      c_sharpBreakStatement
+    of "case_pattern_switch_label":
+      c_sharpCasePatternSwitchLabel
+    of "case_switch_label":
+      c_sharpCaseSwitchLabel
+    of "cast_expression":
+      c_sharpCastExpression
+    of "catch_clause":
+      c_sharpCatchClause
+    of "catch_declaration":
+      c_sharpCatchDeclaration
+    of "catch_filter_clause":
+      c_sharpCatchFilterClause
+    of "character_literal":
+      c_sharpCharacterLiteral
+    of "checked_expression":
+      c_sharpCheckedExpression
+    of "checked_statement":
+      c_sharpCheckedStatement
+    of "class_declaration":
+      c_sharpClassDeclaration
+    of "compilation_unit":
+      c_sharpCompilationUnit
+    of "conditional_access_expression":
+      c_sharpConditionalAccessExpression
+    of "conditional_expression":
+      c_sharpConditionalExpression
+    of "constant_pattern":
+      c_sharpConstantPattern
+    of "constructor_constraint":
+      c_sharpConstructorConstraint
+    of "constructor_declaration":
+      c_sharpConstructorDeclaration
+    of "constructor_initializer":
+      c_sharpConstructorInitializer
+    of "continue_statement":
+      c_sharpContinueStatement
+    of "conversion_operator_declaration":
+      c_sharpConversionOperatorDeclaration
+    of "declaration_expression":
+      c_sharpDeclarationExpression
+    of "declaration_list":
+      c_sharpDeclarationList
+    of "declaration_pattern":
+      c_sharpDeclarationPattern
+    of "default_expression":
+      c_sharpDefaultExpression
+    of "default_switch_label":
+      c_sharpDefaultSwitchLabel
+    of "delegate_declaration":
+      c_sharpDelegateDeclaration
+    of "destructor_declaration":
+      c_sharpDestructorDeclaration
+    of "do_statement":
+      c_sharpDoStatement
+    of "element_access_expression":
+      c_sharpElementAccessExpression
+    of "element_binding_expression":
+      c_sharpElementBindingExpression
+    of "empty_statement":
+      c_sharpEmptyStatement
+    of "enum_declaration":
+      c_sharpEnumDeclaration
+    of "enum_member_declaration":
+      c_sharpEnumMemberDeclaration
+    of "enum_member_declaration_list":
+      c_sharpEnumMemberDeclarationList
+    of "equals_value_clause":
+      c_sharpEqualsValueClause
+    of "event_declaration":
+      c_sharpEventDeclaration
+    of "event_field_declaration":
+      c_sharpEventFieldDeclaration
+    of "explicit_interface_specifier":
+      c_sharpExplicitInterfaceSpecifier
+    of "expression_statement":
+      c_sharpExpressionStatement
+    of "extern_alias_directive":
+      c_sharpExternAliasDirective
+    of "field_declaration":
+      c_sharpFieldDeclaration
+    of "finally_clause":
+      c_sharpFinallyClause
+    of "fixed_statement":
+      c_sharpFixedStatement
+    of "for_each_statement":
+      c_sharpForEachStatement
+    of "for_statement":
+      c_sharpForStatement
+    of "from_clause":
+      c_sharpFromClause
+    of "function_pointer_calling_convention":
+      c_sharpFunctionPointerCallingConvention
+    of "function_pointer_parameter":
+      c_sharpFunctionPointerParameter
+    of "function_pointer_type":
+      c_sharpFunctionPointerType
+    of "function_pointer_unmanaged_calling_convention":
+      c_sharpFunctionPointerUnmanagedCallingConvention
+    of "function_pointer_unmanaged_calling_convention_list":
+      c_sharpFunctionPointerUnmanagedCallingConventionList
+    of "generic_name":
+      c_sharpGenericName
+    of "global":
+      c_sharpGlobal
+    of "global_attribute_list":
+      c_sharpGlobalAttributeList
+    of "global_statement":
+      c_sharpGlobalStatement
+    of "goto_statement":
+      c_sharpGotoStatement
+    of "group_clause":
+      c_sharpGroupClause
+    of "identifier":
+      c_sharpIdentifier
+    of "if_statement":
+      c_sharpIfStatement
+    of "implicit_array_creation_expression":
+      c_sharpImplicitArrayCreationExpression
+    of "implicit_object_creation_expression":
+      c_sharpImplicitObjectCreationExpression
+    of "implicit_stack_alloc_array_creation_expression":
+      c_sharpImplicitStackAllocArrayCreationExpression
+    of "implicit_type":
+      c_sharpImplicitType
+    of "indexer_declaration":
+      c_sharpIndexerDeclaration
+    of "initializer_expression":
+      c_sharpInitializerExpression
+    of "interface_declaration":
+      c_sharpInterfaceDeclaration
+    of "interpolated_string_expression":
+      c_sharpInterpolatedStringExpression
+    of "interpolated_string_text":
+      c_sharpInterpolatedStringText
+    of "interpolated_verbatim_string_text":
+      c_sharpInterpolatedVerbatimStringText
+    of "interpolation":
+      c_sharpInterpolation
+    of "interpolation_alignment_clause":
+      c_sharpInterpolationAlignmentClause
+    of "interpolation_format_clause":
+      c_sharpInterpolationFormatClause
+    of "invocation_expression":
+      c_sharpInvocationExpression
+    of "is_pattern_expression":
+      c_sharpIsPatternExpression
+    of "join_clause":
+      c_sharpJoinClause
+    of "join_into_clause":
+      c_sharpJoinIntoClause
+    of "label_name":
+      c_sharpLabelName
+    of "labeled_statement":
+      c_sharpLabeledStatement
+    of "lambda_expression":
+      c_sharpLambdaExpression
+    of "let_clause":
+      c_sharpLetClause
+    of "local_declaration_statement":
+      c_sharpLocalDeclarationStatement
+    of "local_function_statement":
+      c_sharpLocalFunctionStatement
+    of "lock_statement":
+      c_sharpLockStatement
+    of "make_ref_expression":
+      c_sharpMakeRefExpression
+    of "member_access_expression":
+      c_sharpMemberAccessExpression
+    of "member_binding_expression":
+      c_sharpMemberBindingExpression
+    of "method_declaration":
+      c_sharpMethodDeclaration
+    of "modifier":
+      c_sharpModifier
+    of "name_colon":
+      c_sharpNameColon
+    of "name_equals":
+      c_sharpNameEquals
+    of "namespace_declaration":
+      c_sharpNamespaceDeclaration
+    of "negated_pattern":
+      c_sharpNegatedPattern
+    of "nullable_type":
+      c_sharpNullableType
+    of "object_creation_expression":
+      c_sharpObjectCreationExpression
+    of "operator_declaration":
+      c_sharpOperatorDeclaration
+    of "order_by_clause":
+      c_sharpOrderByClause
+    of "parameter":
+      c_sharpParameter
+    of "parameter_array":
+      c_sharpParameterArray
+    of "parameter_list":
+      c_sharpParameterList
+    of "parameter_modifier":
+      c_sharpParameterModifier
+    of "parenthesized_expression":
+      c_sharpParenthesizedExpression
+    of "parenthesized_pattern":
+      c_sharpParenthesizedPattern
+    of "parenthesized_variable_designation":
+      c_sharpParenthesizedVariableDesignation
+    of "pointer_type":
+      c_sharpPointerType
+    of "positional_pattern_clause":
+      c_sharpPositionalPatternClause
+    of "postfix_unary_expression":
+      c_sharpPostfixUnaryExpression
+    of "prefix_unary_expression":
+      c_sharpPrefixUnaryExpression
+    of "preprocessor_call":
+      c_sharpPreprocessorCall
+    of "primary_constructor_base_type":
+      c_sharpPrimaryConstructorBaseType
+    of "property_declaration":
+      c_sharpPropertyDeclaration
+    of "property_pattern_clause":
+      c_sharpPropertyPatternClause
+    of "qualified_name":
+      c_sharpQualifiedName
+    of "query_continuation":
+      c_sharpQueryContinuation
+    of "query_expression":
+      c_sharpQueryExpression
+    of "range_expression":
+      c_sharpRangeExpression
+    of "record_declaration":
+      c_sharpRecordDeclaration
+    of "recursive_pattern":
+      c_sharpRecursivePattern
+    of "ref_expression":
+      c_sharpRefExpression
+    of "ref_type_expression":
+      c_sharpRefTypeExpression
+    of "ref_value_expression":
+      c_sharpRefValueExpression
+    of "relational_pattern":
+      c_sharpRelationalPattern
+    of "return_statement":
+      c_sharpReturnStatement
+    of "select_clause":
+      c_sharpSelectClause
+    of "simple_assignment_expression":
+      c_sharpSimpleAssignmentExpression
+    of "size_of_expression":
+      c_sharpSizeOfExpression
+    of "stack_alloc_array_creation_expression":
+      c_sharpStackAllocArrayCreationExpression
+    of "string_literal":
+      c_sharpStringLiteral
+    of "struct_declaration":
+      c_sharpStructDeclaration
+    of "subpattern":
+      c_sharpSubpattern
+    of "switch_body":
+      c_sharpSwitchBody
+    of "switch_expression":
+      c_sharpSwitchExpression
+    of "switch_expression_arm":
+      c_sharpSwitchExpressionArm
+    of "switch_section":
+      c_sharpSwitchSection
+    of "switch_statement":
+      c_sharpSwitchStatement
+    of "this_expression":
+      c_sharpThisExpression
+    of "throw_expression":
+      c_sharpThrowExpression
+    of "throw_statement":
+      c_sharpThrowStatement
+    of "try_statement":
+      c_sharpTryStatement
+    of "tuple_element":
+      c_sharpTupleElement
+    of "tuple_expression":
+      c_sharpTupleExpression
+    of "tuple_pattern":
+      c_sharpTuplePattern
+    of "tuple_type":
+      c_sharpTupleType
+    of "type_argument_list":
+      c_sharpTypeArgumentList
+    of "type_constraint":
+      c_sharpTypeConstraint
+    of "type_of_expression":
+      c_sharpTypeOfExpression
+    of "type_parameter":
+      c_sharpTypeParameter
+    of "type_parameter_constraint":
+      c_sharpTypeParameterConstraint
+    of "type_parameter_constraints_clause":
+      c_sharpTypeParameterConstraintsClause
+    of "type_parameter_list":
+      c_sharpTypeParameterList
+    of "type_pattern":
+      c_sharpTypePattern
+    of "unsafe_statement":
+      c_sharpUnsafeStatement
+    of "using_directive":
+      c_sharpUsingDirective
+    of "using_statement":
+      c_sharpUsingStatement
+    of "var_pattern":
+      c_sharpVarPattern
+    of "variable_declaration":
+      c_sharpVariableDeclaration
+    of "variable_declarator":
+      c_sharpVariableDeclarator
+    of "when_clause":
+      c_sharpWhenClause
+    of "where_clause":
+      c_sharpWhereClause
+    of "while_statement":
+      c_sharpWhileStatement
+    of "with_expression":
+      c_sharpWithExpression
+    of "with_initializer_expression":
+      c_sharpWithInitializerExpression
+    of "yield_statement":
+      c_sharpYieldStatement
+    of "!":
+      c_sharpExclamationTok
+    of "!=":
+      c_sharpExclamationEqualTok
+    of "\"":
+      c_sharpQuoteTok
+    of "\"\"":
+      c_sharpDoubleQuoteTok
+    of "$\"":
+      c_sharpDollarQuoteTok
+    of "$@\"":
+      c_sharpDollarAtQuoteTok
+    of "%":
+      c_sharpPercentTok
+    of "%=":
+      c_sharpPercentEqualTok
+    of "&":
+      c_sharpAmpersandTok
+    of "&&":
+      c_sharpDoubleAmpersandTok
+    of "&=":
+      c_sharpAmpersandEqualTok
+    of "\'":
+      c_sharpApostropheTok
+    of "(":
+      c_sharpLParTok
+    of ")":
+      c_sharpRParTok
+    of "*":
+      c_sharpAsteriskTok
+    of "*=":
+      c_sharpAsteriskEqualTok
+    of "+":
+      c_sharpPlusTok
+    of "++":
+      c_sharpDoublePlusTok
+    of "+=":
+      c_sharpPlusEqualTok
+    of ",":
+      c_sharpCommaTok
+    of "-":
+      c_sharpMinusTok
+    of "--":
+      c_sharpDoubleMinusTok
+    of "-=":
+      c_sharpMinusEqualTok
+    of "->":
+      c_sharpMinusGreaterThanTok
+    of ".":
+      c_sharpDotTok
+    of "..":
+      c_sharpDoubleDotTok
+    of "/":
+      c_sharpSlashTok
+    of "/=":
+      c_sharpSlashEqualTok
+    of ":":
+      c_sharpColonTok
+    of "::":
+      c_sharpDoubleColonTok
+    of ";":
+      c_sharpSemicolonTok
+    of "<":
+      c_sharpLessThanTok
+    of "<<":
+      c_sharpDoubleLessThanTok
+    of "<<=":
+      c_sharpDoubleLessThanEqualTok
+    of "<=":
+      c_sharpLessThanEqualTok
+    of "=":
+      c_sharpEqualTok
+    of "==":
+      c_sharpDoubleEqualTok
+    of "=>":
+      c_sharpEqualGreaterThanTok
+    of ">":
+      c_sharpGreaterThanTok
+    of ">=":
+      c_sharpGreaterThanEqualTok
+    of ">>":
+      c_sharpDoubleGreaterThanTok
+    of ">>=":
+      c_sharpDoubleGreaterThanEqualTok
+    of "?":
+      c_sharpQuestionTok
+    of "??":
+      c_sharpDoubleQuestionTok
+    of "??=":
+      c_sharpDoubleQuestionEqualTok
+    of "@$\"":
+      c_sharpAtDollarQuoteTok
+    of "Cdecl":
+      c_sharpCdeclTok
+    of "Fastcall":
+      c_sharpFastcallTok
+    of "Stdcall":
+      c_sharpStdcallTok
+    of "Thiscall":
+      c_sharpThiscallTok
+    of "[":
+      c_sharpLBrackTok
+    of "]":
+      c_sharpRBrackTok
+    of "^":
+      c_sharpAccentTok
+    of "^=":
+      c_sharpAccentEqualTok
+    of "__makeref":
+      c_sharpMakerefTok
+    of "__reftype":
+      c_sharpReftypeTok
+    of "__refvalue":
+      c_sharpRefvalueTok
+    of "abstract":
+      c_sharpAbstractTok
+    of "add":
+      c_sharpAddTok
+    of "alias":
+      c_sharpAliasTok
+    of "and":
+      c_sharpAndTok
+    of "as":
+      c_sharpAsTok
+    of "ascending":
+      c_sharpAscendingTok
+    of "assembly":
+      c_sharpAssemblyTok
+    of "async":
+      c_sharpAsyncTok
+    of "await":
+      c_sharpAwaitTok
+    of "base":
+      c_sharpBaseTok
+    of "break":
+      c_sharpBreakTok
+    of "by":
+      c_sharpByTok
+    of "case":
+      c_sharpCaseTok
+    of "catch":
+      c_sharpCatchTok
+    of "checked":
+      c_sharpCheckedTok
+    of "class":
+      c_sharpClassTok
+    of "comment":
+      c_sharpComment
+    of "const":
+      c_sharpConstTok
+    of "continue":
+      c_sharpContinueTok
+    of "default":
+      c_sharpDefaultTok
+    of "delegate":
+      c_sharpDelegateTok
+    of "descending":
+      c_sharpDescendingTok
+    of "discard":
+      c_sharpDiscard
+    of "do":
+      c_sharpDoTok
+    of "dynamic":
+      c_sharpDynamicTok
+    of "else":
+      c_sharpElseTok
+    of "enum":
+      c_sharpEnumTok
+    of "equals":
+      c_sharpEqualsTok
+    of "escape_sequence":
+      c_sharpEscapeSequence
+    of "event":
+      c_sharpEventTok
+    of "explicit":
+      c_sharpExplicitTok
+    of "extern":
+      c_sharpExternTok
+    of "false":
+      c_sharpFalseTok
+    of "field":
+      c_sharpFieldTok
+    of "finally":
+      c_sharpFinallyTok
+    of "fixed":
+      c_sharpFixedTok
+    of "for":
+      c_sharpForTok
+    of "foreach":
+      c_sharpForeachTok
+    of "from":
+      c_sharpFromTok
+    of "get":
+      c_sharpGetTok
+    of "goto":
+      c_sharpGotoTok
+    of "group":
+      c_sharpGroupTok
+    of "if":
+      c_sharpIfTok
+    of "implicit":
+      c_sharpImplicitTok
+    of "in":
+      c_sharpInTok
+    of "init":
+      c_sharpInitTok
+    of "integer_literal":
+      c_sharpIntegerLiteral
+    of "interface":
+      c_sharpInterfaceTok
+    of "internal":
+      c_sharpInternalTok
+    of "into":
+      c_sharpIntoTok
+    of "is":
+      c_sharpIsTok
+    of "join":
+      c_sharpJoinTok
+    of "let":
+      c_sharpLetTok
+    of "lock":
+      c_sharpLockTok
+    of "managed":
+      c_sharpManagedTok
+    of "method":
+      c_sharpMethodTok
+    of "module":
+      c_sharpModuleTok
+    of "nameof":
+      c_sharpNameofTok
+    of "namespace":
+      c_sharpNamespaceTok
+    of "new":
+      c_sharpNewTok
+    of "not":
+      c_sharpNotTok
+    of "notnull":
+      c_sharpNotnullTok
+    of "null_literal":
+      c_sharpNullLiteral
+    of "on":
+      c_sharpOnTok
+    of "operator":
+      c_sharpOperatorTok
+    of "or":
+      c_sharpOrTok
+    of "orderby":
+      c_sharpOrderbyTok
+    of "out":
+      c_sharpOutTok
+    of "override":
+      c_sharpOverrideTok
+    of "param":
+      c_sharpParamTok
+    of "params":
+      c_sharpParamsTok
+    of "partial":
+      c_sharpPartialTok
+    of "predefined_type":
+      c_sharpPredefinedType
+    of "preprocessor_directive":
+      c_sharpPreprocessorDirective
+    of "private":
+      c_sharpPrivateTok
+    of "property":
+      c_sharpPropertyTok
+    of "protected":
+      c_sharpProtectedTok
+    of "public":
+      c_sharpPublicTok
+    of "readonly":
+      c_sharpReadonlyTok
+    of "real_literal":
+      c_sharpRealLiteral
+    of "record":
+      c_sharpRecordTok
+    of "ref":
+      c_sharpRefTok
+    of "remove":
+      c_sharpRemoveTok
+    of "return":
+      c_sharpReturnTok
+    of "sealed":
+      c_sharpSealedTok
+    of "select":
+      c_sharpSelectTok
+    of "set":
+      c_sharpSetTok
+    of "sizeof":
+      c_sharpSizeofTok
+    of "stackalloc":
+      c_sharpStackallocTok
+    of "static":
+      c_sharpStaticTok
+    of "struct":
+      c_sharpStructTok
+    of "switch":
+      c_sharpSwitchTok
+    of "this":
+      c_sharpThisTok
+    of "throw":
+      c_sharpThrowTok
+    of "true":
+      c_sharpTrueTok
+    of "try":
+      c_sharpTryTok
+    of "type":
+      c_sharpTypeTok
+    of "typeof":
+      c_sharpTypeofTok
+    of "unchecked":
+      c_sharpUncheckedTok
+    of "unmanaged":
+      c_sharpUnmanagedTok
+    of "unsafe":
+      c_sharpUnsafeTok
+    of "using":
+      c_sharpUsingTok
+    of "var":
+      c_sharpVarTok
+    of "verbatim_string_literal":
+      c_sharpVerbatimStringLiteral
+    of "virtual":
+      c_sharpVirtualTok
+    of "void_keyword":
+      c_sharpVoidKeyword
+    of "volatile":
+      c_sharpVolatileTok
+    of "when":
+      c_sharpWhenTok
+    of "where":
+      c_sharpWhereTok
+    of "while":
+      c_sharpWhileTok
+    of "with":
+      c_sharpWithTok
+    of "yield":
+      c_sharpYieldTok
+    of "{":
+      c_sharpLCurlyTok
+    of "{{":
+      c_sharpDoubleLCurlyTok
+    of "|":
+      c_sharpPipeTok
+    of "|=":
+      c_sharpPipeEqualTok
+    of "||":
+      c_sharpDoublePipeTok
+    of "}":
+      c_sharpRCurlyTok
+    of "~":
+      c_sharpTildeTok
+    of "ERROR":
+      c_sharpSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_c_sharp(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: C_sharpNode): string =
@@ -1139,6 +1140,10 @@ proc newC_sharpParser*(): C_sharpParser =
 proc parseString*(parser: C_sharpParser; str: string): C_sharpNode =
   C_sharpNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseC_sharpString*(str: string): C_sharpNode =
+  let parser = newC_sharpParser()
+  return parseString(parser, str)
 
 func `[]`*(node: C_sharpNode; idx: int; withUnnamed: bool = false): C_sharpNode =
   if withUnnamed:
@@ -1159,8 +1164,9 @@ iterator items*(node: C_sharpNode; withUnnamed: bool = false): C_sharpNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: C_sharpNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: C_sharpNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: C_sharpNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: C_sharpNode; level: int): seq[string] =

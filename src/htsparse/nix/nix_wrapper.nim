@@ -28,35 +28,35 @@ type
     nixString,              ## string
     nixUnary,               ## unary
     nixWith,                ## with
-    nixSingleExclamationTok, ## !
-    nixSingleExclamationSingleEqualTok, ## !=
-    nixSingleQuoteTok,      ## "
-    nixSingleDollarSingleLCurlyTok, ## ${
+    nixExclamationTok,      ## !
+    nixExclamationEqualTok, ## !=
+    nixQuoteTok,            ## "
+    nixDollarLCurlyTok,     ## ${
     nixDoubleAmpersandTok,  ## &&
     nixDoubleApostropheTok, ## ''
-    nixSingleLParTok,       ## (
-    nixSingleRParTok,       ## )
-    nixSingleAsteriskTok,   ## *
-    nixSinglePlusTok,       ## +
+    nixLParTok,             ## (
+    nixRParTok,             ## )
+    nixAsteriskTok,         ## *
+    nixPlusTok,             ## +
     nixDoublePlusTok,       ## ++
-    nixSingleCommaTok,      ## ,
-    nixSingleMinusTok,      ## -
-    nixSingleMinusSingleGreaterThanTok, ## ->
-    nixSingleDotTok,        ## .
-    nixSingleSlashTok,      ## /
+    nixCommaTok,            ## ,
+    nixMinusTok,            ## -
+    nixMinusGreaterThanTok, ## ->
+    nixDotTok,              ## .
+    nixSlashTok,            ## /
     nixDoubleSlashTok,      ## //
-    nixSingleColonTok,      ## :
-    nixSingleSemicolonTok,  ## ;
-    nixSingleLessThanTok,   ## <
-    nixSingleLessThanSingleEqualTok, ## <=
-    nixSingleEqualTok,      ## =
+    nixColonTok,            ## :
+    nixSemicolonTok,        ## ;
+    nixLessThanTok,         ## <
+    nixLessThanEqualTok,    ## <=
+    nixEqualTok,            ## =
     nixDoubleEqualTok,      ## ==
-    nixSingleGreaterThanTok, ## >
-    nixSingleGreaterThanSingleEqualTok, ## >=
-    nixSingleQuestionTok,   ## ?
-    nixSingleAtTok,         ## @
-    nixSingleLBrackTok,     ## [
-    nixSingleRBrackTok,     ## ]
+    nixGreaterThanTok,      ## >
+    nixGreaterThanEqualTok, ## >=
+    nixQuestionTok,         ## ?
+    nixAtTok,               ## @
+    nixLBrackTok,           ## [
+    nixRBrackTok,           ## ]
     nixAssertTok,           ## assert
     nixComment,             ## comment
     nixEllipses,            ## ellipses
@@ -77,9 +77,9 @@ type
     nixThenTok,             ## then
     nixUri,                 ## uri
     nixWithTok,             ## with
-    nixSingleLCurlyTok,     ## {
+    nixLCurlyTok,           ## {
     nixDoublePipeTok,       ## ||
-    nixSingleRCurlyTok,     ## }
+    nixRCurlyTok,           ## }
     nixSyntaxError           ## Tree-sitter parser syntax error
 type
   NixExternalTok* = enum
@@ -92,154 +92,155 @@ type
 type
   NixParser* = distinct PtsParser
 proc tsNodeType*(node: NixNode): string
-proc kind*(node: NixNode): NixNodeKind =
-  case node.tsNodeType
-  of "app":
-    nixApp
-  of "assert":
-    nixAssert
-  of "attrpath":
-    nixAttrpath
-  of "attrs":
-    nixAttrs
-  of "attrset":
-    nixAttrset
-  of "binary":
-    nixBinary
-  of "bind":
-    nixBind
-  of "expression":
-    nixExpression
-  of "formal":
-    nixFormal
-  of "formals":
-    nixFormals
-  of "function":
-    nixFunction
-  of "if":
-    nixIf
-  of "indented_string":
-    nixIndentedString
-  of "inherit":
-    nixInherit
-  of "interpolation":
-    nixInterpolation
-  of "let":
-    nixLet
-  of "let_attrset":
-    nixLetAttrset
-  of "list":
-    nixList
-  of "parenthesized":
-    nixParenthesized
-  of "rec_attrset":
-    nixRecAttrset
-  of "select":
-    nixSelect
-  of "string":
-    nixString
-  of "unary":
-    nixUnary
-  of "with":
-    nixWith
-  of "!":
-    nixSingleExclamationTok
-  of "!=":
-    nixSingleExclamationSingleEqualTok
-  of "\"":
-    nixSingleQuoteTok
-  of "${":
-    nixSingleDollarSingleLCurlyTok
-  of "&&":
-    nixDoubleAmpersandTok
-  of "\'\'":
-    nixDoubleApostropheTok
-  of "(":
-    nixSingleLParTok
-  of ")":
-    nixSingleRParTok
-  of "*":
-    nixSingleAsteriskTok
-  of "+":
-    nixSinglePlusTok
-  of "++":
-    nixDoublePlusTok
-  of ",":
-    nixSingleCommaTok
-  of "-":
-    nixSingleMinusTok
-  of "->":
-    nixSingleMinusSingleGreaterThanTok
-  of ".":
-    nixSingleDotTok
-  of "/":
-    nixSingleSlashTok
-  of "//":
-    nixDoubleSlashTok
-  of ":":
-    nixSingleColonTok
-  of ";":
-    nixSingleSemicolonTok
-  of "<":
-    nixSingleLessThanTok
-  of "<=":
-    nixSingleLessThanSingleEqualTok
-  of "=":
-    nixSingleEqualTok
-  of "==":
-    nixDoubleEqualTok
-  of ">":
-    nixSingleGreaterThanTok
-  of ">=":
-    nixSingleGreaterThanSingleEqualTok
-  of "?":
-    nixSingleQuestionTok
-  of "@":
-    nixSingleAtTok
-  of "[":
-    nixSingleLBrackTok
-  of "]":
-    nixSingleRBrackTok
-  of "comment":
-    nixComment
-  of "ellipses":
-    nixEllipses
-  of "else":
-    nixElseTok
-  of "escape_sequence":
-    nixEscapeSequence
-  of "float":
-    nixFloat
-  of "hpath":
-    nixHpath
-  of "identifier":
-    nixIdentifier
-  of "in":
-    nixInTok
-  of "integer":
-    nixInteger
-  of "or":
-    nixOrTok
-  of "path":
-    nixPath
-  of "rec":
-    nixRecTok
-  of "spath":
-    nixSpath
-  of "then":
-    nixThenTok
-  of "uri":
-    nixUri
-  of "{":
-    nixSingleLCurlyTok
-  of "||":
-    nixDoublePipeTok
-  of "}":
-    nixSingleRCurlyTok
-  of "ERROR":
-    nixSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "app":
+      nixApp
+    of "assert":
+      nixAssert
+    of "attrpath":
+      nixAttrpath
+    of "attrs":
+      nixAttrs
+    of "attrset":
+      nixAttrset
+    of "binary":
+      nixBinary
+    of "bind":
+      nixBind
+    of "expression":
+      nixExpression
+    of "formal":
+      nixFormal
+    of "formals":
+      nixFormals
+    of "function":
+      nixFunction
+    of "if":
+      nixIf
+    of "indented_string":
+      nixIndentedString
+    of "inherit":
+      nixInherit
+    of "interpolation":
+      nixInterpolation
+    of "let":
+      nixLet
+    of "let_attrset":
+      nixLetAttrset
+    of "list":
+      nixList
+    of "parenthesized":
+      nixParenthesized
+    of "rec_attrset":
+      nixRecAttrset
+    of "select":
+      nixSelect
+    of "string":
+      nixString
+    of "unary":
+      nixUnary
+    of "with":
+      nixWith
+    of "!":
+      nixExclamationTok
+    of "!=":
+      nixExclamationEqualTok
+    of "\"":
+      nixQuoteTok
+    of "${":
+      nixDollarLCurlyTok
+    of "&&":
+      nixDoubleAmpersandTok
+    of "\'\'":
+      nixDoubleApostropheTok
+    of "(":
+      nixLParTok
+    of ")":
+      nixRParTok
+    of "*":
+      nixAsteriskTok
+    of "+":
+      nixPlusTok
+    of "++":
+      nixDoublePlusTok
+    of ",":
+      nixCommaTok
+    of "-":
+      nixMinusTok
+    of "->":
+      nixMinusGreaterThanTok
+    of ".":
+      nixDotTok
+    of "/":
+      nixSlashTok
+    of "//":
+      nixDoubleSlashTok
+    of ":":
+      nixColonTok
+    of ";":
+      nixSemicolonTok
+    of "<":
+      nixLessThanTok
+    of "<=":
+      nixLessThanEqualTok
+    of "=":
+      nixEqualTok
+    of "==":
+      nixDoubleEqualTok
+    of ">":
+      nixGreaterThanTok
+    of ">=":
+      nixGreaterThanEqualTok
+    of "?":
+      nixQuestionTok
+    of "@":
+      nixAtTok
+    of "[":
+      nixLBrackTok
+    of "]":
+      nixRBrackTok
+    of "comment":
+      nixComment
+    of "ellipses":
+      nixEllipses
+    of "else":
+      nixElseTok
+    of "escape_sequence":
+      nixEscapeSequence
+    of "float":
+      nixFloat
+    of "hpath":
+      nixHpath
+    of "identifier":
+      nixIdentifier
+    of "in":
+      nixInTok
+    of "integer":
+      nixInteger
+    of "or":
+      nixOrTok
+    of "path":
+      nixPath
+    of "rec":
+      nixRecTok
+    of "spath":
+      nixSpath
+    of "then":
+      nixThenTok
+    of "uri":
+      nixUri
+    of "{":
+      nixLCurlyTok
+    of "||":
+      nixDoublePipeTok
+    of "}":
+      nixRCurlyTok
+    of "ERROR":
+      nixSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_nix(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: NixNode): string =
@@ -252,6 +253,10 @@ proc newNixParser*(): NixParser =
 proc parseString*(parser: NixParser; str: string): NixNode =
   NixNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseNixString*(str: string): NixNode =
+  let parser = newNixParser()
+  return parseString(parser, str)
 
 func `[]`*(node: NixNode; idx: int; withUnnamed: bool = false): NixNode =
   if withUnnamed:
@@ -272,8 +277,9 @@ iterator items*(node: NixNode; withUnnamed: bool = false): NixNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: NixNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: NixNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: NixNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: NixNode; level: int): seq[string] =

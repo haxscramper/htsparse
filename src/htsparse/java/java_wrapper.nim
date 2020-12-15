@@ -113,51 +113,51 @@ type
     javaVariableDeclarator, ## variable_declarator
     javaWhileStatement,     ## while_statement
     javaWildcard,           ## wildcard
-    javaSingleExclamationTok, ## !
-    javaSingleExclamationSingleEqualTok, ## !=
-    javaSinglePercentTok,   ## %
-    javaSinglePercentSingleEqualTok, ## %=
-    javaSingleAmpersandTok, ## &
+    javaExclamationTok,     ## !
+    javaExclamationEqualTok, ## !=
+    javaPercentTok,         ## %
+    javaPercentEqualTok,    ## %=
+    javaAmpersandTok,       ## &
     javaDoubleAmpersandTok, ## &&
-    javaSingleAmpersandSingleEqualTok, ## &=
-    javaSingleLParTok,      ## (
-    javaSingleRParTok,      ## )
-    javaSingleAsteriskTok,  ## *
-    javaSingleAsteriskSingleEqualTok, ## *=
-    javaSinglePlusTok,      ## +
+    javaAmpersandEqualTok,  ## &=
+    javaLParTok,            ## (
+    javaRParTok,            ## )
+    javaAsteriskTok,        ## *
+    javaAsteriskEqualTok,   ## *=
+    javaPlusTok,            ## +
     javaDoublePlusTok,      ## ++
-    javaSinglePlusSingleEqualTok, ## +=
-    javaSingleCommaTok,     ## ,
-    javaSingleMinusTok,     ## -
+    javaPlusEqualTok,       ## +=
+    javaCommaTok,           ## ,
+    javaMinusTok,           ## -
     javaDoubleMinusTok,     ## --
-    javaSingleMinusSingleEqualTok, ## -=
-    javaSingleMinusSingleGreaterThanTok, ## ->
-    javaSingleDotTok,       ## .
+    javaMinusEqualTok,      ## -=
+    javaMinusGreaterThanTok, ## ->
+    javaDotTok,             ## .
     javaTripleDotTok,       ## ...
-    javaSingleSlashTok,     ## /
-    javaSingleSlashSingleEqualTok, ## /=
-    javaSingleColonTok,     ## :
+    javaSlashTok,           ## /
+    javaSlashEqualTok,      ## /=
+    javaColonTok,           ## :
     javaDoubleColonTok,     ## ::
-    javaSingleSemicolonTok, ## ;
-    javaSingleLessThanTok,  ## <
+    javaSemicolonTok,       ## ;
+    javaLessThanTok,        ## <
     javaDoubleLessThanTok,  ## <<
-    javaDoubleLessThanSingleEqualTok, ## <<=
-    javaSingleLessThanSingleEqualTok, ## <=
-    javaSingleEqualTok,     ## =
+    javaDoubleLessThanEqualTok, ## <<=
+    javaLessThanEqualTok,   ## <=
+    javaEqualTok,           ## =
     javaDoubleEqualTok,     ## ==
-    javaSingleGreaterThanTok, ## >
-    javaSingleGreaterThanSingleEqualTok, ## >=
+    javaGreaterThanTok,     ## >
+    javaGreaterThanEqualTok, ## >=
     javaDoubleGreaterThanTok, ## >>
-    javaDoubleGreaterThanSingleEqualTok, ## >>=
+    javaDoubleGreaterThanEqualTok, ## >>=
     javaTripleGreaterThanTok, ## >>>
-    javaTripleGreaterThanSingleEqualTok, ## >>>=
-    javaSingleQuestionTok,  ## ?
-    javaSingleAtTok,        ## @
-    javaSingleAtinterfaceTok, ## @interface
-    javaSingleLBrackTok,    ## [
-    javaSingleRBrackTok,    ## ]
-    javaSingleAccentTok,    ## ^
-    javaSingleAccentSingleEqualTok, ## ^=
+    javaTripleGreaterThanEqualTok, ## >>>=
+    javaQuestionTok,        ## ?
+    javaAtTok,              ## @
+    javaAtinterfaceTok,     ## @interface
+    javaLBrackTok,          ## [
+    javaRBrackTok,          ## ]
+    javaAccentTok,          ## ^
+    javaAccentEqualTok,     ## ^=
     javaAbstractTok,        ## abstract
     javaAssertTok,          ## assert
     javaBinaryIntegerLiteral, ## binary_integer_literal
@@ -230,486 +230,487 @@ type
     javaVolatileTok,        ## volatile
     javaWhileTok,           ## while
     javaWithTok,            ## with
-    javaSingleLCurlyTok,    ## {
-    javaSinglePipeTok,      ## |
-    javaSinglePipeSingleEqualTok, ## |=
+    javaLCurlyTok,          ## {
+    javaPipeTok,            ## |
+    javaPipeEqualTok,       ## |=
     javaDoublePipeTok,      ## ||
-    javaSingleRCurlyTok,    ## }
-    javaSingleTildeTok,     ## ~
+    javaRCurlyTok,          ## }
+    javaTildeTok,           ## ~
     javaSyntaxError          ## Tree-sitter parser syntax error
 type
   JavaNode* = distinct TSNode
 type
   JavaParser* = distinct PtsParser
 proc tsNodeType*(node: JavaNode): string
-proc kind*(node: JavaNode): JavaNodeKind =
-  case node.tsNodeType
-  of "_literal":
-    javaLiteral
-  of "_simple_type":
-    javaSimpleType
-  of "_type":
-    javaType
-  of "_unannotated_type":
-    javaUnannotatedType
-  of "declaration":
-    javaDeclaration
-  of "expression":
-    javaExpression
-  of "primary_expression":
-    javaPrimaryExpression
-  of "statement":
-    javaStatement
-  of "annotated_type":
-    javaAnnotatedType
-  of "annotation":
-    javaAnnotation
-  of "annotation_argument_list":
-    javaAnnotationArgumentList
-  of "annotation_type_body":
-    javaAnnotationTypeBody
-  of "annotation_type_declaration":
-    javaAnnotationTypeDeclaration
-  of "annotation_type_element_declaration":
-    javaAnnotationTypeElementDeclaration
-  of "argument_list":
-    javaArgumentList
-  of "array_access":
-    javaArrayAccess
-  of "array_creation_expression":
-    javaArrayCreationExpression
-  of "array_initializer":
-    javaArrayInitializer
-  of "array_type":
-    javaArrayType
-  of "assert_statement":
-    javaAssertStatement
-  of "assignment_expression":
-    javaAssignmentExpression
-  of "asterisk":
-    javaAsterisk
-  of "binary_expression":
-    javaBinaryExpression
-  of "block":
-    javaBlock
-  of "break_statement":
-    javaBreakStatement
-  of "cast_expression":
-    javaCastExpression
-  of "catch_clause":
-    javaCatchClause
-  of "catch_formal_parameter":
-    javaCatchFormalParameter
-  of "catch_type":
-    javaCatchType
-  of "class_body":
-    javaClassBody
-  of "class_declaration":
-    javaClassDeclaration
-  of "class_literal":
-    javaClassLiteral
-  of "constant_declaration":
-    javaConstantDeclaration
-  of "constructor_body":
-    javaConstructorBody
-  of "constructor_declaration":
-    javaConstructorDeclaration
-  of "continue_statement":
-    javaContinueStatement
-  of "dimensions":
-    javaDimensions
-  of "dimensions_expr":
-    javaDimensionsExpr
-  of "do_statement":
-    javaDoStatement
-  of "element_value_array_initializer":
-    javaElementValueArrayInitializer
-  of "element_value_pair":
-    javaElementValuePair
-  of "enhanced_for_statement":
-    javaEnhancedForStatement
-  of "enum_body":
-    javaEnumBody
-  of "enum_body_declarations":
-    javaEnumBodyDeclarations
-  of "enum_constant":
-    javaEnumConstant
-  of "enum_declaration":
-    javaEnumDeclaration
-  of "explicit_constructor_invocation":
-    javaExplicitConstructorInvocation
-  of "expression_statement":
-    javaExpressionStatement
-  of "extends_interfaces":
-    javaExtendsInterfaces
-  of "field_access":
-    javaFieldAccess
-  of "field_declaration":
-    javaFieldDeclaration
-  of "finally_clause":
-    javaFinallyClause
-  of "floating_point_type":
-    javaFloatingPointType
-  of "for_statement":
-    javaForStatement
-  of "formal_parameter":
-    javaFormalParameter
-  of "formal_parameters":
-    javaFormalParameters
-  of "generic_type":
-    javaGenericType
-  of "if_statement":
-    javaIfStatement
-  of "import_declaration":
-    javaImportDeclaration
-  of "inferred_parameters":
-    javaInferredParameters
-  of "instanceof_expression":
-    javaInstanceofExpression
-  of "integral_type":
-    javaIntegralType
-  of "interface_body":
-    javaInterfaceBody
-  of "interface_declaration":
-    javaInterfaceDeclaration
-  of "interface_type_list":
-    javaInterfaceTypeList
-  of "labeled_statement":
-    javaLabeledStatement
-  of "lambda_expression":
-    javaLambdaExpression
-  of "local_variable_declaration":
-    javaLocalVariableDeclaration
-  of "marker_annotation":
-    javaMarkerAnnotation
-  of "method_declaration":
-    javaMethodDeclaration
-  of "method_invocation":
-    javaMethodInvocation
-  of "method_reference":
-    javaMethodReference
-  of "modifiers":
-    javaModifiers
-  of "module_body":
-    javaModuleBody
-  of "module_declaration":
-    javaModuleDeclaration
-  of "module_directive":
-    javaModuleDirective
-  of "object_creation_expression":
-    javaObjectCreationExpression
-  of "package_declaration":
-    javaPackageDeclaration
-  of "parenthesized_expression":
-    javaParenthesizedExpression
-  of "program":
-    javaProgram
-  of "receiver_parameter":
-    javaReceiverParameter
-  of "requires_modifier":
-    javaRequiresModifier
-  of "resource":
-    javaResource
-  of "resource_specification":
-    javaResourceSpecification
-  of "return_statement":
-    javaReturnStatement
-  of "scoped_identifier":
-    javaScopedIdentifier
-  of "scoped_type_identifier":
-    javaScopedTypeIdentifier
-  of "spread_parameter":
-    javaSpreadParameter
-  of "static_initializer":
-    javaStaticInitializer
-  of "super_interfaces":
-    javaSuperInterfaces
-  of "superclass":
-    javaSuperclass
-  of "switch_block":
-    javaSwitchBlock
-  of "switch_label":
-    javaSwitchLabel
-  of "switch_statement":
-    javaSwitchStatement
-  of "synchronized_statement":
-    javaSynchronizedStatement
-  of "ternary_expression":
-    javaTernaryExpression
-  of "throw_statement":
-    javaThrowStatement
-  of "throws":
-    javaThrows
-  of "try_statement":
-    javaTryStatement
-  of "try_with_resources_statement":
-    javaTryWithResourcesStatement
-  of "type_arguments":
-    javaTypeArguments
-  of "type_bound":
-    javaTypeBound
-  of "type_parameter":
-    javaTypeParameter
-  of "type_parameters":
-    javaTypeParameters
-  of "unary_expression":
-    javaUnaryExpression
-  of "update_expression":
-    javaUpdateExpression
-  of "variable_declarator":
-    javaVariableDeclarator
-  of "while_statement":
-    javaWhileStatement
-  of "wildcard":
-    javaWildcard
-  of "!":
-    javaSingleExclamationTok
-  of "!=":
-    javaSingleExclamationSingleEqualTok
-  of "%":
-    javaSinglePercentTok
-  of "%=":
-    javaSinglePercentSingleEqualTok
-  of "&":
-    javaSingleAmpersandTok
-  of "&&":
-    javaDoubleAmpersandTok
-  of "&=":
-    javaSingleAmpersandSingleEqualTok
-  of "(":
-    javaSingleLParTok
-  of ")":
-    javaSingleRParTok
-  of "*":
-    javaSingleAsteriskTok
-  of "*=":
-    javaSingleAsteriskSingleEqualTok
-  of "+":
-    javaSinglePlusTok
-  of "++":
-    javaDoublePlusTok
-  of "+=":
-    javaSinglePlusSingleEqualTok
-  of ",":
-    javaSingleCommaTok
-  of "-":
-    javaSingleMinusTok
-  of "--":
-    javaDoubleMinusTok
-  of "-=":
-    javaSingleMinusSingleEqualTok
-  of "->":
-    javaSingleMinusSingleGreaterThanTok
-  of ".":
-    javaSingleDotTok
-  of "...":
-    javaTripleDotTok
-  of "/":
-    javaSingleSlashTok
-  of "/=":
-    javaSingleSlashSingleEqualTok
-  of ":":
-    javaSingleColonTok
-  of "::":
-    javaDoubleColonTok
-  of ";":
-    javaSingleSemicolonTok
-  of "<":
-    javaSingleLessThanTok
-  of "<<":
-    javaDoubleLessThanTok
-  of "<<=":
-    javaDoubleLessThanSingleEqualTok
-  of "<=":
-    javaSingleLessThanSingleEqualTok
-  of "=":
-    javaSingleEqualTok
-  of "==":
-    javaDoubleEqualTok
-  of ">":
-    javaSingleGreaterThanTok
-  of ">=":
-    javaSingleGreaterThanSingleEqualTok
-  of ">>":
-    javaDoubleGreaterThanTok
-  of ">>=":
-    javaDoubleGreaterThanSingleEqualTok
-  of ">>>":
-    javaTripleGreaterThanTok
-  of ">>>=":
-    javaTripleGreaterThanSingleEqualTok
-  of "?":
-    javaSingleQuestionTok
-  of "@":
-    javaSingleAtTok
-  of "@interface":
-    javaSingleAtinterfaceTok
-  of "[":
-    javaSingleLBrackTok
-  of "]":
-    javaSingleRBrackTok
-  of "^":
-    javaSingleAccentTok
-  of "^=":
-    javaSingleAccentSingleEqualTok
-  of "abstract":
-    javaAbstractTok
-  of "assert":
-    javaAssertTok
-  of "binary_integer_literal":
-    javaBinaryIntegerLiteral
-  of "boolean_type":
-    javaBooleanType
-  of "break":
-    javaBreakTok
-  of "byte":
-    javaByteTok
-  of "case":
-    javaCaseTok
-  of "catch":
-    javaCatchTok
-  of "char":
-    javaCharTok
-  of "character_literal":
-    javaCharacterLiteral
-  of "class":
-    javaClassTok
-  of "comment":
-    javaComment
-  of "continue":
-    javaContinueTok
-  of "decimal_floating_point_literal":
-    javaDecimalFloatingPointLiteral
-  of "decimal_integer_literal":
-    javaDecimalIntegerLiteral
-  of "default":
-    javaDefaultTok
-  of "do":
-    javaDoTok
-  of "double":
-    javaDoubleTok
-  of "else":
-    javaElseTok
-  of "enum":
-    javaEnumTok
-  of "exports":
-    javaExportsTok
-  of "extends":
-    javaExtendsTok
-  of "false":
-    javaFalse
-  of "final":
-    javaFinalTok
-  of "finally":
-    javaFinallyTok
-  of "float":
-    javaFloatTok
-  of "for":
-    javaForTok
-  of "hex_floating_point_literal":
-    javaHexFloatingPointLiteral
-  of "hex_integer_literal":
-    javaHexIntegerLiteral
-  of "identifier":
-    javaIdentifier
-  of "if":
-    javaIfTok
-  of "implements":
-    javaImplementsTok
-  of "import":
-    javaImportTok
-  of "instanceof":
-    javaInstanceofTok
-  of "int":
-    javaIntTok
-  of "interface":
-    javaInterfaceTok
-  of "long":
-    javaLongTok
-  of "module":
-    javaModuleTok
-  of "native":
-    javaNativeTok
-  of "new":
-    javaNewTok
-  of "null_literal":
-    javaNullLiteral
-  of "octal_integer_literal":
-    javaOctalIntegerLiteral
-  of "open":
-    javaOpenTok
-  of "opens":
-    javaOpensTok
-  of "package":
-    javaPackageTok
-  of "private":
-    javaPrivateTok
-  of "protected":
-    javaProtectedTok
-  of "provides":
-    javaProvidesTok
-  of "public":
-    javaPublicTok
-  of "requires":
-    javaRequiresTok
-  of "return":
-    javaReturnTok
-  of "short":
-    javaShortTok
-  of "static":
-    javaStaticTok
-  of "strictfp":
-    javaStrictfpTok
-  of "string_literal":
-    javaStringLiteral
-  of "super":
-    javaSuper
-  of "switch":
-    javaSwitchTok
-  of "synchronized":
-    javaSynchronizedTok
-  of "this":
-    javaThis
-  of "throw":
-    javaThrowTok
-  of "to":
-    javaToTok
-  of "transient":
-    javaTransientTok
-  of "transitive":
-    javaTransitiveTok
-  of "true":
-    javaTrue
-  of "try":
-    javaTryTok
-  of "type_identifier":
-    javaTypeIdentifier
-  of "uses":
-    javaUsesTok
-  of "void_type":
-    javaVoidType
-  of "volatile":
-    javaVolatileTok
-  of "while":
-    javaWhileTok
-  of "with":
-    javaWithTok
-  of "{":
-    javaSingleLCurlyTok
-  of "|":
-    javaSinglePipeTok
-  of "|=":
-    javaSinglePipeSingleEqualTok
-  of "||":
-    javaDoublePipeTok
-  of "}":
-    javaSingleRCurlyTok
-  of "~":
-    javaSingleTildeTok
-  of "ERROR":
-    javaSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_literal":
+      javaLiteral
+    of "_simple_type":
+      javaSimpleType
+    of "_type":
+      javaType
+    of "_unannotated_type":
+      javaUnannotatedType
+    of "declaration":
+      javaDeclaration
+    of "expression":
+      javaExpression
+    of "primary_expression":
+      javaPrimaryExpression
+    of "statement":
+      javaStatement
+    of "annotated_type":
+      javaAnnotatedType
+    of "annotation":
+      javaAnnotation
+    of "annotation_argument_list":
+      javaAnnotationArgumentList
+    of "annotation_type_body":
+      javaAnnotationTypeBody
+    of "annotation_type_declaration":
+      javaAnnotationTypeDeclaration
+    of "annotation_type_element_declaration":
+      javaAnnotationTypeElementDeclaration
+    of "argument_list":
+      javaArgumentList
+    of "array_access":
+      javaArrayAccess
+    of "array_creation_expression":
+      javaArrayCreationExpression
+    of "array_initializer":
+      javaArrayInitializer
+    of "array_type":
+      javaArrayType
+    of "assert_statement":
+      javaAssertStatement
+    of "assignment_expression":
+      javaAssignmentExpression
+    of "asterisk":
+      javaAsterisk
+    of "binary_expression":
+      javaBinaryExpression
+    of "block":
+      javaBlock
+    of "break_statement":
+      javaBreakStatement
+    of "cast_expression":
+      javaCastExpression
+    of "catch_clause":
+      javaCatchClause
+    of "catch_formal_parameter":
+      javaCatchFormalParameter
+    of "catch_type":
+      javaCatchType
+    of "class_body":
+      javaClassBody
+    of "class_declaration":
+      javaClassDeclaration
+    of "class_literal":
+      javaClassLiteral
+    of "constant_declaration":
+      javaConstantDeclaration
+    of "constructor_body":
+      javaConstructorBody
+    of "constructor_declaration":
+      javaConstructorDeclaration
+    of "continue_statement":
+      javaContinueStatement
+    of "dimensions":
+      javaDimensions
+    of "dimensions_expr":
+      javaDimensionsExpr
+    of "do_statement":
+      javaDoStatement
+    of "element_value_array_initializer":
+      javaElementValueArrayInitializer
+    of "element_value_pair":
+      javaElementValuePair
+    of "enhanced_for_statement":
+      javaEnhancedForStatement
+    of "enum_body":
+      javaEnumBody
+    of "enum_body_declarations":
+      javaEnumBodyDeclarations
+    of "enum_constant":
+      javaEnumConstant
+    of "enum_declaration":
+      javaEnumDeclaration
+    of "explicit_constructor_invocation":
+      javaExplicitConstructorInvocation
+    of "expression_statement":
+      javaExpressionStatement
+    of "extends_interfaces":
+      javaExtendsInterfaces
+    of "field_access":
+      javaFieldAccess
+    of "field_declaration":
+      javaFieldDeclaration
+    of "finally_clause":
+      javaFinallyClause
+    of "floating_point_type":
+      javaFloatingPointType
+    of "for_statement":
+      javaForStatement
+    of "formal_parameter":
+      javaFormalParameter
+    of "formal_parameters":
+      javaFormalParameters
+    of "generic_type":
+      javaGenericType
+    of "if_statement":
+      javaIfStatement
+    of "import_declaration":
+      javaImportDeclaration
+    of "inferred_parameters":
+      javaInferredParameters
+    of "instanceof_expression":
+      javaInstanceofExpression
+    of "integral_type":
+      javaIntegralType
+    of "interface_body":
+      javaInterfaceBody
+    of "interface_declaration":
+      javaInterfaceDeclaration
+    of "interface_type_list":
+      javaInterfaceTypeList
+    of "labeled_statement":
+      javaLabeledStatement
+    of "lambda_expression":
+      javaLambdaExpression
+    of "local_variable_declaration":
+      javaLocalVariableDeclaration
+    of "marker_annotation":
+      javaMarkerAnnotation
+    of "method_declaration":
+      javaMethodDeclaration
+    of "method_invocation":
+      javaMethodInvocation
+    of "method_reference":
+      javaMethodReference
+    of "modifiers":
+      javaModifiers
+    of "module_body":
+      javaModuleBody
+    of "module_declaration":
+      javaModuleDeclaration
+    of "module_directive":
+      javaModuleDirective
+    of "object_creation_expression":
+      javaObjectCreationExpression
+    of "package_declaration":
+      javaPackageDeclaration
+    of "parenthesized_expression":
+      javaParenthesizedExpression
+    of "program":
+      javaProgram
+    of "receiver_parameter":
+      javaReceiverParameter
+    of "requires_modifier":
+      javaRequiresModifier
+    of "resource":
+      javaResource
+    of "resource_specification":
+      javaResourceSpecification
+    of "return_statement":
+      javaReturnStatement
+    of "scoped_identifier":
+      javaScopedIdentifier
+    of "scoped_type_identifier":
+      javaScopedTypeIdentifier
+    of "spread_parameter":
+      javaSpreadParameter
+    of "static_initializer":
+      javaStaticInitializer
+    of "super_interfaces":
+      javaSuperInterfaces
+    of "superclass":
+      javaSuperclass
+    of "switch_block":
+      javaSwitchBlock
+    of "switch_label":
+      javaSwitchLabel
+    of "switch_statement":
+      javaSwitchStatement
+    of "synchronized_statement":
+      javaSynchronizedStatement
+    of "ternary_expression":
+      javaTernaryExpression
+    of "throw_statement":
+      javaThrowStatement
+    of "throws":
+      javaThrows
+    of "try_statement":
+      javaTryStatement
+    of "try_with_resources_statement":
+      javaTryWithResourcesStatement
+    of "type_arguments":
+      javaTypeArguments
+    of "type_bound":
+      javaTypeBound
+    of "type_parameter":
+      javaTypeParameter
+    of "type_parameters":
+      javaTypeParameters
+    of "unary_expression":
+      javaUnaryExpression
+    of "update_expression":
+      javaUpdateExpression
+    of "variable_declarator":
+      javaVariableDeclarator
+    of "while_statement":
+      javaWhileStatement
+    of "wildcard":
+      javaWildcard
+    of "!":
+      javaExclamationTok
+    of "!=":
+      javaExclamationEqualTok
+    of "%":
+      javaPercentTok
+    of "%=":
+      javaPercentEqualTok
+    of "&":
+      javaAmpersandTok
+    of "&&":
+      javaDoubleAmpersandTok
+    of "&=":
+      javaAmpersandEqualTok
+    of "(":
+      javaLParTok
+    of ")":
+      javaRParTok
+    of "*":
+      javaAsteriskTok
+    of "*=":
+      javaAsteriskEqualTok
+    of "+":
+      javaPlusTok
+    of "++":
+      javaDoublePlusTok
+    of "+=":
+      javaPlusEqualTok
+    of ",":
+      javaCommaTok
+    of "-":
+      javaMinusTok
+    of "--":
+      javaDoubleMinusTok
+    of "-=":
+      javaMinusEqualTok
+    of "->":
+      javaMinusGreaterThanTok
+    of ".":
+      javaDotTok
+    of "...":
+      javaTripleDotTok
+    of "/":
+      javaSlashTok
+    of "/=":
+      javaSlashEqualTok
+    of ":":
+      javaColonTok
+    of "::":
+      javaDoubleColonTok
+    of ";":
+      javaSemicolonTok
+    of "<":
+      javaLessThanTok
+    of "<<":
+      javaDoubleLessThanTok
+    of "<<=":
+      javaDoubleLessThanEqualTok
+    of "<=":
+      javaLessThanEqualTok
+    of "=":
+      javaEqualTok
+    of "==":
+      javaDoubleEqualTok
+    of ">":
+      javaGreaterThanTok
+    of ">=":
+      javaGreaterThanEqualTok
+    of ">>":
+      javaDoubleGreaterThanTok
+    of ">>=":
+      javaDoubleGreaterThanEqualTok
+    of ">>>":
+      javaTripleGreaterThanTok
+    of ">>>=":
+      javaTripleGreaterThanEqualTok
+    of "?":
+      javaQuestionTok
+    of "@":
+      javaAtTok
+    of "@interface":
+      javaAtinterfaceTok
+    of "[":
+      javaLBrackTok
+    of "]":
+      javaRBrackTok
+    of "^":
+      javaAccentTok
+    of "^=":
+      javaAccentEqualTok
+    of "abstract":
+      javaAbstractTok
+    of "assert":
+      javaAssertTok
+    of "binary_integer_literal":
+      javaBinaryIntegerLiteral
+    of "boolean_type":
+      javaBooleanType
+    of "break":
+      javaBreakTok
+    of "byte":
+      javaByteTok
+    of "case":
+      javaCaseTok
+    of "catch":
+      javaCatchTok
+    of "char":
+      javaCharTok
+    of "character_literal":
+      javaCharacterLiteral
+    of "class":
+      javaClassTok
+    of "comment":
+      javaComment
+    of "continue":
+      javaContinueTok
+    of "decimal_floating_point_literal":
+      javaDecimalFloatingPointLiteral
+    of "decimal_integer_literal":
+      javaDecimalIntegerLiteral
+    of "default":
+      javaDefaultTok
+    of "do":
+      javaDoTok
+    of "double":
+      javaDoubleTok
+    of "else":
+      javaElseTok
+    of "enum":
+      javaEnumTok
+    of "exports":
+      javaExportsTok
+    of "extends":
+      javaExtendsTok
+    of "false":
+      javaFalse
+    of "final":
+      javaFinalTok
+    of "finally":
+      javaFinallyTok
+    of "float":
+      javaFloatTok
+    of "for":
+      javaForTok
+    of "hex_floating_point_literal":
+      javaHexFloatingPointLiteral
+    of "hex_integer_literal":
+      javaHexIntegerLiteral
+    of "identifier":
+      javaIdentifier
+    of "if":
+      javaIfTok
+    of "implements":
+      javaImplementsTok
+    of "import":
+      javaImportTok
+    of "instanceof":
+      javaInstanceofTok
+    of "int":
+      javaIntTok
+    of "interface":
+      javaInterfaceTok
+    of "long":
+      javaLongTok
+    of "module":
+      javaModuleTok
+    of "native":
+      javaNativeTok
+    of "new":
+      javaNewTok
+    of "null_literal":
+      javaNullLiteral
+    of "octal_integer_literal":
+      javaOctalIntegerLiteral
+    of "open":
+      javaOpenTok
+    of "opens":
+      javaOpensTok
+    of "package":
+      javaPackageTok
+    of "private":
+      javaPrivateTok
+    of "protected":
+      javaProtectedTok
+    of "provides":
+      javaProvidesTok
+    of "public":
+      javaPublicTok
+    of "requires":
+      javaRequiresTok
+    of "return":
+      javaReturnTok
+    of "short":
+      javaShortTok
+    of "static":
+      javaStaticTok
+    of "strictfp":
+      javaStrictfpTok
+    of "string_literal":
+      javaStringLiteral
+    of "super":
+      javaSuper
+    of "switch":
+      javaSwitchTok
+    of "synchronized":
+      javaSynchronizedTok
+    of "this":
+      javaThis
+    of "throw":
+      javaThrowTok
+    of "to":
+      javaToTok
+    of "transient":
+      javaTransientTok
+    of "transitive":
+      javaTransitiveTok
+    of "true":
+      javaTrue
+    of "try":
+      javaTryTok
+    of "type_identifier":
+      javaTypeIdentifier
+    of "uses":
+      javaUsesTok
+    of "void_type":
+      javaVoidType
+    of "volatile":
+      javaVolatileTok
+    of "while":
+      javaWhileTok
+    of "with":
+      javaWithTok
+    of "{":
+      javaLCurlyTok
+    of "|":
+      javaPipeTok
+    of "|=":
+      javaPipeEqualTok
+    of "||":
+      javaDoublePipeTok
+    of "}":
+      javaRCurlyTok
+    of "~":
+      javaTildeTok
+    of "ERROR":
+      javaSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_java(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: JavaNode): string =
@@ -722,6 +723,10 @@ proc newJavaParser*(): JavaParser =
 proc parseString*(parser: JavaParser; str: string): JavaNode =
   JavaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseJavaString*(str: string): JavaNode =
+  let parser = newJavaParser()
+  return parseString(parser, str)
 
 func `[]`*(node: JavaNode; idx: int; withUnnamed: bool = false): JavaNode =
   if withUnnamed:
@@ -742,8 +747,9 @@ iterator items*(node: JavaNode; withUnnamed: bool = false): JavaNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: JavaNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: JavaNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: JavaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: JavaNode; level: int): seq[string] =

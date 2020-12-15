@@ -97,48 +97,48 @@ type
     pythonWithItem,         ## with_item
     pythonWithStatement,    ## with_statement
     pythonYield,            ## yield
-    pythonSingleExclamationSingleEqualTok, ## !=
-    pythonSingleQuoteTok,   ## "
-    pythonSinglePercentTok, ## %
-    pythonSinglePercentSingleEqualTok, ## %=
-    pythonSingleAmpersandTok, ## &
-    pythonSingleAmpersandSingleEqualTok, ## &=
-    pythonSingleLParTok,    ## (
-    pythonSingleRParTok,    ## )
-    pythonSingleAsteriskTok, ## *
+    pythonExclamationEqualTok, ## !=
+    pythonQuoteTok,         ## "
+    pythonPercentTok,       ## %
+    pythonPercentEqualTok,  ## %=
+    pythonAmpersandTok,     ## &
+    pythonAmpersandEqualTok, ## &=
+    pythonLParTok,          ## (
+    pythonRParTok,          ## )
+    pythonAsteriskTok,      ## *
     pythonDoubleAsteriskTok, ## **
-    pythonDoubleAsteriskSingleEqualTok, ## **=
-    pythonSingleAsteriskSingleEqualTok, ## *=
-    pythonSinglePlusTok,    ## +
-    pythonSinglePlusSingleEqualTok, ## +=
-    pythonSingleCommaTok,   ## ,
-    pythonSingleMinusTok,   ## -
-    pythonSingleMinusSingleEqualTok, ## -=
-    pythonSingleMinusSingleGreaterThanTok, ## ->
-    pythonSingleDotTok,     ## .
-    pythonSingleSlashTok,   ## /
+    pythonDoubleAsteriskEqualTok, ## **=
+    pythonAsteriskEqualTok, ## *=
+    pythonPlusTok,          ## +
+    pythonPlusEqualTok,     ## +=
+    pythonCommaTok,         ## ,
+    pythonMinusTok,         ## -
+    pythonMinusEqualTok,    ## -=
+    pythonMinusGreaterThanTok, ## ->
+    pythonDotTok,           ## .
+    pythonSlashTok,         ## /
     pythonDoubleSlashTok,   ## //
-    pythonDoubleSlashSingleEqualTok, ## //=
-    pythonSingleSlashSingleEqualTok, ## /=
-    pythonSingleColonTok,   ## :
-    pythonSingleColonSingleEqualTok, ## :=
-    pythonSingleLessThanTok, ## <
+    pythonDoubleSlashEqualTok, ## //=
+    pythonSlashEqualTok,    ## /=
+    pythonColonTok,         ## :
+    pythonColonEqualTok,    ## :=
+    pythonLessThanTok,      ## <
     pythonDoubleLessThanTok, ## <<
-    pythonDoubleLessThanSingleEqualTok, ## <<=
-    pythonSingleLessThanSingleEqualTok, ## <=
-    pythonSingleLessThanSingleGreaterThanTok, ## <>
-    pythonSingleEqualTok,   ## =
+    pythonDoubleLessThanEqualTok, ## <<=
+    pythonLessThanEqualTok, ## <=
+    pythonLessThanGreaterThanTok, ## <>
+    pythonEqualTok,         ## =
     pythonDoubleEqualTok,   ## ==
-    pythonSingleGreaterThanTok, ## >
-    pythonSingleGreaterThanSingleEqualTok, ## >=
+    pythonGreaterThanTok,   ## >
+    pythonGreaterThanEqualTok, ## >=
     pythonDoubleGreaterThanTok, ## >>
-    pythonDoubleGreaterThanSingleEqualTok, ## >>=
-    pythonSingleAtTok,      ## @
-    pythonSingleAtSingleEqualTok, ## @=
-    pythonSingleLBrackTok,  ## [
-    pythonSingleRBrackTok,  ## ]
-    pythonSingleAccentTok,  ## ^
-    pythonSingleAccentSingleEqualTok, ## ^=
+    pythonDoubleGreaterThanEqualTok, ## >>=
+    pythonAtTok,            ## @
+    pythonAtEqualTok,       ## @=
+    pythonLBrackTok,        ## [
+    pythonRBrackTok,        ## ]
+    pythonAccentTok,        ## ^
+    pythonAccentEqualTok,   ## ^=
     pythonFutureTok,        ## __future__
     pythonAndTok,           ## and
     pythonAsTok,            ## as
@@ -184,11 +184,11 @@ type
     pythonWhileTok,         ## while
     pythonWithTok,          ## with
     pythonYieldTok,         ## yield
-    pythonSingleLCurlyTok,  ## {
-    pythonSinglePipeTok,    ## |
-    pythonSinglePipeSingleEqualTok, ## |=
-    pythonSingleRCurlyTok,  ## }
-    pythonSingleTildeTok,   ## ~
+    pythonLCurlyTok,        ## {
+    pythonPipeTok,          ## |
+    pythonPipeEqualTok,     ## |=
+    pythonRCurlyTok,        ## }
+    pythonTildeTok,         ## ~
     pythonSyntaxError        ## Tree-sitter parser syntax error
 type
   PythonExternalTok* = enum
@@ -203,376 +203,377 @@ type
 type
   PythonParser* = distinct PtsParser
 proc tsNodeType*(node: PythonNode): string
-proc kind*(node: PythonNode): PythonNodeKind =
-  case node.tsNodeType
-  of "_compound_statement":
-    pythonCompoundStatement
-  of "_simple_statement":
-    pythonSimpleStatement
-  of "expression":
-    pythonExpression
-  of "parameter":
-    pythonParameter
-  of "pattern":
-    pythonPattern
-  of "primary_expression":
-    pythonPrimaryExpression
-  of "aliased_import":
-    pythonAliasedImport
-  of "argument_list":
-    pythonArgumentList
-  of "assert_statement":
-    pythonAssertStatement
-  of "assignment":
-    pythonAssignment
-  of "attribute":
-    pythonAttribute
-  of "augmented_assignment":
-    pythonAugmentedAssignment
-  of "await":
-    pythonAwait
-  of "binary_operator":
-    pythonBinaryOperator
-  of "block":
-    pythonBlock
-  of "boolean_operator":
-    pythonBooleanOperator
-  of "break_statement":
-    pythonBreakStatement
-  of "call":
-    pythonCall
-  of "chevron":
-    pythonChevron
-  of "class_definition":
-    pythonClassDefinition
-  of "comparison_operator":
-    pythonComparisonOperator
-  of "concatenated_string":
-    pythonConcatenatedString
-  of "conditional_expression":
-    pythonConditionalExpression
-  of "continue_statement":
-    pythonContinueStatement
-  of "decorated_definition":
-    pythonDecoratedDefinition
-  of "decorator":
-    pythonDecorator
-  of "default_parameter":
-    pythonDefaultParameter
-  of "delete_statement":
-    pythonDeleteStatement
-  of "dictionary":
-    pythonDictionary
-  of "dictionary_comprehension":
-    pythonDictionaryComprehension
-  of "dictionary_splat":
-    pythonDictionarySplat
-  of "dictionary_splat_pattern":
-    pythonDictionarySplatPattern
-  of "dotted_name":
-    pythonDottedName
-  of "elif_clause":
-    pythonElifClause
-  of "else_clause":
-    pythonElseClause
-  of "except_clause":
-    pythonExceptClause
-  of "exec_statement":
-    pythonExecStatement
-  of "expression_list":
-    pythonExpressionList
-  of "expression_statement":
-    pythonExpressionStatement
-  of "finally_clause":
-    pythonFinallyClause
-  of "for_in_clause":
-    pythonForInClause
-  of "for_statement":
-    pythonForStatement
-  of "format_expression":
-    pythonFormatExpression
-  of "format_specifier":
-    pythonFormatSpecifier
-  of "function_definition":
-    pythonFunctionDefinition
-  of "future_import_statement":
-    pythonFutureImportStatement
-  of "generator_expression":
-    pythonGeneratorExpression
-  of "global_statement":
-    pythonGlobalStatement
-  of "if_clause":
-    pythonIfClause
-  of "if_statement":
-    pythonIfStatement
-  of "import_from_statement":
-    pythonImportFromStatement
-  of "import_prefix":
-    pythonImportPrefix
-  of "import_statement":
-    pythonImportStatement
-  of "interpolation":
-    pythonInterpolation
-  of "keyword_argument":
-    pythonKeywordArgument
-  of "lambda":
-    pythonLambda
-  of "lambda_parameters":
-    pythonLambdaParameters
-  of "list":
-    pythonList
-  of "list_comprehension":
-    pythonListComprehension
-  of "list_pattern":
-    pythonListPattern
-  of "list_splat":
-    pythonListSplat
-  of "list_splat_pattern":
-    pythonListSplatPattern
-  of "module":
-    pythonModule
-  of "named_expression":
-    pythonNamedExpression
-  of "nonlocal_statement":
-    pythonNonlocalStatement
-  of "not_operator":
-    pythonNotOperator
-  of "pair":
-    pythonPair
-  of "parameters":
-    pythonParameters
-  of "parenthesized_expression":
-    pythonParenthesizedExpression
-  of "parenthesized_list_splat":
-    pythonParenthesizedListSplat
-  of "pass_statement":
-    pythonPassStatement
-  of "pattern_list":
-    pythonPatternList
-  of "print_statement":
-    pythonPrintStatement
-  of "raise_statement":
-    pythonRaiseStatement
-  of "relative_import":
-    pythonRelativeImport
-  of "return_statement":
-    pythonReturnStatement
-  of "set":
-    pythonSet
-  of "set_comprehension":
-    pythonSetComprehension
-  of "slice":
-    pythonSlice
-  of "string":
-    pythonString
-  of "subscript":
-    pythonSubscript
-  of "try_statement":
-    pythonTryStatement
-  of "tuple":
-    pythonTuple
-  of "tuple_pattern":
-    pythonTuplePattern
-  of "type":
-    pythonType
-  of "typed_default_parameter":
-    pythonTypedDefaultParameter
-  of "typed_parameter":
-    pythonTypedParameter
-  of "unary_operator":
-    pythonUnaryOperator
-  of "while_statement":
-    pythonWhileStatement
-  of "wildcard_import":
-    pythonWildcardImport
-  of "with_item":
-    pythonWithItem
-  of "with_statement":
-    pythonWithStatement
-  of "yield":
-    pythonYield
-  of "!=":
-    pythonSingleExclamationSingleEqualTok
-  of "\"":
-    pythonSingleQuoteTok
-  of "%":
-    pythonSinglePercentTok
-  of "%=":
-    pythonSinglePercentSingleEqualTok
-  of "&":
-    pythonSingleAmpersandTok
-  of "&=":
-    pythonSingleAmpersandSingleEqualTok
-  of "(":
-    pythonSingleLParTok
-  of ")":
-    pythonSingleRParTok
-  of "*":
-    pythonSingleAsteriskTok
-  of "**":
-    pythonDoubleAsteriskTok
-  of "**=":
-    pythonDoubleAsteriskSingleEqualTok
-  of "*=":
-    pythonSingleAsteriskSingleEqualTok
-  of "+":
-    pythonSinglePlusTok
-  of "+=":
-    pythonSinglePlusSingleEqualTok
-  of ",":
-    pythonSingleCommaTok
-  of "-":
-    pythonSingleMinusTok
-  of "-=":
-    pythonSingleMinusSingleEqualTok
-  of "->":
-    pythonSingleMinusSingleGreaterThanTok
-  of ".":
-    pythonSingleDotTok
-  of "/":
-    pythonSingleSlashTok
-  of "//":
-    pythonDoubleSlashTok
-  of "//=":
-    pythonDoubleSlashSingleEqualTok
-  of "/=":
-    pythonSingleSlashSingleEqualTok
-  of ":":
-    pythonSingleColonTok
-  of ":=":
-    pythonSingleColonSingleEqualTok
-  of "<":
-    pythonSingleLessThanTok
-  of "<<":
-    pythonDoubleLessThanTok
-  of "<<=":
-    pythonDoubleLessThanSingleEqualTok
-  of "<=":
-    pythonSingleLessThanSingleEqualTok
-  of "<>":
-    pythonSingleLessThanSingleGreaterThanTok
-  of "=":
-    pythonSingleEqualTok
-  of "==":
-    pythonDoubleEqualTok
-  of ">":
-    pythonSingleGreaterThanTok
-  of ">=":
-    pythonSingleGreaterThanSingleEqualTok
-  of ">>":
-    pythonDoubleGreaterThanTok
-  of ">>=":
-    pythonDoubleGreaterThanSingleEqualTok
-  of "@":
-    pythonSingleAtTok
-  of "@=":
-    pythonSingleAtSingleEqualTok
-  of "[":
-    pythonSingleLBrackTok
-  of "]":
-    pythonSingleRBrackTok
-  of "^":
-    pythonSingleAccentTok
-  of "^=":
-    pythonSingleAccentSingleEqualTok
-  of "__future__":
-    pythonFutureTok
-  of "and":
-    pythonAndTok
-  of "as":
-    pythonAsTok
-  of "assert":
-    pythonAssertTok
-  of "async":
-    pythonAsyncTok
-  of "break":
-    pythonBreakTok
-  of "class":
-    pythonClassTok
-  of "comment":
-    pythonComment
-  of "continue":
-    pythonContinueTok
-  of "def":
-    pythonDefTok
-  of "del":
-    pythonDelTok
-  of "elif":
-    pythonElifTok
-  of "ellipsis":
-    pythonEllipsis
-  of "else":
-    pythonElseTok
-  of "escape_sequence":
-    pythonEscapeSequence
-  of "except":
-    pythonExceptTok
-  of "exec":
-    pythonExecTok
-  of "false":
-    pythonFalse
-  of "finally":
-    pythonFinallyTok
-  of "float":
-    pythonFloat
-  of "for":
-    pythonForTok
-  of "from":
-    pythonFromTok
-  of "global":
-    pythonGlobalTok
-  of "identifier":
-    pythonIdentifier
-  of "if":
-    pythonIfTok
-  of "import":
-    pythonImportTok
-  of "in":
-    pythonInTok
-  of "integer":
-    pythonInteger
-  of "is":
-    pythonIsTok
-  of "none":
-    pythonNone
-  of "nonlocal":
-    pythonNonlocalTok
-  of "not":
-    pythonNotTok
-  of "or":
-    pythonOrTok
-  of "pass":
-    pythonPassTok
-  of "print":
-    pythonPrintTok
-  of "raise":
-    pythonRaiseTok
-  of "return":
-    pythonReturnTok
-  of "true":
-    pythonTrue
-  of "try":
-    pythonTryTok
-  of "type_conversion":
-    pythonTypeConversion
-  of "while":
-    pythonWhileTok
-  of "with":
-    pythonWithTok
-  of "{":
-    pythonSingleLCurlyTok
-  of "|":
-    pythonSinglePipeTok
-  of "|=":
-    pythonSinglePipeSingleEqualTok
-  of "}":
-    pythonSingleRCurlyTok
-  of "~":
-    pythonSingleTildeTok
-  of "ERROR":
-    pythonSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_compound_statement":
+      pythonCompoundStatement
+    of "_simple_statement":
+      pythonSimpleStatement
+    of "expression":
+      pythonExpression
+    of "parameter":
+      pythonParameter
+    of "pattern":
+      pythonPattern
+    of "primary_expression":
+      pythonPrimaryExpression
+    of "aliased_import":
+      pythonAliasedImport
+    of "argument_list":
+      pythonArgumentList
+    of "assert_statement":
+      pythonAssertStatement
+    of "assignment":
+      pythonAssignment
+    of "attribute":
+      pythonAttribute
+    of "augmented_assignment":
+      pythonAugmentedAssignment
+    of "await":
+      pythonAwait
+    of "binary_operator":
+      pythonBinaryOperator
+    of "block":
+      pythonBlock
+    of "boolean_operator":
+      pythonBooleanOperator
+    of "break_statement":
+      pythonBreakStatement
+    of "call":
+      pythonCall
+    of "chevron":
+      pythonChevron
+    of "class_definition":
+      pythonClassDefinition
+    of "comparison_operator":
+      pythonComparisonOperator
+    of "concatenated_string":
+      pythonConcatenatedString
+    of "conditional_expression":
+      pythonConditionalExpression
+    of "continue_statement":
+      pythonContinueStatement
+    of "decorated_definition":
+      pythonDecoratedDefinition
+    of "decorator":
+      pythonDecorator
+    of "default_parameter":
+      pythonDefaultParameter
+    of "delete_statement":
+      pythonDeleteStatement
+    of "dictionary":
+      pythonDictionary
+    of "dictionary_comprehension":
+      pythonDictionaryComprehension
+    of "dictionary_splat":
+      pythonDictionarySplat
+    of "dictionary_splat_pattern":
+      pythonDictionarySplatPattern
+    of "dotted_name":
+      pythonDottedName
+    of "elif_clause":
+      pythonElifClause
+    of "else_clause":
+      pythonElseClause
+    of "except_clause":
+      pythonExceptClause
+    of "exec_statement":
+      pythonExecStatement
+    of "expression_list":
+      pythonExpressionList
+    of "expression_statement":
+      pythonExpressionStatement
+    of "finally_clause":
+      pythonFinallyClause
+    of "for_in_clause":
+      pythonForInClause
+    of "for_statement":
+      pythonForStatement
+    of "format_expression":
+      pythonFormatExpression
+    of "format_specifier":
+      pythonFormatSpecifier
+    of "function_definition":
+      pythonFunctionDefinition
+    of "future_import_statement":
+      pythonFutureImportStatement
+    of "generator_expression":
+      pythonGeneratorExpression
+    of "global_statement":
+      pythonGlobalStatement
+    of "if_clause":
+      pythonIfClause
+    of "if_statement":
+      pythonIfStatement
+    of "import_from_statement":
+      pythonImportFromStatement
+    of "import_prefix":
+      pythonImportPrefix
+    of "import_statement":
+      pythonImportStatement
+    of "interpolation":
+      pythonInterpolation
+    of "keyword_argument":
+      pythonKeywordArgument
+    of "lambda":
+      pythonLambda
+    of "lambda_parameters":
+      pythonLambdaParameters
+    of "list":
+      pythonList
+    of "list_comprehension":
+      pythonListComprehension
+    of "list_pattern":
+      pythonListPattern
+    of "list_splat":
+      pythonListSplat
+    of "list_splat_pattern":
+      pythonListSplatPattern
+    of "module":
+      pythonModule
+    of "named_expression":
+      pythonNamedExpression
+    of "nonlocal_statement":
+      pythonNonlocalStatement
+    of "not_operator":
+      pythonNotOperator
+    of "pair":
+      pythonPair
+    of "parameters":
+      pythonParameters
+    of "parenthesized_expression":
+      pythonParenthesizedExpression
+    of "parenthesized_list_splat":
+      pythonParenthesizedListSplat
+    of "pass_statement":
+      pythonPassStatement
+    of "pattern_list":
+      pythonPatternList
+    of "print_statement":
+      pythonPrintStatement
+    of "raise_statement":
+      pythonRaiseStatement
+    of "relative_import":
+      pythonRelativeImport
+    of "return_statement":
+      pythonReturnStatement
+    of "set":
+      pythonSet
+    of "set_comprehension":
+      pythonSetComprehension
+    of "slice":
+      pythonSlice
+    of "string":
+      pythonString
+    of "subscript":
+      pythonSubscript
+    of "try_statement":
+      pythonTryStatement
+    of "tuple":
+      pythonTuple
+    of "tuple_pattern":
+      pythonTuplePattern
+    of "type":
+      pythonType
+    of "typed_default_parameter":
+      pythonTypedDefaultParameter
+    of "typed_parameter":
+      pythonTypedParameter
+    of "unary_operator":
+      pythonUnaryOperator
+    of "while_statement":
+      pythonWhileStatement
+    of "wildcard_import":
+      pythonWildcardImport
+    of "with_item":
+      pythonWithItem
+    of "with_statement":
+      pythonWithStatement
+    of "yield":
+      pythonYield
+    of "!=":
+      pythonExclamationEqualTok
+    of "\"":
+      pythonQuoteTok
+    of "%":
+      pythonPercentTok
+    of "%=":
+      pythonPercentEqualTok
+    of "&":
+      pythonAmpersandTok
+    of "&=":
+      pythonAmpersandEqualTok
+    of "(":
+      pythonLParTok
+    of ")":
+      pythonRParTok
+    of "*":
+      pythonAsteriskTok
+    of "**":
+      pythonDoubleAsteriskTok
+    of "**=":
+      pythonDoubleAsteriskEqualTok
+    of "*=":
+      pythonAsteriskEqualTok
+    of "+":
+      pythonPlusTok
+    of "+=":
+      pythonPlusEqualTok
+    of ",":
+      pythonCommaTok
+    of "-":
+      pythonMinusTok
+    of "-=":
+      pythonMinusEqualTok
+    of "->":
+      pythonMinusGreaterThanTok
+    of ".":
+      pythonDotTok
+    of "/":
+      pythonSlashTok
+    of "//":
+      pythonDoubleSlashTok
+    of "//=":
+      pythonDoubleSlashEqualTok
+    of "/=":
+      pythonSlashEqualTok
+    of ":":
+      pythonColonTok
+    of ":=":
+      pythonColonEqualTok
+    of "<":
+      pythonLessThanTok
+    of "<<":
+      pythonDoubleLessThanTok
+    of "<<=":
+      pythonDoubleLessThanEqualTok
+    of "<=":
+      pythonLessThanEqualTok
+    of "<>":
+      pythonLessThanGreaterThanTok
+    of "=":
+      pythonEqualTok
+    of "==":
+      pythonDoubleEqualTok
+    of ">":
+      pythonGreaterThanTok
+    of ">=":
+      pythonGreaterThanEqualTok
+    of ">>":
+      pythonDoubleGreaterThanTok
+    of ">>=":
+      pythonDoubleGreaterThanEqualTok
+    of "@":
+      pythonAtTok
+    of "@=":
+      pythonAtEqualTok
+    of "[":
+      pythonLBrackTok
+    of "]":
+      pythonRBrackTok
+    of "^":
+      pythonAccentTok
+    of "^=":
+      pythonAccentEqualTok
+    of "__future__":
+      pythonFutureTok
+    of "and":
+      pythonAndTok
+    of "as":
+      pythonAsTok
+    of "assert":
+      pythonAssertTok
+    of "async":
+      pythonAsyncTok
+    of "break":
+      pythonBreakTok
+    of "class":
+      pythonClassTok
+    of "comment":
+      pythonComment
+    of "continue":
+      pythonContinueTok
+    of "def":
+      pythonDefTok
+    of "del":
+      pythonDelTok
+    of "elif":
+      pythonElifTok
+    of "ellipsis":
+      pythonEllipsis
+    of "else":
+      pythonElseTok
+    of "escape_sequence":
+      pythonEscapeSequence
+    of "except":
+      pythonExceptTok
+    of "exec":
+      pythonExecTok
+    of "false":
+      pythonFalse
+    of "finally":
+      pythonFinallyTok
+    of "float":
+      pythonFloat
+    of "for":
+      pythonForTok
+    of "from":
+      pythonFromTok
+    of "global":
+      pythonGlobalTok
+    of "identifier":
+      pythonIdentifier
+    of "if":
+      pythonIfTok
+    of "import":
+      pythonImportTok
+    of "in":
+      pythonInTok
+    of "integer":
+      pythonInteger
+    of "is":
+      pythonIsTok
+    of "none":
+      pythonNone
+    of "nonlocal":
+      pythonNonlocalTok
+    of "not":
+      pythonNotTok
+    of "or":
+      pythonOrTok
+    of "pass":
+      pythonPassTok
+    of "print":
+      pythonPrintTok
+    of "raise":
+      pythonRaiseTok
+    of "return":
+      pythonReturnTok
+    of "true":
+      pythonTrue
+    of "try":
+      pythonTryTok
+    of "type_conversion":
+      pythonTypeConversion
+    of "while":
+      pythonWhileTok
+    of "with":
+      pythonWithTok
+    of "{":
+      pythonLCurlyTok
+    of "|":
+      pythonPipeTok
+    of "|=":
+      pythonPipeEqualTok
+    of "}":
+      pythonRCurlyTok
+    of "~":
+      pythonTildeTok
+    of "ERROR":
+      pythonSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_python(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: PythonNode): string =
@@ -585,6 +586,10 @@ proc newPythonParser*(): PythonParser =
 proc parseString*(parser: PythonParser; str: string): PythonNode =
   PythonNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parsePythonString*(str: string): PythonNode =
+  let parser = newPythonParser()
+  return parseString(parser, str)
 
 func `[]`*(node: PythonNode; idx: int; withUnnamed: bool = false): PythonNode =
   if withUnnamed:
@@ -605,8 +610,9 @@ iterator items*(node: PythonNode; withUnnamed: bool = false): PythonNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: PythonNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: PythonNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: PythonNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: PythonNode; level: int): seq[string] =

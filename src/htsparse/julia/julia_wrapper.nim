@@ -78,34 +78,34 @@ type
     juliaUnaryExpression,   ## unary_expression
     juliaVariableDeclaration, ## variable_declaration
     juliaWhileStatement,    ## while_statement
-    juliaSingleNewlineTok,  ## 
+    juliaNewlineTok,        ## 
                              ## 
-    juliaSingleExclamationTok, ## !
-    juliaSingleQuoteTok,    ## "
-    juliaSingleDollarTok,   ## $
+    juliaExclamationTok,    ## !
+    juliaQuoteTok,          ## "
+    juliaDollarTok,         ## $
     juliaDoubleAmpersandTok, ## &&
-    juliaSingleApostropheTok, ## '
-    juliaSingleLParTok,     ## (
-    juliaSingleRParTok,     ## )
-    juliaSinglePlusTok,     ## +
-    juliaSingleCommaTok,    ## ,
-    juliaSingleMinusTok,    ## -
-    juliaSingleMinusSingleGreaterThanTok, ## ->
-    juliaSingleDotTok,      ## .
-    juliaSingleDotSingleApostropheTok, ## .'
+    juliaApostropheTok,     ## '
+    juliaLParTok,           ## (
+    juliaRParTok,           ## )
+    juliaPlusTok,           ## +
+    juliaCommaTok,          ## ,
+    juliaMinusTok,          ## -
+    juliaMinusGreaterThanTok, ## ->
+    juliaDotTok,            ## .
+    juliaDotApostropheTok,  ## .'
     juliaTripleDotTok,      ## ...
-    juliaSingleColonTok,    ## :
+    juliaColonTok,          ## :
     juliaDoubleColonTok,    ## ::
-    juliaSingleSemicolonTok, ## ;
-    juliaSingleLessThanSingleColonTok, ## <:
-    juliaSingleLessThanSinglePipeTok, ## <|
-    juliaSingleEqualTok,    ## =
-    juliaSingleEqualSingleGreaterThanTok, ## =>
-    juliaSingleGreaterThanSingleColonTok, ## >:
-    juliaSingleQuestionTok, ## ?
-    juliaSingleAtTok,       ## @
-    juliaSingleLBrackTok,   ## [
-    juliaSingleRBrackTok,   ## ]
+    juliaSemicolonTok,      ## ;
+    juliaLessThanColonTok,  ## <:
+    juliaLessThanPipeTok,   ## <|
+    juliaEqualTok,          ## =
+    juliaEqualGreaterThanTok, ## =>
+    juliaGreaterThanColonTok, ## >:
+    juliaQuestionTok,       ## ?
+    juliaAtTok,             ## @
+    juliaLBrackTok,         ## [
+    juliaRBrackTok,         ## ]
     juliaAbstractTok,       ## abstract
     juliaBeginTok,          ## begin
     juliaBlockComment,      ## block_comment
@@ -135,7 +135,6 @@ type
     juliaMutableTok,        ## mutable
     juliaNumber,            ## number
     juliaPrimitiveTok,      ## primitive
-    juliaQuoteTok,          ## quote
     juliaReturnTok,         ## return
     juliaStructTok,         ## struct
     juliaTripleString,      ## triple_string
@@ -143,16 +142,16 @@ type
     juliaTypeTok,           ## type
     juliaUsingTok,          ## using
     juliaWhileTok,          ## while
-    juliaSingleLCurlyTok,   ## {
-    juliaSinglePipeSingleGreaterThanTok, ## |>
+    juliaLCurlyTok,         ## {
+    juliaPipeGreaterThanTok, ## |>
     juliaDoublePipeTok,     ## ||
-    juliaSingleRCurlyTok,   ## }
-    juliaSingleTildeTok,    ## ~
-    juliaSingleÂSingle¬Tok, ## Â¬
-    juliaSingleâDoubleˆTok, ## âˆˆ
-    juliaSingleâSingleˆSinglešTok, ## âˆš
-    juliaSingleâSingleˆSingle›Tok, ## âˆ›
-    juliaSingleâSingleˆSingleœTok, ## âˆœ
+    juliaRCurlyTok,         ## }
+    juliaTildeTok,          ## ~
+    juliaÂ¬Tok,             ## Â¬
+    juliaâDoubleˆTok,       ## âˆˆ
+    juliaâˆšTok,            ## âˆš
+    juliaâˆ›Tok,            ## âˆ›
+    juliaâˆœTok,            ## âˆœ
     juliaSyntaxError         ## Tree-sitter parser syntax error
 type
   JuliaExternalTok* = enum
@@ -164,308 +163,309 @@ type
 type
   JuliaParser* = distinct PtsParser
 proc tsNodeType*(node: JuliaNode): string
-proc kind*(node: JuliaNode): JuliaNodeKind =
-  case node.tsNodeType
-  of "_definition":
-    juliaDefinition
-  of "_expression":
-    juliaExpression
-  of "_statement":
-    juliaStatement
-  of "abstract_definition":
-    juliaAbstractDefinition
-  of "argument_list":
-    juliaArgumentList
-  of "array_comprehension_expression":
-    juliaArrayComprehensionExpression
-  of "array_expression":
-    juliaArrayExpression
-  of "assignment_expression":
-    juliaAssignmentExpression
-  of "bare_tuple_expression":
-    juliaBareTupleExpression
-  of "binary_expression":
-    juliaBinaryExpression
-  of "broadcast_call_expression":
-    juliaBroadcastCallExpression
-  of "call_expression":
-    juliaCallExpression
-  of "catch_clause":
-    juliaCatchClause
-  of "coefficient_expression":
-    juliaCoefficientExpression
-  of "compound_expression":
-    juliaCompoundExpression
-  of "const_statement":
-    juliaConstStatement
-  of "constrained_parameter":
-    juliaConstrainedParameter
-  of "do_clause":
-    juliaDoClause
-  of "else_clause":
-    juliaElseClause
-  of "elseif_clause":
-    juliaElseifClause
-  of "export_statement":
-    juliaExportStatement
-  of "field_expression":
-    juliaFieldExpression
-  of "finally_clause":
-    juliaFinallyClause
-  of "for_binding":
-    juliaForBinding
-  of "for_clause":
-    juliaForClause
-  of "for_statement":
-    juliaForStatement
-  of "function_definition":
-    juliaFunctionDefinition
-  of "function_expression":
-    juliaFunctionExpression
-  of "generator_expression":
-    juliaGeneratorExpression
-  of "if_clause":
-    juliaIfClause
-  of "if_statement":
-    juliaIfStatement
-  of "import_statement":
-    juliaImportStatement
-  of "interpolation_expression":
-    juliaInterpolationExpression
-  of "keyword_parameters":
-    juliaKeywordParameters
-  of "let_statement":
-    juliaLetStatement
-  of "macro_argument_list":
-    juliaMacroArgumentList
-  of "macro_definition":
-    juliaMacroDefinition
-  of "macro_expression":
-    juliaMacroExpression
-  of "macro_identifier":
-    juliaMacroIdentifier
-  of "matrix_expression":
-    juliaMatrixExpression
-  of "matrix_row":
-    juliaMatrixRow
-  of "module_definition":
-    juliaModuleDefinition
-  of "named_argument":
-    juliaNamedArgument
-  of "named_field":
-    juliaNamedField
-  of "operator":
-    juliaOperator
-  of "optional_parameter":
-    juliaOptionalParameter
-  of "pair_expression":
-    juliaPairExpression
-  of "parameter_list":
-    juliaParameterList
-  of "parameterized_identifier":
-    juliaParameterizedIdentifier
-  of "parenthesized_expression":
-    juliaParenthesizedExpression
-  of "primitive_definition":
-    juliaPrimitiveDefinition
-  of "quote_expression":
-    juliaQuoteExpression
-  of "quote_statement":
-    juliaQuoteStatement
-  of "range_expression":
-    juliaRangeExpression
-  of "return_statement":
-    juliaReturnStatement
-  of "scoped_identifier":
-    juliaScopedIdentifier
-  of "selected_import":
-    juliaSelectedImport
-  of "source_file":
-    juliaSourceFile
-  of "spread_expression":
-    juliaSpreadExpression
-  of "spread_parameter":
-    juliaSpreadParameter
-  of "string":
-    juliaString
-  of "struct_definition":
-    juliaStructDefinition
-  of "subscript_expression":
-    juliaSubscriptExpression
-  of "subtype_clause":
-    juliaSubtypeClause
-  of "ternary_expression":
-    juliaTernaryExpression
-  of "try_statement":
-    juliaTryStatement
-  of "tuple_expression":
-    juliaTupleExpression
-  of "type_argument_list":
-    juliaTypeArgumentList
-  of "type_parameter_list":
-    juliaTypeParameterList
-  of "typed_expression":
-    juliaTypedExpression
-  of "typed_parameter":
-    juliaTypedParameter
-  of "unary_expression":
-    juliaUnaryExpression
-  of "variable_declaration":
-    juliaVariableDeclaration
-  of "while_statement":
-    juliaWhileStatement
-  of "\n":
-    juliaSingleNewlineTok
-  of "!":
-    juliaSingleExclamationTok
-  of "\"":
-    juliaSingleQuoteTok
-  of "$":
-    juliaSingleDollarTok
-  of "&&":
-    juliaDoubleAmpersandTok
-  of "\'":
-    juliaSingleApostropheTok
-  of "(":
-    juliaSingleLParTok
-  of ")":
-    juliaSingleRParTok
-  of "+":
-    juliaSinglePlusTok
-  of ",":
-    juliaSingleCommaTok
-  of "-":
-    juliaSingleMinusTok
-  of "->":
-    juliaSingleMinusSingleGreaterThanTok
-  of ".":
-    juliaSingleDotTok
-  of ".\'":
-    juliaSingleDotSingleApostropheTok
-  of "...":
-    juliaTripleDotTok
-  of ":":
-    juliaSingleColonTok
-  of "::":
-    juliaDoubleColonTok
-  of ";":
-    juliaSingleSemicolonTok
-  of "<:":
-    juliaSingleLessThanSingleColonTok
-  of "<|":
-    juliaSingleLessThanSinglePipeTok
-  of "=":
-    juliaSingleEqualTok
-  of "=>":
-    juliaSingleEqualSingleGreaterThanTok
-  of ">:":
-    juliaSingleGreaterThanSingleColonTok
-  of "?":
-    juliaSingleQuestionTok
-  of "@":
-    juliaSingleAtTok
-  of "[":
-    juliaSingleLBrackTok
-  of "]":
-    juliaSingleRBrackTok
-  of "abstract":
-    juliaAbstractTok
-  of "begin":
-    juliaBeginTok
-  of "block_comment":
-    juliaBlockComment
-  of "break_statement":
-    juliaBreakStatement
-  of "catch":
-    juliaCatchTok
-  of "character":
-    juliaCharacter
-  of "command_string":
-    juliaCommandString
-  of "comment":
-    juliaComment
-  of "const":
-    juliaConstTok
-  of "continue_statement":
-    juliaContinueStatement
-  of "do":
-    juliaDoTok
-  of "else":
-    juliaElseTok
-  of "elseif":
-    juliaElseifTok
-  of "end":
-    juliaEndTok
-  of "export":
-    juliaExportTok
-  of "finally":
-    juliaFinallyTok
-  of "for":
-    juliaForTok
-  of "function":
-    juliaFunctionTok
-  of "identifier":
-    juliaIdentifier
-  of "if":
-    juliaIfTok
-  of "import":
-    juliaImportTok
-  of "in":
-    juliaInTok
-  of "isa":
-    juliaIsaTok
-  of "let":
-    juliaLetTok
-  of "macro":
-    juliaMacroTok
-  of "module":
-    juliaModuleTok
-  of "mutable":
-    juliaMutableTok
-  of "number":
-    juliaNumber
-  of "primitive":
-    juliaPrimitiveTok
-  of "quote":
-    juliaQuoteTok
-  of "return":
-    juliaReturnTok
-  of "struct":
-    juliaStructTok
-  of "triple_string":
-    juliaTripleString
-  of "try":
-    juliaTryTok
-  of "type":
-    juliaTypeTok
-  of "using":
-    juliaUsingTok
-  of "while":
-    juliaWhileTok
-  of "{":
-    juliaSingleLCurlyTok
-  of "|>":
-    juliaSinglePipeSingleGreaterThanTok
-  of "||":
-    juliaDoublePipeTok
-  of "}":
-    juliaSingleRCurlyTok
-  of "~":
-    juliaSingleTildeTok
-  of "Â¬":
-    juliaSingleÂSingle¬Tok
-  of "âˆˆ":
-    juliaSingleâDoubleˆTok
-  of "âˆš":
-    juliaSingleâSingleˆSinglešTok
-  of "âˆ›":
-    juliaSingleâSingleˆSingle›Tok
-  of "âˆœ":
-    juliaSingleâSingleˆSingleœTok
-  of "ERROR":
-    juliaSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_definition":
+      juliaDefinition
+    of "_expression":
+      juliaExpression
+    of "_statement":
+      juliaStatement
+    of "abstract_definition":
+      juliaAbstractDefinition
+    of "argument_list":
+      juliaArgumentList
+    of "array_comprehension_expression":
+      juliaArrayComprehensionExpression
+    of "array_expression":
+      juliaArrayExpression
+    of "assignment_expression":
+      juliaAssignmentExpression
+    of "bare_tuple_expression":
+      juliaBareTupleExpression
+    of "binary_expression":
+      juliaBinaryExpression
+    of "broadcast_call_expression":
+      juliaBroadcastCallExpression
+    of "call_expression":
+      juliaCallExpression
+    of "catch_clause":
+      juliaCatchClause
+    of "coefficient_expression":
+      juliaCoefficientExpression
+    of "compound_expression":
+      juliaCompoundExpression
+    of "const_statement":
+      juliaConstStatement
+    of "constrained_parameter":
+      juliaConstrainedParameter
+    of "do_clause":
+      juliaDoClause
+    of "else_clause":
+      juliaElseClause
+    of "elseif_clause":
+      juliaElseifClause
+    of "export_statement":
+      juliaExportStatement
+    of "field_expression":
+      juliaFieldExpression
+    of "finally_clause":
+      juliaFinallyClause
+    of "for_binding":
+      juliaForBinding
+    of "for_clause":
+      juliaForClause
+    of "for_statement":
+      juliaForStatement
+    of "function_definition":
+      juliaFunctionDefinition
+    of "function_expression":
+      juliaFunctionExpression
+    of "generator_expression":
+      juliaGeneratorExpression
+    of "if_clause":
+      juliaIfClause
+    of "if_statement":
+      juliaIfStatement
+    of "import_statement":
+      juliaImportStatement
+    of "interpolation_expression":
+      juliaInterpolationExpression
+    of "keyword_parameters":
+      juliaKeywordParameters
+    of "let_statement":
+      juliaLetStatement
+    of "macro_argument_list":
+      juliaMacroArgumentList
+    of "macro_definition":
+      juliaMacroDefinition
+    of "macro_expression":
+      juliaMacroExpression
+    of "macro_identifier":
+      juliaMacroIdentifier
+    of "matrix_expression":
+      juliaMatrixExpression
+    of "matrix_row":
+      juliaMatrixRow
+    of "module_definition":
+      juliaModuleDefinition
+    of "named_argument":
+      juliaNamedArgument
+    of "named_field":
+      juliaNamedField
+    of "operator":
+      juliaOperator
+    of "optional_parameter":
+      juliaOptionalParameter
+    of "pair_expression":
+      juliaPairExpression
+    of "parameter_list":
+      juliaParameterList
+    of "parameterized_identifier":
+      juliaParameterizedIdentifier
+    of "parenthesized_expression":
+      juliaParenthesizedExpression
+    of "primitive_definition":
+      juliaPrimitiveDefinition
+    of "quote_expression":
+      juliaQuoteExpression
+    of "quote_statement":
+      juliaQuoteStatement
+    of "range_expression":
+      juliaRangeExpression
+    of "return_statement":
+      juliaReturnStatement
+    of "scoped_identifier":
+      juliaScopedIdentifier
+    of "selected_import":
+      juliaSelectedImport
+    of "source_file":
+      juliaSourceFile
+    of "spread_expression":
+      juliaSpreadExpression
+    of "spread_parameter":
+      juliaSpreadParameter
+    of "string":
+      juliaString
+    of "struct_definition":
+      juliaStructDefinition
+    of "subscript_expression":
+      juliaSubscriptExpression
+    of "subtype_clause":
+      juliaSubtypeClause
+    of "ternary_expression":
+      juliaTernaryExpression
+    of "try_statement":
+      juliaTryStatement
+    of "tuple_expression":
+      juliaTupleExpression
+    of "type_argument_list":
+      juliaTypeArgumentList
+    of "type_parameter_list":
+      juliaTypeParameterList
+    of "typed_expression":
+      juliaTypedExpression
+    of "typed_parameter":
+      juliaTypedParameter
+    of "unary_expression":
+      juliaUnaryExpression
+    of "variable_declaration":
+      juliaVariableDeclaration
+    of "while_statement":
+      juliaWhileStatement
+    of "\n":
+      juliaNewlineTok
+    of "!":
+      juliaExclamationTok
+    of "\"":
+      juliaQuoteTok
+    of "$":
+      juliaDollarTok
+    of "&&":
+      juliaDoubleAmpersandTok
+    of "\'":
+      juliaApostropheTok
+    of "(":
+      juliaLParTok
+    of ")":
+      juliaRParTok
+    of "+":
+      juliaPlusTok
+    of ",":
+      juliaCommaTok
+    of "-":
+      juliaMinusTok
+    of "->":
+      juliaMinusGreaterThanTok
+    of ".":
+      juliaDotTok
+    of ".\'":
+      juliaDotApostropheTok
+    of "...":
+      juliaTripleDotTok
+    of ":":
+      juliaColonTok
+    of "::":
+      juliaDoubleColonTok
+    of ";":
+      juliaSemicolonTok
+    of "<:":
+      juliaLessThanColonTok
+    of "<|":
+      juliaLessThanPipeTok
+    of "=":
+      juliaEqualTok
+    of "=>":
+      juliaEqualGreaterThanTok
+    of ">:":
+      juliaGreaterThanColonTok
+    of "?":
+      juliaQuestionTok
+    of "@":
+      juliaAtTok
+    of "[":
+      juliaLBrackTok
+    of "]":
+      juliaRBrackTok
+    of "abstract":
+      juliaAbstractTok
+    of "begin":
+      juliaBeginTok
+    of "block_comment":
+      juliaBlockComment
+    of "break_statement":
+      juliaBreakStatement
+    of "catch":
+      juliaCatchTok
+    of "character":
+      juliaCharacter
+    of "command_string":
+      juliaCommandString
+    of "comment":
+      juliaComment
+    of "const":
+      juliaConstTok
+    of "continue_statement":
+      juliaContinueStatement
+    of "do":
+      juliaDoTok
+    of "else":
+      juliaElseTok
+    of "elseif":
+      juliaElseifTok
+    of "end":
+      juliaEndTok
+    of "export":
+      juliaExportTok
+    of "finally":
+      juliaFinallyTok
+    of "for":
+      juliaForTok
+    of "function":
+      juliaFunctionTok
+    of "identifier":
+      juliaIdentifier
+    of "if":
+      juliaIfTok
+    of "import":
+      juliaImportTok
+    of "in":
+      juliaInTok
+    of "isa":
+      juliaIsaTok
+    of "let":
+      juliaLetTok
+    of "macro":
+      juliaMacroTok
+    of "module":
+      juliaModuleTok
+    of "mutable":
+      juliaMutableTok
+    of "number":
+      juliaNumber
+    of "primitive":
+      juliaPrimitiveTok
+    of "quote":
+      juliaQuoteTok
+    of "return":
+      juliaReturnTok
+    of "struct":
+      juliaStructTok
+    of "triple_string":
+      juliaTripleString
+    of "try":
+      juliaTryTok
+    of "type":
+      juliaTypeTok
+    of "using":
+      juliaUsingTok
+    of "while":
+      juliaWhileTok
+    of "{":
+      juliaLCurlyTok
+    of "|>":
+      juliaPipeGreaterThanTok
+    of "||":
+      juliaDoublePipeTok
+    of "}":
+      juliaRCurlyTok
+    of "~":
+      juliaTildeTok
+    of "Â¬":
+      juliaÂ¬Tok
+    of "âˆˆ":
+      juliaâDoubleˆTok
+    of "âˆš":
+      juliaâˆšTok
+    of "âˆ›":
+      juliaâˆ›Tok
+    of "âˆœ":
+      juliaâˆœTok
+    of "ERROR":
+      juliaSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_julia(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: JuliaNode): string =
@@ -478,6 +478,10 @@ proc newJuliaParser*(): JuliaParser =
 proc parseString*(parser: JuliaParser; str: string): JuliaNode =
   JuliaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseJuliaString*(str: string): JuliaNode =
+  let parser = newJuliaParser()
+  return parseString(parser, str)
 
 func `[]`*(node: JuliaNode; idx: int; withUnnamed: bool = false): JuliaNode =
   if withUnnamed:
@@ -498,8 +502,9 @@ iterator items*(node: JuliaNode; withUnnamed: bool = false): JuliaNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: JuliaNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: JuliaNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: JuliaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: JuliaNode; level: int): seq[string] =

@@ -49,60 +49,60 @@ type
     bashVariableAssignment, ## variable_assignment
     bashWhileStatement,     ## while_statement
     bashWord,               ## word
-    bashSingleNewlineTok,   ## 
+    bashNewlineTok,         ## 
                              ## 
-    bashSingleExclamationTok, ## !
-    bashSingleExclamationSingleEqualTok, ## !=
-    bashSingleQuoteTok,     ## "
-    bashSingleHashTok,      ## #
-    bashSingleDollarTok,    ## $
-    bashSingleDollarSingleLParTok, ## $(
-    bashSingleDollarSingleLCurlyTok, ## ${
-    bashSinglePercentTok,   ## %
-    bashSingleAmpersandTok, ## &
+    bashExclamationTok,     ## !
+    bashExclamationEqualTok, ## !=
+    bashQuoteTok,           ## "
+    bashHashTok,            ## #
+    bashDollarTok,          ## $
+    bashDollarLParTok,      ## $(
+    bashDollarLCurlyTok,    ## ${
+    bashPercentTok,         ## %
+    bashAmpersandTok,       ## &
     bashDoubleAmpersandTok, ## &&
-    bashSingleAmpersandSingleGreaterThanTok, ## &>
-    bashSingleAmpersandDoubleGreaterThanTok, ## &>>
-    bashSingleLParTok,      ## (
+    bashAmpersandGreaterThanTok, ## &>
+    bashAmpersandDoubleGreaterThanTok, ## &>>
+    bashLParTok,            ## (
     bashDoubleLParTok,      ## ((
-    bashSingleRParTok,      ## )
+    bashRParTok,            ## )
     bashDoubleRParTok,      ## ))
-    bashSinglePlusTok,      ## +
+    bashPlusTok,            ## +
     bashDoublePlusTok,      ## ++
-    bashSinglePlusSingleEqualTok, ## +=
-    bashSingleMinusTok,     ## -
+    bashPlusEqualTok,       ## +=
+    bashMinusTok,           ## -
     bashDoubleMinusTok,     ## --
-    bashSingleMinusSingleEqualTok, ## -=
-    bashSingleSlashTok,     ## /
-    bashSingleColonTok,     ## :
-    bashSingleColonSingleMinusTok, ## :-
-    bashSingleColonSingleQuestionTok, ## :?
-    bashSingleSemicolonTok, ## ;
-    bashSingleSemicolonSingleAmpersandTok, ## ;&
+    bashMinusEqualTok,      ## -=
+    bashSlashTok,           ## /
+    bashColonTok,           ## :
+    bashColonMinusTok,      ## :-
+    bashColonQuestionTok,   ## :?
+    bashSemicolonTok,       ## ;
+    bashSemicolonAmpersandTok, ## ;&
     bashDoubleSemicolonTok, ## ;;
-    bashDoubleSemicolonSingleAmpersandTok, ## ;;&
-    bashSingleLessThanTok,  ## <
-    bashSingleLessThanSingleAmpersandTok, ## <&
-    bashSingleLessThanSingleLParTok, ## <(
+    bashDoubleSemicolonAmpersandTok, ## ;;&
+    bashLessThanTok,        ## <
+    bashLessThanAmpersandTok, ## <&
+    bashLessThanLParTok,    ## <(
     bashDoubleLessThanTok,  ## <<
-    bashDoubleLessThanSingleMinusTok, ## <<-
+    bashDoubleLessThanMinusTok, ## <<-
     bashTripleLessThanTok,  ## <<<
-    bashSingleLessThanSingleEqualTok, ## <=
-    bashSingleEqualTok,     ## =
+    bashLessThanEqualTok,   ## <=
+    bashEqualTok,           ## =
     bashDoubleEqualTok,     ## ==
-    bashSingleEqualSingleTildeTok, ## =~
-    bashSingleGreaterThanTok, ## >
-    bashSingleGreaterThanSingleAmpersandTok, ## >&
-    bashSingleGreaterThanSingleLParTok, ## >(
-    bashSingleGreaterThanSingleEqualTok, ## >=
+    bashEqualTildeTok,      ## =~
+    bashGreaterThanTok,     ## >
+    bashGreaterThanAmpersandTok, ## >&
+    bashGreaterThanLParTok, ## >(
+    bashGreaterThanEqualTok, ## >=
     bashDoubleGreaterThanTok, ## >>
-    bashSingleGreaterThanSinglePipeTok, ## >|
-    bashSingleQuestionTok,  ## ?
-    bashSingleLBrackTok,    ## [
+    bashGreaterThanPipeTok, ## >|
+    bashQuestionTok,        ## ?
+    bashLBrackTok,          ## [
     bashDoubleLBrackTok,    ## [[
-    bashSingleRBrackTok,    ## ]
+    bashRBrackTok,          ## ]
     bashDoubleRBrackTok,    ## ]]
-    bashSingleBacktickTok,  ## `
+    bashBacktickTok,        ## `
     bashAnsiiCString,       ## ansii_c_string
     bashCaseTok,            ## case
     bashComment,            ## comment
@@ -132,11 +132,11 @@ type
     bashUnsetenvTok,        ## unsetenv
     bashVariableName,       ## variable_name
     bashWhileTok,           ## while
-    bashSingleLCurlyTok,    ## {
-    bashSinglePipeTok,      ## |
-    bashSinglePipeSingleAmpersandTok, ## |&
+    bashLCurlyTok,          ## {
+    bashPipeTok,            ## |
+    bashPipeAmpersandTok,   ## |&
     bashDoublePipeTok,      ## ||
-    bashSingleRCurlyTok,    ## }
+    bashRCurlyTok,          ## }
     bashSyntaxError          ## Tree-sitter parser syntax error
 type
   BashExternalTok* = enum
@@ -155,276 +155,277 @@ type
 type
   BashParser* = distinct PtsParser
 proc tsNodeType*(node: BashNode): string
-proc kind*(node: BashNode): BashNodeKind =
-  case node.tsNodeType
-  of "_expression":
-    bashExpression
-  of "_primary_expression":
-    bashPrimaryExpression
-  of "_statement":
-    bashStatement
-  of "array":
-    bashArray
-  of "binary_expression":
-    bashBinaryExpression
-  of "c_style_for_statement":
-    bashCStyleForStatement
-  of "case_item":
-    bashCaseItem
-  of "case_statement":
-    bashCaseStatement
-  of "command":
-    bashCommand
-  of "command_name":
-    bashCommandName
-  of "command_substitution":
-    bashCommandSubstitution
-  of "compound_statement":
-    bashCompoundStatement
-  of "concatenation":
-    bashConcatenation
-  of "declaration_command":
-    bashDeclarationCommand
-  of "do_group":
-    bashDoGroup
-  of "elif_clause":
-    bashElifClause
-  of "else_clause":
-    bashElseClause
-  of "expansion":
-    bashExpansion
-  of "file_redirect":
-    bashFileRedirect
-  of "for_statement":
-    bashForStatement
-  of "function_definition":
-    bashFunctionDefinition
-  of "heredoc_body":
-    bashHeredocBody
-  of "heredoc_redirect":
-    bashHeredocRedirect
-  of "herestring_redirect":
-    bashHerestringRedirect
-  of "if_statement":
-    bashIfStatement
-  of "list":
-    bashList
-  of "negated_command":
-    bashNegatedCommand
-  of "parenthesized_expression":
-    bashParenthesizedExpression
-  of "pipeline":
-    bashPipeline
-  of "postfix_expression":
-    bashPostfixExpression
-  of "process_substitution":
-    bashProcessSubstitution
-  of "program":
-    bashProgram
-  of "redirected_statement":
-    bashRedirectedStatement
-  of "simple_expansion":
-    bashSimpleExpansion
-  of "string":
-    bashString
-  of "string_expansion":
-    bashStringExpansion
-  of "subscript":
-    bashSubscript
-  of "subshell":
-    bashSubshell
-  of "ternary_expression":
-    bashTernaryExpression
-  of "test_command":
-    bashTestCommand
-  of "unary_expression":
-    bashUnaryExpression
-  of "unset_command":
-    bashUnsetCommand
-  of "variable_assignment":
-    bashVariableAssignment
-  of "while_statement":
-    bashWhileStatement
-  of "word":
-    bashWord
-  of "\n":
-    bashSingleNewlineTok
-  of "!":
-    bashSingleExclamationTok
-  of "!=":
-    bashSingleExclamationSingleEqualTok
-  of "\"":
-    bashSingleQuoteTok
-  of "#":
-    bashSingleHashTok
-  of "$":
-    bashSingleDollarTok
-  of "$(":
-    bashSingleDollarSingleLParTok
-  of "${":
-    bashSingleDollarSingleLCurlyTok
-  of "%":
-    bashSinglePercentTok
-  of "&":
-    bashSingleAmpersandTok
-  of "&&":
-    bashDoubleAmpersandTok
-  of "&>":
-    bashSingleAmpersandSingleGreaterThanTok
-  of "&>>":
-    bashSingleAmpersandDoubleGreaterThanTok
-  of "(":
-    bashSingleLParTok
-  of "((":
-    bashDoubleLParTok
-  of ")":
-    bashSingleRParTok
-  of "))":
-    bashDoubleRParTok
-  of "+":
-    bashSinglePlusTok
-  of "++":
-    bashDoublePlusTok
-  of "+=":
-    bashSinglePlusSingleEqualTok
-  of "-":
-    bashSingleMinusTok
-  of "--":
-    bashDoubleMinusTok
-  of "-=":
-    bashSingleMinusSingleEqualTok
-  of "/":
-    bashSingleSlashTok
-  of ":":
-    bashSingleColonTok
-  of ":-":
-    bashSingleColonSingleMinusTok
-  of ":?":
-    bashSingleColonSingleQuestionTok
-  of ";":
-    bashSingleSemicolonTok
-  of ";&":
-    bashSingleSemicolonSingleAmpersandTok
-  of ";;":
-    bashDoubleSemicolonTok
-  of ";;&":
-    bashDoubleSemicolonSingleAmpersandTok
-  of "<":
-    bashSingleLessThanTok
-  of "<&":
-    bashSingleLessThanSingleAmpersandTok
-  of "<(":
-    bashSingleLessThanSingleLParTok
-  of "<<":
-    bashDoubleLessThanTok
-  of "<<-":
-    bashDoubleLessThanSingleMinusTok
-  of "<<<":
-    bashTripleLessThanTok
-  of "<=":
-    bashSingleLessThanSingleEqualTok
-  of "=":
-    bashSingleEqualTok
-  of "==":
-    bashDoubleEqualTok
-  of "=~":
-    bashSingleEqualSingleTildeTok
-  of ">":
-    bashSingleGreaterThanTok
-  of ">&":
-    bashSingleGreaterThanSingleAmpersandTok
-  of ">(":
-    bashSingleGreaterThanSingleLParTok
-  of ">=":
-    bashSingleGreaterThanSingleEqualTok
-  of ">>":
-    bashDoubleGreaterThanTok
-  of ">|":
-    bashSingleGreaterThanSinglePipeTok
-  of "?":
-    bashSingleQuestionTok
-  of "[":
-    bashSingleLBrackTok
-  of "[[":
-    bashDoubleLBrackTok
-  of "]":
-    bashSingleRBrackTok
-  of "]]":
-    bashDoubleRBrackTok
-  of "`":
-    bashSingleBacktickTok
-  of "ansii_c_string":
-    bashAnsiiCString
-  of "case":
-    bashCaseTok
-  of "comment":
-    bashComment
-  of "declare":
-    bashDeclareTok
-  of "do":
-    bashDoTok
-  of "done":
-    bashDoneTok
-  of "elif":
-    bashElifTok
-  of "else":
-    bashElseTok
-  of "esac":
-    bashEsacTok
-  of "export":
-    bashExportTok
-  of "fi":
-    bashFiTok
-  of "file_descriptor":
-    bashFileDescriptor
-  of "for":
-    bashForTok
-  of "function":
-    bashFunctionTok
-  of "heredoc_start":
-    bashHeredocStart
-  of "if":
-    bashIfTok
-  of "in":
-    bashInTok
-  of "local":
-    bashLocalTok
-  of "raw_string":
-    bashRawString
-  of "readonly":
-    bashReadonlyTok
-  of "regex":
-    bashRegex
-  of "special_variable_name":
-    bashSpecialVariableName
-  of "test_operator":
-    bashTestOperator
-  of "then":
-    bashThenTok
-  of "typeset":
-    bashTypesetTok
-  of "unset":
-    bashUnsetTok
-  of "unsetenv":
-    bashUnsetenvTok
-  of "variable_name":
-    bashVariableName
-  of "while":
-    bashWhileTok
-  of "{":
-    bashSingleLCurlyTok
-  of "|":
-    bashSinglePipeTok
-  of "|&":
-    bashSinglePipeSingleAmpersandTok
-  of "||":
-    bashDoublePipeTok
-  of "}":
-    bashSingleRCurlyTok
-  of "ERROR":
-    bashSyntaxError
-  else:
-    raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
+proc kind*(node: BashNode): BashNodeKind {.noSideEffect.} =
+  {.cast(noSideEffect).}:
+    case node.tsNodeType
+    of "_expression":
+      bashExpression
+    of "_primary_expression":
+      bashPrimaryExpression
+    of "_statement":
+      bashStatement
+    of "array":
+      bashArray
+    of "binary_expression":
+      bashBinaryExpression
+    of "c_style_for_statement":
+      bashCStyleForStatement
+    of "case_item":
+      bashCaseItem
+    of "case_statement":
+      bashCaseStatement
+    of "command":
+      bashCommand
+    of "command_name":
+      bashCommandName
+    of "command_substitution":
+      bashCommandSubstitution
+    of "compound_statement":
+      bashCompoundStatement
+    of "concatenation":
+      bashConcatenation
+    of "declaration_command":
+      bashDeclarationCommand
+    of "do_group":
+      bashDoGroup
+    of "elif_clause":
+      bashElifClause
+    of "else_clause":
+      bashElseClause
+    of "expansion":
+      bashExpansion
+    of "file_redirect":
+      bashFileRedirect
+    of "for_statement":
+      bashForStatement
+    of "function_definition":
+      bashFunctionDefinition
+    of "heredoc_body":
+      bashHeredocBody
+    of "heredoc_redirect":
+      bashHeredocRedirect
+    of "herestring_redirect":
+      bashHerestringRedirect
+    of "if_statement":
+      bashIfStatement
+    of "list":
+      bashList
+    of "negated_command":
+      bashNegatedCommand
+    of "parenthesized_expression":
+      bashParenthesizedExpression
+    of "pipeline":
+      bashPipeline
+    of "postfix_expression":
+      bashPostfixExpression
+    of "process_substitution":
+      bashProcessSubstitution
+    of "program":
+      bashProgram
+    of "redirected_statement":
+      bashRedirectedStatement
+    of "simple_expansion":
+      bashSimpleExpansion
+    of "string":
+      bashString
+    of "string_expansion":
+      bashStringExpansion
+    of "subscript":
+      bashSubscript
+    of "subshell":
+      bashSubshell
+    of "ternary_expression":
+      bashTernaryExpression
+    of "test_command":
+      bashTestCommand
+    of "unary_expression":
+      bashUnaryExpression
+    of "unset_command":
+      bashUnsetCommand
+    of "variable_assignment":
+      bashVariableAssignment
+    of "while_statement":
+      bashWhileStatement
+    of "word":
+      bashWord
+    of "\n":
+      bashNewlineTok
+    of "!":
+      bashExclamationTok
+    of "!=":
+      bashExclamationEqualTok
+    of "\"":
+      bashQuoteTok
+    of "#":
+      bashHashTok
+    of "$":
+      bashDollarTok
+    of "$(":
+      bashDollarLParTok
+    of "${":
+      bashDollarLCurlyTok
+    of "%":
+      bashPercentTok
+    of "&":
+      bashAmpersandTok
+    of "&&":
+      bashDoubleAmpersandTok
+    of "&>":
+      bashAmpersandGreaterThanTok
+    of "&>>":
+      bashAmpersandDoubleGreaterThanTok
+    of "(":
+      bashLParTok
+    of "((":
+      bashDoubleLParTok
+    of ")":
+      bashRParTok
+    of "))":
+      bashDoubleRParTok
+    of "+":
+      bashPlusTok
+    of "++":
+      bashDoublePlusTok
+    of "+=":
+      bashPlusEqualTok
+    of "-":
+      bashMinusTok
+    of "--":
+      bashDoubleMinusTok
+    of "-=":
+      bashMinusEqualTok
+    of "/":
+      bashSlashTok
+    of ":":
+      bashColonTok
+    of ":-":
+      bashColonMinusTok
+    of ":?":
+      bashColonQuestionTok
+    of ";":
+      bashSemicolonTok
+    of ";&":
+      bashSemicolonAmpersandTok
+    of ";;":
+      bashDoubleSemicolonTok
+    of ";;&":
+      bashDoubleSemicolonAmpersandTok
+    of "<":
+      bashLessThanTok
+    of "<&":
+      bashLessThanAmpersandTok
+    of "<(":
+      bashLessThanLParTok
+    of "<<":
+      bashDoubleLessThanTok
+    of "<<-":
+      bashDoubleLessThanMinusTok
+    of "<<<":
+      bashTripleLessThanTok
+    of "<=":
+      bashLessThanEqualTok
+    of "=":
+      bashEqualTok
+    of "==":
+      bashDoubleEqualTok
+    of "=~":
+      bashEqualTildeTok
+    of ">":
+      bashGreaterThanTok
+    of ">&":
+      bashGreaterThanAmpersandTok
+    of ">(":
+      bashGreaterThanLParTok
+    of ">=":
+      bashGreaterThanEqualTok
+    of ">>":
+      bashDoubleGreaterThanTok
+    of ">|":
+      bashGreaterThanPipeTok
+    of "?":
+      bashQuestionTok
+    of "[":
+      bashLBrackTok
+    of "[[":
+      bashDoubleLBrackTok
+    of "]":
+      bashRBrackTok
+    of "]]":
+      bashDoubleRBrackTok
+    of "`":
+      bashBacktickTok
+    of "ansii_c_string":
+      bashAnsiiCString
+    of "case":
+      bashCaseTok
+    of "comment":
+      bashComment
+    of "declare":
+      bashDeclareTok
+    of "do":
+      bashDoTok
+    of "done":
+      bashDoneTok
+    of "elif":
+      bashElifTok
+    of "else":
+      bashElseTok
+    of "esac":
+      bashEsacTok
+    of "export":
+      bashExportTok
+    of "fi":
+      bashFiTok
+    of "file_descriptor":
+      bashFileDescriptor
+    of "for":
+      bashForTok
+    of "function":
+      bashFunctionTok
+    of "heredoc_start":
+      bashHeredocStart
+    of "if":
+      bashIfTok
+    of "in":
+      bashInTok
+    of "local":
+      bashLocalTok
+    of "raw_string":
+      bashRawString
+    of "readonly":
+      bashReadonlyTok
+    of "regex":
+      bashRegex
+    of "special_variable_name":
+      bashSpecialVariableName
+    of "test_operator":
+      bashTestOperator
+    of "then":
+      bashThenTok
+    of "typeset":
+      bashTypesetTok
+    of "unset":
+      bashUnsetTok
+    of "unsetenv":
+      bashUnsetenvTok
+    of "variable_name":
+      bashVariableName
+    of "while":
+      bashWhileTok
+    of "{":
+      bashLCurlyTok
+    of "|":
+      bashPipeTok
+    of "|&":
+      bashPipeAmpersandTok
+    of "||":
+      bashDoublePipeTok
+    of "}":
+      bashRCurlyTok
+    of "ERROR":
+      bashSyntaxError
+    else:
+      raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
 proc tree_sitter_bash(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: BashNode): string =
@@ -437,6 +438,10 @@ proc newBashParser*(): BashParser =
 proc parseString*(parser: BashParser; str: string): BashNode =
   BashNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
       str.cstring, uint32(len(str)))))
+
+proc parseBashString*(str: string): BashNode =
+  let parser = newBashParser()
+  return parseString(parser, str)
 
 func `[]`*(node: BashNode; idx: int; withUnnamed: bool = false): BashNode =
   if withUnnamed:
@@ -457,8 +462,9 @@ iterator items*(node: BashNode; withUnnamed: bool = false): BashNode =
   for i in 0 .. node.len(withUnnamed):
     yield node[i, withUnnamed]
 
-proc slice*(node: BashNode): Slice[int] =
-  ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+func slice*(node: BashNode): Slice[int] =
+  {.cast(noSideEffect).}:
+    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 proc treeRepr*(mainNode: BashNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: BashNode; level: int): seq[string] =
