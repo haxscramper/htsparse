@@ -60,6 +60,5 @@ manually:
 #+begin_src sh
   wget https://github.com/tree-sitter/tree-sitter/archive/0.17.3.tar.gz
   tar -xvf 0.17.3.tar.gz && cd tree-sitter-0.17.3
-  sudo make install
-  export LD_LIBRARY_PATH=/usr/local/lib
+  sudo make install PREFIX=/usr
 #+end_src
