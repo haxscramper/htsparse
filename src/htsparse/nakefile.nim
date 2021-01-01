@@ -1,6 +1,6 @@
 import hparse/htreesitter/hts_wrapgen
 import hmisc/other/[oswrap, colorlogger, hcligen]
-import std/[uri, options]
+import std/[uri, options, httpclient]
 
 # let rawgh = "https://raw.githubusercontent.com/"
 
@@ -20,6 +20,31 @@ proc build*(
     scannerUrl = scannerUrl,
     scannerFile = scannerFile,
     parserOut = parserOut
+  )
+
+proc build*(
+    lang: string,
+    downUrls: seq[(Url, RelFile)],
+    # copyFiles: seq[RelFile],
+    scannerMain: Option[RelFile],
+    grammarJs: FsFile,
+    buildDir: Option[RelDir] = none(RelDir),
+    parserOut: RelFile = RelFile(lang & "_parser.c")
+  ) =
+
+  mkDir RelDir(lang)
+  cd RelDir(lang)
+  debug lang
+  let client = newHttpClient()
+  for (url, file) in downUrls:
+    info "Downloaded", url.string, "to", file
+    client.downloadFile(url.string, file.getStr())
+
+
+  grammarFromFile(
+    grammarJs = grammarJs,
+    scannerFile = scannerMain,
+    parserOut = some(parserOut)
   )
 
 proc tomlCompile*() =
@@ -97,7 +122,27 @@ proc goCompile*() =
 
 proc htmlCompile*() =
   # FIXME html has multifile scanner
-  discard
+  build(
+    lang = "html",
+    scannerMain = some RelFile("scanner.cc"),
+    grammarJs = RelFile "grammar.js",
+    downUrls = @[
+      (
+        Url "https://raw.githubusercontent.com/tree-sitter/tree-sitter-html/master/grammar.js",
+        RelFile "grammar.js"
+      ),
+      (
+        Url "https://raw.githubusercontent.com/tree-sitter/tree-sitter-html/master/src/scanner.cc",
+        RelFile "scanner.cc"
+      ),
+      (
+        Url "https://raw.githubusercontent.com/tree-sitter/tree-sitter-html/master/src/tag.h",
+        RelFile "tag.h"
+      )
+    ],
+
+    # copyFile = @[RelFile "scanner.cc", Rel]
+  )
   # build(
   #   "html",
   #   Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-html/master/grammar.js"),
