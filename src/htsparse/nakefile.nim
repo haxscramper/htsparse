@@ -36,15 +36,20 @@ proc build*(
   cd RelDir(lang)
   debug lang
   let client = newHttpClient()
+  var extraFiles: seq[(AbsFile, RelFile)]
   for (url, file) in downUrls:
     info "Downloaded", url.string, "to", file
+    mkDir file.parentDir()
     client.downloadFile(url.string, file.getStr())
+    extraFiles.add((file.toAbsFile(), file))
 
 
   grammarFromFile(
+    langPrefix = lang,
     grammarJs = grammarJs,
     scannerFile = scannerMain,
-    parserOut = some(parserOut)
+    parserOut = some(parserOut),
+    extraFiles = extraFiles
   )
 
 proc tomlCompile*() =
@@ -150,6 +155,52 @@ proc htmlCompile*() =
   #   scannerFile = RelFile("html_scanner.cc")
   # )
 
+proc latexCompile*() =
+  let urlPrefix = "https://raw.githubusercontent.com/haxscramper/tree-sitter-latex/master/"
+  var downUrls: seq[(Url, RelFile)]
+  for entry in @[
+    "grammar.js",
+    "src/catcode.cc",
+    "src/catcode.hh",
+    "src/scanner.cc",
+    "src/scanner.hh",
+    "src/scanner_control_sequences.cc",
+    "src/scanner_environments.cc",
+    "src/scanner_keywords.cc",
+    "src/scanner_names.cc",
+    "src/serialization.hh",
+    "grammar/luatex/luatexbase/luatexbase-sty.js",
+    "grammar/lualatex/luacode/luacode-sty.js",
+    "grammar/latex/tools/verbatim-sty.js",
+    "grammar/latex/tools/varioref-sty.js",
+    "grammar/latex/tabu/tabu-sty.js",
+    "grammar/latex/pgf/frontendlayer/tikz-sty.js",
+    "grammar/latex/minted/minted-sty.js",
+    "grammar/latex/listings/listings-sty.js",
+    "grammar/latex/l3kernel/expl3-sty.js",
+    "grammar/latex/hyperref/hyperref-sty.js",
+    "grammar/latex/gnuplotex/gnuplotex-sty.js",
+    "grammar/latex/glossaries/base/glossaries-sty.js",
+    "grammar/latex/filecontents/filecontents-sty.js",
+    "grammar/latex/fancyvrb/fancyvrb-sty.js",
+    "grammar/latex/fancyref/fancyref-sty.js",
+    "grammar/latex/breqn/breqn-sty.js",
+    "grammar/latex/biblatex/biblatex-sty.js",
+    "grammar/latex/base/shortvrb-sty.js",
+    "grammar/latex/base/latex-ltx.js",
+    "grammar/latex/base/doc-sty.js",
+    "grammar/latex/amsmath/amsmath-sty.js",
+    "grammar/initex.js",
+  ]:
+    downUrls.add((Url urlPrefix & entry, RelFile entry))
+
+
+  build(
+    lang = "latex",
+    scannerMain = some RelFile("src/scanner.cc"),
+    grammarJs = RelFile "grammar.js",
+    downUrls = downUrls
+  )
 
 proc javaCompile*() =
   build(
@@ -340,6 +391,7 @@ proc totalCompile*() =
     goCompile,
     fennelCompile,
     htmlCompile,
+    latexCompile,
     javaCompile,
     javascriptCompile,
     luaCompile,
@@ -378,6 +430,7 @@ when isMainModule:
     [goCompile],
     [fennelCompile],
     [htmlCompile],
+    [latexCompile],
     [javaCompile],
     [javascriptCompile],
     [luaCompile],
