@@ -2,7 +2,8 @@ import std/[sugar, strutils, sequtils, strformat, unittest]
 import htsparse/[
   toml/toml,
   cpp/cpp,
-  java/java
+  java/java,
+  html/html
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -37,5 +38,19 @@ class HelloWorld {
         System.out.println("Hello World!");
     }
 }
+"""
+    echo parser.parseString(str).treeRepr(str)
+
+  test "html":
+    let parser = newHtmlParser()
+    let str = """
+<body>
+
+<h2>HTML Links</h2>
+<p>HTML links are defined with the a tag:</p>
+
+<a href="https://www.w3schools.com">This is a link</a>
+
+</body>
 """
     echo parser.parseString(str).treeRepr(str)
