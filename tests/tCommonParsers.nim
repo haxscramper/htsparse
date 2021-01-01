@@ -3,7 +3,8 @@ import htsparse/[
   toml/toml,
   cpp/cpp,
   java/java,
-  html/html
+  html/html,
+  latex/latex
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -53,4 +54,9 @@ class HelloWorld {
 
 </body>
 """
+    echo parser.parseString(str).treeRepr(str)
+
+  test "latex":
+    let parser = newLatexParser()
+    let str = r"\sin"
     echo parser.parseString(str).treeRepr(str)

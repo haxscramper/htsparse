@@ -1,6 +1,6 @@
 import hparse/htreesitter/hts_wrapgen
 import hmisc/other/[oswrap, colorlogger, hcligen]
-import std/[uri, options, httpclient]
+import std/[uri, options, httpclient, strutils]
 
 # let rawgh = "https://raw.githubusercontent.com/"
 
@@ -192,7 +192,22 @@ proc latexCompile*() =
     "grammar/latex/amsmath/amsmath-sty.js",
     "grammar/initex.js",
   ]:
-    downUrls.add((Url urlPrefix & entry, RelFile entry))
+    let file =
+      if entry.endsWith("cc"):
+        RelFile(entry).withBasePrefix("latex_")
+
+      else:
+        RelFile(entry)
+
+    downUrls.add((Url urlPrefix & entry, file))
+
+
+  if RelDir("latex").exists:
+    info "Directory cleanup"
+    for file in RelDir("latex").walkDir(RelFile):
+      if file != RelFile("latex.nim"):
+        debug "Removing", file
+        rmFile file
 
 
   build(
