@@ -264,6 +264,8 @@ type
     phpDoublePipeTok,       ## ||
     phpRCurlyTok,           ## }
     phpTildeTok,            ## ~
+    phpComment2,            ## comment
+    phpTextInterpolation2,  ## text_interpolation
     phpSyntaxError           ## Tree-sitter parser syntax error
 type
   PhpExternalTok* = enum
@@ -467,7 +469,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "text":
       phpText
     of "text_interpolation":
-      phpTextInterpolation
+      phpTextInterpolation2
     of "throw_statement":
       phpThrowStatement
     of "trait_declaration":
@@ -637,7 +639,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "clone":
       phpCloneTok
     of "comment":
-      phpComment
+      phpComment2
     of "const":
       phpConstTok
     of "continue":

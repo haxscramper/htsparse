@@ -135,6 +135,7 @@ type
     juliaMutableTok,        ## mutable
     juliaNumber,            ## number
     juliaPrimitiveTok,      ## primitive
+    juliaQuoteTok2,         ## quote
     juliaReturnTok,         ## return
     juliaStructTok,         ## struct
     juliaTripleString,      ## triple_string
@@ -152,6 +153,8 @@ type
     julia√Tok,            ## √
     julia∛Tok,            ## ∛
     julia∜Tok,            ## ∜
+    juliaComment2,          ## comment
+    juliaBlockComment2,     ## block_comment
     juliaSyntaxError         ## Tree-sitter parser syntax error
 type
   JuliaExternalTok* = enum
@@ -319,7 +322,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "!":
       juliaExclamationTok
     of "\"":
-      juliaQuoteTok
+      juliaQuoteTok2
     of "$":
       juliaDollarTok
     of "&&":
@@ -373,7 +376,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "begin":
       juliaBeginTok
     of "block_comment":
-      juliaBlockComment
+      juliaBlockComment2
     of "break_statement":
       juliaBreakStatement
     of "catch":
@@ -383,7 +386,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "command_string":
       juliaCommandString
     of "comment":
-      juliaComment
+      juliaComment2
     of "const":
       juliaConstTok
     of "continue_statement":
@@ -427,7 +430,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "primitive":
       juliaPrimitiveTok
     of "quote":
-      juliaQuoteTok
+      juliaQuoteTok2
     of "return":
       juliaReturnTok
     of "struct":

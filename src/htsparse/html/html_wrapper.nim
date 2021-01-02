@@ -31,6 +31,7 @@ type
     htmlRawText,            ## raw_text
     htmlTagName,            ## tag_name
     htmlText,               ## text
+    htmlComment2,           ## comment
     htmlSyntaxError          ## Tree-sitter parser syntax error
 type
   HtmlExternalTok* = enum
@@ -93,7 +94,7 @@ proc kind*(node: HtmlNode): HtmlNodeKind {.noSideEffect.} =
     of "attribute_value":
       htmlAttributeValue
     of "comment":
-      htmlComment
+      htmlComment2
     of "erroneous_end_tag_name":
       htmlErroneousEndTagName
     of "raw_text":

@@ -1,5 +1,5 @@
 {.compile: "systemVerilog_parser.c".}
 {.passl: "-ltree-sitter".}
 
-import systemVerilog_wrapper
-export systemVerilog_wrapper
+import verilog_wrapper
+export verilog_wrapper

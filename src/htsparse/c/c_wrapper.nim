@@ -159,6 +159,7 @@ type
     cThiscallTok,           ## __thiscall
     cUnalignedTok,          ## __unaligned
     cVectorcallTok,         ## __vectorcall
+    cUnalignedTok2,         ## _unaligned
     cAutoTok,               ## auto
     cBreakTok,              ## break
     cCaseTok,               ## case
@@ -202,6 +203,8 @@ type
     cTrue,                  ## true
     cTypeIdentifier,        ## type_identifier
     cTypedefTok,            ## typedef
+    cUQuoteTok2,            ## u"
+    cUApostropheTok2,       ## u'
     cU8QuoteTok,            ## u8"
     cU8ApostropheTok,       ## u8'
     cUnionTok,              ## union
@@ -214,6 +217,7 @@ type
     cDoublePipeTok,         ## ||
     cRCurlyTok,             ## }
     cTildeTok,              ## ~
+    cComment2,              ## comment
     cSyntaxError             ## Tree-sitter parser syntax error
 type
   CNode* = distinct TSNode
@@ -498,9 +502,9 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "L\'":
       cLApostropheTok
     of "U\"":
-      cUQuoteTok
+      cUQuoteTok2
     of "U\'":
-      cUApostropheTok
+      cUApostropheTok2
     of "[":
       cLBrackTok
     of "]":
@@ -528,11 +532,11 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "__thiscall":
       cThiscallTok
     of "__unaligned":
-      cUnalignedTok
+      cUnalignedTok2
     of "__vectorcall":
       cVectorcallTok
     of "_unaligned":
-      cUnalignedTok
+      cUnalignedTok2
     of "auto":
       cAutoTok
     of "break":
@@ -540,7 +544,7 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "case":
       cCaseTok
     of "comment":
-      cComment
+      cComment2
     of "const":
       cConstTok
     of "continue":
@@ -620,9 +624,9 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "typedef":
       cTypedefTok
     of "u\"":
-      cUQuoteTok
+      cUQuoteTok2
     of "u\'":
-      cUApostropheTok
+      cUApostropheTok2
     of "u8\"":
       cU8QuoteTok
     of "u8\'":

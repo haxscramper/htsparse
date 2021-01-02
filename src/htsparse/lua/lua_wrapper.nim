@@ -101,6 +101,7 @@ type
     luaRCurlyTok,           ## }
     luaTildeTok,            ## ~
     luaTildeEqualTok,       ## ~=
+    luaComment2,            ## comment
     luaSyntaxError           ## Tree-sitter parser syntax error
 type
   LuaExternalTok* = enum
@@ -241,7 +242,7 @@ proc kind*(node: LuaNode): LuaNodeKind {.noSideEffect.} =
     of "break_statement":
       luaBreakStatement
     of "comment":
-      luaComment
+      luaComment2
     of "do":
       luaDoTok
     of "end":

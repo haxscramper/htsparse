@@ -169,6 +169,7 @@ type
     latexUsebox,            ## usebox
     latexValue,             ## value
     latexVerb,              ## verb
+    latexVerbatimEnv2,      ## verbatim_env
     latexVolcite,           ## volcite
     latexVolcites,          ## volcites
     latexActiveChar,        ## active_char
@@ -215,6 +216,12 @@ type
     latexUnit,              ## unit
     latexVerbDelim,         ## verb_delim
     latexVerbatim,          ## verbatim
+    latexSpace2,            ## _space
+    latexCommentArara2,     ## comment_arara
+    latexCommentBib2,       ## comment_bib
+    latexCommentTag2,       ## comment_tag
+    latexCommentTex2,       ## comment_tex
+    latexComment2,          ## comment
     latexSyntaxError         ## Tree-sitter parser syntax error
 type
   LatexExternalTok* = enum
@@ -481,7 +488,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "ProvidesExpl":
       latexProvidesExpl
     of "Verbatim_env":
-      latexVerbatimEnv
+      latexVerbatimEnv2
     of "WarningInfo":
       latexWarningInfo
     of "addvspace":
@@ -727,7 +734,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "short_verb":
       latexShortVerb
     of "space":
-      latexSpace
+      latexSpace2
     of "sqrt":
       latexSqrt
     of "stackrel":
@@ -779,7 +786,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "verb":
       latexVerb
     of "verbatim_env":
-      latexVerbatimEnv
+      latexVerbatimEnv2
     of "volcite":
       latexVolcite
     of "volcites":
@@ -795,17 +802,17 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "comma":
       latexComma
     of "comment":
-      latexComment
+      latexComment2
     of "comment_arara":
-      latexCommentArara
+      latexCommentArara2
     of "comment_bib":
-      latexCommentBib
+      latexCommentBib2
     of "comment_block":
       latexCommentBlock
     of "comment_tag":
-      latexCommentTag
+      latexCommentTag2
     of "comment_tex":
-      latexCommentTex
+      latexCommentTex2
     of "cs":
       latexCs
     of "decimal":
@@ -873,7 +880,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "verbatim":
       latexVerbatim
     of "_space":
-      latexSpace
+      latexSpace2
     of "ERROR":
       latexSyntaxError
     else:

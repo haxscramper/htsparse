@@ -36,6 +36,7 @@ type
     tomlOffsetDateTime,     ## offset_date_time
     tomlLCurlyTok,          ## {
     tomlRCurlyTok,          ## }
+    tomlComment2,           ## comment
     tomlSyntaxError          ## Tree-sitter parser syntax error
 type
   TomlExternalTok* = enum
@@ -101,7 +102,7 @@ proc kind*(node: TomlNode): TomlNodeKind {.noSideEffect.} =
     of "boolean":
       tomlBoolean
     of "comment":
-      tomlComment
+      tomlComment2
     of "escape_sequence":
       tomlEscapeSequence
     of "local_date":

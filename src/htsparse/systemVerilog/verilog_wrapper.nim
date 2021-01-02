@@ -389,6 +389,7 @@ type
     verilogOpenRangeList,   ## open_range_list
     verilogOpenValueRange,  ## open_value_range
     verilogOperatorAssignment, ## operator_assignment
+    verilogOrderedParameterAssignment2, ## ordered_parameter_assignment
     verilogOrderedPortConnection, ## ordered_port_connection
     verilogOutputDeclaration, ## output_declaration
     verilogOutputIdentifier, ## output_identifier
@@ -631,8 +632,8 @@ type
     verilogApostrophe1Tok,  ## '1
     verilogApostropheB0Tok, ## 'B0
     verilogApostropheB1Tok, ## 'B1
-    verilogApostropheb0Tok, ## 'b0
-    verilogApostropheb1Tok, ## 'b1
+    verilogApostropheb0Tok2, ## 'b0
+    verilogApostropheb1Tok2, ## 'b1
     verilogApostropheLCurlyTok, ## '{
     verilogLParTok,         ## (
     verilogLParAsteriskTok, ## (*
@@ -664,11 +665,11 @@ type
     verilog1ApostropheB0Tok, ## 1'B0
     verilog1ApostropheB1Tok, ## 1'B1
     verilog1ApostropheBXTok, ## 1'BX
-    verilog1ApostropheBxTok, ## 1'Bx
-    verilog1Apostropheb0Tok, ## 1'b0
-    verilog1Apostropheb1Tok, ## 1'b1
-    verilog1ApostrophebXTok, ## 1'bX
-    verilog1ApostrophebxTok, ## 1'bx
+    verilog1ApostropheBxTok2, ## 1'Bx
+    verilog1Apostropheb0Tok2, ## 1'b0
+    verilog1Apostropheb1Tok2, ## 1'b1
+    verilog1ApostrophebXTok3, ## 1'bX
+    verilog1ApostrophebxTok4, ## 1'bx
     verilog10Tok,           ## 10
     verilog1stepTok,        ## 1step
     verilog2Tok,            ## 2
@@ -1017,6 +1018,7 @@ type
     verilog–Tok,          ## –
     verilog–GreaterThanTok, ## –>
     verilog––Tok,       ## ––
+    verilogComment2,        ## comment
     verilogSyntaxError       ## Tree-sitter parser syntax error
 type
   VerilogNode* = distinct TSNode
@@ -1051,7 +1053,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "$width_timing_check":
       verilogDollarwidthUnderscoretimingUnderscorecheck
     of "_ordered_parameter_assignment":
-      verilogOrderedParameterAssignment
+      verilogOrderedParameterAssignment2
     of "action_block":
       verilogActionBlock
     of "always_construct":
@@ -1797,7 +1799,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "operator_assignment":
       verilogOperatorAssignment
     of "ordered_parameter_assignment":
-      verilogOrderedParameterAssignment
+      verilogOrderedParameterAssignment2
     of "ordered_port_connection":
       verilogOrderedPortConnection
     of "output_declaration":
@@ -2277,13 +2279,13 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "\'1":
       verilogApostrophe1Tok
     of "\'B0":
-      verilogApostropheB0Tok
+      verilogApostropheB0Tok2
     of "\'B1":
-      verilogApostropheB1Tok
+      verilogApostropheB1Tok2
     of "\'b0":
-      verilogApostropheb0Tok
+      verilogApostropheb0Tok2
     of "\'b1":
-      verilogApostropheb1Tok
+      verilogApostropheb1Tok2
     of "\'{":
       verilogApostropheLCurlyTok
     of "(":
@@ -2341,21 +2343,21 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "1":
       verilog1Tok
     of "1\'B0":
-      verilog1ApostropheB0Tok
+      verilog1ApostropheB0Tok2
     of "1\'B1":
-      verilog1ApostropheB1Tok
+      verilog1ApostropheB1Tok2
     of "1\'BX":
-      verilog1ApostropheBXTok
+      verilog1ApostropheBXTok4
     of "1\'Bx":
-      verilog1ApostropheBxTok
+      verilog1ApostropheBxTok4
     of "1\'b0":
-      verilog1Apostropheb0Tok
+      verilog1Apostropheb0Tok2
     of "1\'b1":
-      verilog1Apostropheb1Tok
+      verilog1Apostropheb1Tok2
     of "1\'bX":
-      verilog1ApostrophebXTok
+      verilog1ApostrophebXTok4
     of "1\'bx":
-      verilog1ApostrophebxTok
+      verilog1ApostrophebxTok4
     of "10":
       verilog10Tok
     of "1step":
@@ -2511,7 +2513,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "cmos":
       verilogCmosTok
     of "comment":
-      verilogComment
+      verilogComment2
     of "config":
       verilogConfigTok
     of "const":

@@ -16,6 +16,7 @@ type
     vhdlPSLClockedFLProperty, ## PSL_Clocked_FL_Property
     vhdlPSLClockedSERE,     ## PSL_Clocked_SERE
     vhdlPSLConstantParameterSpecification, ## PSL_Constant_Parameter_Specification
+    vhdlPSLCount,           ## PSL_Count
     vhdlPSLCoverDirective,  ## PSL_Cover_Directive
     vhdlPSLExpression,      ## PSL_Expression
     vhdlPSLExtendedOcurrenceFLProperty, ## PSL_Extended_Ocurrence_FL_Property
@@ -89,6 +90,8 @@ type
     vhdlBlockConfiguration, ## block_configuration
     vhdlBlockSpecification, ## block_specification
     vhdlBlockStatement,     ## block_statement
+    vhdlBoolean,            ## boolean
+    vhdlBuffer,             ## buffer
     vhdlCaseGenerateAlternative, ## case_generate_alternative
     vhdlCaseGenerateStatement, ## case_generate_statement
     vhdlCaseStatement,      ## case_statement
@@ -151,13 +154,16 @@ type
     vhdlFileDeclaration,    ## file_declaration
     vhdlFileInterfaceDeclaration, ## file_interface_declaration
     vhdlFileOpenInformation, ## file_open_information
-    vhdlFileOpenKind,       ## file_open_kind
     vhdlFileTypeDefinition, ## file_type_definition
     vhdlForGenerateStatement, ## for_generate_statement
     vhdlForLoop,            ## for_loop
     vhdlForceMode,          ## force_mode
     vhdlFullTypeDeclaration, ## full_type_declaration
+    vhdlFunctionBody,       ## function_body
     vhdlFunctionCall,       ## function_call
+    vhdlFunctionDeclaration, ## function_declaration
+    vhdlFunctionInstantiationDeclaration, ## function_instantiation_declaration
+    vhdlFunctionInterfaceDeclaration, ## function_interface_declaration
     vhdlFunctionParameterClause, ## function_parameter_clause
     vhdlGenerateStatementBody, ## generate_statement_body
     vhdlGenerateStatementElement, ## generate_statement_element
@@ -173,11 +179,13 @@ type
     vhdlIfGenerate,         ## if_generate
     vhdlIfGenerateStatement, ## if_generate_statement
     vhdlIfStatement,        ## if_statement
+    vhdlIn,                 ## in
     vhdlIncompleteTypeDeclaration, ## incomplete_type_declaration
     vhdlIndexConstraint,    ## index_constraint
     vhdlIndexSubtypeDefinition, ## index_subtype_definition
     vhdlInertial,           ## inertial
     vhdlInertialExpression, ## inertial_expression
+    vhdlInout,              ## inout
     vhdlInstantiationList,  ## instantiation_list
     vhdlInteger,            ## integer
     vhdlIntegerDecimal,     ## integer_decimal
@@ -185,6 +193,7 @@ type
     vhdlLabel,              ## label
     vhdlLength,             ## length
     vhdlLibraryClause,      ## library_clause
+    vhdlLinkage,            ## linkage
     vhdlLogicalExpression,  ## logical_expression
     vhdlLogicalNameList,    ## logical_name_list
     vhdlLoopStatement,      ## loop_statement
@@ -197,9 +206,11 @@ type
     vhdlNull,               ## null
     vhdlNullStatement,      ## null_statement
     vhdlNumericTypeDefinition, ## numeric_type_definition
+    vhdlObjectAttribute,    ## object_attribute
     vhdlOpen,               ## open
     vhdlOperatorSymbol,     ## operator_symbol
     vhdlOthers,             ## others
+    vhdlOut,                ## out
     vhdlPackageBody,        ## package_body
     vhdlPackageDeclaration, ## package_declaration
     vhdlPackageInstantiationDeclaration, ## package_instantiation_declaration
@@ -217,7 +228,11 @@ type
     vhdlPositionalElementAssociation, ## positional_element_association
     vhdlPositiveExponent,   ## positive_exponent
     vhdlPrimaryUnitDeclaration, ## primary_unit_declaration
+    vhdlProcedureBody,      ## procedure_body
     vhdlProcedureCallStatement, ## procedure_call_statement
+    vhdlProcedureDeclaration, ## procedure_declaration
+    vhdlProcedureInstantiationDeclaration, ## procedure_instantiation_declaration
+    vhdlProcedureInterfaceDeclaration, ## procedure_interface_declaration
     vhdlProcedureParameterClause, ## procedure_parameter_clause
     vhdlProcessStatement,   ## process_statement
     vhdlProtectedTypeBody,  ## protected_type_body
@@ -248,6 +263,7 @@ type
     vhdlSelectedWaveforms,  ## selected_waveforms
     vhdlSensitivityClause,  ## sensitivity_clause
     vhdlSensitivityList,    ## sensitivity_list
+    vhdlSeparator,          ## separator
     vhdlSequenceOfStatements, ## sequence_of_statements
     vhdlSeverity,           ## severity
     vhdlSharedVariableDeclaration, ## shared_variable_declaration
@@ -265,11 +281,8 @@ type
     vhdlSimpleWaveformAssignment, ## simple_waveform_assignment
     vhdlSliceName,          ## slice_name
     vhdlStringLiteral,      ## string_literal
-    vhdlSubprogramBody,     ## subprogram_body
-    vhdlSubprogramDeclaration, ## subprogram_declaration
-    vhdlSubprogramInstantiationDeclaration, ## subprogram_instantiation_declaration
-    vhdlSubprogramInterfaceDeclaration, ## subprogram_interface_declaration
-    vhdlSubprogramSpecification, ## subprogram_specification
+    vhdlSubprogramHeader,   ## subprogram_header
+    vhdlSubprogramInstantiationMapAspect, ## subprogram_instantiation_map_aspect
     vhdlSubtypeDeclaration, ## subtype_declaration
     vhdlSubtypeIndication,  ## subtype_indication
     vhdlTerm,               ## term
@@ -278,8 +291,8 @@ type
     vhdlTransport,          ## transport
     vhdlTypeInterfaceDeclaration, ## type_interface_declaration
     vhdlTypeMark,           ## type_mark
+    vhdlUnaffected,         ## unaffected
     vhdlUnboundedArrayDefinition, ## unbounded_array_definition
-    vhdlUnderline,          ## underline
     vhdlUseClause,          ## use_clause
     vhdlVariableDeclaration, ## variable_declaration
     vhdlVariableInterfaceDeclaration, ## variable_interface_declaration
@@ -307,44 +320,59 @@ type
     vhdlMinusGreaterThanTok, ## ->
     vhdlDotTok,             ## .
     vhdlSlashTok,           ## /
-    vhdlSlashEqualTok,      ## /=
+    vhdlSlashAsteriskTok,   ## /*
+    vhdl0Tok,               ## 0
+    vhdl1Tok,               ## 1
+    vhdl2Tok,               ## 2
+    vhdl3Tok,               ## 3
+    vhdl4Tok,               ## 4
+    vhdl5Tok,               ## 5
+    vhdl6Tok,               ## 6
+    vhdl7Tok,               ## 7
+    vhdl8Tok,               ## 8
+    vhdl9Tok,               ## 9
     vhdlColonTok,           ## :
     vhdlColonEqualTok,      ## :=
     vhdlSemicolonTok,       ## ;
-    vhdlLessThanTok,        ## <
-    vhdlLessThanMinusGreaterThanTok, ## <->
     vhdlDoubleLessThanTok,  ## <<
     vhdlLessThanEqualTok,   ## <=
-    vhdlLessThanGreaterThanTok, ## <>
     vhdlEqualTok,           ## =
     vhdlEqualGreaterThanTok, ## =>
-    vhdlGreaterThanTok,     ## >
-    vhdlGreaterThanEqualTok, ## >=
     vhdlDoubleGreaterThanTok, ## >>
+    vhdlQuestionTok,        ## ?
     vhdlDoubleQuestionTok,  ## ??
     vhdlAtTok,              ## @
+    vhdlCONDITIONALRELATIONALOPERATORTok, ## CONDITIONAL_RELATIONAL_OPERATOR
+    vhdlLOGICALOPERATORTok, ## LOGICAL_OPERATOR
+    vhdlMISCELLANEOUSOPERATORTok, ## MISCELLANEOUS_OPERATOR
+    vhdlMULTIPLYINGOPERATORTok, ## MULTIPLYING_OPERATOR
     vhdlPSLIdentifier,      ## PSL_Identifier
+    vhdlPSLLOGICALIMPLICATIONOPERATORTok, ## PSL_LOGICAL_IMPLICATION_OPERATOR
+    vhdlPSLLOGICALOPERATORTok, ## PSL_LOGICAL_OPERATOR
+    vhdlPSLMISCELLANEOUSOPERATORTok, ## PSL_MISCELLANEOUS_OPERATOR
+    vhdlPSLSUFFIXIMPLICATIONOPERATORTok, ## PSL_SUFFIX_IMPLICATION_OPERATOR
+    vhdlPSLTERMINATIONOPERATORTok, ## PSL_TERMINATION_OPERATOR
+    vhdlREDUCTIONOPERATORTok, ## REDUCTION_OPERATOR
+    vhdlRELATIONALOPERATORTok, ## RELATIONAL_OPERATOR
+    vhdlSHIFTOPERATORTok,   ## SHIFT_OPERATOR
     vhdlLBrackTok,          ## [
     vhdlRBrackTok,          ## ]
     vhdlAccentDotTok,       ## ^.
     vhdlUnderscoreTok,      ## _
     vhdlBacktickTok,        ## `
-    vhdlAbortTok,           ## abort
-    vhdlAbsTok,             ## abs
     vhdlAccessTok,          ## access
     vhdlAfterTok,           ## after
     vhdlAliasTok,           ## alias
     vhdlAllTok,             ## all
     vhdlAlwaysTok,          ## always
-    vhdlAndTok,             ## and
     vhdlAny,                ## any
-    vhdlAppendModeTok,      ## append_mode
     vhdlArchitectureTok,    ## architecture
     vhdlArrayTok,           ## array
+    vhdlArrayAttribute,     ## array_attribute
+    vhdlArrayObjectAttribute, ## array_object_attribute
     vhdlAssertTok,          ## assert
     vhdlAssumeTok,          ## assume
     vhdlAssumeGuaranteeTok, ## assume_guarantee
-    vhdlAsyncAbortTok,      ## async_abort
     vhdlAttributeTok,       ## attribute
     vhdlBaseSpecifier,      ## base_specifier
     vhdlBeforeTok,          ## before
@@ -353,12 +381,10 @@ type
     vhdlBitVectorTok,       ## bit_vector
     vhdlBlockTok,           ## block
     vhdlBodyTok,            ## body
-    vhdlBoolean,            ## boolean
     vhdlBooleanTok,         ## boolean
     vhdlBufferTok,          ## buffer
     vhdlBusTok,             ## bus
     vhdlCaseTok,            ## case
-    vhdlCaseQuestionTok,    ## case?
     vhdlClockTok,           ## clock
     vhdlComponentTok,       ## component
     vhdlConfigurationTok,   ## configuration
@@ -391,10 +417,9 @@ type
     vhdlGroupTok,           ## group
     vhdlGuardedTok,         ## guarded
     vhdlHdltypeTok,         ## hdltype
-    vhdlHigh,               ## high
-    vhdlHighImpedance,      ## high_impedance
     vhdlIdentifier,         ## identifier
     vhdlIfTok,              ## if
+    vhdlIllegal,            ## illegal
     vhdlImpureTok,          ## impure
     vhdlInTok,              ## in
     vhdlInertialTok,        ## inertial
@@ -407,10 +432,8 @@ type
     vhdlLinkageTok,         ## linkage
     vhdlLiteralTok,         ## literal
     vhdlLoopTok,            ## loop
-    vhdlLow,                ## low
     vhdlMapTok,             ## map
-    vhdlModTok,             ## mod
-    vhdlNandTok,            ## nand
+    vhdlNamedEntityAttribute, ## named_entity_attribute
     vhdlNeverTok,           ## never
     vhdlNewTok,             ## new
     vhdlNextTok,            ## next
@@ -421,8 +444,6 @@ type
     vhdlNextEventETok,      ## next_event_e
     vhdlNondetTok,          ## nondet
     vhdlNondetVectorTok,    ## nondet_vector
-    vhdlNorTok,             ## nor
-    vhdlNotTok,             ## not
     vhdlNullTok,            ## null
     vhdlNumericTok,         ## numeric
     vhdlOfTok,              ## of
@@ -430,14 +451,12 @@ type
     vhdlOnehotTok,          ## onehot
     vhdlOnehot0Tok,         ## onehot0
     vhdlOpenTok,            ## open
-    vhdlOrTok,              ## or
     vhdlOthersTok,          ## others
     vhdlOutTok,             ## out
     vhdlPackageTok,         ## package
     vhdlParameterTok,       ## parameter
     vhdlPortTok,            ## port
     vhdlPostponedTok,       ## postponed
-    vhdlPredefinedName,     ## predefined_name
     vhdlPrevTok,            ## prev
     vhdlProcedureTok,       ## procedure
     vhdlProcessTok,         ## process
@@ -445,44 +464,37 @@ type
     vhdlProtectedTok,       ## protected
     vhdlPureTok,            ## pure
     vhdlRangeTok,           ## range
-    vhdlReadModeTok,        ## read_mode
     vhdlRecordTok,          ## record
     vhdlRegisterTok,        ## register
     vhdlRejectTok,          ## reject
     vhdlReleaseTok,         ## release
-    vhdlRemTok,             ## rem
     vhdlReportTok,          ## report
     vhdlRestrictTok,        ## restrict
     vhdlRestrictGuaranteeTok, ## restrict_guarantee
     vhdlReturnTok,          ## return
-    vhdlRolTok,             ## rol
-    vhdlRorTok,             ## ror
     vhdlRoseTok,            ## rose
     vhdlSame,               ## same
     vhdlSelectTok,          ## select
-    vhdlSelectQuestionTok,  ## select?
     vhdlSemicolon,          ## semicolon
     vhdlSequenceTok,        ## sequence
     vhdlSeverityTok,        ## severity
     vhdlSharedTok,          ## shared
     vhdlSignalTok,          ## signal
+    vhdlSignalAttribute,    ## signal_attribute
     vhdlSimpleName,         ## simple_name
-    vhdlSlaTok,             ## sla
-    vhdlSllTok,             ## sll
-    vhdlSraTok,             ## sra
-    vhdlSrlTok,             ## srl
     vhdlStableTok,          ## stable
     vhdlStringTok,          ## string
     vhdlStrongTok,          ## strong
     vhdlSubtypeTok,         ## subtype
-    vhdlSyncAbortTok,       ## sync_abort
     vhdlThenTok,            ## then
     vhdlToTok,              ## to
     vhdlTransportTok,       ## transport
     vhdlTypeTok,            ## type
-    vhdlUnaffected,         ## unaffected
-    vhdlUninitialized,      ## uninitialized
+    vhdlTypeAttribute,      ## type_attribute
+    vhdlTypeOrArrayAttribute, ## type_or_array_attribute
+    vhdlUnaffectedTok,      ## unaffected
     vhdlUnitsTok,           ## units
+    vhdlUnresolved,         ## unresolved
     vhdlUntilTok,           ## until
     vhdlUseTok,             ## use
     vhdlVariableTok,        ## variable
@@ -490,19 +502,15 @@ type
     vhdlVpropTok,           ## vprop
     vhdlVunitTok,           ## vunit
     vhdlWaitTok,            ## wait
-    vhdlWeak,               ## weak
     vhdlWhenTok,            ## when
     vhdlWhileTok,           ## while
     vhdlWithTok,            ## with
     vhdlWithinTok,          ## within
-    vhdlWriteModeTok,       ## write_mode
-    vhdlXnorTok,            ## xnor
-    vhdlXorTok,             ## xor
     vhdlLCurlyTok,          ## {
     vhdlPipeTok,            ## |
-    vhdlPipeMinusGreaterThanTok, ## |->
-    vhdlPipeEqualGreaterThanTok, ## |=>
     vhdlRCurlyTok,          ## }
+    vhdlComment2,           ## comment
+    vhdlToolDirective2,     ## tool_directive
     vhdlSyntaxError          ## Tree-sitter parser syntax error
 type
   VhdlNode* = distinct TSNode
@@ -536,6 +544,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlPSLClockedSERE
     of "PSL_Constant_Parameter_Specification":
       vhdlPSLConstantParameterSpecification
+    of "PSL_Count":
+      vhdlPSLCount
     of "PSL_Cover_Directive":
       vhdlPSLCoverDirective
     of "PSL_Expression":
@@ -682,6 +692,10 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlBlockSpecification
     of "block_statement":
       vhdlBlockStatement
+    of "boolean":
+      vhdlBoolean
+    of "buffer":
+      vhdlBuffer
     of "case_generate_alternative":
       vhdlCaseGenerateAlternative
     of "case_generate_statement":
@@ -695,7 +709,7 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
     of "choices":
       vhdlChoices
     of "comment":
-      vhdlComment
+      vhdlComment2
     of "component_configuration":
       vhdlComponentConfiguration
     of "component_declaration":
@@ -806,8 +820,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlFileInterfaceDeclaration
     of "file_open_information":
       vhdlFileOpenInformation
-    of "file_open_kind":
-      vhdlFileOpenKind
     of "file_type_definition":
       vhdlFileTypeDefinition
     of "for_generate_statement":
@@ -818,8 +830,16 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlForceMode
     of "full_type_declaration":
       vhdlFullTypeDeclaration
+    of "function_body":
+      vhdlFunctionBody
     of "function_call":
       vhdlFunctionCall
+    of "function_declaration":
+      vhdlFunctionDeclaration
+    of "function_instantiation_declaration":
+      vhdlFunctionInstantiationDeclaration
+    of "function_interface_declaration":
+      vhdlFunctionInterfaceDeclaration
     of "function_parameter_clause":
       vhdlFunctionParameterClause
     of "generate_statement_body":
@@ -850,6 +870,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlIfGenerateStatement
     of "if_statement":
       vhdlIfStatement
+    of "in":
+      vhdlIn
     of "incomplete_type_declaration":
       vhdlIncompleteTypeDeclaration
     of "index_constraint":
@@ -860,6 +882,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlInertial
     of "inertial_expression":
       vhdlInertialExpression
+    of "inout":
+      vhdlInout
     of "instantiation_list":
       vhdlInstantiationList
     of "integer":
@@ -874,6 +898,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlLength
     of "library_clause":
       vhdlLibraryClause
+    of "linkage":
+      vhdlLinkage
     of "logical_expression":
       vhdlLogicalExpression
     of "logical_name_list":
@@ -898,12 +924,16 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlNullStatement
     of "numeric_type_definition":
       vhdlNumericTypeDefinition
+    of "object_attribute":
+      vhdlObjectAttribute
     of "open":
       vhdlOpen
     of "operator_symbol":
       vhdlOperatorSymbol
     of "others":
       vhdlOthers
+    of "out":
+      vhdlOut
     of "package_body":
       vhdlPackageBody
     of "package_declaration":
@@ -938,8 +968,16 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlPositiveExponent
     of "primary_unit_declaration":
       vhdlPrimaryUnitDeclaration
+    of "procedure_body":
+      vhdlProcedureBody
     of "procedure_call_statement":
       vhdlProcedureCallStatement
+    of "procedure_declaration":
+      vhdlProcedureDeclaration
+    of "procedure_instantiation_declaration":
+      vhdlProcedureInstantiationDeclaration
+    of "procedure_interface_declaration":
+      vhdlProcedureInterfaceDeclaration
     of "procedure_parameter_clause":
       vhdlProcedureParameterClause
     of "process_statement":
@@ -1000,6 +1038,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlSensitivityClause
     of "sensitivity_list":
       vhdlSensitivityList
+    of "separator":
+      vhdlSeparator
     of "sequence_of_statements":
       vhdlSequenceOfStatements
     of "severity":
@@ -1034,16 +1074,10 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlSliceName
     of "string_literal":
       vhdlStringLiteral
-    of "subprogram_body":
-      vhdlSubprogramBody
-    of "subprogram_declaration":
-      vhdlSubprogramDeclaration
-    of "subprogram_instantiation_declaration":
-      vhdlSubprogramInstantiationDeclaration
-    of "subprogram_interface_declaration":
-      vhdlSubprogramInterfaceDeclaration
-    of "subprogram_specification":
-      vhdlSubprogramSpecification
+    of "subprogram_header":
+      vhdlSubprogramHeader
+    of "subprogram_instantiation_map_aspect":
+      vhdlSubprogramInstantiationMapAspect
     of "subtype_declaration":
       vhdlSubtypeDeclaration
     of "subtype_indication":
@@ -1053,17 +1087,17 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
     of "timeout_clause":
       vhdlTimeoutClause
     of "tool_directive":
-      vhdlToolDirective
+      vhdlToolDirective2
     of "transport":
       vhdlTransport
     of "type_interface_declaration":
       vhdlTypeInterfaceDeclaration
     of "type_mark":
       vhdlTypeMark
+    of "unaffected":
+      vhdlUnaffected
     of "unbounded_array_definition":
       vhdlUnboundedArrayDefinition
-    of "underline":
-      vhdlUnderline
     of "use_clause":
       vhdlUseClause
     of "variable_declaration":
@@ -1118,40 +1152,76 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlDotTok
     of "/":
       vhdlSlashTok
-    of "/=":
-      vhdlSlashEqualTok
+    of "/*":
+      vhdlSlashAsteriskTok
+    of "0":
+      vhdl0Tok
+    of "1":
+      vhdl1Tok
+    of "2":
+      vhdl2Tok
+    of "3":
+      vhdl3Tok
+    of "4":
+      vhdl4Tok
+    of "5":
+      vhdl5Tok
+    of "6":
+      vhdl6Tok
+    of "7":
+      vhdl7Tok
+    of "8":
+      vhdl8Tok
+    of "9":
+      vhdl9Tok
     of ":":
       vhdlColonTok
     of ":=":
       vhdlColonEqualTok
     of ";":
       vhdlSemicolonTok
-    of "<":
-      vhdlLessThanTok
-    of "<->":
-      vhdlLessThanMinusGreaterThanTok
     of "<<":
       vhdlDoubleLessThanTok
     of "<=":
       vhdlLessThanEqualTok
-    of "<>":
-      vhdlLessThanGreaterThanTok
     of "=":
       vhdlEqualTok
     of "=>":
       vhdlEqualGreaterThanTok
-    of ">":
-      vhdlGreaterThanTok
-    of ">=":
-      vhdlGreaterThanEqualTok
     of ">>":
       vhdlDoubleGreaterThanTok
+    of "?":
+      vhdlQuestionTok
     of "??":
       vhdlDoubleQuestionTok
     of "@":
       vhdlAtTok
+    of "CONDITIONAL_RELATIONAL_OPERATOR":
+      vhdlCONDITIONALRELATIONALOPERATORTok
+    of "LOGICAL_OPERATOR":
+      vhdlLOGICALOPERATORTok
+    of "MISCELLANEOUS_OPERATOR":
+      vhdlMISCELLANEOUSOPERATORTok
+    of "MULTIPLYING_OPERATOR":
+      vhdlMULTIPLYINGOPERATORTok
     of "PSL_Identifier":
       vhdlPSLIdentifier
+    of "PSL_LOGICAL_IMPLICATION_OPERATOR":
+      vhdlPSLLOGICALIMPLICATIONOPERATORTok
+    of "PSL_LOGICAL_OPERATOR":
+      vhdlPSLLOGICALOPERATORTok
+    of "PSL_MISCELLANEOUS_OPERATOR":
+      vhdlPSLMISCELLANEOUSOPERATORTok
+    of "PSL_SUFFIX_IMPLICATION_OPERATOR":
+      vhdlPSLSUFFIXIMPLICATIONOPERATORTok
+    of "PSL_TERMINATION_OPERATOR":
+      vhdlPSLTERMINATIONOPERATORTok
+    of "REDUCTION_OPERATOR":
+      vhdlREDUCTIONOPERATORTok
+    of "RELATIONAL_OPERATOR":
+      vhdlRELATIONALOPERATORTok
+    of "SHIFT_OPERATOR":
+      vhdlSHIFTOPERATORTok
     of "[":
       vhdlLBrackTok
     of "]":
@@ -1162,34 +1232,28 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlUnderscoreTok
     of "`":
       vhdlBacktickTok
-    of "abort":
-      vhdlAbortTok
-    of "abs":
-      vhdlAbsTok
     of "access":
       vhdlAccessTok
     of "alias":
       vhdlAliasTok
     of "always":
       vhdlAlwaysTok
-    of "and":
-      vhdlAndTok
     of "any":
       vhdlAny
-    of "append_mode":
-      vhdlAppendModeTok
     of "architecture":
       vhdlArchitectureTok
     of "array":
       vhdlArrayTok
+    of "array_attribute":
+      vhdlArrayAttribute
+    of "array_object_attribute":
+      vhdlArrayObjectAttribute
     of "assert":
       vhdlAssertTok
     of "assume":
       vhdlAssumeTok
     of "assume_guarantee":
       vhdlAssumeGuaranteeTok
-    of "async_abort":
-      vhdlAsyncAbortTok
     of "attribute":
       vhdlAttributeTok
     of "base_specifier":
@@ -1206,16 +1270,10 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlBlockTok
     of "body":
       vhdlBodyTok
-    of "boolean":
-      vhdlBoolean
-    of "buffer":
-      vhdlBufferTok
     of "bus":
       vhdlBusTok
     of "case":
       vhdlCaseTok
-    of "case?":
-      vhdlCaseQuestionTok
     of "clock":
       vhdlClockTok
     of "component":
@@ -1274,40 +1332,28 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlGuardedTok
     of "hdltype":
       vhdlHdltypeTok
-    of "high":
-      vhdlHigh
-    of "high_impedance":
-      vhdlHighImpedance
     of "identifier":
       vhdlIdentifier
+    of "illegal":
+      vhdlIllegal
     of "impure":
       vhdlImpureTok
-    of "in":
-      vhdlInTok
     of "inherit":
       vhdlInheritTok
-    of "inout":
-      vhdlInoutTok
     of "is":
       vhdlIsTok
     of "isunknown":
       vhdlIsunknownTok
     of "library":
       vhdlLibraryTok
-    of "linkage":
-      vhdlLinkageTok
     of "literal":
       vhdlLiteralTok
     of "loop":
       vhdlLoopTok
-    of "low":
-      vhdlLow
     of "map":
       vhdlMapTok
-    of "mod":
-      vhdlModTok
-    of "nand":
-      vhdlNandTok
+    of "named_entity_attribute":
+      vhdlNamedEntityAttribute
     of "never":
       vhdlNeverTok
     of "new":
@@ -1328,10 +1374,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlNondetTok
     of "nondet_vector":
       vhdlNondetVectorTok
-    of "nor":
-      vhdlNorTok
-    of "not":
-      vhdlNotTok
     of "numeric":
       vhdlNumericTok
     of "of":
@@ -1342,10 +1384,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlOnehotTok
     of "onehot0":
       vhdlOnehot0Tok
-    of "or":
-      vhdlOrTok
-    of "out":
-      vhdlOutTok
     of "package":
       vhdlPackageTok
     of "parameter":
@@ -1354,8 +1392,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlPortTok
     of "postponed":
       vhdlPostponedTok
-    of "predefined_name":
-      vhdlPredefinedName
     of "prev":
       vhdlPrevTok
     of "procedure":
@@ -1370,32 +1406,22 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlPureTok
     of "range":
       vhdlRangeTok
-    of "read_mode":
-      vhdlReadModeTok
     of "record":
       vhdlRecordTok
     of "register":
       vhdlRegisterTok
     of "release":
       vhdlReleaseTok
-    of "rem":
-      vhdlRemTok
     of "restrict":
       vhdlRestrictTok
     of "restrict_guarantee":
       vhdlRestrictGuaranteeTok
-    of "rol":
-      vhdlRolTok
-    of "ror":
-      vhdlRorTok
     of "rose":
       vhdlRoseTok
     of "same":
       vhdlSame
     of "select":
       vhdlSelectTok
-    of "select?":
-      vhdlSelectQuestionTok
     of "semicolon":
       vhdlSemicolon
     of "sequence":
@@ -1404,16 +1430,10 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlSharedTok
     of "signal":
       vhdlSignalTok
+    of "signal_attribute":
+      vhdlSignalAttribute
     of "simple_name":
       vhdlSimpleName
-    of "sla":
-      vhdlSlaTok
-    of "sll":
-      vhdlSllTok
-    of "sra":
-      vhdlSraTok
-    of "srl":
-      vhdlSrlTok
     of "stable":
       vhdlStableTok
     of "string":
@@ -1422,20 +1442,20 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlStrongTok
     of "subtype":
       vhdlSubtypeTok
-    of "sync_abort":
-      vhdlSyncAbortTok
     of "then":
       vhdlThenTok
     of "to":
       vhdlToTok
     of "type":
       vhdlTypeTok
-    of "unaffected":
-      vhdlUnaffected
-    of "uninitialized":
-      vhdlUninitialized
+    of "type_attribute":
+      vhdlTypeAttribute
+    of "type_or_array_attribute":
+      vhdlTypeOrArrayAttribute
     of "units":
       vhdlUnitsTok
+    of "unresolved":
+      vhdlUnresolved
     of "until":
       vhdlUntilTok
     of "use":
@@ -1450,8 +1470,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlVunitTok
     of "wait":
       vhdlWaitTok
-    of "weak":
-      vhdlWeak
     of "when":
       vhdlWhenTok
     of "while":
@@ -1460,20 +1478,10 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlWithTok
     of "within":
       vhdlWithinTok
-    of "write_mode":
-      vhdlWriteModeTok
-    of "xnor":
-      vhdlXnorTok
-    of "xor":
-      vhdlXorTok
     of "{":
       vhdlLCurlyTok
     of "|":
       vhdlPipeTok
-    of "|->":
-      vhdlPipeMinusGreaterThanTok
-    of "|=>":
-      vhdlPipeEqualGreaterThanTok
     of "}":
       vhdlRCurlyTok
     of "ERROR":

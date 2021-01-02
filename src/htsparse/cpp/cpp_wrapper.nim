@@ -217,6 +217,7 @@ type
     cppThiscallTok,         ## __thiscall
     cppUnalignedTok,        ## __unaligned
     cppVectorcallTok,       ## __vectorcall
+    cppUnalignedTok2,       ## _unaligned
     cppAuto,                ## auto
     cppBreakTok,            ## break
     cppCaseTok,             ## case
@@ -287,6 +288,8 @@ type
     cppTypeIdentifier,      ## type_identifier
     cppTypedefTok,          ## typedef
     cppTypenameTok,         ## typename
+    cppUQuoteTok2,          ## u"
+    cppUApostropheTok2,     ## u'
     cppU8QuoteTok,          ## u8"
     cppU8ApostropheTok,     ## u8'
     cppUnionTok,            ## union
@@ -301,6 +304,7 @@ type
     cppDoublePipeTok,       ## ||
     cppRCurlyTok,           ## }
     cppTildeTok,            ## ~
+    cppComment2,            ## comment
     cppSyntaxError           ## Tree-sitter parser syntax error
 type
   CppExternalTok* = enum
@@ -700,9 +704,9 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "L\'":
       cppLApostropheTok
     of "U\"":
-      cppUQuoteTok
+      cppUQuoteTok2
     of "U\'":
-      cppUApostropheTok
+      cppUApostropheTok2
     of "[":
       cppLBrackTok
     of "[[":
@@ -734,11 +738,11 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "__thiscall":
       cppThiscallTok
     of "__unaligned":
-      cppUnalignedTok
+      cppUnalignedTok2
     of "__vectorcall":
       cppVectorcallTok
     of "_unaligned":
-      cppUnalignedTok
+      cppUnalignedTok2
     of "auto":
       cppAuto
     of "break":
@@ -750,7 +754,7 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "class":
       cppClassTok
     of "comment":
-      cppComment
+      cppComment2
     of "const":
       cppConstTok
     of "constexpr":
@@ -876,9 +880,9 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "typename":
       cppTypenameTok
     of "u\"":
-      cppUQuoteTok
+      cppUQuoteTok2
     of "u\'":
-      cppUApostropheTok
+      cppUApostropheTok2
     of "u8\"":
       cppU8QuoteTok
     of "u8\'":

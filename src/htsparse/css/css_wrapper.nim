@@ -94,6 +94,7 @@ type
     cssRCurlyTok,           ## }
     cssTildeTok,            ## ~
     cssTildeEqualTok,       ## ~=
+    cssComment2,            ## comment
     cssSyntaxError           ## Tree-sitter parser syntax error
 type
   CssExternalTok* = enum
@@ -237,7 +238,7 @@ proc kind*(node: CssNode): CssNodeKind {.noSideEffect.} =
     of "class_name":
       cssClassName
     of "comment":
-      cssComment
+      cssComment2
     of "feature_name":
       cssFeatureName
     of "from":

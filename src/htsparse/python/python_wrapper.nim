@@ -189,6 +189,7 @@ type
     pythonPipeEqualTok,     ## |=
     pythonRCurlyTok,        ## }
     pythonTildeTok,         ## ~
+    pythonComment2,         ## comment
     pythonSyntaxError        ## Tree-sitter parser syntax error
 type
   PythonExternalTok* = enum
@@ -491,7 +492,7 @@ proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
     of "class":
       pythonClassTok
     of "comment":
-      pythonComment
+      pythonComment2
     of "continue":
       pythonContinueTok
     of "def":

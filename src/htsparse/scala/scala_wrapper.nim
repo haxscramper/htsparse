@@ -136,6 +136,7 @@ type
     scalaPipeTok,           ## |
     scalaRCurlyTok,         ## }
     scalaTildeTok,          ## ~
+    scalaComment2,          ## comment
     scalaSyntaxError         ## Tree-sitter parser syntax error
 type
   ScalaExternalTok* = enum
@@ -354,7 +355,7 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
     of "class":
       scalaClassTok
     of "comment":
-      scalaComment
+      scalaComment2
     of "def":
       scalaDefTok
     of "else":

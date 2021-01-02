@@ -264,6 +264,8 @@ type
     rustPipeEqualTok,       ## |=
     rustDoublePipeTok,      ## ||
     rustRCurlyTok,          ## }
+    rustLineComment2,       ## line_comment
+    rustBlockComment2,      ## block_comment
     rustSyntaxError          ## Tree-sitter parser syntax error
 type
   RustExternalTok* = enum
@@ -664,7 +666,7 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
     of "await":
       rustAwaitTok
     of "block_comment":
-      rustBlockComment
+      rustBlockComment2
     of "break":
       rustBreakTok
     of "char_literal":
@@ -716,7 +718,7 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
     of "let":
       rustLetTok
     of "line_comment":
-      rustLineComment
+      rustLineComment2
     of "literal":
       rustLiteralTok
     of "loop":

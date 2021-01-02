@@ -258,6 +258,7 @@ type
     kotlinLCurlyTok,        ## {
     kotlinDoublePipeTok,    ## ||
     kotlinRCurlyTok,        ## }
+    kotlinComment2,         ## comment
     kotlinSyntaxError        ## Tree-sitter parser syntax error
 type
   KotlinNode* = distinct TSNode
@@ -618,7 +619,7 @@ proc kind*(node: KotlinNode): KotlinNodeKind {.noSideEffect.} =
     of "class":
       kotlinClassTok
     of "comment":
-      kotlinComment
+      kotlinComment2
     of "companion":
       kotlinCompanionTok
     of "constructor":

@@ -4,7 +4,22 @@ import htsparse/[
   cpp/cpp,
   java/java,
   html/html,
-  latex/latex
+  latex/latex,
+  scala/scala,
+  ruby/ruby,
+  rust/rust,
+  lua/lua,
+  php/php,
+  bash/bash,
+  c/c,
+  csharp/csharp,
+  css/css,
+  embeddedTemplate/embedded_template,
+  go/go,
+  vhdl/vhdl,
+  kotlin/kotlin,
+  zig/zig,
+  systemVerilog/systemVerilog
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -59,4 +74,14 @@ class HelloWorld {
   test "latex":
     let parser = newLatexParser()
     let str = r"\sin{\int}"
+    echo parser.parseString(str).treeRepr(str)
+
+  test "rust":
+    let parser = newRustParser()
+    let str = """
+fn main() {
+    // Print text to the console
+    println!("Hello World!");
+}
+"""
     echo parser.parseString(str).treeRepr(str)

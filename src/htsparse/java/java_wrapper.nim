@@ -236,6 +236,7 @@ type
     javaDoublePipeTok,      ## ||
     javaRCurlyTok,          ## }
     javaTildeTok,           ## ~
+    javaComment2,           ## comment
     javaSyntaxError          ## Tree-sitter parser syntax error
 type
   JavaNode* = distinct TSNode
@@ -576,7 +577,7 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
     of "class":
       javaClassTok
     of "comment":
-      javaComment
+      javaComment2
     of "continue":
       javaContinueTok
     of "decimal_floating_point_literal":

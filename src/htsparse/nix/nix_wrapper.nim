@@ -80,6 +80,7 @@ type
     nixLCurlyTok,           ## {
     nixDoublePipeTok,       ## ||
     nixRCurlyTok,           ## }
+    nixComment2,            ## comment
     nixSyntaxError           ## Tree-sitter parser syntax error
 type
   NixExternalTok* = enum
@@ -202,7 +203,7 @@ proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
     of "]":
       nixRBrackTok
     of "comment":
-      nixComment
+      nixComment2
     of "ellipses":
       nixEllipses
     of "else":

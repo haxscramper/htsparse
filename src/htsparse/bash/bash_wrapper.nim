@@ -137,6 +137,7 @@ type
     bashPipeAmpersandTok,   ## |&
     bashDoublePipeTok,      ## ||
     bashRCurlyTok,          ## }
+    bashComment2,           ## comment
     bashSyntaxError          ## Tree-sitter parser syntax error
 type
   BashExternalTok* = enum
@@ -359,7 +360,7 @@ proc kind*(node: BashNode): BashNodeKind {.noSideEffect.} =
     of "case":
       bashCaseTok
     of "comment":
-      bashComment
+      bashComment2
     of "declare":
       bashDeclareTok
     of "do":

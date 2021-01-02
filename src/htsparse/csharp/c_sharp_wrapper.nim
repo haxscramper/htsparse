@@ -374,6 +374,8 @@ type
     c_sharpDoublePipeTok,   ## ||
     c_sharpRCurlyTok,       ## }
     c_sharpTildeTok,        ## ~
+    c_sharpComment2,        ## comment
+    c_sharpPreprocessorCall2, ## preprocessor_call
     c_sharpSyntaxError       ## Tree-sitter parser syntax error
 type
   C_sharpExternalTok* = enum
@@ -663,7 +665,7 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
     of "prefix_unary_expression":
       c_sharpPrefixUnaryExpression
     of "preprocessor_call":
-      c_sharpPreprocessorCall
+      c_sharpPreprocessorCall2
     of "primary_constructor_base_type":
       c_sharpPrimaryConstructorBaseType
     of "property_declaration":
@@ -919,7 +921,7 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
     of "class":
       c_sharpClassTok
     of "comment":
-      c_sharpComment
+      c_sharpComment2
     of "const":
       c_sharpConstTok
     of "continue":

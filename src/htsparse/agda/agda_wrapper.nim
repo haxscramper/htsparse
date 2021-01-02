@@ -149,6 +149,8 @@ type
     agda⦄Tok,             ## ⦄
     agda⦇Tok,             ## ⦇
     agda⦈Tok,             ## ⦈
+    agdaComment2,           ## comment
+    agdaPragma2,            ## pragma
     agdaSyntaxError          ## Tree-sitter parser syntax error
 type
   AgdaExternalTok* = enum
@@ -332,7 +334,7 @@ proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
     of "coinductive":
       agdaCoinductiveTok
     of "comment":
-      agdaComment
+      agdaComment2
     of "constructor":
       agdaConstructorTok
     of "eta-equality":
@@ -360,7 +362,7 @@ proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
     of "overlap":
       agdaOverlapTok
     of "pragma":
-      agdaPragma
+      agdaPragma2
     of "public":
       agdaPublicTok
     of "quote":

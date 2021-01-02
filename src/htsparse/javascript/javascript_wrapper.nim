@@ -215,6 +215,7 @@ type
     javascriptDoublePipeEqualTok, ## ||=
     javascriptRCurlyTok,    ## }
     javascriptTildeTok,     ## ~
+    javascriptComment2,     ## comment
     javascriptSyntaxError    ## Tree-sitter parser syntax error
 type
   JavascriptExternalTok* = enum
@@ -533,7 +534,7 @@ proc kind*(node: JavascriptNode): JavascriptNodeKind {.noSideEffect.} =
     of "catch":
       javascriptCatchTok
     of "comment":
-      javascriptComment
+      javascriptComment2
     of "const":
       javascriptConstTok
     of "continue":

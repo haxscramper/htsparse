@@ -225,6 +225,8 @@ type
     zigPipeEqualTok,        ## |=
     zigRCurlyTok,           ## }
     zigTildeTok,            ## ~
+    zigLineComment2,        ## line_comment
+    zigDocComment2,         ## doc_comment
     zigSyntaxError           ## Tree-sitter parser syntax error
 type
   ZigNode* = distinct TSNode
@@ -527,7 +529,7 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "defer":
       zigDeferTok
     of "doc_comment":
-      zigDocComment
+      zigDocComment2
     of "else":
       zigElseTok
     of "else_switch":
@@ -593,7 +595,7 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "label_identifier":
       zigLabelIdentifier
     of "line_comment":
-      zigLineComment
+      zigLineComment2
     of "loop_modifier":
       zigLoopModifier
     of "nakedcc":

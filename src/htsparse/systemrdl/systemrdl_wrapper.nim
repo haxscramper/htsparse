@@ -209,6 +209,8 @@ type
     systemrdlTildeAmpersandTok, ## ~&
     systemrdlTildeAccentTok, ## ~^
     systemrdlTildePipeTok,  ## ~|
+    systemrdlComment2,      ## comment
+    systemrdlTemplate2,     ## template
     systemrdlSyntaxError     ## Tree-sitter parser syntax error
 type
   SystemrdlNode* = distinct TSNode
@@ -495,7 +497,7 @@ proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
     of "clr":
       systemrdlClrTok
     of "comment":
-      systemrdlComment
+      systemrdlComment2
     of "compact":
       systemrdlCompactTok
     of "component":
@@ -579,7 +581,7 @@ proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
     of "sw":
       systemrdlSwTok
     of "template":
-      systemrdlTemplate
+      systemrdlTemplate2
     of "this":
       systemrdlThisTok
     of "true":
