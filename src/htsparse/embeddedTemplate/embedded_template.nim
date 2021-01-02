@@ -1,6 +1,6 @@
 {.compile: "embeddedTemplate_parser.c".}
-{.compile: "embeddedTemplate_scanner.c".}
+{.compile: "embeddedTemplate_scanner.cc".}
 {.passl: "-ltree-sitter".}
 
-import embeddedTemplate_wrapper
-export embeddedTemplate_wrapper
+import embedded_template_wrapper
+export embedded_template_wrapper

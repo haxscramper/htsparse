@@ -178,6 +178,7 @@ type
     goPipeEqualTok,         ## |=
     goDoublePipeTok,        ## ||
     goRCurlyTok,            ## }
+    goComment2,             ## comment
     goSyntaxError            ## Tree-sitter parser syntax error
 type
   GoNode* = distinct TSNode
@@ -450,7 +451,7 @@ proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
     of "chan":
       goChanTok
     of "comment":
-      goComment
+      goComment2
     of "const":
       goConstTok
     of "continue":

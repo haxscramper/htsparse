@@ -55,7 +55,6 @@ type
     rubyLambdaParameters,   ## lambda_parameters
     rubyLeftAssignmentList, ## left_assignment_list
     rubyMethod,             ## method
-    rubyMethodCall,         ## method_call
     rubyMethodParameters,   ## method_parameters
     rubyModule,             ## module
     rubyNext,               ## next
@@ -159,10 +158,11 @@ type
     rubyRBrackTok,          ## ]
     rubyAccentTok,          ## ^
     rubyAccentEqualTok,     ## ^=
+    rubyENDTok2,            ## __END__
     rubyBacktickTok,        ## `
     rubyAliasTok,           ## alias
     rubyAndTok,             ## and
-    rubyBeginTok,           ## begin
+    rubyBeginTok2,          ## begin
     rubyBreakTok,           ## break
     rubyCaseTok,            ## case
     rubyCharacter,          ## character
@@ -176,7 +176,7 @@ type
     rubyDoTok,              ## do
     rubyElseTok,            ## else
     rubyElsifTok,           ## elsif
-    rubyEndTok,             ## end
+    rubyEndTok3,            ## end
     rubyEnsureTok,          ## ensure
     rubyEscapeSequence,     ## escape_sequence
     rubyFalse,              ## false
@@ -220,6 +220,8 @@ type
     rubyDoublePipeEqualTok, ## ||=
     rubyRCurlyTok,          ## }
     rubyTildeTok,           ## ~
+    rubyComment2,           ## comment
+    rubyHeredocBody2,       ## heredoc_body
     rubySyntaxError          ## Tree-sitter parser syntax error
 type
   RubyExternalTok* = enum
@@ -335,7 +337,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "hash_splat_parameter":
       rubyHashSplatParameter
     of "heredoc_body":
-      rubyHeredocBody
+      rubyHeredocBody2
     of "if":
       rubyIf
     of "if_modifier":
@@ -354,8 +356,6 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
       rubyLeftAssignmentList
     of "method":
       rubyMethod
-    of "method_call":
-      rubyMethodCall
     of "method_parameters":
       rubyMethodParameters
     of "module":
@@ -547,9 +547,9 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "?":
       rubyQuestionTok
     of "BEGIN":
-      rubyBEGINTok
+      rubyBEGINTok2
     of "END":
-      rubyENDTok
+      rubyENDTok3
     of "[":
       rubyLBrackTok
     of "[]":
@@ -563,7 +563,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "^=":
       rubyAccentEqualTok
     of "__END__":
-      rubyENDTok
+      rubyENDTok3
     of "`":
       rubyBacktickTok
     of "and":
@@ -573,7 +573,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "class_variable":
       rubyClassVariable
     of "comment":
-      rubyComment
+      rubyComment2
     of "complex":
       rubyComplex
     of "constant":
@@ -583,7 +583,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "defined?":
       rubyDefinedQuestionTok
     of "end":
-      rubyEndTok
+      rubyEndTok3
     of "escape_sequence":
       rubyEscapeSequence
     of "false":

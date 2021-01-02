@@ -1,5 +1,5 @@
 {.compile: "csharp_parser.c".}
-{.compile: "cshard_scanner.c"}
+{.compile: "csharp_scanner.c"}
 {.passl: "-ltree-sitter".}
 
 import c_sharp_wrapper
