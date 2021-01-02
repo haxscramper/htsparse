@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.3"
+version       = "0.1.4"
 author        = "haxscramper"
 description   = "Nim wrappers for tree-sitter parser grammars"
 license       = "Apache-2.0"
