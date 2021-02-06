@@ -19,7 +19,8 @@ import htsparse/[
   vhdl/vhdl,
   kotlin/kotlin,
   zig/zig,
-  systemVerilog/systemVerilog
+  systemVerilog/systemVerilog,
+  julia/julia
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -84,4 +85,22 @@ fn main() {
     println!("Hello World!");
 }
 """
+    echo parser.parseString(str).treeRepr(str)
+
+suite "Julia":
+  test "julia":
+    let parser = newJuliaParser()
+    let str = """
+import Base.Pkg.PkgError
+
+function reqs_from_data(reqs_data)
+    reqs = Dict{ByteString,VersionSet}()
+    for r in reqs_data
+        p = r[1]
+        reqs[p] = VersionSet(VersionNumber[r[2:end]...])
+    end
+    reqs
+end
+"""
+
     echo parser.parseString(str).treeRepr(str)
