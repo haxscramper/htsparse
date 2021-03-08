@@ -11,7 +11,7 @@ srcDir        = "src"
 
 requires "nim >= 1.4.0"
 requires "hmisc >= 0.9.16"
-requires "hparse"
+requires "hparse >= 0.2.4"
 
 task docgen, "Generate documentation":
   exec("hmisc-putils docgen")
