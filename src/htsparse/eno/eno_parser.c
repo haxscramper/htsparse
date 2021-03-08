@@ -365,18 +365,18 @@ static uint16_t ts_non_terminal_alias_map[] = {
   0,
 };
 
-static inline bool sym_key_character_set_1(int32_t lookahead) {
-  return
-    lookahead == 0 ||
-    lookahead == '\r' ||
-    lookahead == '#' ||
-    lookahead == '-' ||
-    lookahead == ':' ||
-    lookahead == '<' ||
-    lookahead == '=' ||
-    lookahead == '\\' ||
-    lookahead == '`' ||
-    lookahead == '|';
+static inline bool sym_key_character_set_1(int32_t c) {
+  return (c < ':'
+    ? (c < '#'
+      ? (c < '\r'
+        ? c == 0
+        : c <= '\r')
+      : (c <= '#' || c == '-'))
+    : (c <= ':' || (c < '`'
+      ? (c < '\\'
+        ? (c >= '<' && c <= '=')
+        : c <= '\\')
+      : (c <= '`' || c == '|'))));
 }
 
 static bool ts_lex(TSLexer *lexer, TSStateId state) {

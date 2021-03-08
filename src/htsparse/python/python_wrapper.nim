@@ -94,6 +94,7 @@ type
     pythonUnaryOperator,    ## unary_operator
     pythonWhileStatement,   ## while_statement
     pythonWildcardImport,   ## wildcard_import
+    pythonWithClause,       ## with_clause
     pythonWithItem,         ## with_item
     pythonWithStatement,    ## with_statement
     pythonYield,            ## yield
@@ -189,7 +190,6 @@ type
     pythonPipeEqualTok,     ## |=
     pythonRCurlyTok,        ## }
     pythonTildeTok,         ## ~
-    pythonComment2,         ## comment
     pythonSyntaxError        ## Tree-sitter parser syntax error
 type
   PythonExternalTok* = enum
@@ -387,6 +387,8 @@ proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
       pythonWhileStatement
     of "wildcard_import":
       pythonWildcardImport
+    of "with_clause":
+      pythonWithClause
     of "with_item":
       pythonWithItem
     of "with_statement":
@@ -492,7 +494,7 @@ proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
     of "class":
       pythonClassTok
     of "comment":
-      pythonComment2
+      pythonComment
     of "continue":
       pythonContinueTok
     of "def":
@@ -608,12 +610,70 @@ proc isNil*(node: PythonNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: PythonNode; withUnnamed: bool = false): PythonNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: PythonNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: PythonNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: PythonNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: PythonNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: PythonNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: PythonNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: PythonNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: PythonNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: PythonNode): PythonNode =
+  PythonNode(ts_node_parent(TSNode(node)))
+
+func child*(node: PythonNode; a2: int): PythonNode =
+  PythonNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: PythonNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: PythonNode; a2: int): PythonNode =
+  PythonNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: PythonNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: PythonNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: PythonNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: PythonNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: PythonNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: PythonNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: PythonNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: PythonNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: PythonNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: PythonNode; level: int): seq[string] =

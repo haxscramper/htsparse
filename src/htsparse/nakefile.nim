@@ -109,9 +109,7 @@ proc enoCompile*() =
 
 proc embeddedTemplateCompile*() =
   build("embeddedTemplate",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-embedded-template/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-embedded-template/master/src/scanner.cc"),
-    scannerFile = RelFile("embeddedTemplate_scanner.cc")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-embedded-template/master/grammar.js")
   )
 
 proc fennelCompile*() =
@@ -366,9 +364,7 @@ proc juliaCompile*() =
 proc nixCompile*() =
   build(
     "nix",
-    Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/master/src/scanner.cc"),
-    scannerFile = RelFile("nix_scanner.cc")
+    Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/master/grammar.js")
   )
 
 proc scalaCompile*() =
@@ -408,14 +404,14 @@ proc totalCompile*() =
     htmlCompile,
     latexCompile,
     javaCompile,
-    javascriptCompile,
+    # javascriptCompile,
     luaCompile,
     phpCompile,
     pythonCompile,
     rubyCompile,
     rustCompile,
     systemrdlCompile,
-    systemVerilogCompile,
+    # systemVerilogCompile,
     vhdlCompile,
     vueCompile,
     yamlCompile,

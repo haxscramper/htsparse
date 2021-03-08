@@ -94,7 +94,6 @@ type
     cssRCurlyTok,           ## }
     cssTildeTok,            ## ~
     cssTildeEqualTok,       ## ~=
-    cssComment2,            ## comment
     cssSyntaxError           ## Tree-sitter parser syntax error
 type
   CssExternalTok* = enum
@@ -238,7 +237,7 @@ proc kind*(node: CssNode): CssNodeKind {.noSideEffect.} =
     of "class_name":
       cssClassName
     of "comment":
-      cssComment2
+      cssComment
     of "feature_name":
       cssFeatureName
     of "from":
@@ -324,12 +323,70 @@ proc isNil*(node: CssNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: CssNode; withUnnamed: bool = false): CssNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: CssNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: CssNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: CssNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: CssNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: CssNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: CssNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: CssNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: CssNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: CssNode): CssNode =
+  CssNode(ts_node_parent(TSNode(node)))
+
+func child*(node: CssNode; a2: int): CssNode =
+  CssNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: CssNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: CssNode; a2: int): CssNode =
+  CssNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: CssNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: CssNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: CssNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: CssNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: CssNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: CssNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: CssNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: CssNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: CssNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: CssNode; level: int): seq[string] =

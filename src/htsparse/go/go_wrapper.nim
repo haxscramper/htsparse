@@ -178,7 +178,6 @@ type
     goPipeEqualTok,         ## |=
     goDoublePipeTok,        ## ||
     goRCurlyTok,            ## }
-    goComment2,             ## comment
     goSyntaxError            ## Tree-sitter parser syntax error
 type
   GoNode* = distinct TSNode
@@ -451,7 +450,7 @@ proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
     of "chan":
       goChanTok
     of "comment":
-      goComment2
+      goComment
     of "const":
       goConstTok
     of "continue":
@@ -571,12 +570,70 @@ proc isNil*(node: GoNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: GoNode; withUnnamed: bool = false): GoNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: GoNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: GoNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: GoNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: GoNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: GoNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: GoNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: GoNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: GoNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: GoNode): GoNode =
+  GoNode(ts_node_parent(TSNode(node)))
+
+func child*(node: GoNode; a2: int): GoNode =
+  GoNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: GoNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: GoNode; a2: int): GoNode =
+  GoNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: GoNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: GoNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: GoNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: GoNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: GoNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: GoNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: GoNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: GoNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: GoNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: GoNode; level: int): seq[string] =

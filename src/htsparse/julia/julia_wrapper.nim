@@ -135,7 +135,6 @@ type
     juliaMutableTok,        ## mutable
     juliaNumber,            ## number
     juliaPrimitiveTok,      ## primitive
-    juliaQuoteTok2,         ## quote
     juliaReturnTok,         ## return
     juliaStructTok,         ## struct
     juliaTripleString,      ## triple_string
@@ -153,8 +152,6 @@ type
     julia√Tok,            ## √
     julia∛Tok,            ## ∛
     julia∜Tok,            ## ∜
-    juliaComment2,          ## comment
-    juliaBlockComment2,     ## block_comment
     juliaSyntaxError         ## Tree-sitter parser syntax error
 type
   JuliaExternalTok* = enum
@@ -322,7 +319,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "!":
       juliaExclamationTok
     of "\"":
-      juliaQuoteTok2
+      juliaQuoteTok
     of "$":
       juliaDollarTok
     of "&&":
@@ -376,7 +373,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "begin":
       juliaBeginTok
     of "block_comment":
-      juliaBlockComment2
+      juliaBlockComment
     of "break_statement":
       juliaBreakStatement
     of "catch":
@@ -386,7 +383,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "command_string":
       juliaCommandString
     of "comment":
-      juliaComment2
+      juliaComment
     of "const":
       juliaConstTok
     of "continue_statement":
@@ -430,7 +427,7 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     of "primitive":
       juliaPrimitiveTok
     of "quote":
-      juliaQuoteTok2
+      juliaQuoteTok
     of "return":
       juliaReturnTok
     of "struct":
@@ -502,12 +499,70 @@ proc isNil*(node: JuliaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: JuliaNode; withUnnamed: bool = false): JuliaNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: JuliaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: JuliaNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: JuliaNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: JuliaNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: JuliaNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: JuliaNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: JuliaNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: JuliaNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: JuliaNode): JuliaNode =
+  JuliaNode(ts_node_parent(TSNode(node)))
+
+func child*(node: JuliaNode; a2: int): JuliaNode =
+  JuliaNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: JuliaNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: JuliaNode; a2: int): JuliaNode =
+  JuliaNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: JuliaNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: JuliaNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: JuliaNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: JuliaNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: JuliaNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: JuliaNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: JuliaNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: JuliaNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: JuliaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: JuliaNode; level: int): seq[string] =

@@ -471,12 +471,70 @@ proc isNil*(node: FennelNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: FennelNode; withUnnamed: bool = false): FennelNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: FennelNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: FennelNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: FennelNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: FennelNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: FennelNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: FennelNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: FennelNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: FennelNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: FennelNode): FennelNode =
+  FennelNode(ts_node_parent(TSNode(node)))
+
+func child*(node: FennelNode; a2: int): FennelNode =
+  FennelNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: FennelNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: FennelNode; a2: int): FennelNode =
+  FennelNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: FennelNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: FennelNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: FennelNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: FennelNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: FennelNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: FennelNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: FennelNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: FennelNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: FennelNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: FennelNode; level: int): seq[string] =

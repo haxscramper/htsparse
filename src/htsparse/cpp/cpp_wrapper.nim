@@ -217,7 +217,6 @@ type
     cppThiscallTok,         ## __thiscall
     cppUnalignedTok,        ## __unaligned
     cppVectorcallTok,       ## __vectorcall
-    cppUnalignedTok2,       ## _unaligned
     cppAuto,                ## auto
     cppBreakTok,            ## break
     cppCaseTok,             ## case
@@ -288,8 +287,6 @@ type
     cppTypeIdentifier,      ## type_identifier
     cppTypedefTok,          ## typedef
     cppTypenameTok,         ## typename
-    cppUQuoteTok2,          ## u"
-    cppUApostropheTok2,     ## u'
     cppU8QuoteTok,          ## u8"
     cppU8ApostropheTok,     ## u8'
     cppUnionTok,            ## union
@@ -304,7 +301,6 @@ type
     cppDoublePipeTok,       ## ||
     cppRCurlyTok,           ## }
     cppTildeTok,            ## ~
-    cppComment2,            ## comment
     cppSyntaxError           ## Tree-sitter parser syntax error
 type
   CppExternalTok* = enum
@@ -704,9 +700,9 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "L\'":
       cppLApostropheTok
     of "U\"":
-      cppUQuoteTok2
+      cppUQuoteTok
     of "U\'":
-      cppUApostropheTok2
+      cppUApostropheTok
     of "[":
       cppLBrackTok
     of "[[":
@@ -738,11 +734,11 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "__thiscall":
       cppThiscallTok
     of "__unaligned":
-      cppUnalignedTok2
+      cppUnalignedTok
     of "__vectorcall":
       cppVectorcallTok
     of "_unaligned":
-      cppUnalignedTok2
+      cppUnalignedTok
     of "auto":
       cppAuto
     of "break":
@@ -754,7 +750,7 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "class":
       cppClassTok
     of "comment":
-      cppComment2
+      cppComment
     of "const":
       cppConstTok
     of "constexpr":
@@ -880,9 +876,9 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     of "typename":
       cppTypenameTok
     of "u\"":
-      cppUQuoteTok2
+      cppUQuoteTok
     of "u\'":
-      cppUApostropheTok2
+      cppUApostropheTok
     of "u8\"":
       cppU8QuoteTok
     of "u8\'":
@@ -948,12 +944,70 @@ proc isNil*(node: CppNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: CppNode; withUnnamed: bool = false): CppNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: CppNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: CppNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: CppNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: CppNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: CppNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: CppNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: CppNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: CppNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: CppNode): CppNode =
+  CppNode(ts_node_parent(TSNode(node)))
+
+func child*(node: CppNode; a2: int): CppNode =
+  CppNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: CppNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: CppNode; a2: int): CppNode =
+  CppNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: CppNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: CppNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: CppNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: CppNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: CppNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: CppNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: CppNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: CppNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: CppNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: CppNode; level: int): seq[string] =

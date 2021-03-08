@@ -10,7 +10,7 @@ srcDir        = "src"
 # Dependencies
 
 requires "nim >= 1.4.0"
-requires "hmisc >= 0.9.0"
+requires "hmisc >= 0.9.16"
 requires "hparse"
 
 task docgen, "Generate documentation":

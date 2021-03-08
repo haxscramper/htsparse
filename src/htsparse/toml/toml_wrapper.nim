@@ -36,7 +36,6 @@ type
     tomlOffsetDateTime,     ## offset_date_time
     tomlLCurlyTok,          ## {
     tomlRCurlyTok,          ## }
-    tomlComment2,           ## comment
     tomlSyntaxError          ## Tree-sitter parser syntax error
 type
   TomlExternalTok* = enum
@@ -102,7 +101,7 @@ proc kind*(node: TomlNode): TomlNodeKind {.noSideEffect.} =
     of "boolean":
       tomlBoolean
     of "comment":
-      tomlComment2
+      tomlComment
     of "escape_sequence":
       tomlEscapeSequence
     of "local_date":
@@ -154,12 +153,70 @@ proc isNil*(node: TomlNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: TomlNode; withUnnamed: bool = false): TomlNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: TomlNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: TomlNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: TomlNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: TomlNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: TomlNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: TomlNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: TomlNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: TomlNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: TomlNode): TomlNode =
+  TomlNode(ts_node_parent(TSNode(node)))
+
+func child*(node: TomlNode; a2: int): TomlNode =
+  TomlNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: TomlNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: TomlNode; a2: int): TomlNode =
+  TomlNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: TomlNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: TomlNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: TomlNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: TomlNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: TomlNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: TomlNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: TomlNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: TomlNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: TomlNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: TomlNode; level: int): seq[string] =

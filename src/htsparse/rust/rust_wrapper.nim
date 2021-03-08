@@ -31,6 +31,7 @@ type
     rustClosureExpression,  ## closure_expression
     rustClosureParameters,  ## closure_parameters
     rustCompoundAssignmentExpr, ## compound_assignment_expr
+    rustConstBlock,         ## const_block
     rustConstItem,          ## const_item
     rustConstParameter,     ## const_parameter
     rustConstrainedTypeParameter, ## constrained_type_parameter
@@ -264,8 +265,6 @@ type
     rustPipeEqualTok,       ## |=
     rustDoublePipeTok,      ## ||
     rustRCurlyTok,          ## }
-    rustLineComment2,       ## line_comment
-    rustBlockComment2,      ## block_comment
     rustSyntaxError          ## Tree-sitter parser syntax error
 type
   RustExternalTok* = enum
@@ -335,6 +334,8 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
       rustClosureParameters
     of "compound_assignment_expr":
       rustCompoundAssignmentExpr
+    of "const_block":
+      rustConstBlock
     of "const_item":
       rustConstItem
     of "const_parameter":
@@ -666,7 +667,7 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
     of "await":
       rustAwaitTok
     of "block_comment":
-      rustBlockComment2
+      rustBlockComment
     of "break":
       rustBreakTok
     of "char_literal":
@@ -718,7 +719,7 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
     of "let":
       rustLetTok
     of "line_comment":
-      rustLineComment2
+      rustLineComment
     of "literal":
       rustLiteralTok
     of "loop":
@@ -834,12 +835,70 @@ proc isNil*(node: RustNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: RustNode; withUnnamed: bool = false): RustNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: RustNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: RustNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: RustNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: RustNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: RustNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: RustNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: RustNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: RustNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: RustNode): RustNode =
+  RustNode(ts_node_parent(TSNode(node)))
+
+func child*(node: RustNode; a2: int): RustNode =
+  RustNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: RustNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: RustNode; a2: int): RustNode =
+  RustNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: RustNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: RustNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: RustNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: RustNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: RustNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: RustNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: RustNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: RustNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: RustNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: RustNode; level: int): seq[string] =

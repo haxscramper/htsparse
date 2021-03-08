@@ -258,7 +258,6 @@ type
     kotlinLCurlyTok,        ## {
     kotlinDoublePipeTok,    ## ||
     kotlinRCurlyTok,        ## }
-    kotlinComment2,         ## comment
     kotlinSyntaxError        ## Tree-sitter parser syntax error
 type
   KotlinNode* = distinct TSNode
@@ -619,7 +618,7 @@ proc kind*(node: KotlinNode): KotlinNodeKind {.noSideEffect.} =
     of "class":
       kotlinClassTok
     of "comment":
-      kotlinComment2
+      kotlinComment
     of "companion":
       kotlinCompanionTok
     of "constructor":
@@ -811,12 +810,70 @@ proc isNil*(node: KotlinNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: KotlinNode; withUnnamed: bool = false): KotlinNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: KotlinNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: KotlinNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: KotlinNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: KotlinNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: KotlinNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: KotlinNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: KotlinNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: KotlinNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: KotlinNode): KotlinNode =
+  KotlinNode(ts_node_parent(TSNode(node)))
+
+func child*(node: KotlinNode; a2: int): KotlinNode =
+  KotlinNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: KotlinNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: KotlinNode; a2: int): KotlinNode =
+  KotlinNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: KotlinNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: KotlinNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: KotlinNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: KotlinNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: KotlinNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: KotlinNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: KotlinNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: KotlinNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: KotlinNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: KotlinNode; level: int): seq[string] =

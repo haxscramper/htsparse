@@ -136,7 +136,6 @@ type
     scalaPipeTok,           ## |
     scalaRCurlyTok,         ## }
     scalaTildeTok,          ## ~
-    scalaComment2,          ## comment
     scalaSyntaxError         ## Tree-sitter parser syntax error
 type
   ScalaExternalTok* = enum
@@ -355,7 +354,7 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
     of "class":
       scalaClassTok
     of "comment":
-      scalaComment2
+      scalaComment
     of "def":
       scalaDefTok
     of "else":
@@ -457,12 +456,70 @@ proc isNil*(node: ScalaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: ScalaNode; withUnnamed: bool = false): ScalaNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: ScalaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: ScalaNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: ScalaNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: ScalaNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: ScalaNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: ScalaNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: ScalaNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: ScalaNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: ScalaNode): ScalaNode =
+  ScalaNode(ts_node_parent(TSNode(node)))
+
+func child*(node: ScalaNode; a2: int): ScalaNode =
+  ScalaNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: ScalaNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: ScalaNode; a2: int): ScalaNode =
+  ScalaNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: ScalaNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: ScalaNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: ScalaNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: ScalaNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: ScalaNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: ScalaNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: ScalaNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: ScalaNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: ScalaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: ScalaNode; level: int): seq[string] =

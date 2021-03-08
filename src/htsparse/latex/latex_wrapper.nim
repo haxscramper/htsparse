@@ -15,7 +15,7 @@ type
     latexExplSyntaxOn,      ## ExplSyntaxOn
     latexIfFileExists,      ## IfFileExists
     latexMakeShortVerb,     ## MakeShortVerb
-    latexNeedsTeXFormat,    ## NeedsTeXFormat
+    latexNeedsTeXFOrmat,    ## NeedsTeXFormat
     latexPassOptionsTo,     ## PassOptionsTo
     latexProcessOptions,    ## ProcessOptions
     latexProvides,          ## Provides
@@ -169,7 +169,6 @@ type
     latexUsebox,            ## usebox
     latexValue,             ## value
     latexVerb,              ## verb
-    latexVerbatimEnv2,      ## verbatim_env
     latexVolcite,           ## volcite
     latexVolcites,          ## volcites
     latexActiveChar,        ## active_char
@@ -216,12 +215,6 @@ type
     latexUnit,              ## unit
     latexVerbDelim,         ## verb_delim
     latexVerbatim,          ## verbatim
-    latexSpace2,            ## _space
-    latexCommentArara2,     ## comment_arara
-    latexCommentBib2,       ## comment_bib
-    latexCommentTag2,       ## comment_tag
-    latexCommentTex2,       ## comment_tex
-    latexComment2,          ## comment
     latexSyntaxError         ## Tree-sitter parser syntax error
 type
   LatexExternalTok* = enum
@@ -478,7 +471,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "MakeShortVerb":
       latexMakeShortVerb
     of "NeedsTeXFormat":
-      latexNeedsTeXFormat
+      latexNeedsTeXFOrmat
     of "PassOptionsTo":
       latexPassOptionsTo
     of "ProcessOptions":
@@ -488,7 +481,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "ProvidesExpl":
       latexProvidesExpl
     of "Verbatim_env":
-      latexVerbatimEnv2
+      latexVerbatimEnv
     of "WarningInfo":
       latexWarningInfo
     of "addvspace":
@@ -734,7 +727,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "short_verb":
       latexShortVerb
     of "space":
-      latexSpace2
+      latexSpace
     of "sqrt":
       latexSqrt
     of "stackrel":
@@ -786,7 +779,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "verb":
       latexVerb
     of "verbatim_env":
-      latexVerbatimEnv2
+      latexVerbatimEnv
     of "volcite":
       latexVolcite
     of "volcites":
@@ -802,17 +795,17 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "comma":
       latexComma
     of "comment":
-      latexComment2
+      latexComment
     of "comment_arara":
-      latexCommentArara2
+      latexCommentArara
     of "comment_bib":
-      latexCommentBib2
+      latexCommentBib
     of "comment_block":
       latexCommentBlock
     of "comment_tag":
-      latexCommentTag2
+      latexCommentTag
     of "comment_tex":
-      latexCommentTex2
+      latexCommentTex
     of "cs":
       latexCs
     of "decimal":
@@ -880,7 +873,7 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     of "verbatim":
       latexVerbatim
     of "_space":
-      latexSpace2
+      latexSpace
     of "ERROR":
       latexSyntaxError
     else:
@@ -918,12 +911,70 @@ proc isNil*(node: LatexNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: LatexNode; withUnnamed: bool = false): LatexNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: LatexNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: LatexNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: LatexNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: LatexNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: LatexNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: LatexNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: LatexNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: LatexNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: LatexNode): LatexNode =
+  LatexNode(ts_node_parent(TSNode(node)))
+
+func child*(node: LatexNode; a2: int): LatexNode =
+  LatexNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: LatexNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: LatexNode; a2: int): LatexNode =
+  LatexNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: LatexNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: LatexNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: LatexNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: LatexNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: LatexNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: LatexNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: LatexNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: LatexNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: LatexNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: LatexNode; level: int): seq[string] =

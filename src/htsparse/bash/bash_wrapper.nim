@@ -137,7 +137,6 @@ type
     bashPipeAmpersandTok,   ## |&
     bashDoublePipeTok,      ## ||
     bashRCurlyTok,          ## }
-    bashComment2,           ## comment
     bashSyntaxError          ## Tree-sitter parser syntax error
 type
   BashExternalTok* = enum
@@ -360,7 +359,7 @@ proc kind*(node: BashNode): BashNodeKind {.noSideEffect.} =
     of "case":
       bashCaseTok
     of "comment":
-      bashComment2
+      bashComment
     of "declare":
       bashDeclareTok
     of "do":
@@ -460,12 +459,70 @@ proc isNil*(node: BashNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: BashNode; withUnnamed: bool = false): BashNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: BashNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: BashNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: BashNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: BashNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: BashNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: BashNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: BashNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: BashNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: BashNode): BashNode =
+  BashNode(ts_node_parent(TSNode(node)))
+
+func child*(node: BashNode; a2: int): BashNode =
+  BashNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: BashNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: BashNode; a2: int): BashNode =
+  BashNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: BashNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: BashNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: BashNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: BashNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: BashNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: BashNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: BashNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: BashNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: BashNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: BashNode; level: int): seq[string] =

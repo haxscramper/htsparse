@@ -3255,14 +3255,14 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\n') ADVANCE(39);
       if (lookahead == '*') ADVANCE(123);
       if (lookahead == '/') ADVANCE(254);
-      if (lookahead == '\\') ADVANCE(134);
+      if (lookahead == '\\') ADVANCE(130);
       if (lookahead != 0) ADVANCE(124);
       END_STATE();
     case 124:
       ACCEPT_TOKEN(sym_preproc_arg);
       if (lookahead == '\n') ADVANCE(39);
       if (lookahead == '*') ADVANCE(123);
-      if (lookahead == '\\') ADVANCE(134);
+      if (lookahead == '\\') ADVANCE(130);
       if (lookahead != 0) ADVANCE(124);
       END_STATE();
     case 125:
@@ -3305,15 +3305,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 130:
       ACCEPT_TOKEN(sym_preproc_arg);
       if (lookahead != 0 &&
-          lookahead != '\\') ADVANCE(129);
-      if (lookahead == '\\') ADVANCE(131);
+          lookahead != '\r' &&
+          lookahead != '*' &&
+          lookahead != '\\') ADVANCE(124);
+      if (lookahead == '\r') ADVANCE(133);
+      if (lookahead == '*') ADVANCE(123);
+      if (lookahead == '\\') ADVANCE(130);
       END_STATE();
     case 131:
       ACCEPT_TOKEN(sym_preproc_arg);
       if (lookahead != 0 &&
           lookahead != '\r' &&
           lookahead != '\\') ADVANCE(129);
-      if (lookahead == '\r') ADVANCE(130);
+      if (lookahead == '\r') ADVANCE(134);
       if (lookahead == '\\') ADVANCE(131);
       END_STATE();
     case 132:
@@ -3330,17 +3334,13 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead != '*' &&
           lookahead != '\\') ADVANCE(124);
       if (lookahead == '*') ADVANCE(123);
-      if (lookahead == '\\') ADVANCE(134);
+      if (lookahead == '\\') ADVANCE(130);
       END_STATE();
     case 134:
       ACCEPT_TOKEN(sym_preproc_arg);
       if (lookahead != 0 &&
-          lookahead != '\r' &&
-          lookahead != '*' &&
-          lookahead != '\\') ADVANCE(124);
-      if (lookahead == '\r') ADVANCE(133);
-      if (lookahead == '*') ADVANCE(123);
-      if (lookahead == '\\') ADVANCE(134);
+          lookahead != '\\') ADVANCE(129);
+      if (lookahead == '\\') ADVANCE(131);
       END_STATE();
     case 135:
       ACCEPT_TOKEN(anon_sym_LPAREN2);

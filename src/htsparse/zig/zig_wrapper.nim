@@ -225,8 +225,6 @@ type
     zigPipeEqualTok,        ## |=
     zigRCurlyTok,           ## }
     zigTildeTok,            ## ~
-    zigLineComment2,        ## line_comment
-    zigDocComment2,         ## doc_comment
     zigSyntaxError           ## Tree-sitter parser syntax error
 type
   ZigNode* = distinct TSNode
@@ -529,7 +527,7 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "defer":
       zigDeferTok
     of "doc_comment":
-      zigDocComment2
+      zigDocComment
     of "else":
       zigElseTok
     of "else_switch":
@@ -595,7 +593,7 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     of "label_identifier":
       zigLabelIdentifier
     of "line_comment":
-      zigLineComment2
+      zigLineComment
     of "loop_modifier":
       zigLoopModifier
     of "nakedcc":
@@ -715,12 +713,70 @@ proc isNil*(node: ZigNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: ZigNode; withUnnamed: bool = false): ZigNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: ZigNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: ZigNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: ZigNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: ZigNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: ZigNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: ZigNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: ZigNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: ZigNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: ZigNode): ZigNode =
+  ZigNode(ts_node_parent(TSNode(node)))
+
+func child*(node: ZigNode; a2: int): ZigNode =
+  ZigNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: ZigNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: ZigNode; a2: int): ZigNode =
+  ZigNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: ZigNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: ZigNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: ZigNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: ZigNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: ZigNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: ZigNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: ZigNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: ZigNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: ZigNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: ZigNode; level: int): seq[string] =

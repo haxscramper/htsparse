@@ -236,7 +236,6 @@ type
     javaDoublePipeTok,      ## ||
     javaRCurlyTok,          ## }
     javaTildeTok,           ## ~
-    javaComment2,           ## comment
     javaSyntaxError          ## Tree-sitter parser syntax error
 type
   JavaNode* = distinct TSNode
@@ -577,7 +576,7 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
     of "class":
       javaClassTok
     of "comment":
-      javaComment2
+      javaComment
     of "continue":
       javaContinueTok
     of "decimal_floating_point_literal":
@@ -745,12 +744,70 @@ proc isNil*(node: JavaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: JavaNode; withUnnamed: bool = false): JavaNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: JavaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: JavaNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: JavaNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: JavaNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: JavaNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: JavaNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: JavaNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: JavaNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: JavaNode): JavaNode =
+  JavaNode(ts_node_parent(TSNode(node)))
+
+func child*(node: JavaNode; a2: int): JavaNode =
+  JavaNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: JavaNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: JavaNode; a2: int): JavaNode =
+  JavaNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: JavaNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: JavaNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: JavaNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: JavaNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: JavaNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: JavaNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: JavaNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: JavaNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: JavaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: JavaNode; level: int): seq[string] =

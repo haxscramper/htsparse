@@ -549,7 +549,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\t' ||
           lookahead == ' ') ADVANCE(124);
       if (lookahead != 0 &&
-          (lookahead < 0 || 31 < lookahead) &&
+          lookahead > 31 &&
           lookahead != 127) ADVANCE(125);
       END_STATE();
     case 3:
@@ -560,7 +560,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\t' ||
           lookahead == ' ') ADVANCE(134);
       if (lookahead != 0 &&
-          (lookahead < 0 || 31 < lookahead) &&
+          lookahead > 31 &&
           lookahead != 127) ADVANCE(135);
       END_STATE();
     case 4:
@@ -915,7 +915,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 79:
       ACCEPT_TOKEN(sym_comment);
       if (lookahead != 0 &&
-          (lookahead < 0 || 8 < lookahead) &&
+          lookahead > 8 &&
           (lookahead < '\n' || 31 < lookahead) &&
           lookahead != 127) ADVANCE(79);
       END_STATE();
@@ -1276,7 +1276,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\t' ||
           lookahead == ' ') ADVANCE(124);
       if (lookahead != 0 &&
-          (lookahead < 0 || 31 < lookahead) &&
+          lookahead > 31 &&
           lookahead != '"' &&
           lookahead != '\\' &&
           lookahead != 127) ADVANCE(125);
@@ -1284,7 +1284,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 125:
       ACCEPT_TOKEN(aux_sym__basic_string_token1);
       if (lookahead != 0 &&
-          (lookahead < 0 || 8 < lookahead) &&
+          lookahead > 8 &&
           (lookahead < '\n' || 31 < lookahead) &&
           lookahead != '"' &&
           lookahead != '\\' &&
@@ -1322,14 +1322,14 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == '\t' ||
           lookahead == ' ') ADVANCE(134);
       if (lookahead != 0 &&
-          (lookahead < 0 || 31 < lookahead) &&
+          lookahead > 31 &&
           lookahead != '\'' &&
           lookahead != 127) ADVANCE(135);
       END_STATE();
     case 135:
       ACCEPT_TOKEN(aux_sym__literal_string_token1);
       if (lookahead != 0 &&
-          (lookahead < 0 || 8 < lookahead) &&
+          lookahead > 8 &&
           (lookahead < '\n' || 31 < lookahead) &&
           lookahead != '\'' &&
           lookahead != 127) ADVANCE(135);

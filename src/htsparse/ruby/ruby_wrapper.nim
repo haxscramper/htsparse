@@ -29,6 +29,7 @@ type
     rubyChainedString,      ## chained_string
     rubyClass,              ## class
     rubyConditional,        ## conditional
+    rubyDelimitedSymbol,    ## delimited_symbol
     rubyDestructuredLeftAssignment, ## destructured_left_assignment
     rubyDestructuredParameter, ## destructured_parameter
     rubyDo,                 ## do
@@ -85,7 +86,6 @@ type
     rubyStringArray,        ## string_array
     rubySubshell,           ## subshell
     rubySuperclass,         ## superclass
-    rubySymbol,             ## symbol
     rubySymbolArray,        ## symbol_array
     rubyThen,               ## then
     rubyUnary,              ## unary
@@ -158,11 +158,10 @@ type
     rubyRBrackTok,          ## ]
     rubyAccentTok,          ## ^
     rubyAccentEqualTok,     ## ^=
-    rubyENDTok2,            ## __END__
     rubyBacktickTok,        ## `
     rubyAliasTok,           ## alias
     rubyAndTok,             ## and
-    rubyBeginTok2,          ## begin
+    rubyBeginTok1,          ## begin
     rubyBreakTok,           ## break
     rubyCaseTok,            ## case
     rubyCharacter,          ## character
@@ -176,13 +175,14 @@ type
     rubyDoTok,              ## do
     rubyElseTok,            ## else
     rubyElsifTok,           ## elsif
-    rubyEndTok3,            ## end
+    rubyEndTok1,            ## end
     rubyEnsureTok,          ## ensure
     rubyEscapeSequence,     ## escape_sequence
     rubyFalse,              ## false
     rubyFloat,              ## float
     rubyForTok,             ## for
     rubyGlobalVariable,     ## global_variable
+    rubyHashKeySymbol,      ## hash_key_symbol
     rubyHeredocBeginning,   ## heredoc_beginning
     rubyHeredocContent,     ## heredoc_content
     rubyHeredocEnd,         ## heredoc_end
@@ -202,6 +202,7 @@ type
     rubyRetryTok,           ## retry
     rubyReturnTok,          ## return
     rubySelf,               ## self
+    rubySimpleSymbol,       ## simple_symbol
     rubyStringContent,      ## string_content
     rubySuper,              ## super
     rubyThenTok,            ## then
@@ -220,13 +221,11 @@ type
     rubyDoublePipeEqualTok, ## ||=
     rubyRCurlyTok,          ## }
     rubyTildeTok,           ## ~
-    rubyComment2,           ## comment
-    rubyHeredocBody2,       ## heredoc_body
     rubySyntaxError          ## Tree-sitter parser syntax error
 type
   RubyExternalTok* = enum
     rubyExtern_line_break,  ## _line_break
-    rubyExtern_simple_symbol, ## _simple_symbol
+    rubyExternSimple_symbol, ## simple_symbol
     rubyExtern_string_start, ## _string_start
     rubyExtern_symbol_start, ## _symbol_start
     rubyExtern_subshell_start, ## _subshell_start
@@ -245,7 +244,10 @@ type
     rubyExtern_binary_minus, ## _binary_minus
     rubyExtern_binary_star, ## _binary_star
     rubyExtern_singleton_class_left_angle_left_langle, ## _singleton_class_left_angle_left_langle
-    rubyExtern_identifier_hash_key ## _identifier_hash_key
+    rubyExternHash_key_symbol, ## hash_key_symbol
+    rubyExtern_hash_splat_star_star, ## _hash_splat_star_star
+    rubyExtern_binary_star_star, ## _binary_star_star
+    rubyExtern_element_reference_bracket ## _element_reference_bracket
 type
   RubyNode* = distinct TSNode
 type
@@ -304,6 +306,8 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
       rubyClass
     of "conditional":
       rubyConditional
+    of "delimited_symbol":
+      rubyDelimitedSymbol
     of "destructured_left_assignment":
       rubyDestructuredLeftAssignment
     of "destructured_parameter":
@@ -337,7 +341,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "hash_splat_parameter":
       rubyHashSplatParameter
     of "heredoc_body":
-      rubyHeredocBody2
+      rubyHeredocBody
     of "if":
       rubyIf
     of "if_modifier":
@@ -416,8 +420,6 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
       rubySubshell
     of "superclass":
       rubySuperclass
-    of "symbol":
-      rubySymbol
     of "symbol_array":
       rubySymbolArray
     of "then":
@@ -547,9 +549,9 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "?":
       rubyQuestionTok
     of "BEGIN":
-      rubyBEGINTok2
+      rubyBEGINTok
     of "END":
-      rubyENDTok3
+      rubyENDTok
     of "[":
       rubyLBrackTok
     of "[]":
@@ -563,7 +565,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "^=":
       rubyAccentEqualTok
     of "__END__":
-      rubyENDTok3
+      rubyENDTok
     of "`":
       rubyBacktickTok
     of "and":
@@ -573,7 +575,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "class_variable":
       rubyClassVariable
     of "comment":
-      rubyComment2
+      rubyComment
     of "complex":
       rubyComplex
     of "constant":
@@ -583,7 +585,7 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     of "defined?":
       rubyDefinedQuestionTok
     of "end":
-      rubyEndTok3
+      rubyEndTok1
     of "escape_sequence":
       rubyEscapeSequence
     of "false":
@@ -592,6 +594,8 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
       rubyFloat
     of "global_variable":
       rubyGlobalVariable
+    of "hash_key_symbol":
+      rubyHashKeySymbol
     of "heredoc_beginning":
       rubyHeredocBeginning
     of "heredoc_content":
@@ -614,6 +618,8 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
       rubyRTok
     of "self":
       rubySelf
+    of "simple_symbol":
+      rubySimpleSymbol
     of "string_content":
       rubyStringContent
     of "super":
@@ -673,12 +679,70 @@ proc isNil*(node: RubyNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: RubyNode; withUnnamed: bool = false): RubyNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: RubyNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: RubyNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: RubyNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: RubyNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: RubyNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: RubyNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: RubyNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: RubyNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: RubyNode): RubyNode =
+  RubyNode(ts_node_parent(TSNode(node)))
+
+func child*(node: RubyNode; a2: int): RubyNode =
+  RubyNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: RubyNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: RubyNode; a2: int): RubyNode =
+  RubyNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: RubyNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: RubyNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: RubyNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: RubyNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: RubyNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: RubyNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: RubyNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: RubyNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: RubyNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: RubyNode; level: int): seq[string] =

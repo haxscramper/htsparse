@@ -19,6 +19,7 @@ type
     c_sharpArrayRankSpecifier, ## array_rank_specifier
     c_sharpArrayType,       ## array_type
     c_sharpArrowExpressionClause, ## arrow_expression_clause
+    c_sharpAsExpression,    ## as_expression
     c_sharpAssignmentExpression, ## assignment_expression
     c_sharpAssignmentOperator, ## assignment_operator
     c_sharpAttribute,       ## attribute
@@ -108,6 +109,7 @@ type
     c_sharpInterpolationAlignmentClause, ## interpolation_alignment_clause
     c_sharpInterpolationFormatClause, ## interpolation_format_clause
     c_sharpInvocationExpression, ## invocation_expression
+    c_sharpIsExpression,    ## is_expression
     c_sharpIsPatternExpression, ## is_pattern_expression
     c_sharpJoinClause,      ## join_clause
     c_sharpJoinIntoClause,  ## join_into_clause
@@ -374,8 +376,6 @@ type
     c_sharpDoublePipeTok,   ## ||
     c_sharpRCurlyTok,       ## }
     c_sharpTildeTok,        ## ~
-    c_sharpComment2,        ## comment
-    c_sharpPreprocessorCall2, ## preprocessor_call
     c_sharpSyntaxError       ## Tree-sitter parser syntax error
 type
   C_sharpExternalTok* = enum
@@ -418,6 +418,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpArrayType
     of "arrow_expression_clause":
       c_sharpArrowExpressionClause
+    of "as_expression":
+      c_sharpAsExpression
     of "assignment_expression":
       c_sharpAssignmentExpression
     of "assignment_operator":
@@ -596,6 +598,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpInterpolationFormatClause
     of "invocation_expression":
       c_sharpInvocationExpression
+    of "is_expression":
+      c_sharpIsExpression
     of "is_pattern_expression":
       c_sharpIsPatternExpression
     of "join_clause":
@@ -665,7 +669,7 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
     of "prefix_unary_expression":
       c_sharpPrefixUnaryExpression
     of "preprocessor_call":
-      c_sharpPreprocessorCall2
+      c_sharpPreprocessorCall
     of "primary_constructor_base_type":
       c_sharpPrimaryConstructorBaseType
     of "property_declaration":
@@ -921,7 +925,7 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
     of "class":
       c_sharpClassTok
     of "comment":
-      c_sharpComment2
+      c_sharpComment
     of "const":
       c_sharpConstTok
     of "continue":
@@ -1163,12 +1167,71 @@ proc isNil*(node: C_sharpNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: C_sharpNode; withUnnamed: bool = false): C_sharpNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: C_sharpNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: C_sharpNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: C_sharpNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: C_sharpNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: C_sharpNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: C_sharpNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: C_sharpNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: C_sharpNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: C_sharpNode): C_sharpNode =
+  C_sharpNode(ts_node_parent(TSNode(node)))
+
+func child*(node: C_sharpNode; a2: int): C_sharpNode =
+  C_sharpNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: C_sharpNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: C_sharpNode; a2: int): C_sharpNode =
+  C_sharpNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: C_sharpNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: C_sharpNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: C_sharpNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: C_sharpNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: C_sharpNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: C_sharpNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: C_sharpNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: C_sharpNode; fieldName: string;
+                       fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: C_sharpNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: C_sharpNode; level: int): seq[string] =

@@ -264,8 +264,6 @@ type
     phpDoublePipeTok,       ## ||
     phpRCurlyTok,           ## }
     phpTildeTok,            ## ~
-    phpComment2,            ## comment
-    phpTextInterpolation2,  ## text_interpolation
     phpSyntaxError           ## Tree-sitter parser syntax error
 type
   PhpExternalTok* = enum
@@ -469,7 +467,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "text":
       phpText
     of "text_interpolation":
-      phpTextInterpolation2
+      phpTextInterpolation
     of "throw_statement":
       phpThrowStatement
     of "trait_declaration":
@@ -639,7 +637,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "clone":
       phpCloneTok
     of "comment":
-      phpComment2
+      phpComment
     of "const":
       phpConstTok
     of "continue":
@@ -829,12 +827,70 @@ proc isNil*(node: PhpNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: PhpNode; withUnnamed: bool = false): PhpNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: PhpNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: PhpNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: PhpNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: PhpNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: PhpNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: PhpNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: PhpNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: PhpNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: PhpNode): PhpNode =
+  PhpNode(ts_node_parent(TSNode(node)))
+
+func child*(node: PhpNode; a2: int): PhpNode =
+  PhpNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: PhpNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: PhpNode; a2: int): PhpNode =
+  PhpNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: PhpNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: PhpNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: PhpNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: PhpNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: PhpNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: PhpNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: PhpNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: PhpNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: PhpNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: PhpNode; level: int): seq[string] =

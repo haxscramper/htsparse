@@ -31,7 +31,6 @@ type
     htmlRawText,            ## raw_text
     htmlTagName,            ## tag_name
     htmlText,               ## text
-    htmlComment2,           ## comment
     htmlSyntaxError          ## Tree-sitter parser syntax error
 type
   HtmlExternalTok* = enum
@@ -94,7 +93,7 @@ proc kind*(node: HtmlNode): HtmlNodeKind {.noSideEffect.} =
     of "attribute_value":
       htmlAttributeValue
     of "comment":
-      htmlComment2
+      htmlComment
     of "erroneous_end_tag_name":
       htmlErroneousEndTagName
     of "raw_text":
@@ -140,12 +139,70 @@ proc isNil*(node: HtmlNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: HtmlNode; withUnnamed: bool = false): HtmlNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: HtmlNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: HtmlNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: HtmlNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: HtmlNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: HtmlNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: HtmlNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: HtmlNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: HtmlNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: HtmlNode): HtmlNode =
+  HtmlNode(ts_node_parent(TSNode(node)))
+
+func child*(node: HtmlNode; a2: int): HtmlNode =
+  HtmlNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: HtmlNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: HtmlNode; a2: int): HtmlNode =
+  HtmlNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: HtmlNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: HtmlNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: HtmlNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: HtmlNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: HtmlNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: HtmlNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: HtmlNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: HtmlNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: HtmlNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: HtmlNode; level: int): seq[string] =

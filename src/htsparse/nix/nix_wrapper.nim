@@ -4,20 +4,22 @@ import
 
 type
   NixNodeKind* = enum
+    nixExpression,          ## _expression
     nixApp,                 ## app
     nixAssert,              ## assert
     nixAttrpath,            ## attrpath
-    nixAttrs,               ## attrs
+    nixAttrsInherited,      ## attrs_inherited
+    nixAttrsInheritedFrom,  ## attrs_inherited_from
     nixAttrset,             ## attrset
     nixBinary,              ## binary
     nixBind,                ## bind
-    nixExpression,          ## expression
     nixFormal,              ## formal
     nixFormals,             ## formals
     nixFunction,            ## function
     nixIf,                  ## if
     nixIndentedString,      ## indented_string
     nixInherit,             ## inherit
+    nixInheritFrom,         ## inherit_from
     nixInterpolation,       ## interpolation
     nixLet,                 ## let
     nixLetAttrset,          ## let_attrset
@@ -25,6 +27,7 @@ type
     nixParenthesized,       ## parenthesized
     nixRecAttrset,          ## rec_attrset
     nixSelect,              ## select
+    nixSourceExpression,    ## source_expression
     nixString,              ## string
     nixUnary,               ## unary
     nixWith,                ## with
@@ -58,6 +61,7 @@ type
     nixLBrackTok,           ## [
     nixRBrackTok,           ## ]
     nixAssertTok,           ## assert
+    nixAttrIdentifier,      ## attr_identifier
     nixComment,             ## comment
     nixEllipses,            ## ellipses
     nixElseTok,             ## else
@@ -80,7 +84,6 @@ type
     nixLCurlyTok,           ## {
     nixDoublePipeTok,       ## ||
     nixRCurlyTok,           ## }
-    nixComment2,            ## comment
     nixSyntaxError           ## Tree-sitter parser syntax error
 type
   NixExternalTok* = enum
@@ -96,22 +99,24 @@ proc tsNodeType*(node: NixNode): string
 proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
+    of "_expression":
+      nixExpression
     of "app":
       nixApp
     of "assert":
       nixAssert
     of "attrpath":
       nixAttrpath
-    of "attrs":
-      nixAttrs
+    of "attrs_inherited":
+      nixAttrsInherited
+    of "attrs_inherited_from":
+      nixAttrsInheritedFrom
     of "attrset":
       nixAttrset
     of "binary":
       nixBinary
     of "bind":
       nixBind
-    of "expression":
-      nixExpression
     of "formal":
       nixFormal
     of "formals":
@@ -124,6 +129,8 @@ proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
       nixIndentedString
     of "inherit":
       nixInherit
+    of "inherit_from":
+      nixInheritFrom
     of "interpolation":
       nixInterpolation
     of "let":
@@ -138,6 +145,8 @@ proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
       nixRecAttrset
     of "select":
       nixSelect
+    of "source_expression":
+      nixSourceExpression
     of "string":
       nixString
     of "unary":
@@ -202,8 +211,10 @@ proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
       nixLBrackTok
     of "]":
       nixRBrackTok
+    of "attr_identifier":
+      nixAttrIdentifier
     of "comment":
-      nixComment2
+      nixComment
     of "ellipses":
       nixEllipses
     of "else":
@@ -275,12 +286,70 @@ proc isNil*(node: NixNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: NixNode; withUnnamed: bool = false): NixNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: NixNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: NixNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: NixNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: NixNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: NixNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: NixNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: NixNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: NixNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: NixNode): NixNode =
+  NixNode(ts_node_parent(TSNode(node)))
+
+func child*(node: NixNode; a2: int): NixNode =
+  NixNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: NixNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: NixNode; a2: int): NixNode =
+  NixNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: NixNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: NixNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: NixNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: NixNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: NixNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: NixNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: NixNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: NixNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: NixNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: NixNode; level: int): seq[string] =

@@ -149,8 +149,6 @@ type
     agda⦄Tok,             ## ⦄
     agda⦇Tok,             ## ⦇
     agda⦈Tok,             ## ⦈
-    agdaComment2,           ## comment
-    agdaPragma2,            ## pragma
     agdaSyntaxError          ## Tree-sitter parser syntax error
 type
   AgdaExternalTok* = enum
@@ -334,7 +332,7 @@ proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
     of "coinductive":
       agdaCoinductiveTok
     of "comment":
-      agdaComment2
+      agdaComment
     of "constructor":
       agdaConstructorTok
     of "eta-equality":
@@ -362,7 +360,7 @@ proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
     of "overlap":
       agdaOverlapTok
     of "pragma":
-      agdaPragma2
+      agdaPragma
     of "public":
       agdaPublicTok
     of "quote":
@@ -450,12 +448,70 @@ proc isNil*(node: AgdaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: AgdaNode; withUnnamed: bool = false): AgdaNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: AgdaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: AgdaNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: AgdaNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: AgdaNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: AgdaNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: AgdaNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: AgdaNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: AgdaNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: AgdaNode): AgdaNode =
+  AgdaNode(ts_node_parent(TSNode(node)))
+
+func child*(node: AgdaNode; a2: int): AgdaNode =
+  AgdaNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: AgdaNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: AgdaNode; a2: int): AgdaNode =
+  AgdaNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: AgdaNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: AgdaNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: AgdaNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: AgdaNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: AgdaNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: AgdaNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: AgdaNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: AgdaNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: AgdaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: AgdaNode; level: int): seq[string] =

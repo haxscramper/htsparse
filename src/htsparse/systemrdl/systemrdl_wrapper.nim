@@ -209,8 +209,6 @@ type
     systemrdlTildeAmpersandTok, ## ~&
     systemrdlTildeAccentTok, ## ~^
     systemrdlTildePipeTok,  ## ~|
-    systemrdlComment2,      ## comment
-    systemrdlTemplate2,     ## template
     systemrdlSyntaxError     ## Tree-sitter parser syntax error
 type
   SystemrdlNode* = distinct TSNode
@@ -497,7 +495,7 @@ proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
     of "clr":
       systemrdlClrTok
     of "comment":
-      systemrdlComment2
+      systemrdlComment
     of "compact":
       systemrdlCompactTok
     of "component":
@@ -581,7 +579,7 @@ proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
     of "sw":
       systemrdlSwTok
     of "template":
-      systemrdlTemplate2
+      systemrdlTemplate
     of "this":
       systemrdlThisTok
     of "true":
@@ -665,12 +663,71 @@ proc isNil*(node: SystemrdlNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: SystemrdlNode; withUnnamed: bool = false): SystemrdlNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: SystemrdlNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: SystemrdlNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: SystemrdlNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: SystemrdlNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: SystemrdlNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: SystemrdlNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: SystemrdlNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: SystemrdlNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: SystemrdlNode): SystemrdlNode =
+  SystemrdlNode(ts_node_parent(TSNode(node)))
+
+func child*(node: SystemrdlNode; a2: int): SystemrdlNode =
+  SystemrdlNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: SystemrdlNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: SystemrdlNode; a2: int): SystemrdlNode =
+  SystemrdlNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: SystemrdlNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: SystemrdlNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: SystemrdlNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: SystemrdlNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: SystemrdlNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: SystemrdlNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: SystemrdlNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: SystemrdlNode; fieldName: string;
+                       fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: SystemrdlNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: SystemrdlNode; level: int): seq[string] =

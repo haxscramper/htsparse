@@ -101,7 +101,6 @@ type
     luaRCurlyTok,           ## }
     luaTildeTok,            ## ~
     luaTildeEqualTok,       ## ~=
-    luaComment2,            ## comment
     luaSyntaxError           ## Tree-sitter parser syntax error
 type
   LuaExternalTok* = enum
@@ -242,7 +241,7 @@ proc kind*(node: LuaNode): LuaNodeKind {.noSideEffect.} =
     of "break_statement":
       luaBreakStatement
     of "comment":
-      luaComment2
+      luaComment
     of "do":
       luaDoTok
     of "end":
@@ -340,12 +339,70 @@ proc isNil*(node: LuaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: LuaNode; withUnnamed: bool = false): LuaNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: LuaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: LuaNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: LuaNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: LuaNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: LuaNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: LuaNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: LuaNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: LuaNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: LuaNode): LuaNode =
+  LuaNode(ts_node_parent(TSNode(node)))
+
+func child*(node: LuaNode; a2: int): LuaNode =
+  LuaNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: LuaNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: LuaNode; a2: int): LuaNode =
+  LuaNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: LuaNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: LuaNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: LuaNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: LuaNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: LuaNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: LuaNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: LuaNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: LuaNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: LuaNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: LuaNode; level: int): seq[string] =

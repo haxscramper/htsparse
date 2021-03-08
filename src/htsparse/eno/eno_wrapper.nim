@@ -136,12 +136,70 @@ proc isNil*(node: EnoNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: EnoNode; withUnnamed: bool = false): EnoNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: EnoNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: EnoNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: EnoNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: EnoNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: EnoNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: EnoNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: EnoNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: EnoNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: EnoNode): EnoNode =
+  EnoNode(ts_node_parent(TSNode(node)))
+
+func child*(node: EnoNode; a2: int): EnoNode =
+  EnoNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: EnoNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: EnoNode; a2: int): EnoNode =
+  EnoNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: EnoNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: EnoNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: EnoNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: EnoNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: EnoNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: EnoNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: EnoNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: EnoNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: EnoNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: EnoNode; level: int): seq[string] =

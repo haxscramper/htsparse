@@ -159,7 +159,6 @@ type
     cThiscallTok,           ## __thiscall
     cUnalignedTok,          ## __unaligned
     cVectorcallTok,         ## __vectorcall
-    cUnalignedTok2,         ## _unaligned
     cAutoTok,               ## auto
     cBreakTok,              ## break
     cCaseTok,               ## case
@@ -203,8 +202,6 @@ type
     cTrue,                  ## true
     cTypeIdentifier,        ## type_identifier
     cTypedefTok,            ## typedef
-    cUQuoteTok2,            ## u"
-    cUApostropheTok2,       ## u'
     cU8QuoteTok,            ## u8"
     cU8ApostropheTok,       ## u8'
     cUnionTok,              ## union
@@ -217,7 +214,6 @@ type
     cDoublePipeTok,         ## ||
     cRCurlyTok,             ## }
     cTildeTok,              ## ~
-    cComment2,              ## comment
     cSyntaxError             ## Tree-sitter parser syntax error
 type
   CNode* = distinct TSNode
@@ -502,9 +498,9 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "L\'":
       cLApostropheTok
     of "U\"":
-      cUQuoteTok2
+      cUQuoteTok
     of "U\'":
-      cUApostropheTok2
+      cUApostropheTok
     of "[":
       cLBrackTok
     of "]":
@@ -532,11 +528,11 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "__thiscall":
       cThiscallTok
     of "__unaligned":
-      cUnalignedTok2
+      cUnalignedTok
     of "__vectorcall":
       cVectorcallTok
     of "_unaligned":
-      cUnalignedTok2
+      cUnalignedTok
     of "auto":
       cAutoTok
     of "break":
@@ -544,7 +540,7 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "case":
       cCaseTok
     of "comment":
-      cComment2
+      cComment
     of "const":
       cConstTok
     of "continue":
@@ -624,9 +620,9 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     of "typedef":
       cTypedefTok
     of "u\"":
-      cUQuoteTok2
+      cUQuoteTok
     of "u\'":
-      cUApostropheTok2
+      cUApostropheTok
     of "u8\"":
       cU8QuoteTok
     of "u8\'":
@@ -688,12 +684,70 @@ proc isNil*(node: CNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: CNode; withUnnamed: bool = false): CNode =
-  for i in 0 .. node.len(withUnnamed):
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: CNode): Slice[int] =
   {.cast(noSideEffect).}:
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func nodeString*(node: CNode): string =
+  $ts_node_string(TSNode(node))
+
+func isNull*(node: CNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: CNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: CNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: CNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: CNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: CNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: CNode): CNode =
+  CNode(ts_node_parent(TSNode(node)))
+
+func child*(node: CNode; a2: int): CNode =
+  CNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: CNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: CNode; a2: int): CNode =
+  CNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: CNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: CNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: CNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: CNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: CNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: CNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: CNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: CNode; fieldName: string; fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)
 
 proc treeRepr*(mainNode: CNode; instr: string; withUnnamed: bool = false): string =
   proc aux(node: CNode; level: int): seq[string] =
