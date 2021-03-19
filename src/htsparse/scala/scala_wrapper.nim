@@ -42,6 +42,8 @@ type
     scalaInfixPattern,      ## infix_pattern
     scalaInfixType,         ## infix_type
     scalaInstanceExpression, ## instance_expression
+    scalaInterpolatedString, ## interpolated_string
+    scalaInterpolatedStringExpression, ## interpolated_string_expression
     scalaInterpolation,     ## interpolation
     scalaLazyParameterType, ## lazy_parameter_type
     scalaLowerBound,        ## lower_bound
@@ -62,7 +64,6 @@ type
     scalaStableIdentifier,  ## stable_identifier
     scalaStableTypeIdentifier, ## stable_type_identifier
     scalaString,            ## string
-    scalaStringTransformExpression, ## string_transform_expression
     scalaTemplateBody,      ## template_body
     scalaTraitDefinition,   ## trait_definition
     scalaTryExpression,     ## try_expression
@@ -141,12 +142,11 @@ type
   ScalaExternalTok* = enum
     scalaExtern_automatic_semicolon, ## _automatic_semicolon
     scalaExtern_simple_string, ## _simple_string
-    scalaExtern_string_start, ## _string_start
-    scalaExtern_string_middle, ## _string_middle
-    scalaExtern_string_end, ## _string_end
-    scalaExtern_multiline_string_start, ## _multiline_string_start
-    scalaExtern_multiline_string_middle, ## _multiline_string_middle
-    scalaExtern_multiline_string_end ## _multiline_string_end
+    scalaExtern_simple_multiline_string, ## _simple_multiline_string
+    scalaExtern_interpolated_string_middle, ## _interpolated_string_middle
+    scalaExtern_interpolated_string_end, ## _interpolated_string_end
+    scalaExtern_interpolated_multiline_string_middle, ## _interpolated_multiline_string_middle
+    scalaExtern_interpolated_multiline_string_end ## _interpolated_multiline_string_end
 type
   ScalaNode* = distinct TSNode
 type
@@ -231,6 +231,10 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaInfixType
     of "instance_expression":
       scalaInstanceExpression
+    of "interpolated_string":
+      scalaInterpolatedString
+    of "interpolated_string_expression":
+      scalaInterpolatedStringExpression
     of "interpolation":
       scalaInterpolation
     of "lazy_parameter_type":
@@ -271,8 +275,6 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaStableTypeIdentifier
     of "string":
       scalaString
-    of "string_transform_expression":
-      scalaStringTransformExpression
     of "template_body":
       scalaTemplateBody
     of "trait_definition":
