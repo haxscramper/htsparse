@@ -20,7 +20,8 @@ import htsparse/[
   kotlin/kotlin,
   zig/zig,
   systemVerilog/systemVerilog,
-  julia/julia
+  julia/julia,
+  dart/dart
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -104,3 +105,18 @@ end
 """
 
     echo parser.parseString(str).treeRepr(str)
+
+suite "Dart":
+  test "Dart":
+    let str = """
+class Term {
+  /// Whether the term is positive or not.
+  ///
+  /// A positive constraint is true when a package version that matches
+  /// [package] is selected; a negative constraint is true when no package
+  /// versions that match [package] are selected.
+  final bool isPositive;
+}
+"""
+
+    echo parseDartString(str).treeRepr(str)
