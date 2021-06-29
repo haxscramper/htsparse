@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   ScalaNodeKind* = enum
@@ -12,6 +15,7 @@ type
     scalaArguments,         ## arguments
     scalaAssignmentExpression, ## assignment_expression
     scalaBlock,             ## block
+    scalaBooleanLiteral,    ## boolean_literal
     scalaCallExpression,    ## call_expression
     scalaCapturePattern,    ## capture_pattern
     scalaCaseBlock,         ## case_block
@@ -103,21 +107,24 @@ type
     scalaAbstractTok,       ## abstract
     scalaCaseTok,           ## case
     scalaCatchTok,          ## catch
+    scalaCharacterLiteral,  ## character_literal
     scalaClassTok,          ## class
     scalaComment,           ## comment
     scalaDefTok,            ## def
     scalaElseTok,           ## else
     scalaExtendsTok,        ## extends
+    scalaFalseTok,          ## false
     scalaFinalTok,          ## final
     scalaFinallyTok,        ## finally
+    scalaFloatingPointLiteral, ## floating_point_literal
     scalaIdentifier,        ## identifier
     scalaIfTok,             ## if
     scalaImplicitTok,       ## implicit
     scalaImportTok,         ## import
+    scalaIntegerLiteral,    ## integer_literal
     scalaLazyTok,           ## lazy
     scalaMatchTok,          ## match
     scalaNewTok,            ## new
-    scalaNumber,            ## number
     scalaObjectTok,         ## object
     scalaOperatorIdentifier, ## operator_identifier
     scalaOverrideTok,       ## override
@@ -125,7 +132,9 @@ type
     scalaPrivateTok,        ## private
     scalaProtectedTok,      ## protected
     scalaSealedTok,         ## sealed
+    scalaSymbolLiteral,     ## symbol_literal
     scalaTraitTok,          ## trait
+    scalaTrueTok,           ## true
     scalaTryTok,            ## try
     scalaTypeTok,           ## type
     scalaTypeIdentifier,    ## type_identifier
@@ -171,6 +180,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaAssignmentExpression
     of "block":
       scalaBlock
+    of "boolean_literal":
+      scalaBooleanLiteral
     of "call_expression":
       scalaCallExpression
     of "capture_pattern":
@@ -353,6 +364,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaCaseTok
     of "catch":
       scalaCatchTok
+    of "character_literal":
+      scalaCharacterLiteral
     of "class":
       scalaClassTok
     of "comment":
@@ -363,10 +376,14 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaElseTok
     of "extends":
       scalaExtendsTok
+    of "false":
+      scalaFalseTok
     of "final":
       scalaFinalTok
     of "finally":
       scalaFinallyTok
+    of "floating_point_literal":
+      scalaFloatingPointLiteral
     of "identifier":
       scalaIdentifier
     of "if":
@@ -375,14 +392,14 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaImplicitTok
     of "import":
       scalaImportTok
+    of "integer_literal":
+      scalaIntegerLiteral
     of "lazy":
       scalaLazyTok
     of "match":
       scalaMatchTok
     of "new":
       scalaNewTok
-    of "number":
-      scalaNumber
     of "object":
       scalaObjectTok
     of "operator_identifier":
@@ -397,8 +414,12 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaProtectedTok
     of "sealed":
       scalaSealedTok
+    of "symbol_literal":
+      scalaSymbolLiteral
     of "trait":
       scalaTraitTok
+    of "true":
+      scalaTrueTok
     of "try":
       scalaTryTok
     of "type":
@@ -458,11 +479,14 @@ proc isNil*(node: ScalaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: ScalaNode; withUnnamed: bool = false): ScalaNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                         ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: ScalaNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: ScalaNode): string =
@@ -522,14 +546,3 @@ func endColumn*(node: ScalaNode): int =
 func childByFieldName*(self: ScalaNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: ScalaNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: ScalaNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[5 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

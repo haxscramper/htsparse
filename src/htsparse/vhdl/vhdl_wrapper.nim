@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   VhdlNodeKind* = enum
@@ -90,6 +93,7 @@ type
     vhdlBitStringLiteral,   ## bit_string_literal
     vhdlBitValue,           ## bit_value
     vhdlBlockConfiguration, ## block_configuration
+    vhdlBlockHeader,        ## block_header
     vhdlBlockSpecification, ## block_specification
     vhdlBlockStatement,     ## block_statement
     vhdlBoolean,            ## boolean
@@ -102,15 +106,19 @@ type
     vhdlComment,            ## comment
     vhdlComponentConfiguration, ## component_configuration
     vhdlComponentDeclaration, ## component_declaration
+    vhdlComponentHeader,    ## component_header
     vhdlComponentInstantiation, ## component_instantiation
     vhdlComponentInstantiationStatement, ## component_instantiation_statement
+    vhdlComponentMapAspect, ## component_map_aspect
+    vhdlConcatenation,      ## concatenation
     vhdlConcurrentStatementPart, ## concurrent_statement_part
     vhdlCondition,          ## condition
     vhdlConditionalConcurrentSignalAssignment, ## conditional_concurrent_signal_assignment
     vhdlConditionalExpression, ## conditional_expression
     vhdlConditionalExpressions, ## conditional_expressions
-    vhdlConditionalSignalAssignment, ## conditional_signal_assignment
+    vhdlConditionalForceAssignment, ## conditional_force_assignment
     vhdlConditionalVariableAssignment, ## conditional_variable_assignment
+    vhdlConditionalWaveformAssignment, ## conditional_waveform_assignment
     vhdlConditionalWaveforms, ## conditional_waveforms
     vhdlConfigurationDeclaration, ## configuration_declaration
     vhdlConfigurationInstantiation, ## configuration_instantiation
@@ -140,12 +148,12 @@ type
     vhdlEntityClassEntryList, ## entity_class_entry_list
     vhdlEntityDeclaration,  ## entity_declaration
     vhdlEntityDesignator,   ## entity_designator
+    vhdlEntityHeader,       ## entity_header
     vhdlEntityInstantiation, ## entity_instantiation
     vhdlEntityNameList,     ## entity_name_list
     vhdlEntitySpecification, ## entity_specification
     vhdlEnumerationTypeDefinition, ## enumeration_type_definition
     vhdlExitStatement,      ## exit_statement
-    vhdlExpandedName,       ## expanded_name
     vhdlExponentiation,     ## exponentiation
     vhdlExpression,         ## expression
     vhdlExpressionList,     ## expression_list
@@ -176,7 +184,6 @@ type
     vhdlGroupDeclaration,   ## group_declaration
     vhdlGroupTemplateDeclaration, ## group_template_declaration
     vhdlGuardedSignalSpecification, ## guarded_signal_specification
-    vhdlHeader,             ## header
     vhdlIdentifierList,     ## identifier_list
     vhdlIf,                 ## if
     vhdlIfGenerate,         ## if_generate
@@ -198,7 +205,6 @@ type
     vhdlLogicalExpression,  ## logical_expression
     vhdlLogicalNameList,    ## logical_name_list
     vhdlLoopStatement,      ## loop_statement
-    vhdlMapAspect,          ## map_aspect
     vhdlMode,               ## mode
     vhdlNamedAssociationElement, ## named_association_element
     vhdlNamedElementAssociation, ## named_element_association
@@ -211,8 +217,10 @@ type
     vhdlOthers,             ## others
     vhdlPackageBody,        ## package_body
     vhdlPackageDeclaration, ## package_declaration
+    vhdlPackageHeader,      ## package_header
     vhdlPackageInstantiationDeclaration, ## package_instantiation_declaration
     vhdlPackageInterfaceDeclaration, ## package_interface_declaration
+    vhdlPackageMapAspect,   ## package_map_aspect
     vhdlPackagePathname,    ## package_pathname
     vhdlParameterSpecification, ## parameter_specification
     vhdlParenthesizedExpression, ## parenthesized_expression
@@ -253,9 +261,10 @@ type
     vhdlSecondaryUnitDeclaration, ## secondary_unit_declaration
     vhdlSelectedConcurrentSignalAssignment, ## selected_concurrent_signal_assignment
     vhdlSelectedExpressions, ## selected_expressions
+    vhdlSelectedForceAssignment, ## selected_force_assignment
     vhdlSelectedName,       ## selected_name
-    vhdlSelectedSignalAssignment, ## selected_signal_assignment
     vhdlSelectedVariableAssignment, ## selected_variable_assignment
+    vhdlSelectedWaveformAssignment, ## selected_waveform_assignment
     vhdlSelectedWaveforms,  ## selected_waveforms
     vhdlSensitivityList,    ## sensitivity_list
     vhdlSeparator,          ## separator
@@ -271,12 +280,15 @@ type
     vhdlSignature,          ## signature
     vhdlSimpleConcurrentSignalAssignment, ## simple_concurrent_signal_assignment
     vhdlSimpleExpression,   ## simple_expression
-    vhdlSimpleSignalAssignment, ## simple_signal_assignment
+    vhdlSimpleForceAssignment, ## simple_force_assignment
+    vhdlSimpleReleaseAssignment, ## simple_release_assignment
     vhdlSimpleVariableAssignment, ## simple_variable_assignment
+    vhdlSimpleWaveformAssignment, ## simple_waveform_assignment
     vhdlSliceName,          ## slice_name
     vhdlStringExpression,   ## string_expression
     vhdlStringLiteral,      ## string_literal
     vhdlSubprogramHeader,   ## subprogram_header
+    vhdlSubprogramMapAspect, ## subprogram_map_aspect
     vhdlSubtypeDeclaration, ## subtype_declaration
     vhdlSubtypeIndication,  ## subtype_indication
     vhdlTerm,               ## term
@@ -732,6 +744,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlBitValue
     of "block_configuration":
       vhdlBlockConfiguration
+    of "block_header":
+      vhdlBlockHeader
     of "block_specification":
       vhdlBlockSpecification
     of "block_statement":
@@ -756,10 +770,16 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlComponentConfiguration
     of "component_declaration":
       vhdlComponentDeclaration
+    of "component_header":
+      vhdlComponentHeader
     of "component_instantiation":
       vhdlComponentInstantiation
     of "component_instantiation_statement":
       vhdlComponentInstantiationStatement
+    of "component_map_aspect":
+      vhdlComponentMapAspect
+    of "concatenation":
+      vhdlConcatenation
     of "concurrent_statement_part":
       vhdlConcurrentStatementPart
     of "condition":
@@ -770,10 +790,12 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlConditionalExpression
     of "conditional_expressions":
       vhdlConditionalExpressions
-    of "conditional_signal_assignment":
-      vhdlConditionalSignalAssignment
+    of "conditional_force_assignment":
+      vhdlConditionalForceAssignment
     of "conditional_variable_assignment":
       vhdlConditionalVariableAssignment
+    of "conditional_waveform_assignment":
+      vhdlConditionalWaveformAssignment
     of "conditional_waveforms":
       vhdlConditionalWaveforms
     of "configuration_declaration":
@@ -832,6 +854,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlEntityDeclaration
     of "entity_designator":
       vhdlEntityDesignator
+    of "entity_header":
+      vhdlEntityHeader
     of "entity_instantiation":
       vhdlEntityInstantiation
     of "entity_name_list":
@@ -842,8 +866,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlEnumerationTypeDefinition
     of "exit_statement":
       vhdlExitStatement
-    of "expanded_name":
-      vhdlExpandedName
     of "exponentiation":
       vhdlExponentiation
     of "expression":
@@ -904,8 +926,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlGroupTemplateDeclaration
     of "guarded_signal_specification":
       vhdlGuardedSignalSpecification
-    of "header":
-      vhdlHeader
     of "identifier_list":
       vhdlIdentifierList
     of "if":
@@ -948,8 +968,6 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlLogicalNameList
     of "loop_statement":
       vhdlLoopStatement
-    of "map_aspect":
-      vhdlMapAspect
     of "mode":
       vhdlMode
     of "named_association_element":
@@ -974,10 +992,14 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlPackageBody
     of "package_declaration":
       vhdlPackageDeclaration
+    of "package_header":
+      vhdlPackageHeader
     of "package_instantiation_declaration":
       vhdlPackageInstantiationDeclaration
     of "package_interface_declaration":
       vhdlPackageInterfaceDeclaration
+    of "package_map_aspect":
+      vhdlPackageMapAspect
     of "package_pathname":
       vhdlPackagePathname
     of "parameter_specification":
@@ -1058,12 +1080,14 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlSelectedConcurrentSignalAssignment
     of "selected_expressions":
       vhdlSelectedExpressions
+    of "selected_force_assignment":
+      vhdlSelectedForceAssignment
     of "selected_name":
       vhdlSelectedName
-    of "selected_signal_assignment":
-      vhdlSelectedSignalAssignment
     of "selected_variable_assignment":
       vhdlSelectedVariableAssignment
+    of "selected_waveform_assignment":
+      vhdlSelectedWaveformAssignment
     of "selected_waveforms":
       vhdlSelectedWaveforms
     of "sensitivity_list":
@@ -1094,10 +1118,14 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlSimpleConcurrentSignalAssignment
     of "simple_expression":
       vhdlSimpleExpression
-    of "simple_signal_assignment":
-      vhdlSimpleSignalAssignment
+    of "simple_force_assignment":
+      vhdlSimpleForceAssignment
+    of "simple_release_assignment":
+      vhdlSimpleReleaseAssignment
     of "simple_variable_assignment":
       vhdlSimpleVariableAssignment
+    of "simple_waveform_assignment":
+      vhdlSimpleWaveformAssignment
     of "slice_name":
       vhdlSliceName
     of "string_expression":
@@ -1106,6 +1134,8 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
       vhdlStringLiteral
     of "subprogram_header":
       vhdlSubprogramHeader
+    of "subprogram_map_aspect":
+      vhdlSubprogramMapAspect
     of "subtype_declaration":
       vhdlSubtypeDeclaration
     of "subtype_indication":
@@ -1659,11 +1689,14 @@ proc isNil*(node: VhdlNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: VhdlNode; withUnnamed: bool = false): VhdlNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                       ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: VhdlNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: VhdlNode): string =
@@ -1723,14 +1756,3 @@ func endColumn*(node: VhdlNode): int =
 func childByFieldName*(self: VhdlNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: VhdlNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: VhdlNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[4 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   VerilogNodeKind* = enum
@@ -111,10 +114,8 @@ type
     verilogConsecutiveRepetition, ## consecutive_repetition
     verilogConstIdentifier, ## const_identifier
     verilogConstantBitSelect1, ## constant_bit_select1
-    verilogConstantCast,    ## constant_cast
     verilogConstantConcatenation, ## constant_concatenation
     verilogConstantExpression, ## constant_expression
-    verilogConstantFunctionCall, ## constant_function_call
     verilogConstantIndexedRange, ## constant_indexed_range
     verilogConstantMintypmaxExpression, ## constant_mintypmax_expression
     verilogConstantMultipleConcatenation, ## constant_multiple_concatenation
@@ -389,7 +390,6 @@ type
     verilogOpenRangeList,   ## open_range_list
     verilogOpenValueRange,  ## open_value_range
     verilogOperatorAssignment, ## operator_assignment
-    verilogOrderedParameterAssignment2, ## ordered_parameter_assignment
     verilogOrderedPortConnection, ## ordered_port_connection
     verilogOutputDeclaration, ## output_declaration
     verilogOutputIdentifier, ## output_identifier
@@ -632,8 +632,8 @@ type
     verilogApostrophe1Tok,  ## '1
     verilogApostropheB0Tok, ## 'B0
     verilogApostropheB1Tok, ## 'B1
-    verilogApostropheb0Tok2, ## 'b0
-    verilogApostropheb1Tok2, ## 'b1
+    verilogApostropheb0Tok1, ## 'b0
+    verilogApostropheb1Tok1, ## 'b1
     verilogApostropheLCurlyTok, ## '{
     verilogLParTok,         ## (
     verilogLParAsteriskTok, ## (*
@@ -665,11 +665,11 @@ type
     verilog1ApostropheB0Tok, ## 1'B0
     verilog1ApostropheB1Tok, ## 1'B1
     verilog1ApostropheBXTok, ## 1'BX
-    verilog1ApostropheBxTok2, ## 1'Bx
-    verilog1Apostropheb0Tok2, ## 1'b0
-    verilog1Apostropheb1Tok2, ## 1'b1
-    verilog1ApostrophebXTok3, ## 1'bX
-    verilog1ApostrophebxTok4, ## 1'bx
+    verilog1ApostropheBxTok1, ## 1'Bx
+    verilog1Apostropheb0Tok1, ## 1'b0
+    verilog1Apostropheb1Tok1, ## 1'b1
+    verilog1ApostrophebXTok2, ## 1'bX
+    verilog1ApostrophebxTok3, ## 1'bx
     verilog10Tok,           ## 10
     verilog1stepTok,        ## 1step
     verilog2Tok,            ## 2
@@ -1018,7 +1018,6 @@ type
     verilog–Tok,          ## –
     verilog–GreaterThanTok, ## –>
     verilog––Tok,       ## ––
-    verilogComment2,        ## comment
     verilogSyntaxError       ## Tree-sitter parser syntax error
 type
   VerilogNode* = distinct TSNode
@@ -1053,7 +1052,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "$width_timing_check":
       verilogDollarwidthUnderscoretimingUnderscorecheck
     of "_ordered_parameter_assignment":
-      verilogOrderedParameterAssignment2
+      verilogOrderedParameterAssignment
     of "action_block":
       verilogActionBlock
     of "always_construct":
@@ -1242,14 +1241,10 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
       verilogConstIdentifier
     of "constant_bit_select1":
       verilogConstantBitSelect1
-    of "constant_cast":
-      verilogConstantCast
     of "constant_concatenation":
       verilogConstantConcatenation
     of "constant_expression":
       verilogConstantExpression
-    of "constant_function_call":
-      verilogConstantFunctionCall
     of "constant_indexed_range":
       verilogConstantIndexedRange
     of "constant_mintypmax_expression":
@@ -1799,7 +1794,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "operator_assignment":
       verilogOperatorAssignment
     of "ordered_parameter_assignment":
-      verilogOrderedParameterAssignment2
+      verilogOrderedParameterAssignment
     of "ordered_port_connection":
       verilogOrderedPortConnection
     of "output_declaration":
@@ -2279,13 +2274,13 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "\'1":
       verilogApostrophe1Tok
     of "\'B0":
-      verilogApostropheB0Tok2
+      verilogApostropheB0Tok
     of "\'B1":
-      verilogApostropheB1Tok2
+      verilogApostropheB1Tok
     of "\'b0":
-      verilogApostropheb0Tok2
+      verilogApostropheb0Tok1
     of "\'b1":
-      verilogApostropheb1Tok2
+      verilogApostropheb1Tok1
     of "\'{":
       verilogApostropheLCurlyTok
     of "(":
@@ -2343,21 +2338,21 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "1":
       verilog1Tok
     of "1\'B0":
-      verilog1ApostropheB0Tok2
+      verilog1ApostropheB0Tok
     of "1\'B1":
-      verilog1ApostropheB1Tok2
+      verilog1ApostropheB1Tok
     of "1\'BX":
-      verilog1ApostropheBXTok4
+      verilog1ApostropheBXTok
     of "1\'Bx":
-      verilog1ApostropheBxTok4
+      verilog1ApostropheBxTok1
     of "1\'b0":
-      verilog1Apostropheb0Tok2
+      verilog1Apostropheb0Tok1
     of "1\'b1":
-      verilog1Apostropheb1Tok2
+      verilog1Apostropheb1Tok1
     of "1\'bX":
-      verilog1ApostrophebXTok4
+      verilog1ApostrophebXTok2
     of "1\'bx":
-      verilog1ApostrophebxTok4
+      verilog1ApostrophebxTok3
     of "10":
       verilog10Tok
     of "1step":
@@ -2513,7 +2508,7 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     of "cmos":
       verilogCmosTok
     of "comment":
-      verilogComment2
+      verilogComment
     of "config":
       verilogConfigTok
     of "const":
@@ -3091,20 +3086,71 @@ proc isNil*(node: VerilogNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: VerilogNode; withUnnamed: bool = false): VerilogNode =
-  for i in 0 .. node.len(withUnnamed):
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                             ## nodes (usually things like punctuation, braces and so on).
+  for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: VerilogNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
-proc treeRepr*(mainNode: VerilogNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: VerilogNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[7 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
+func nodeString*(node: VerilogNode): string =
+  $ts_node_string(TSNode(node))
 
-  return aux(mainNode, 0).join("\n")
+func isNull*(node: VerilogNode): bool =
+  ts_node_is_null(TSNode(node))
+
+func isNamed*(node: VerilogNode): bool =
+  ts_node_is_named(TSNode(node))
+
+func isMissing*(node: VerilogNode): bool =
+  ts_node_is_missing(TSNode(node))
+
+func isExtra*(node: VerilogNode): bool =
+  ts_node_is_extra(TSNode(node))
+
+func hasChanges*(node: VerilogNode): bool =
+  ts_node_has_changes(TSNode(node))
+
+func hasError*(node: VerilogNode): bool =
+  ts_node_has_error(TSNode(node))
+
+func parent*(node: VerilogNode): VerilogNode =
+  VerilogNode(ts_node_parent(TSNode(node)))
+
+func child*(node: VerilogNode; a2: int): VerilogNode =
+  VerilogNode(ts_node_child(TSNode(node), a2.uint32))
+
+func childCount*(node: VerilogNode): int =
+  ts_node_child_count(TSNode(node)).int
+
+func namedChild*(node: VerilogNode; a2: int): VerilogNode =
+  VerilogNode(ts_node_named_child(TSNode(node), a2.uint32))
+
+func namedChildCount*(node: VerilogNode): int =
+  ts_node_named_child_count(TSNode(node)).int
+
+func startPoint*(node: VerilogNode): TSPoint =
+  ts_node_start_point(TSNode(node))
+
+func endPoint*(node: VerilogNode): TSPoint =
+  ts_node_end_point(TSNode(node))
+
+func startLine*(node: VerilogNode): int =
+  node.startPoint().row.int
+
+func endLine*(node: VerilogNode): int =
+  node.endPoint().row.int
+
+func startColumn*(node: VerilogNode): int =
+  node.startPoint().column.int
+
+func endColumn*(node: VerilogNode): int =
+  node.endPoint().column.int
+
+func childByFieldName*(self: VerilogNode; fieldName: string;
+                       fieldNameLength: int): TSNode =
+  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
+                              fieldNameLength.uint32)

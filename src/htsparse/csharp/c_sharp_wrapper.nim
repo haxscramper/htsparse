@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   C_sharpNodeKind* = enum
@@ -61,16 +64,21 @@ type
     c_sharpDeclarationPattern, ## declaration_pattern
     c_sharpDefaultExpression, ## default_expression
     c_sharpDefaultSwitchLabel, ## default_switch_label
+    c_sharpDefineDirective, ## define_directive
     c_sharpDelegateDeclaration, ## delegate_declaration
     c_sharpDestructorDeclaration, ## destructor_declaration
     c_sharpDoStatement,     ## do_statement
     c_sharpElementAccessExpression, ## element_access_expression
     c_sharpElementBindingExpression, ## element_binding_expression
+    c_sharpElifDirective,   ## elif_directive
+    c_sharpElseDirective,   ## else_directive
     c_sharpEmptyStatement,  ## empty_statement
+    c_sharpEndregionDirective, ## endregion_directive
     c_sharpEnumDeclaration, ## enum_declaration
     c_sharpEnumMemberDeclaration, ## enum_member_declaration
     c_sharpEnumMemberDeclarationList, ## enum_member_declaration_list
     c_sharpEqualsValueClause, ## equals_value_clause
+    c_sharpErrorDirective,  ## error_directive
     c_sharpEventDeclaration, ## event_declaration
     c_sharpEventFieldDeclaration, ## event_field_declaration
     c_sharpExplicitInterfaceSpecifier, ## explicit_interface_specifier
@@ -94,6 +102,7 @@ type
     c_sharpGotoStatement,   ## goto_statement
     c_sharpGroupClause,     ## group_clause
     c_sharpIdentifier,      ## identifier
+    c_sharpIfDirective,     ## if_directive
     c_sharpIfStatement,     ## if_statement
     c_sharpImplicitArrayCreationExpression, ## implicit_array_creation_expression
     c_sharpImplicitObjectCreationExpression, ## implicit_object_creation_expression
@@ -117,6 +126,7 @@ type
     c_sharpLabeledStatement, ## labeled_statement
     c_sharpLambdaExpression, ## lambda_expression
     c_sharpLetClause,       ## let_clause
+    c_sharpLineDirective,   ## line_directive
     c_sharpLocalDeclarationStatement, ## local_declaration_statement
     c_sharpLocalFunctionStatement, ## local_function_statement
     c_sharpLockStatement,   ## lock_statement
@@ -129,6 +139,7 @@ type
     c_sharpNameEquals,      ## name_equals
     c_sharpNamespaceDeclaration, ## namespace_declaration
     c_sharpNegatedPattern,  ## negated_pattern
+    c_sharpNullableDirective, ## nullable_directive
     c_sharpNullableType,    ## nullable_type
     c_sharpObjectCreationExpression, ## object_creation_expression
     c_sharpOperatorDeclaration, ## operator_declaration
@@ -143,8 +154,8 @@ type
     c_sharpPointerType,     ## pointer_type
     c_sharpPositionalPatternClause, ## positional_pattern_clause
     c_sharpPostfixUnaryExpression, ## postfix_unary_expression
+    c_sharpPragmaDirective, ## pragma_directive
     c_sharpPrefixUnaryExpression, ## prefix_unary_expression
-    c_sharpPreprocessorCall, ## preprocessor_call
     c_sharpPrimaryConstructorBaseType, ## primary_constructor_base_type
     c_sharpPropertyDeclaration, ## property_declaration
     c_sharpPropertyPatternClause, ## property_pattern_clause
@@ -157,6 +168,7 @@ type
     c_sharpRefExpression,   ## ref_expression
     c_sharpRefTypeExpression, ## ref_type_expression
     c_sharpRefValueExpression, ## ref_value_expression
+    c_sharpRegionDirective, ## region_directive
     c_sharpRelationalPattern, ## relational_pattern
     c_sharpReturnStatement, ## return_statement
     c_sharpSelectClause,    ## select_clause
@@ -187,12 +199,14 @@ type
     c_sharpTypeParameterConstraintsClause, ## type_parameter_constraints_clause
     c_sharpTypeParameterList, ## type_parameter_list
     c_sharpTypePattern,     ## type_pattern
+    c_sharpUndefDirective,  ## undef_directive
     c_sharpUnsafeStatement, ## unsafe_statement
     c_sharpUsingDirective,  ## using_directive
     c_sharpUsingStatement,  ## using_statement
     c_sharpVarPattern,      ## var_pattern
     c_sharpVariableDeclaration, ## variable_declaration
     c_sharpVariableDeclarator, ## variable_declarator
+    c_sharpWarningDirective, ## warning_directive
     c_sharpWhenClause,      ## when_clause
     c_sharpWhereClause,     ## where_clause
     c_sharpWhileStatement,  ## while_statement
@@ -260,6 +274,7 @@ type
     c_sharpAddTok,          ## add
     c_sharpAliasTok,        ## alias
     c_sharpAndTok,          ## and
+    c_sharpAnnotationsTok,  ## annotations
     c_sharpAsTok,           ## as
     c_sharpAscendingTok,    ## ascending
     c_sharpAssemblyTok,     ## assembly
@@ -271,19 +286,27 @@ type
     c_sharpCaseTok,         ## case
     c_sharpCatchTok,        ## catch
     c_sharpCheckedTok,      ## checked
+    c_sharpChecksumTok,     ## checksum
     c_sharpClassTok,        ## class
     c_sharpComment,         ## comment
     c_sharpConstTok,        ## const
     c_sharpContinueTok,     ## continue
     c_sharpDefaultTok,      ## default
+    c_sharpDefineTok,       ## define
     c_sharpDelegateTok,     ## delegate
     c_sharpDescendingTok,   ## descending
+    c_sharpDisableTok,      ## disable
     c_sharpDiscard,         ## discard
     c_sharpDoTok,           ## do
     c_sharpDynamicTok,      ## dynamic
+    c_sharpElifTok,         ## elif
     c_sharpElseTok,         ## else
+    c_sharpEnableTok,       ## enable
+    c_sharpEndifDirective,  ## endif_directive
+    c_sharpEndregionTok,    ## endregion
     c_sharpEnumTok,         ## enum
     c_sharpEqualsTok,       ## equals
+    c_sharpErrorTok,        ## error
     c_sharpEscapeSequence,  ## escape_sequence
     c_sharpEventTok,        ## event
     c_sharpExplicitTok,     ## explicit
@@ -299,6 +322,7 @@ type
     c_sharpGlobalTok,       ## global
     c_sharpGotoTok,         ## goto
     c_sharpGroupTok,        ## group
+    c_sharpHiddenTok,       ## hidden
     c_sharpIfTok,           ## if
     c_sharpImplicitTok,     ## implicit
     c_sharpInTok,           ## in
@@ -310,6 +334,7 @@ type
     c_sharpIsTok,           ## is
     c_sharpJoinTok,         ## join
     c_sharpLetTok,          ## let
+    c_sharpLineTok,         ## line
     c_sharpLockTok,         ## lock
     c_sharpManagedTok,      ## managed
     c_sharpMethodTok,       ## method
@@ -320,6 +345,7 @@ type
     c_sharpNotTok,          ## not
     c_sharpNotnullTok,      ## notnull
     c_sharpNullLiteral,     ## null_literal
+    c_sharpNullableTok,     ## nullable
     c_sharpOnTok,           ## on
     c_sharpOperatorTok,     ## operator
     c_sharpOrTok,           ## or
@@ -329,8 +355,11 @@ type
     c_sharpParamTok,        ## param
     c_sharpParamsTok,       ## params
     c_sharpPartialTok,      ## partial
+    c_sharpPragmaTok,       ## pragma
     c_sharpPredefinedType,  ## predefined_type
-    c_sharpPreprocessorDirective, ## preprocessor_directive
+    c_sharpPreprocIntegerLiteral, ## preproc_integer_literal
+    c_sharpPreprocMessage,  ## preproc_message
+    c_sharpPreprocStringLiteral, ## preproc_string_literal
     c_sharpPrivateTok,      ## private
     c_sharpPropertyTok,     ## property
     c_sharpProtectedTok,    ## protected
@@ -339,7 +368,9 @@ type
     c_sharpRealLiteral,     ## real_literal
     c_sharpRecordTok,       ## record
     c_sharpRefTok,          ## ref
+    c_sharpRegionTok,       ## region
     c_sharpRemoveTok,       ## remove
+    c_sharpRestoreTok,      ## restore
     c_sharpReturnTok,       ## return
     c_sharpSealedTok,       ## sealed
     c_sharpSelectTok,       ## select
@@ -356,6 +387,7 @@ type
     c_sharpTypeTok,         ## type
     c_sharpTypeofTok,       ## typeof
     c_sharpUncheckedTok,    ## unchecked
+    c_sharpUndefTok,        ## undef
     c_sharpUnmanagedTok,    ## unmanaged
     c_sharpUnsafeTok,       ## unsafe
     c_sharpUsingTok,        ## using
@@ -364,6 +396,8 @@ type
     c_sharpVirtualTok,      ## virtual
     c_sharpVoidKeyword,     ## void_keyword
     c_sharpVolatileTok,     ## volatile
+    c_sharpWarningTok,      ## warning
+    c_sharpWarningsTok,     ## warnings
     c_sharpWhenTok,         ## when
     c_sharpWhereTok,        ## where
     c_sharpWhileTok,        ## while
@@ -376,6 +410,7 @@ type
     c_sharpDoublePipeTok,   ## ||
     c_sharpRCurlyTok,       ## }
     c_sharpTildeTok,        ## ~
+    c_sharpPreprocessorCall, ## _preprocessor_call
     c_sharpSyntaxError       ## Tree-sitter parser syntax error
 type
   C_sharpExternalTok* = enum
@@ -502,6 +537,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpDefaultExpression
     of "default_switch_label":
       c_sharpDefaultSwitchLabel
+    of "define_directive":
+      c_sharpDefineDirective
     of "delegate_declaration":
       c_sharpDelegateDeclaration
     of "destructor_declaration":
@@ -512,8 +549,14 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpElementAccessExpression
     of "element_binding_expression":
       c_sharpElementBindingExpression
+    of "elif_directive":
+      c_sharpElifDirective
+    of "else_directive":
+      c_sharpElseDirective
     of "empty_statement":
       c_sharpEmptyStatement
+    of "endregion_directive":
+      c_sharpEndregionDirective
     of "enum_declaration":
       c_sharpEnumDeclaration
     of "enum_member_declaration":
@@ -522,6 +565,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpEnumMemberDeclarationList
     of "equals_value_clause":
       c_sharpEqualsValueClause
+    of "error_directive":
+      c_sharpErrorDirective
     of "event_declaration":
       c_sharpEventDeclaration
     of "event_field_declaration":
@@ -568,6 +613,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpGroupClause
     of "identifier":
       c_sharpIdentifier
+    of "if_directive":
+      c_sharpIfDirective
     of "if_statement":
       c_sharpIfStatement
     of "implicit_array_creation_expression":
@@ -614,6 +661,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpLambdaExpression
     of "let_clause":
       c_sharpLetClause
+    of "line_directive":
+      c_sharpLineDirective
     of "local_declaration_statement":
       c_sharpLocalDeclarationStatement
     of "local_function_statement":
@@ -638,6 +687,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpNamespaceDeclaration
     of "negated_pattern":
       c_sharpNegatedPattern
+    of "nullable_directive":
+      c_sharpNullableDirective
     of "nullable_type":
       c_sharpNullableType
     of "object_creation_expression":
@@ -666,10 +717,10 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpPositionalPatternClause
     of "postfix_unary_expression":
       c_sharpPostfixUnaryExpression
+    of "pragma_directive":
+      c_sharpPragmaDirective
     of "prefix_unary_expression":
       c_sharpPrefixUnaryExpression
-    of "preprocessor_call":
-      c_sharpPreprocessorCall
     of "primary_constructor_base_type":
       c_sharpPrimaryConstructorBaseType
     of "property_declaration":
@@ -694,6 +745,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpRefTypeExpression
     of "ref_value_expression":
       c_sharpRefValueExpression
+    of "region_directive":
+      c_sharpRegionDirective
     of "relational_pattern":
       c_sharpRelationalPattern
     of "return_statement":
@@ -754,6 +807,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpTypeParameterList
     of "type_pattern":
       c_sharpTypePattern
+    of "undef_directive":
+      c_sharpUndefDirective
     of "unsafe_statement":
       c_sharpUnsafeStatement
     of "using_directive":
@@ -766,6 +821,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpVariableDeclaration
     of "variable_declarator":
       c_sharpVariableDeclarator
+    of "warning_directive":
+      c_sharpWarningDirective
     of "when_clause":
       c_sharpWhenClause
     of "where_clause":
@@ -900,6 +957,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpAliasTok
     of "and":
       c_sharpAndTok
+    of "annotations":
+      c_sharpAnnotationsTok
     of "as":
       c_sharpAsTok
     of "ascending":
@@ -922,6 +981,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpCatchTok
     of "checked":
       c_sharpCheckedTok
+    of "checksum":
+      c_sharpChecksumTok
     of "class":
       c_sharpClassTok
     of "comment":
@@ -932,22 +993,36 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpContinueTok
     of "default":
       c_sharpDefaultTok
+    of "define":
+      c_sharpDefineTok
     of "delegate":
       c_sharpDelegateTok
     of "descending":
       c_sharpDescendingTok
+    of "disable":
+      c_sharpDisableTok
     of "discard":
       c_sharpDiscard
     of "do":
       c_sharpDoTok
     of "dynamic":
       c_sharpDynamicTok
+    of "elif":
+      c_sharpElifTok
     of "else":
       c_sharpElseTok
+    of "enable":
+      c_sharpEnableTok
+    of "endif_directive":
+      c_sharpEndifDirective
+    of "endregion":
+      c_sharpEndregionTok
     of "enum":
       c_sharpEnumTok
     of "equals":
       c_sharpEqualsTok
+    of "error":
+      c_sharpErrorTok
     of "escape_sequence":
       c_sharpEscapeSequence
     of "event":
@@ -976,6 +1051,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpGotoTok
     of "group":
       c_sharpGroupTok
+    of "hidden":
+      c_sharpHiddenTok
     of "if":
       c_sharpIfTok
     of "implicit":
@@ -998,6 +1075,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpJoinTok
     of "let":
       c_sharpLetTok
+    of "line":
+      c_sharpLineTok
     of "lock":
       c_sharpLockTok
     of "managed":
@@ -1018,6 +1097,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpNotnullTok
     of "null_literal":
       c_sharpNullLiteral
+    of "nullable":
+      c_sharpNullableTok
     of "on":
       c_sharpOnTok
     of "operator":
@@ -1036,10 +1117,16 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpParamsTok
     of "partial":
       c_sharpPartialTok
+    of "pragma":
+      c_sharpPragmaTok
     of "predefined_type":
       c_sharpPredefinedType
-    of "preprocessor_directive":
-      c_sharpPreprocessorDirective
+    of "preproc_integer_literal":
+      c_sharpPreprocIntegerLiteral
+    of "preproc_message":
+      c_sharpPreprocMessage
+    of "preproc_string_literal":
+      c_sharpPreprocStringLiteral
     of "private":
       c_sharpPrivateTok
     of "property":
@@ -1056,8 +1143,12 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpRecordTok
     of "ref":
       c_sharpRefTok
+    of "region":
+      c_sharpRegionTok
     of "remove":
       c_sharpRemoveTok
+    of "restore":
+      c_sharpRestoreTok
     of "return":
       c_sharpReturnTok
     of "sealed":
@@ -1090,6 +1181,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpTypeofTok
     of "unchecked":
       c_sharpUncheckedTok
+    of "undef":
+      c_sharpUndefTok
     of "unmanaged":
       c_sharpUnmanagedTok
     of "unsafe":
@@ -1106,6 +1199,10 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpVoidKeyword
     of "volatile":
       c_sharpVolatileTok
+    of "warning":
+      c_sharpWarningTok
+    of "warnings":
+      c_sharpWarningsTok
     of "when":
       c_sharpWhenTok
     of "where":
@@ -1130,6 +1227,8 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       c_sharpRCurlyTok
     of "~":
       c_sharpTildeTok
+    of "_preprocessor_call":
+      c_sharpPreprocessorCall
     of "ERROR":
       c_sharpSyntaxError
     else:
@@ -1167,11 +1266,14 @@ proc isNil*(node: C_sharpNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: C_sharpNode; withUnnamed: bool = false): C_sharpNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                             ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: C_sharpNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: C_sharpNode): string =
@@ -1232,14 +1334,3 @@ func childByFieldName*(self: C_sharpNode; fieldName: string;
                        fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: C_sharpNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: C_sharpNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[7 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

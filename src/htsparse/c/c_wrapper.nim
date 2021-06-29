@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   CNodeKind* = enum
@@ -684,11 +687,14 @@ proc isNil*(node: CNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: CNode; withUnnamed: bool = false): CNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                 ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: CNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: CNode): string =
@@ -748,14 +754,3 @@ func endColumn*(node: CNode): int =
 func childByFieldName*(self: CNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: CNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: CNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[1 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

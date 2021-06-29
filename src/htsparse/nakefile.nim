@@ -386,6 +386,12 @@ proc zigCompile*() =
     Url("https://raw.githubusercontent.com/GrayJack/tree-sitter-zig/master/grammar.js")
   )
 
+proc dartCompile*() =
+  build(
+    "dart",
+    Url("https://raw.githubusercontent.com/UserNobody14/tree-sitter-dart/master/grammar.js"),
+    some Url("https://raw.githubusercontent.com/UserNobody14/tree-sitter-dart/master/src/scanner.c")
+  )
 
 
 proc totalCompile*() =
@@ -411,7 +417,7 @@ proc totalCompile*() =
     rubyCompile,
     rustCompile,
     systemrdlCompile,
-    # systemVerilogCompile,
+    systemVerilogCompile,
     vhdlCompile,
     vueCompile,
     yamlCompile,
@@ -423,7 +429,8 @@ proc totalCompile*() =
     nixCompile,
     scalaCompile,
     kotlinCompile,
-    zigCompile
+    zigCompile,
+    dartCompile
   ]:
     cd startDir
     pr()
@@ -463,6 +470,7 @@ when isMainModule:
     [scalaCompile],
     [kotlinCompile],
     [zigCompile],
+    [dartCompile],
 
     [totalCompile]
   )

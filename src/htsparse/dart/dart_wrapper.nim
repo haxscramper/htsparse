@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   DartNodeKind* = enum
@@ -991,14 +994,3 @@ func endColumn*(node: DartNode): int =
 func childByFieldName*(self: DartNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: DartNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: DartNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[4 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   JavaNodeKind* = enum
@@ -85,6 +88,7 @@ type
     javaParenthesizedExpression, ## parenthesized_expression
     javaProgram,            ## program
     javaReceiverParameter,  ## receiver_parameter
+    javaRecordDeclaration,  ## record_declaration
     javaRequiresModifier,   ## requires_modifier
     javaResource,           ## resource
     javaResourceSpecification, ## resource_specification
@@ -96,8 +100,10 @@ type
     javaSuperInterfaces,    ## super_interfaces
     javaSuperclass,         ## superclass
     javaSwitchBlock,        ## switch_block
+    javaSwitchBlockStatementGroup, ## switch_block_statement_group
+    javaSwitchExpression,   ## switch_expression
     javaSwitchLabel,        ## switch_label
-    javaSwitchStatement,    ## switch_statement
+    javaSwitchRule,         ## switch_rule
     javaSynchronizedStatement, ## synchronized_statement
     javaTernaryExpression,  ## ternary_expression
     javaThrowStatement,     ## throw_statement
@@ -113,6 +119,7 @@ type
     javaVariableDeclarator, ## variable_declarator
     javaWhileStatement,     ## while_statement
     javaWildcard,           ## wildcard
+    javaYieldStatement,     ## yield_statement
     javaExclamationTok,     ## !
     javaExclamationEqualTok, ## !=
     javaPercentTok,         ## %
@@ -207,6 +214,7 @@ type
     javaProtectedTok,       ## protected
     javaProvidesTok,        ## provides
     javaPublicTok,          ## public
+    javaRecordTok,          ## record
     javaRequiresTok,        ## requires
     javaReturnTok,          ## return
     javaShortTok,           ## short
@@ -230,6 +238,7 @@ type
     javaVolatileTok,        ## volatile
     javaWhileTok,           ## while
     javaWithTok,            ## with
+    javaYieldTok,           ## yield
     javaLCurlyTok,          ## {
     javaPipeTok,            ## |
     javaPipeEqualTok,       ## |=
@@ -407,6 +416,8 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
       javaProgram
     of "receiver_parameter":
       javaReceiverParameter
+    of "record_declaration":
+      javaRecordDeclaration
     of "requires_modifier":
       javaRequiresModifier
     of "resource":
@@ -429,10 +440,14 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
       javaSuperclass
     of "switch_block":
       javaSwitchBlock
+    of "switch_block_statement_group":
+      javaSwitchBlockStatementGroup
+    of "switch_expression":
+      javaSwitchExpression
     of "switch_label":
       javaSwitchLabel
-    of "switch_statement":
-      javaSwitchStatement
+    of "switch_rule":
+      javaSwitchRule
     of "synchronized_statement":
       javaSynchronizedStatement
     of "ternary_expression":
@@ -463,6 +478,8 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
       javaWhileStatement
     of "wildcard":
       javaWildcard
+    of "yield_statement":
+      javaYieldStatement
     of "!":
       javaExclamationTok
     of "!=":
@@ -651,6 +668,8 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
       javaProvidesTok
     of "public":
       javaPublicTok
+    of "record":
+      javaRecordTok
     of "requires":
       javaRequiresTok
     of "return":
@@ -695,6 +714,8 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
       javaWhileTok
     of "with":
       javaWithTok
+    of "yield":
+      javaYieldTok
     of "{":
       javaLCurlyTok
     of "|":
@@ -744,11 +765,14 @@ proc isNil*(node: JavaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: JavaNode; withUnnamed: bool = false): JavaNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                       ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: JavaNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: JavaNode): string =
@@ -808,14 +832,3 @@ func endColumn*(node: JavaNode): int =
 func childByFieldName*(self: JavaNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: JavaNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: JavaNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[4 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

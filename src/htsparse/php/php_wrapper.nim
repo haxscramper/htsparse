@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   PhpNodeKind* = enum
@@ -9,12 +12,17 @@ type
     phpPrimaryExpression,   ## _primary_expression
     phpStatement,           ## _statement
     phpType,                ## _type
+    phpAbstractModifier,    ## abstract_modifier
     phpAnonymousFunctionCreationExpression, ## anonymous_function_creation_expression
     phpAnonymousFunctionUseClause, ## anonymous_function_use_clause
+    phpArgument,            ## argument
     phpArguments,           ## arguments
     phpArrayCreationExpression, ## array_creation_expression
     phpArrayElementInitializer, ## array_element_initializer
+    phpArrowFunction,       ## arrow_function
     phpAssignmentExpression, ## assignment_expression
+    phpAttribute,           ## attribute
+    phpAttributeList,       ## attribute_list
     phpAugmentedAssignmentExpression, ## augmented_assignment_expression
     phpBaseClause,          ## base_clause
     phpBinaryExpression,    ## binary_expression
@@ -26,7 +34,6 @@ type
     phpClassConstantAccessExpression, ## class_constant_access_expression
     phpClassDeclaration,    ## class_declaration
     phpClassInterfaceClause, ## class_interface_clause
-    phpClassModifier,       ## class_modifier
     phpCloneExpression,     ## clone_expression
     phpColonBlock,          ## colon_block
     phpCompoundStatement,   ## compound_statement
@@ -46,6 +53,7 @@ type
     phpEmptyStatement,      ## empty_statement
     phpExponentiationExpression, ## exponentiation_expression
     phpExpressionStatement, ## expression_statement
+    phpFinalModifier,       ## final_modifier
     phpFinallyClause,       ## finally_clause
     phpForStatement,        ## for_statement
     phpForeachStatement,    ## foreach_statement
@@ -60,11 +68,17 @@ type
     phpIncludeOnceExpression, ## include_once_expression
     phpInterfaceDeclaration, ## interface_declaration
     phpListLiteral,         ## list_literal
+    phpMatchBlock,          ## match_block
+    phpMatchConditionList,  ## match_condition_list
+    phpMatchConditionalExpression, ## match_conditional_expression
+    phpMatchDefaultExpression, ## match_default_expression
+    phpMatchExpression,     ## match_expression
     phpMemberAccessExpression, ## member_access_expression
     phpMemberCallExpression, ## member_call_expression
     phpMethodDeclaration,   ## method_declaration
     phpName,                ## name
     phpNamedLabelStatement, ## named_label_statement
+    phpNamedType,           ## named_type
     phpNamespaceAliasingClause, ## namespace_aliasing_clause
     phpNamespaceDefinition, ## namespace_definition
     phpNamespaceName,       ## namespace_name
@@ -73,6 +87,8 @@ type
     phpNamespaceUseDeclaration, ## namespace_use_declaration
     phpNamespaceUseGroup,   ## namespace_use_group
     phpNamespaceUseGroupClause, ## namespace_use_group_clause
+    phpNullsafeMemberAccessExpression, ## nullsafe_member_access_expression
+    phpNullsafeMemberCallExpression, ## nullsafe_member_call_expression
     phpObjectCreationExpression, ## object_creation_expression
     phpOptionalType,        ## optional_type
     phpPair,                ## pair
@@ -83,6 +99,7 @@ type
     phpPropertyDeclaration, ## property_declaration
     phpPropertyElement,     ## property_element
     phpPropertyInitializer, ## property_initializer
+    phpPropertyPromotionParameter, ## property_promotion_parameter
     phpQualifiedName,       ## qualified_name
     phpRelativeScope,       ## relative_scope
     phpRequireExpression,   ## require_expression
@@ -99,10 +116,10 @@ type
     phpSwitchStatement,     ## switch_statement
     phpText,                ## text
     phpTextInterpolation,   ## text_interpolation
-    phpThrowStatement,      ## throw_statement
+    phpThrowExpression,     ## throw_expression
     phpTraitDeclaration,    ## trait_declaration
     phpTryStatement,        ## try_statement
-    phpTypeName,            ## type_name
+    phpTypeList,            ## type_list
     phpUnaryOpExpression,   ## unary_op_expression
     phpUnsetStatement,      ## unset_statement
     phpUpdateExpression,    ## update_expression
@@ -119,6 +136,7 @@ type
     phpExclamationTok,      ## !
     phpExclamationEqualTok, ## !=
     phpExclamationDoubleEqualTok, ## !==
+    phpHashLBrackTok,       ## #[
     phpDollarTok,           ## $
     phpPercentTok,          ## %
     phpPercentEqualTok,     ## %=
@@ -162,8 +180,10 @@ type
     phpDoubleGreaterThanTok, ## >>
     phpDoubleGreaterThanEqualTok, ## >>=
     phpQuestionTok,         ## ?
+    phpQuestionMinusGreaterThanTok, ## ?->
     phpQuestionGreaterThanTok, ## ?>
     phpDoubleQuestionTok,   ## ??
+    phpDoubleQuestionEqualTok, ## ??=
     phpAtTok,               ## @
     phpLBrackTok,           ## [
     phpBackslashTok,        ## \
@@ -202,10 +222,12 @@ type
     phpEndswitchTok,        ## endswitch
     phpEndwhileTok,         ## endwhile
     phpExtendsTok,          ## extends
+    phpFalseTok,            ## false
     phpFinalTok,            ## final
     phpFinallyTok,          ## finally
     phpFloatTok,            ## float
     phpFloat,               ## float
+    phpFnTok,               ## fn
     phpForTok,              ## for
     phpForeachTok,          ## foreach
     phpFromTok,             ## from
@@ -225,9 +247,12 @@ type
     phpInterfaceTok,        ## interface
     phpIterableTok,         ## iterable
     phpListTok,             ## list
+    phpMatchTok,            ## match
+    phpMixedTok,            ## mixed
     phpNamespaceTok,        ## namespace
     phpNewTok,              ## new
     phpNull,                ## null
+    phpNullTok,             ## null
     phpObjectTok,           ## object
     phpOrTok,               ## or
     phpParentTok,           ## parent
@@ -244,8 +269,8 @@ type
     phpShellCommandExpression, ## shell_command_expression
     phpStaticTok,           ## static
     phpStrictTypesTok,      ## strict_types
-    phpStringTok,           ## string
     phpString,              ## string
+    phpStringTok,           ## string
     phpSwitchTok,           ## switch
     phpThrowTok,            ## throw
     phpTicksTok,            ## ticks
@@ -288,18 +313,28 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpStatement
     of "_type":
       phpType
+    of "abstract_modifier":
+      phpAbstractModifier
     of "anonymous_function_creation_expression":
       phpAnonymousFunctionCreationExpression
     of "anonymous_function_use_clause":
       phpAnonymousFunctionUseClause
+    of "argument":
+      phpArgument
     of "arguments":
       phpArguments
     of "array_creation_expression":
       phpArrayCreationExpression
     of "array_element_initializer":
       phpArrayElementInitializer
+    of "arrow_function":
+      phpArrowFunction
     of "assignment_expression":
       phpAssignmentExpression
+    of "attribute":
+      phpAttribute
+    of "attribute_list":
+      phpAttributeList
     of "augmented_assignment_expression":
       phpAugmentedAssignmentExpression
     of "base_clause":
@@ -322,8 +357,6 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpClassDeclaration
     of "class_interface_clause":
       phpClassInterfaceClause
-    of "class_modifier":
-      phpClassModifier
     of "clone_expression":
       phpCloneExpression
     of "colon_block":
@@ -362,6 +395,8 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpExponentiationExpression
     of "expression_statement":
       phpExpressionStatement
+    of "final_modifier":
+      phpFinalModifier
     of "finally_clause":
       phpFinallyClause
     of "for_statement":
@@ -390,6 +425,16 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpInterfaceDeclaration
     of "list_literal":
       phpListLiteral
+    of "match_block":
+      phpMatchBlock
+    of "match_condition_list":
+      phpMatchConditionList
+    of "match_conditional_expression":
+      phpMatchConditionalExpression
+    of "match_default_expression":
+      phpMatchDefaultExpression
+    of "match_expression":
+      phpMatchExpression
     of "member_access_expression":
       phpMemberAccessExpression
     of "member_call_expression":
@@ -400,6 +445,8 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpName
     of "named_label_statement":
       phpNamedLabelStatement
+    of "named_type":
+      phpNamedType
     of "namespace_aliasing_clause":
       phpNamespaceAliasingClause
     of "namespace_definition":
@@ -416,6 +463,10 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpNamespaceUseGroup
     of "namespace_use_group_clause":
       phpNamespaceUseGroupClause
+    of "nullsafe_member_access_expression":
+      phpNullsafeMemberAccessExpression
+    of "nullsafe_member_call_expression":
+      phpNullsafeMemberCallExpression
     of "object_creation_expression":
       phpObjectCreationExpression
     of "optional_type":
@@ -436,6 +487,8 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpPropertyElement
     of "property_initializer":
       phpPropertyInitializer
+    of "property_promotion_parameter":
+      phpPropertyPromotionParameter
     of "qualified_name":
       phpQualifiedName
     of "relative_scope":
@@ -468,14 +521,14 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpText
     of "text_interpolation":
       phpTextInterpolation
-    of "throw_statement":
-      phpThrowStatement
+    of "throw_expression":
+      phpThrowExpression
     of "trait_declaration":
       phpTraitDeclaration
     of "try_statement":
       phpTryStatement
-    of "type_name":
-      phpTypeName
+    of "type_list":
+      phpTypeList
     of "unary_op_expression":
       phpUnaryOpExpression
     of "unset_statement":
@@ -508,6 +561,8 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpExclamationEqualTok
     of "!==":
       phpExclamationDoubleEqualTok
+    of "#[":
+      phpHashLBrackTok
     of "$":
       phpDollarTok
     of "%":
@@ -594,10 +649,14 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpDoubleGreaterThanEqualTok
     of "?":
       phpQuestionTok
+    of "?->":
+      phpQuestionMinusGreaterThanTok
     of "?>":
       phpQuestionGreaterThanTok
     of "??":
       phpDoubleQuestionTok
+    of "??=":
+      phpDoubleQuestionEqualTok
     of "@":
       phpAtTok
     of "[":
@@ -672,12 +731,16 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpEndwhileTok
     of "extends":
       phpExtendsTok
+    of "false":
+      phpFalseTok
     of "final":
       phpFinalTok
     of "finally":
       phpFinallyTok
     of "float":
       phpFloatTok
+    of "fn":
+      phpFnTok
     of "for":
       phpForTok
     of "foreach":
@@ -714,6 +777,10 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpIterableTok
     of "list":
       phpListTok
+    of "match":
+      phpMatchTok
+    of "mixed":
+      phpMixedTok
     of "namespace":
       phpNamespaceTok
     of "new":
@@ -753,7 +820,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "strict_types":
       phpStrictTypesTok
     of "string":
-      phpStringTok
+      phpString
     of "switch":
       phpSwitchTok
     of "throw":
@@ -827,11 +894,14 @@ proc isNil*(node: PhpNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: PhpNode; withUnnamed: bool = false): PhpNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                     ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: PhpNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: PhpNode): string =
@@ -891,14 +961,3 @@ func endColumn*(node: PhpNode): int =
 func childByFieldName*(self: PhpNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: PhpNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: PhpNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[3 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

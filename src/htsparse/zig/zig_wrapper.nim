@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   ZigNodeKind* = enum
@@ -29,20 +32,25 @@ type
     zigDereferenceExpression, ## dereference_expression
     zigEmptyStatement,      ## empty_statement
     zigEnumExpression,      ## enum_expression
+    zigEnumIdentifier,      ## enum_identifier
     zigEnumLiteral,         ## enum_literal
     zigErrorExpression,     ## error_expression
+    zigErrorIdentifier,     ## error_identifier
     zigErrorType,           ## error_type
     zigExternModifier,      ## extern_modifier
     zigFieldDeclaration,    ## field_declaration
     zigFieldExpression,     ## field_expression
+    zigFieldIdentifier,     ## field_identifier
     zigFieldInit,           ## field_init
     zigFieldPattern,        ## field_pattern
     zigForExpression,       ## for_expression
     zigFunctionDeclaration, ## function_declaration
     zigFunctionModifiers,   ## function_modifiers
     zigFunctionSignature,   ## function_signature
+    zigIdentifier,          ## identifier
     zigIfExpression,        ## if_expression
     zigIndexExpression,     ## index_expression
+    zigLabelIdentifier,     ## label_identifier
     zigLiteralPattern,      ## literal_pattern
     zigLoopLabel,           ## loop_label
     zigLoopLabelInverse,    ## loop_label_inverse
@@ -54,6 +62,7 @@ type
     zigParameters,          ## parameters
     zigPayload,             ## payload
     zigPayloadExpression,   ## payload_expression
+    zigPayloadIdentifier,   ## payload_identifier
     zigPointerType,         ## pointer_type
     zigPrimitiveType,       ## primitive_type
     zigRangePattern,        ## range_pattern
@@ -75,11 +84,13 @@ type
     zigSwitchPattern,       ## switch_pattern
     zigTestExpression,      ## test_expression
     zigTryExpression,       ## try_expression
+    zigTypeIdentifier,      ## type_identifier
     zigTypePrefix,          ## type_prefix
     zigUnaryExpression,     ## unary_expression
     zigUnaryOperator,       ## unary_operator
     zigUnionExpression,     ## union_expression
     zigUnionFieldVariant,   ## union_field_variant
+    zigUnionIdentifier,     ## union_identifier
     zigUsingnamespaceExpression, ## usingnamespace_expression
     zigVariadicParameter,   ## variadic_parameter
     zigVariantDeclaration,  ## variant_declaration
@@ -117,7 +128,7 @@ type
     zigEqualGreaterThanTok, ## =>
     zigDoubleGreaterThanEqualTok, ## >>=
     zigQuestionTok,         ## ?
-    zigAtTok,               ## @
+    zigAtQuoteTok,          ## @"
     zigLBrackTok,           ## [
     zigDoubleBackslashTok,  ## \\
     zigRBrackTok,           ## ]
@@ -130,8 +141,6 @@ type
     zigBinaryOperator,      ## binary_operator
     zigBoolTok,             ## bool
     zigBreakTok,            ## break
-    zigCQuoteTok,           ## c"
-    zigCDoubleBackslashTok, ## c\\
     zigCIntTok,             ## c_int
     zigCLongTok,            ## c_long
     zigCLongdoubleTok,      ## c_longdouble
@@ -154,11 +163,9 @@ type
     zigElseTok,             ## else
     zigElseSwitch,          ## else_switch
     zigEnumTok,             ## enum
-    zigEnumIdentifier,      ## enum_identifier
     zigEnumModifier,        ## enum_modifier
     zigErrdeferTok,         ## errdefer
     zigErrorTok,            ## error
-    zigErrorIdentifier,     ## error_identifier
     zigEscapeSequence,      ## escape_sequence
     zigExportTok,           ## export
     zigExternTok,           ## extern
@@ -167,7 +174,6 @@ type
     zigF32Tok,              ## f32
     zigF64Tok,              ## f64
     zigFalseTok,            ## false
-    zigFieldIdentifier,     ## field_identifier
     zigFloatLiteral,        ## float_literal
     zigFnTok,               ## fn
     zigForTok,              ## for
@@ -176,19 +182,16 @@ type
     zigI32Tok,              ## i32
     zigI64Tok,              ## i64
     zigI8Tok,               ## i8
-    zigIdentifier,          ## identifier
     zigIfTok,               ## if
     zigInferenceType,       ## inference_type
     zigInlineTok,           ## inline
     zigIntegerLiteral,      ## integer_literal
     zigIsizeTok,            ## isize
-    zigLabelIdentifier,     ## label_identifier
     zigLineComment,         ## line_comment
     zigLoopModifier,        ## loop_modifier
     zigNakedccTok,          ## nakedcc
     zigNoreturnTok,         ## noreturn
     zigNullTok,             ## null
-    zigPayloadIdentifier,   ## payload_identifier
     zigPointer,             ## pointer
     zigPromiseTok,          ## promise
     zigPubTok,              ## pub
@@ -203,7 +206,6 @@ type
     zigTrueTok,             ## true
     zigTryTok,              ## try
     zigTypeTok,             ## type
-    zigTypeIdentifier,      ## type_identifier
     zigU128Tok,             ## u128
     zigU16Tok,              ## u16
     zigU32Tok,              ## u32
@@ -211,7 +213,6 @@ type
     zigU8Tok,               ## u8
     zigUndefinedLiteral,    ## undefined_literal
     zigUnionTok,            ## union
-    zigUnionIdentifier,     ## union_identifier
     zigUnionModifier,       ## union_modifier
     zigUnreachableExpression, ## unreachable_expression
     zigUsingnamespaceTok,   ## usingnamespace
@@ -284,10 +285,14 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigEmptyStatement
     of "enum_expression":
       zigEnumExpression
+    of "enum_identifier":
+      zigEnumIdentifier
     of "enum_literal":
       zigEnumLiteral
     of "error_expression":
       zigErrorExpression
+    of "error_identifier":
+      zigErrorIdentifier
     of "error_type":
       zigErrorType
     of "extern_modifier":
@@ -296,6 +301,8 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigFieldDeclaration
     of "field_expression":
       zigFieldExpression
+    of "field_identifier":
+      zigFieldIdentifier
     of "field_init":
       zigFieldInit
     of "field_pattern":
@@ -308,10 +315,14 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigFunctionModifiers
     of "function_signature":
       zigFunctionSignature
+    of "identifier":
+      zigIdentifier
     of "if_expression":
       zigIfExpression
     of "index_expression":
       zigIndexExpression
+    of "label_identifier":
+      zigLabelIdentifier
     of "literal_pattern":
       zigLiteralPattern
     of "loop_label":
@@ -334,6 +345,8 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigPayload
     of "payload_expression":
       zigPayloadExpression
+    of "payload_identifier":
+      zigPayloadIdentifier
     of "pointer_type":
       zigPointerType
     of "primitive_type":
@@ -376,6 +389,8 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigTestExpression
     of "try_expression":
       zigTryExpression
+    of "type_identifier":
+      zigTypeIdentifier
     of "type_prefix":
       zigTypePrefix
     of "unary_expression":
@@ -386,6 +401,8 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigUnionExpression
     of "union_field_variant":
       zigUnionFieldVariant
+    of "union_identifier":
+      zigUnionIdentifier
     of "usingnamespace_expression":
       zigUsingnamespaceExpression
     of "variadic_parameter":
@@ -460,8 +477,8 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigDoubleGreaterThanEqualTok
     of "?":
       zigQuestionTok
-    of "@":
-      zigAtTok
+    of "@\"":
+      zigAtQuoteTok
     of "[":
       zigLBrackTok
     of "\\\\":
@@ -486,10 +503,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigBoolTok
     of "break":
       zigBreakTok
-    of "c\"":
-      zigCQuoteTok
-    of "c\\\\":
-      zigCDoubleBackslashTok
     of "c_int":
       zigCIntTok
     of "c_long":
@@ -534,16 +547,12 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigElseSwitch
     of "enum":
       zigEnumTok
-    of "enum_identifier":
-      zigEnumIdentifier
     of "enum_modifier":
       zigEnumModifier
     of "errdefer":
       zigErrdeferTok
     of "error":
       zigErrorTok
-    of "error_identifier":
-      zigErrorIdentifier
     of "escape_sequence":
       zigEscapeSequence
     of "export":
@@ -560,8 +569,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigF64Tok
     of "false":
       zigFalseTok
-    of "field_identifier":
-      zigFieldIdentifier
     of "float_literal":
       zigFloatLiteral
     of "fn":
@@ -578,8 +585,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigI64Tok
     of "i8":
       zigI8Tok
-    of "identifier":
-      zigIdentifier
     of "if":
       zigIfTok
     of "inference_type":
@@ -590,8 +595,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigIntegerLiteral
     of "isize":
       zigIsizeTok
-    of "label_identifier":
-      zigLabelIdentifier
     of "line_comment":
       zigLineComment
     of "loop_modifier":
@@ -602,8 +605,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigNoreturnTok
     of "null":
       zigNullTok
-    of "payload_identifier":
-      zigPayloadIdentifier
     of "pointer":
       zigPointer
     of "promise":
@@ -632,8 +633,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigTryTok
     of "type":
       zigTypeTok
-    of "type_identifier":
-      zigTypeIdentifier
     of "u128":
       zigU128Tok
     of "u16":
@@ -648,8 +647,6 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
       zigUndefinedLiteral
     of "union":
       zigUnionTok
-    of "union_identifier":
-      zigUnionIdentifier
     of "union_modifier":
       zigUnionModifier
     of "unreachable_expression":
@@ -713,11 +710,14 @@ proc isNil*(node: ZigNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: ZigNode; withUnnamed: bool = false): ZigNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                     ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
 func slice*(node: ZigNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
 func nodeString*(node: ZigNode): string =
@@ -777,14 +777,3 @@ func endColumn*(node: ZigNode): int =
 func childByFieldName*(self: ZigNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: ZigNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: ZigNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[3 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")
