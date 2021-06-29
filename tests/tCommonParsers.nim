@@ -116,6 +116,7 @@ class Term {
   /// [package] is selected; a negative constraint is true when no package
   /// versions that match [package] are selected.
   final bool isPositive;
+  Term get inverse => Term(package, !isPositive);
 }
 """
 

@@ -11,3 +11,15 @@
 
 import latex_wrapper
 export latex_wrapper
+
+import
+  hmisc/wrappers/treesitter,
+  hmisc/algo/halgorithm
+
+const latexNodeKindMap* = toMapArray {
+  latexComment: tskComment
+}
+
+proc treeRepr*(
+  node: LatexNode, base: string, withUnnamed: bool = false): string =
+  treeRepr(node, base, 5, latexNodeKindMap, withUnnamed)

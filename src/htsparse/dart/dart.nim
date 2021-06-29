@@ -2,14 +2,21 @@
 {.compile: "dart_scanner.c".}
 {.passl: "-ltree-sitter".}
 
-import hmisc/wrappers/treesitter
 
 import dart_wrapper
 export dart_wrapper
 
-const dartNodeKindMap* = toMapArray {
-  dartComment: tskComment
+import
+  hmisc/wrappers/treesitter,
+  hmisc/algo/halgorithm
+
+let dartNodeKindMap* = toMapArray {
+  dartComment, dartDocumentationComment: tskComment,
+  dartFinalBuiltin, dartTypeIdentifier: tskKeyword,
+  dartIdentifier: tskIdent,
+  dartPrefixOperator, dartNegationOperator: tskPrefixOp
 }
+
 
 proc treeRepr*(
   node: DartNode, base: string, withUnnamed: bool = false): string =
