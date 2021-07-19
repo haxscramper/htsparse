@@ -1,31 +1,33 @@
 import hparse/htreesitter/hts_wrapgen
-import hmisc/other/[oswrap, colorlogger, hcligen]
+import hmisc/other/[oswrap, hlogger, hcligen]
 import std/[uri, options, httpclient, strutils]
 
 # let rawgh = "https://raw.githubusercontent.com/"
 
-startColorLogger()
+var logger: HLogger
 
 proc build*(
-  lang: string,
-  grammarUrl: Url,
-  scannerUrl: Option[Url] = none(Url),
-  scannerFile: RelFile = RelFile(lang & "_scanner.c"),
-  parserOut: RelFile = RelFile(lang & "_parser.c")) =
+    lang: string,
+    grammarUrl: Url,
+    scannerUrl: Option[Url] = none(Url),
+    scannerFile: RelFile = RelFile(lang & "_scanner.c"),
+    parserOut: RelFile = RelFile(lang & "_parser.c")
+  ) =
   mkDir RelDir(lang)
   cd RelDir(lang)
-  debug lang
+  logger.debug lang
   grammarFromUrl(
-    grammarUrl = grammarUrl,
-    scannerUrl = scannerUrl,
+    grammarUrl  = grammarUrl,
+    scannerUrl  = scannerUrl,
     scannerFile = scannerFile,
-    parserOut = parserOut
+    parserOut   = parserOut,
+    l           = logger,
+    testLink = false
   )
 
 proc build*(
     lang: string,
     downUrls: seq[(Url, RelFile)],
-    # copyFiles: seq[RelFile],
     scannerMain: Option[RelFile],
     grammarJs: FsFile,
     buildDir: Option[RelDir] = none(RelDir),
@@ -34,22 +36,24 @@ proc build*(
 
   mkDir RelDir(lang)
   cd RelDir(lang)
-  debug lang
+  logger.debug lang
   let client = newHttpClient()
   var extraFiles: seq[(AbsFile, RelFile)]
   for (url, file) in downUrls:
-    info "Downloaded", url.string, "to", file
+    logger.info "Downloaded", url.string, "to", file
     mkDir file.parentDir()
     client.downloadFile(url.string, file.getStr())
     extraFiles.add((file.toAbsFile(), file))
 
 
   grammarFromFile(
-    langPrefix = lang,
-    grammarJs = grammarJs,
+    langPrefix  = lang,
+    grammarJs   = grammarJs,
     scannerFile = scannerMain,
-    parserOut = some(parserOut),
-    extraFiles = extraFiles
+    parserOut   = some(parserOut),
+    extraFiles  = extraFiles,
+    l           = logger,
+    testLink = false
   )
 
 proc tomlCompile*() =
@@ -201,10 +205,10 @@ proc latexCompile*() =
 
 
   if RelDir("latex").exists:
-    info "Directory cleanup"
+    logger.info "Directory cleanup"
     for file in RelDir("latex").walkDir(RelFile):
       if file != RelFile("latex.nim"):
-        debug "Removing", file
+        logger.debug "Removing", file
         rmFile file
 
 
@@ -436,6 +440,7 @@ proc totalCompile*() =
     pr()
 
 when isMainModule:
+  logger = newTermLogger()
   dispatchMulti(
     [tomlCompile],
     [cppCompile],

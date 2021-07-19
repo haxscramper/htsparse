@@ -1271,10 +1271,19 @@ iterator items*(node: C_sharpNode; withUnnamed: bool = false): C_sharpNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: C_sharpNode; withUnnamed: bool = false): (int, C_sharpNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                                    ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: C_sharpNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: C_sharpNode): string =
+  s[node.slice()]
 
 func nodeString*(node: C_sharpNode): string =
   $ts_node_string(TSNode(node))

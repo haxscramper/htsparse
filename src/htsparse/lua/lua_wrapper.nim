@@ -347,10 +347,19 @@ iterator items*(node: LuaNode; withUnnamed: bool = false): LuaNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: LuaNode; withUnnamed: bool = false): (int, LuaNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                            ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: LuaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: LuaNode): string =
+  s[node.slice()]
 
 func nodeString*(node: LuaNode): string =
   $ts_node_string(TSNode(node))

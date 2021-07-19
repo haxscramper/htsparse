@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -247,11 +250,11 @@ type
     javaTildeTok,           ## ~
     javaSyntaxError          ## Tree-sitter parser syntax error
 type
-  JavaNode* = distinct TSNode
+  TsJavaNode* = distinct TSNode
 type
   JavaParser* = distinct PtsParser
-proc tsNodeType*(node: JavaNode): string
-proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsJavaNode): string
+proc kind*(node: TsJavaNode): JavaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_literal":
@@ -733,102 +736,69 @@ proc kind*(node: JavaNode): JavaNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_java(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: JavaNode): string =
-  $ts_node_type(TSNode(node))
+type
+  JavaNode* = HtsNode[TsJavaNode, JavaNodeKind]
+func isNil*(node: TsJavaNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newJavaParser*(): JavaParser =
-  result = JavaParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_java())
-
-proc parseString*(parser: JavaParser; str: string): JavaNode =
-  JavaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseJavaString*(str: string): JavaNode =
-  let parser = newJavaParser()
-  return parseString(parser, str)
-
-func `[]`*(node: JavaNode; idx: int; withUnnamed: bool = false): JavaNode =
-  if withUnnamed:
-    JavaNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    JavaNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: JavaNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsJavaNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: JavaNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsJavaNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: JavaNode; withUnnamed: bool = false): JavaNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
-
-func slice*(node: JavaNode): Slice[int] =
+func slice*(node: TsJavaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
 
-func nodeString*(node: JavaNode): string =
-  $ts_node_string(TSNode(node))
+proc tree_sitter_java(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsJavaNode): string =
+  $ts_node_type(TSNode(node))
 
-func isNull*(node: JavaNode): bool =
-  ts_node_is_null(TSNode(node))
+proc newTsJavaParser*(): JavaParser =
+  result = JavaParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_java())
 
-func isNamed*(node: JavaNode): bool =
-  ts_node_is_named(TSNode(node))
+proc parseString*(parser: JavaParser; str: string): TsJavaNode =
+  TsJavaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func isMissing*(node: JavaNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc parseTsJavaString*(str: string): TsJavaNode =
+  let parser = newTsJavaParser()
+  return parseString(parser, str)
 
-func isExtra*(node: JavaNode): bool =
-  ts_node_is_extra(TSNode(node))
+func `$`*(node: TsJavaNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func hasChanges*(node: JavaNode): bool =
-  ts_node_has_changes(TSNode(node))
+func `[]`*(node: TsJavaNode; idx: int; kind: JavaNodeKind | set[JavaNodeKind]): TsJavaNode =
+  assert 0 <= idx and idx < node.len
+  result = TsJavaNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func hasError*(node: JavaNode): bool =
-  ts_node_has_error(TSNode(node))
+proc treeReprTsJava*(str: string; unnamed: bool = false): string =
+  treeRepr[TsJavaNode, JavaNodeKind](parseTsJavaString(str), str, 4,
+                                     unnamed = unnamed)
 
-func parent*(node: JavaNode): JavaNode =
-  JavaNode(ts_node_parent(TSNode(node)))
+proc toHtsNode*(node: TsJavaNode; str: ptr string): HtsNode[TsJavaNode,
+    JavaNodeKind] =
+  toHtsNode[TsJavaNode, JavaNodeKind](node, str)
 
-func child*(node: JavaNode; a2: int): JavaNode =
-  JavaNode(ts_node_child(TSNode(node), a2.uint32))
+proc toHtsTree*(node: TsJavaNode; str: ptr string): JavaNode =
+  toHtsNode[TsJavaNode, JavaNodeKind](node, str)
 
-func childCount*(node: JavaNode): int =
-  ts_node_child_count(TSNode(node)).int
+proc parseJavaString*(str: ptr string; unnamed: bool = false): JavaNode =
+  let parser = newTsJavaParser()
+  return toHtsTree[TsJavaNode, JavaNodeKind](parseString(parser, str[]), str)
 
-func namedChild*(node: JavaNode; a2: int): JavaNode =
-  JavaNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: JavaNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: JavaNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: JavaNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: JavaNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: JavaNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: JavaNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: JavaNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: JavaNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseJavaString*(str: string; unnamed: bool = false): JavaNode =
+  let parser = newTsJavaParser()
+  return toHtsTree[TsJavaNode, JavaNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

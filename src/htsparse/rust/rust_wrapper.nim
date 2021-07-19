@@ -843,10 +843,19 @@ iterator items*(node: RustNode; withUnnamed: bool = false): RustNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: RustNode; withUnnamed: bool = false): (int, RustNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                              ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: RustNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: RustNode): string =
+  s[node.slice()]
 
 func nodeString*(node: RustNode): string =
   $ts_node_string(TSNode(node))

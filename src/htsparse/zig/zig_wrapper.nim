@@ -715,10 +715,19 @@ iterator items*(node: ZigNode; withUnnamed: bool = false): ZigNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: ZigNode; withUnnamed: bool = false): (int, ZigNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                            ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: ZigNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: ZigNode): string =
+  s[node.slice()]
 
 func nodeString*(node: ZigNode): string =
   $ts_node_string(TSNode(node))

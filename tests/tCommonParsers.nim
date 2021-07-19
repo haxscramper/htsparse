@@ -1,3 +1,5 @@
+{.warning[UnusedImport]:off.}
+
 import std/[sugar, strutils, sequtils, strformat, unittest]
 import htsparse/[
   toml/toml,

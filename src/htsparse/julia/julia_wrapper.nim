@@ -507,10 +507,19 @@ iterator items*(node: JuliaNode; withUnnamed: bool = false): JuliaNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: JuliaNode; withUnnamed: bool = false): (int, JuliaNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                                ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: JuliaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: JuliaNode): string =
+  s[node.slice()]
 
 func nodeString*(node: JuliaNode): string =
   $ts_node_string(TSNode(node))

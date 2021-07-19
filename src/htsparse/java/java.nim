@@ -8,10 +8,31 @@ import
   hmisc/wrappers/treesitter,
   hmisc/algo/halgorithm
 
-const javaNodeKindMap* = toMapArray {
-  javaComment: tskComment
-}
+const
+  javaPrimitiveTypes* = {
+    javaFloatingPointType,
+    javaIntegralType,
+    javaVoidType,
+    javaBooleanType
+  }
+
+  javaNodeKindMap* = toMapArray {
+    { javaComment }: tskComment,
+    javaPrimitiveTypes: tskPrimitiveType
+  }
 
 proc treeRepr*(
-  node: JavaNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, javaNodeKindMap, withUnnamed)
+    node: TsJavaNode | HtsNode[TsJavaNode, JavaNodeKind],
+    base: string = "",
+    unnamed: bool = false,
+    indexed: bool = false,
+    maxdepth: int = high(int),
+    pathIndexed: bool = false
+  ): string =
+
+  argpass(
+    treeRepr(node, base, 4, javaNodeKindMap),
+    unnamed,
+    indexed,
+    maxdepth,
+    pathIndexed)

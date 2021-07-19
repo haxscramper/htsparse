@@ -484,10 +484,19 @@ iterator items*(node: ScalaNode; withUnnamed: bool = false): ScalaNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: ScalaNode; withUnnamed: bool = false): (int, ScalaNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                                ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: ScalaNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: ScalaNode): string =
+  s[node.slice()]
 
 func nodeString*(node: ScalaNode): string =
   $ts_node_string(TSNode(node))

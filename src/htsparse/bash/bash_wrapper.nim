@@ -467,10 +467,19 @@ iterator items*(node: BashNode; withUnnamed: bool = false): BashNode =
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: BashNode; withUnnamed: bool = false): (int, BashNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                              ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: BashNode): Slice[int] =
   {.cast(noSideEffect).}:
     ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: BashNode): string =
+  s[node.slice()]
 
 func nodeString*(node: BashNode): string =
   $ts_node_string(TSNode(node))

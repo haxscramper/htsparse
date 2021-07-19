@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   AgdaNodeKind* = enum
@@ -448,12 +451,24 @@ proc isNil*(node: AgdaNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: AgdaNode; withUnnamed: bool = false): AgdaNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                       ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: AgdaNode; withUnnamed: bool = false): (int, AgdaNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                              ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: AgdaNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: AgdaNode): string =
+  s[node.slice()]
 
 func nodeString*(node: AgdaNode): string =
   $ts_node_string(TSNode(node))
@@ -512,14 +527,3 @@ func endColumn*(node: AgdaNode): int =
 func childByFieldName*(self: AgdaNode; fieldName: string; fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: AgdaNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: AgdaNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[4 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")

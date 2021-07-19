@@ -1,6 +1,9 @@
 
 import
-  hparse / htreesitter / htreesitter, sequtils, strutils
+  hmisc / wrappers / treesitter
+
+import
+  strutils
 
 type
   SystemrdlNodeKind* = enum
@@ -663,12 +666,25 @@ proc isNil*(node: SystemrdlNode): bool =
   ts_node_is_null(TsNode(node))
 
 iterator items*(node: SystemrdlNode; withUnnamed: bool = false): SystemrdlNode =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                                                                                 ## nodes (usually things like punctuation, braces and so on).
   for i in 0 ..< node.len(withUnnamed):
     yield node[i, withUnnamed]
 
+iterator pairs*(node: SystemrdlNode; withUnnamed: bool = false): (int,
+    SystemrdlNode) =
+  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
+                     ## nodes.
+  for i in 0 ..< node.len(withUnnamed):
+    yield (i, node[i, withUnnamed])
+
 func slice*(node: SystemrdlNode): Slice[int] =
   {.cast(noSideEffect).}:
+    ## Get range of source code **bytes** for the node
     ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+
+func `[]`*(s: string; node: SystemrdlNode): string =
+  s[node.slice()]
 
 func nodeString*(node: SystemrdlNode): string =
   $ts_node_string(TSNode(node))
@@ -728,14 +744,3 @@ func childByFieldName*(self: SystemrdlNode; fieldName: string;
                        fieldNameLength: int): TSNode =
   ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
                               fieldNameLength.uint32)
-
-proc treeRepr*(mainNode: SystemrdlNode; instr: string; withUnnamed: bool = false): string =
-  proc aux(node: SystemrdlNode; level: int): seq[string] =
-    if not(node.isNil()):
-      result = @["  ".repeat(level) & ($node.kind())[9 ..^ 1]]
-      if node.len(withUnnamed) == 0:
-        result[0] &= " " & instr[node.slice()]
-      for subn in items(node, withUnnamed):
-        result.add subn.aux(level + 1)
-
-  return aux(mainNode, 0).join("\n")
