@@ -1,4 +1,4 @@
-{.warning[UnusedImport]:off.}
+# {.warning[UnusedImport]:off.}
 
 import std/[sugar, strutils, sequtils, strformat, unittest]
 import htsparse/[
@@ -29,9 +29,272 @@ import htsparse/[
 # {.passl: "-ltree-sitter".}
 # {.passl: "-lstdc++".}
 
+suite "Test":
+  discard
+
+
 suite "Main":
-  test "toml":
-    let parser = newTomlParser()
+  test "csharp":
+    let str = """
+using System;
+
+namespace HelloWorld
+{
+  class Program
+  {
+    static void Main(string[] args)
+    {
+      Console.WriteLine("Hello World!");
+    }
+  }
+}
+"""
+    let parser = newTsCsharpParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseCsharpString(str).treeRepr()
+
+
+
+suite "bash":
+  test "Parse string":
+    let str = """
+#!/bin/bash
+
+# Add two numeric value
+((sum=25+35))
+
+#Print the result
+echo $sum
+"""
+    let parser = newTsBashParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseBashString(str).treeRepr()
+
+
+suite "Kotlin":
+  test "Parse string":
+    let str = """
+package org.kotlinlang.play         // 1
+
+fun main() {                        // 2
+    println("Hello, World!")        // 3
+}
+"""
+    let parser = newTsKotlinParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseKotlinString(str).treeRepr()
+
+suite "Lua":
+  test "Parse string":
+    let str = """
+-- defines a factorial function
+function fact (n)
+  if n == 0 then
+    return 1
+  else
+    return n * fact(n-1)
+  end
+end
+
+print("enter a number:")
+a = io.read("*number")        -- read a number
+print(fact(a))
+"""
+    let parser = newTsLuaParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseLuaString(str).treeRepr()
+
+suite "C":
+  test "Parse string":
+    let str = """
+#include <stdio.h>
+int main() {
+   // printf() displays the string inside quotation
+   printf("Hello, World!");
+   return 0;
+}
+"""
+    let parser = newTsCParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseCString(str).treeRepr()
+
+suite "Php":
+  test "Parse string":
+    let str = """
+  $color = "black";  
+  echo "My car is ". $ColoR ."</br>";  
+  echo "My dog is ". $color ."</br>";  
+  echo "My Phone is ". $COLOR ."</br>";  
+"""
+    let parser = newTsPhpParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parsePhpString(str).treeRepr()
+
+suite "Ruby":
+  test "Parse string":
+    let str = """
+def find_missing(sequence)
+  consecutive     = sequence.each_cons(2)
+  differences     = consecutive.map { |a,b| b - a }
+  sequence        = differences.max_by { |n| differences.count(n) }
+  missing_between = consecutive.find { |a,b| (b - a) != sequence }
+  missing_between.first + sequence
+end
+find_missing([2,4,6,10])
+# 8
+"""
+    let parser = newTsRubyParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseRubyString(str).treeRepr()
+
+suite "Scala":
+  test "Parse string":
+    let str = """
+object HelloWorld {
+  def main(args: Array[String]) {
+    println("Hello, world!")
+  }
+}
+"""
+    let parser = newTsScalaParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseScalaString(str).treeRepr()
+
+suite "Css":
+  test "Parse string":
+    let str = """
+body {
+  background-color: powderblue;
+}
+h1 {
+  color: blue;
+}
+p {
+  color: red;
+} 
+"""
+    let parser = newTsCssParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseCssString(str).treeRepr()
+
+suite "EmbeddedTemplate":
+  test "Parse string":
+    let str = """
+<div>
+  <% names.each do |name| _%>
+    <div>
+      <%= name -%>
+    </div>
+    <span>
+      <% something() -%>
+    </span>
+  <%_ end %>
+</div>
+"""
+    let parser = newTsEmbeddedTemplateParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseEmbeddedTemplateString(str).treeRepr()
+
+suite "Go":
+  test "Parse string":
+    let str = """
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("hello world")
+}
+
+"""
+    let parser = newTsGoParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseGoString(str).treeRepr()
+
+suite "Vhdl":
+  test "Parse string":
+    let str = """
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity lab15_p4a is
+    Port ( a_A, a_B, a_C : in STD_LOGIC;
+           a_Y : out STD_LOGIC);
+end lab15_p4a;
+
+architecture Behavioral of lab15_p4a is
+begin
+    a_Y <= ((not a_A) and a_C) or (a_A and (not a_B) and (not a_C));
+end Behavioral;
+"""
+    let parser = newTsVhdlParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseVhdlString(str).treeRepr()
+
+suite "Zig":
+  test "Parse string":
+    let str = """
+const std = @import("std");
+
+pub fn main() !void {
+    const stdout = std.io.getStdOut().writer();
+    var i: usize = 1;
+    while (i <= 16) : (i += 1) {
+        if (i % 15 == 0) {
+            try stdout.writeAll("ZiggZagg\n");
+        } else if (i % 3 == 0) {
+            try stdout.writeAll("Zigg\n");
+        } else if (i % 5 == 0) {
+            try stdout.writeAll("Zagg\n");
+        } else {
+            try stdout.print("{d}\n", .{i});
+        }
+    }
+}
+"""
+    let parser = newTsZigParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseZigString(str).treeRepr()
+
+suite "SystemVerilog":
+  test "Parse string":
+    let str = """
+module jbuffertb;
+	reg a;
+	wire y;
+	jbuffer jbuf(a,y);
+	initial
+	begin
+		$display ("RESULT\ta\ty");
+
+		a = 0; # 100; // Initial value is set
+		if ( y == 0 ) // Test for inversion
+			$display ("PASS\t%d\t%d",a,y);
+		else
+			$display ("FAIL\t%d\t%d",a,y);
+
+		a = 1; # 100; // Another value
+		if ( y == 1 ) // Test for inversion
+			$display ("PASS\t%d\t%d",a,y);
+		else
+			$display ("FAIL\t%d\t%d",a,y);
+
+		a = 2; # 100; // Dummy value
+	end
+
+  //enabling the wave dump
+  initial begin
+    $dumpfile("dump.vcd"); $dumpvars;
+  end
+endmodule
+"""
+    let parser = newTsVerilogParser()
+    discard parser.parseString(str).treeRepr(str)
+    echo parseVerilogString(str).treeRepr()
+
+suite "toml":
+  test "Parse string":
+    let parser = newTsTomlParser()
     let str = """
 [servers]
 
@@ -42,16 +305,18 @@ suite "Main":
 """
     echo parser.parseString(str).treeRepr(str)
 
-  test "cpp":
-    let parser = newCppParser()
+suite "cpp":
+  test "Parse string":
+    let parser = newTsCppParser()
     let str = """
 int main() {}
 """
     echo parser.parseString(str).treeRepr(str)
     echo parser.parseString(str).treeRepr(str, true)
 
-  test "java":
-    let parser = newJavaParser()
+suite "java":
+  test "Parse string":
+    let parser = newTsJavaParser()
     let str = """
 class HelloWorld {
     public static void main(String[] args) {
@@ -61,8 +326,9 @@ class HelloWorld {
 """
     echo parser.parseString(str).treeRepr(str)
 
-  test "html":
-    let parser = newHtmlParser()
+suite "html":
+  test "Parse string":
+    let parser = newTsHtmlParser()
     let str = """
 <body>
 
@@ -75,13 +341,15 @@ class HelloWorld {
 """
     echo parser.parseString(str).treeRepr(str)
 
-  test "latex":
-    let parser = newLatexParser()
+suite "latex":
+  test "Parse string":
+    let parser = newTsLatexParser()
     let str = r"\sin{\int}"
     echo parser.parseString(str).treeRepr(str)
 
-  test "rust":
-    let parser = newRustParser()
+suite "rust":
+  test "Parse string":
+    let parser = newTsRustParser()
     let str = """
 fn main() {
     // Print text to the console
@@ -92,7 +360,7 @@ fn main() {
 
 suite "Julia":
   test "julia":
-    let parser = newJuliaParser()
+    let parser = newTsJuliaParser()
     let str = """
 import Base.Pkg.PkgError
 

@@ -20,6 +20,11 @@ const latexNodeKindMap* = toMapArray {
   latexComment: tskComment
 }
 
-proc treeRepr*(
-  node: LatexNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 5, latexNodeKindMap, withUnnamed)
+import ../common
+
+initTreeRepr("Latex", 5, latexNodeKindMap)
+
+# proc treeRepr*(
+#     node: LatexNode | TsLatexNode,
+#     base: string, withUnnamed: bool = false): string =
+#   treeRepr(node, base, 5, latexNodeKindMap, withUnnamed)

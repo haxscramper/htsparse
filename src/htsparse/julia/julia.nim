@@ -13,6 +13,9 @@ const juliaNodeKindMap* = toMapArray {
   juliaComment: tskComment
 }
 
-proc treeRepr*(
-  node: JuliaNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 5, juliaNodeKindMap, withUnnamed)
+import ../common
+initTreeRepr("Julia", 5, juliaNodeKindMap)
+
+# proc treeRepr*(
+#   node: JuliaNode, base: string, withUnnamed: bool = false): string =
+#   treeRepr(node, base, 5, juliaNodeKindMap, withUnnamed)

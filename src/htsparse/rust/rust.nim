@@ -13,6 +13,6 @@ const rustNodeKindMap* = toMapArray {
   rustBlockComment, rustLineComment: tskComment
 }
 
-proc treeRepr*(
-  node: RustNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, rustNodeKindMap, withUnnamed)
+import ../common
+
+initTreeRepr("Rust", 4, rustNodeKindMap)

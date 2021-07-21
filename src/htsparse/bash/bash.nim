@@ -9,10 +9,10 @@ import
   hmisc/wrappers/treesitter,
   hmisc/algo/halgorithm
 
+import ../common
+
 const bashNodeKindMap* = toMapArray {
   bashComment: tskComment
 }
 
-proc treeRepr*(
-  node: BashNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, bashNodeKindMap, withUnnamed)
+initTreeRepr("Bash", 6, bashNodeKindMap)

@@ -4,3 +4,11 @@
 
 import php_wrapper
 export php_wrapper
+
+import ../common
+
+const phpNodeKindMap* = toMapArray {
+  phpComment: tskComment
+}
+
+initTreeRepr("Php", 6, phpNodeKindMap)

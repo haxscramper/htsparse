@@ -15,6 +15,9 @@ const cppNodeKindMap* = toMapArray {
   cppComment: tskComment
 }
 
-proc treeRepr*(
-  node: CppNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 3, cppNodeKindMap, withUnnamed)
+import ../common
+initTreeRepr("Cpp", 3, cppNodeKindMap)
+
+# proc treeRepr*(
+#   node: CppNode | TsCppNode, base: string, withUnnamed: bool = false): string =
+#   treeRepr(node, base, 3, cppNodeKindMap, withUnnamed)

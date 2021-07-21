@@ -13,6 +13,9 @@ const tomlNodeKindMap* = toMapArray {
   tomlComment: tskComment
 }
 
-proc treeRepr*(
-  node: TomlNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, tomlNodeKindMap, withUnnamed)
+import ../common
+initTreeRepr("Toml", 4, tomlNodeKindMap)
+
+# proc treeRepr*(
+#   node: TomlNode | TsTomlNode, base: string, withUnnamed: bool = false): string =
+#   treeRepr(node, base, 4, tomlNodeKindMap, withUnnamed)

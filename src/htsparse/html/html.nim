@@ -13,6 +13,10 @@ const htmlNodeKindMap* = toMapArray {
   htmlComment: tskComment
 }
 
-proc treeRepr*(
-  node: HtmlNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, htmlNodeKindMap, withUnnamed)
+import ../common
+
+initTreeRepr("Html", 4, htmlNodeKindMap)
+
+# proc treeRepr*(
+#   node: HtmlNode | TsHtmlNode, base: string, withUnnamed: bool = false): string =
+#   treeRepr(node, base, 4, htmlNodeKindMap, withUnnamed)

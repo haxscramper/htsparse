@@ -4,3 +4,11 @@
 
 import embedded_template_wrapper
 export embedded_template_wrapper
+
+import ../common
+
+const embeddedTemplateNodeKindMap* = toMapArray {
+  embeddedTemplateComment: tskComment
+}
+
+initTreeRepr("EmbeddedTemplate", 16, embeddedTemplateNodeKindMap)
