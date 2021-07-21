@@ -14,9 +14,9 @@ jobs:
           path: '../nim'
           version: 'version-1-4'
       - run: |
-          wget https://github.com/tree-sitter/tree-sitter/archive/$TS_VERSION.tar.gz && \
-          tar -xvf $TS_VERSION.tar.gz && \
-          cd tree-sitter-$TS_VERSION && \
+          wget "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v${TS_VERSION}.tar.gz" && \
+          tar -xvf "v${TS_VERSION}.tar.gz" && \
+          cd "tree-sitter-${TS_VERSION}" && \
           sudo make install PREFIX=/usr
         env:
           TS_VERSION: "0.20.0"
