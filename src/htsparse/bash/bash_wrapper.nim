@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -154,11 +157,11 @@ type
     bashExternVariable_name, ## variable_name
     bashExternRegex          ## regex
 type
-  BashNode* = distinct TSNode
+  TsBashNode* = distinct TSNode
 type
   BashParser* = distinct PtsParser
-proc tsNodeType*(node: BashNode): string
-proc kind*(node: BashNode): BashNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsBashNode): string
+proc kind*(node: TsBashNode): BashNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_expression":
@@ -430,111 +433,64 @@ proc kind*(node: BashNode): BashNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_bash(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: BashNode): string =
-  $ts_node_type(TSNode(node))
+type
+  BashNode* = HtsNode[TsBashNode, BashNodeKind]
+func isNil*(node: TsBashNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newBashParser*(): BashParser =
-  result = BashParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_bash())
-
-proc parseString*(parser: BashParser; str: string): BashNode =
-  BashNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseBashString*(str: string): BashNode =
-  let parser = newBashParser()
-  return parseString(parser, str)
-
-func `[]`*(node: BashNode; idx: int; withUnnamed: bool = false): BashNode =
-  if withUnnamed:
-    BashNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    BashNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: BashNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsBashNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: BashNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsBashNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: BashNode; withUnnamed: bool = false): BashNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_bash(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsBashNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: BashNode; withUnnamed: bool = false): (int, BashNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsBashParser*(): BashParser =
+  result = BashParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_bash())
 
-func slice*(node: BashNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: BashParser; str: string): TsBashNode =
+  TsBashNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: BashNode): string =
-  s[node.slice()]
+proc parseTsBashString*(str: string): TsBashNode =
+  let parser = newTsBashParser()
+  return parseString(parser, str)
 
-func nodeString*(node: BashNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsBashNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: BashNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsBashNode; idx: int; kind: BashNodeKind | set[BashNodeKind]): TsBashNode =
+  assert 0 <= idx and idx < node.len
+  result = TsBashNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: BashNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsBash*(str: string; unnamed: bool = false): string =
+  treeRepr[TsBashNode, BashNodeKind](parseTsBashString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: BashNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsBashNode; str: ptr string): HtsNode[TsBashNode,
+    BashNodeKind] =
+  toHtsNode[TsBashNode, BashNodeKind](node, str)
 
-func isExtra*(node: BashNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsBashNode; str: ptr string): BashNode =
+  toHtsNode[TsBashNode, BashNodeKind](node, str)
 
-func hasChanges*(node: BashNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseBashString*(str: ptr string; unnamed: bool = false): BashNode =
+  let parser = newTsBashParser()
+  return toHtsTree[TsBashNode, BashNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: BashNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: BashNode): BashNode =
-  BashNode(ts_node_parent(TSNode(node)))
-
-func child*(node: BashNode; a2: int): BashNode =
-  BashNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: BashNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: BashNode; a2: int): BashNode =
-  BashNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: BashNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: BashNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: BashNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: BashNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: BashNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: BashNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: BashNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: BashNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseBashString*(str: string; unnamed: bool = false): BashNode =
+  let parser = newTsBashParser()
+  return toHtsTree[TsBashNode, BashNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

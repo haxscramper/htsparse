@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -263,11 +266,11 @@ type
     kotlinRCurlyTok,        ## }
     kotlinSyntaxError        ## Tree-sitter parser syntax error
 type
-  KotlinNode* = distinct TSNode
+  TsKotlinNode* = distinct TSNode
 type
   KotlinParser* = distinct PtsParser
-proc tsNodeType*(node: KotlinNode): string
-proc kind*(node: KotlinNode): KotlinNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsKotlinNode): string
+proc kind*(node: TsKotlinNode): KotlinNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "additive_expression":
@@ -781,111 +784,65 @@ proc kind*(node: KotlinNode): KotlinNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_kotlin(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: KotlinNode): string =
-  $ts_node_type(TSNode(node))
+type
+  KotlinNode* = HtsNode[TsKotlinNode, KotlinNodeKind]
+func isNil*(node: TsKotlinNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newKotlinParser*(): KotlinParser =
-  result = KotlinParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_kotlin())
-
-proc parseString*(parser: KotlinParser; str: string): KotlinNode =
-  KotlinNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseKotlinString*(str: string): KotlinNode =
-  let parser = newKotlinParser()
-  return parseString(parser, str)
-
-func `[]`*(node: KotlinNode; idx: int; withUnnamed: bool = false): KotlinNode =
-  if withUnnamed:
-    KotlinNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    KotlinNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: KotlinNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsKotlinNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: KotlinNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsKotlinNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: KotlinNode; withUnnamed: bool = false): KotlinNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                           ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_kotlin(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsKotlinNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: KotlinNode; withUnnamed: bool = false): (int, KotlinNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                  ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsKotlinParser*(): KotlinParser =
+  result = KotlinParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_kotlin())
 
-func slice*(node: KotlinNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: KotlinParser; str: string): TsKotlinNode =
+  TsKotlinNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: KotlinNode): string =
-  s[node.slice()]
+proc parseTsKotlinString*(str: string): TsKotlinNode =
+  let parser = newTsKotlinParser()
+  return parseString(parser, str)
 
-func nodeString*(node: KotlinNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsKotlinNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: KotlinNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsKotlinNode; idx: int;
+           kind: KotlinNodeKind | set[KotlinNodeKind]): TsKotlinNode =
+  assert 0 <= idx and idx < node.len
+  result = TsKotlinNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: KotlinNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsKotlin*(str: string; unnamed: bool = false): string =
+  treeRepr[TsKotlinNode, KotlinNodeKind](parseTsKotlinString(str), str, 6,
+      unnamed = unnamed)
 
-func isMissing*(node: KotlinNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsKotlinNode; str: ptr string): HtsNode[TsKotlinNode,
+    KotlinNodeKind] =
+  toHtsNode[TsKotlinNode, KotlinNodeKind](node, str)
 
-func isExtra*(node: KotlinNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsKotlinNode; str: ptr string): KotlinNode =
+  toHtsNode[TsKotlinNode, KotlinNodeKind](node, str)
 
-func hasChanges*(node: KotlinNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseKotlinString*(str: ptr string; unnamed: bool = false): KotlinNode =
+  let parser = newTsKotlinParser()
+  return toHtsTree[TsKotlinNode, KotlinNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: KotlinNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: KotlinNode): KotlinNode =
-  KotlinNode(ts_node_parent(TSNode(node)))
-
-func child*(node: KotlinNode; a2: int): KotlinNode =
-  KotlinNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: KotlinNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: KotlinNode; a2: int): KotlinNode =
-  KotlinNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: KotlinNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: KotlinNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: KotlinNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: KotlinNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: KotlinNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: KotlinNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: KotlinNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: KotlinNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseKotlinString*(str: string; unnamed: bool = false): KotlinNode =
+  let parser = newTsKotlinParser()
+  return toHtsTree[TsKotlinNode, KotlinNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

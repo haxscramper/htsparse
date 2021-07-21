@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -214,11 +217,11 @@ type
     systemrdlTildePipeTok,  ## ~|
     systemrdlSyntaxError     ## Tree-sitter parser syntax error
 type
-  SystemrdlNode* = distinct TSNode
+  TsSystemrdlNode* = distinct TSNode
 type
   SystemrdlParser* = distinct PtsParser
-proc tsNodeType*(node: SystemrdlNode): string
-proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsSystemrdlNode): string
+proc kind*(node: TsSystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "accesstype_literal":
@@ -634,113 +637,66 @@ proc kind*(node: SystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_systemrdl(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: SystemrdlNode): string =
-  $ts_node_type(TSNode(node))
+type
+  SystemrdlNode* = HtsNode[TsSystemrdlNode, SystemrdlNodeKind]
+func isNil*(node: TsSystemrdlNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newSystemrdlParser*(): SystemrdlParser =
-  result = SystemrdlParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_systemrdl())
-
-proc parseString*(parser: SystemrdlParser; str: string): SystemrdlNode =
-  SystemrdlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseSystemrdlString*(str: string): SystemrdlNode =
-  let parser = newSystemrdlParser()
-  return parseString(parser, str)
-
-func `[]`*(node: SystemrdlNode; idx: int; withUnnamed: bool = false): SystemrdlNode =
-  if withUnnamed:
-    SystemrdlNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    SystemrdlNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: SystemrdlNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsSystemrdlNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: SystemrdlNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsSystemrdlNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: SystemrdlNode; withUnnamed: bool = false): SystemrdlNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                 ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_systemrdl(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsSystemrdlNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: SystemrdlNode; withUnnamed: bool = false): (int,
-    SystemrdlNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                     ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsSystemrdlParser*(): SystemrdlParser =
+  result = SystemrdlParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_systemrdl())
 
-func slice*(node: SystemrdlNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: SystemrdlParser; str: string): TsSystemrdlNode =
+  TsSystemrdlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser),
+      nil, str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: SystemrdlNode): string =
-  s[node.slice()]
+proc parseTsSystemrdlString*(str: string): TsSystemrdlNode =
+  let parser = newTsSystemrdlParser()
+  return parseString(parser, str)
 
-func nodeString*(node: SystemrdlNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsSystemrdlNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: SystemrdlNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsSystemrdlNode; idx: int;
+           kind: SystemrdlNodeKind | set[SystemrdlNodeKind]): TsSystemrdlNode =
+  assert 0 <= idx and idx < node.len
+  result = TsSystemrdlNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: SystemrdlNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsSystemrdl*(str: string; unnamed: bool = false): string =
+  treeRepr[TsSystemrdlNode, SystemrdlNodeKind](parseTsSystemrdlString(str), str,
+      9, unnamed = unnamed)
 
-func isMissing*(node: SystemrdlNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsSystemrdlNode; str: ptr string): HtsNode[
+    TsSystemrdlNode, SystemrdlNodeKind] =
+  toHtsNode[TsSystemrdlNode, SystemrdlNodeKind](node, str)
 
-func isExtra*(node: SystemrdlNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsSystemrdlNode; str: ptr string): SystemrdlNode =
+  toHtsNode[TsSystemrdlNode, SystemrdlNodeKind](node, str)
 
-func hasChanges*(node: SystemrdlNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseSystemrdlString*(str: ptr string; unnamed: bool = false): SystemrdlNode =
+  let parser = newTsSystemrdlParser()
+  return toHtsTree[TsSystemrdlNode, SystemrdlNodeKind](
+      parseString(parser, str[]), str)
 
-func hasError*(node: SystemrdlNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: SystemrdlNode): SystemrdlNode =
-  SystemrdlNode(ts_node_parent(TSNode(node)))
-
-func child*(node: SystemrdlNode; a2: int): SystemrdlNode =
-  SystemrdlNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: SystemrdlNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: SystemrdlNode; a2: int): SystemrdlNode =
-  SystemrdlNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: SystemrdlNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: SystemrdlNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: SystemrdlNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: SystemrdlNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: SystemrdlNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: SystemrdlNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: SystemrdlNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: SystemrdlNode; fieldName: string;
-                       fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseSystemrdlString*(str: string; unnamed: bool = false): SystemrdlNode =
+  let parser = newTsSystemrdlParser()
+  return toHtsTree[TsSystemrdlNode, SystemrdlNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

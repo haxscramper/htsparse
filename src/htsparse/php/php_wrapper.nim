@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -51,6 +54,9 @@ type
     phpElseClause,          ## else_clause
     phpElseIfClause,        ## else_if_clause
     phpEmptyStatement,      ## empty_statement
+    phpEnumCase,            ## enum_case
+    phpEnumDeclaration,     ## enum_declaration
+    phpEnumDeclarationList, ## enum_declaration_list
     phpExponentiationExpression, ## exponentiation_expression
     phpExpressionStatement, ## expression_statement
     phpFinalModifier,       ## final_modifier
@@ -221,12 +227,13 @@ type
     phpEndifTok,            ## endif
     phpEndswitchTok,        ## endswitch
     phpEndwhileTok,         ## endwhile
+    phpEnumTok,             ## enum
     phpExtendsTok,          ## extends
     phpFalseTok,            ## false
     phpFinalTok,            ## final
     phpFinallyTok,          ## finally
-    phpFloatTok,            ## float
     phpFloat,               ## float
+    phpFloatTok,            ## float
     phpFnTok,               ## fn
     phpForTok,              ## for
     phpForeachTok,          ## foreach
@@ -242,8 +249,8 @@ type
     phpInstanceofTok,       ## instanceof
     phpInsteadofTok,        ## insteadof
     phpIntTok,              ## int
-    phpIntegerTok,          ## integer
     phpInteger,             ## integer
+    phpIntegerTok,          ## integer
     phpInterfaceTok,        ## interface
     phpIterableTok,         ## iterable
     phpListTok,             ## list
@@ -269,8 +276,8 @@ type
     phpShellCommandExpression, ## shell_command_expression
     phpStaticTok,           ## static
     phpStrictTypesTok,      ## strict_types
-    phpString,              ## string
     phpStringTok,           ## string
+    phpString,              ## string
     phpSwitchTok,           ## switch
     phpThrowTok,            ## throw
     phpTicksTok,            ## ticks
@@ -296,11 +303,11 @@ type
     phpExternHeredoc,       ## heredoc
     phpExtern_eof            ## _eof
 type
-  PhpNode* = distinct TSNode
+  TsPhpNode* = distinct TSNode
 type
   PhpParser* = distinct PtsParser
-proc tsNodeType*(node: PhpNode): string
-proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsPhpNode): string
+proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_expression":
@@ -391,6 +398,12 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpElseIfClause
     of "empty_statement":
       phpEmptyStatement
+    of "enum_case":
+      phpEnumCase
+    of "enum_declaration":
+      phpEnumDeclaration
+    of "enum_declaration_list":
+      phpEnumDeclarationList
     of "exponentiation_expression":
       phpExponentiationExpression
     of "expression_statement":
@@ -729,6 +742,8 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
       phpEndswitchTok
     of "endwhile":
       phpEndwhileTok
+    of "enum":
+      phpEnumTok
     of "extends":
       phpExtendsTok
     of "false":
@@ -738,7 +753,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "finally":
       phpFinallyTok
     of "float":
-      phpFloatTok
+      phpFloat
     of "fn":
       phpFnTok
     of "for":
@@ -770,7 +785,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "int":
       phpIntTok
     of "integer":
-      phpIntegerTok
+      phpInteger
     of "interface":
       phpInterfaceTok
     of "iterable":
@@ -820,7 +835,7 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     of "strict_types":
       phpStrictTypesTok
     of "string":
-      phpString
+      phpStringTok
     of "switch":
       phpSwitchTok
     of "throw":
@@ -862,111 +877,64 @@ proc kind*(node: PhpNode): PhpNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_php(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: PhpNode): string =
-  $ts_node_type(TSNode(node))
+type
+  PhpNode* = HtsNode[TsPhpNode, PhpNodeKind]
+func isNil*(node: TsPhpNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newPhpParser*(): PhpParser =
-  result = PhpParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_php())
-
-proc parseString*(parser: PhpParser; str: string): PhpNode =
-  PhpNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parsePhpString*(str: string): PhpNode =
-  let parser = newPhpParser()
-  return parseString(parser, str)
-
-func `[]`*(node: PhpNode; idx: int; withUnnamed: bool = false): PhpNode =
-  if withUnnamed:
-    PhpNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    PhpNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: PhpNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsPhpNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: PhpNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsPhpNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: PhpNode; withUnnamed: bool = false): PhpNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_php(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsPhpNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: PhpNode; withUnnamed: bool = false): (int, PhpNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsPhpParser*(): PhpParser =
+  result = PhpParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_php())
 
-func slice*(node: PhpNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: PhpParser; str: string): TsPhpNode =
+  TsPhpNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: PhpNode): string =
-  s[node.slice()]
+proc parseTsPhpString*(str: string): TsPhpNode =
+  let parser = newTsPhpParser()
+  return parseString(parser, str)
 
-func nodeString*(node: PhpNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsPhpNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: PhpNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsPhpNode; idx: int; kind: PhpNodeKind | set[PhpNodeKind]): TsPhpNode =
+  assert 0 <= idx and idx < node.len
+  result = TsPhpNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: PhpNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsPhp*(str: string; unnamed: bool = false): string =
+  treeRepr[TsPhpNode, PhpNodeKind](parseTsPhpString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: PhpNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsPhpNode; str: ptr string): HtsNode[TsPhpNode,
+    PhpNodeKind] =
+  toHtsNode[TsPhpNode, PhpNodeKind](node, str)
 
-func isExtra*(node: PhpNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsPhpNode; str: ptr string): PhpNode =
+  toHtsNode[TsPhpNode, PhpNodeKind](node, str)
 
-func hasChanges*(node: PhpNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parsePhpString*(str: ptr string; unnamed: bool = false): PhpNode =
+  let parser = newTsPhpParser()
+  return toHtsTree[TsPhpNode, PhpNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: PhpNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: PhpNode): PhpNode =
-  PhpNode(ts_node_parent(TSNode(node)))
-
-func child*(node: PhpNode; a2: int): PhpNode =
-  PhpNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: PhpNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: PhpNode; a2: int): PhpNode =
-  PhpNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: PhpNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: PhpNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: PhpNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: PhpNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: PhpNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: PhpNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: PhpNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: PhpNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parsePhpString*(str: string; unnamed: bool = false): PhpNode =
+  let parser = newTsPhpParser()
+  return toHtsTree[TsPhpNode, PhpNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

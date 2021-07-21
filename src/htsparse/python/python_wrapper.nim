@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -203,11 +206,11 @@ type
     pythonExtern_string_content, ## _string_content
     pythonExtern_string_end  ## _string_end
 type
-  PythonNode* = distinct TSNode
+  TsPythonNode* = distinct TSNode
 type
   PythonParser* = distinct PtsParser
-proc tsNodeType*(node: PythonNode): string
-proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsPythonNode): string
+proc kind*(node: TsPythonNode): PythonNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_compound_statement":
@@ -581,111 +584,65 @@ proc kind*(node: PythonNode): PythonNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_python(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: PythonNode): string =
-  $ts_node_type(TSNode(node))
+type
+  PythonNode* = HtsNode[TsPythonNode, PythonNodeKind]
+func isNil*(node: TsPythonNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newPythonParser*(): PythonParser =
-  result = PythonParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_python())
-
-proc parseString*(parser: PythonParser; str: string): PythonNode =
-  PythonNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parsePythonString*(str: string): PythonNode =
-  let parser = newPythonParser()
-  return parseString(parser, str)
-
-func `[]`*(node: PythonNode; idx: int; withUnnamed: bool = false): PythonNode =
-  if withUnnamed:
-    PythonNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    PythonNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: PythonNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsPythonNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: PythonNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsPythonNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: PythonNode; withUnnamed: bool = false): PythonNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                           ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_python(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsPythonNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: PythonNode; withUnnamed: bool = false): (int, PythonNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                  ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsPythonParser*(): PythonParser =
+  result = PythonParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_python())
 
-func slice*(node: PythonNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: PythonParser; str: string): TsPythonNode =
+  TsPythonNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: PythonNode): string =
-  s[node.slice()]
+proc parseTsPythonString*(str: string): TsPythonNode =
+  let parser = newTsPythonParser()
+  return parseString(parser, str)
 
-func nodeString*(node: PythonNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsPythonNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: PythonNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsPythonNode; idx: int;
+           kind: PythonNodeKind | set[PythonNodeKind]): TsPythonNode =
+  assert 0 <= idx and idx < node.len
+  result = TsPythonNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: PythonNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsPython*(str: string; unnamed: bool = false): string =
+  treeRepr[TsPythonNode, PythonNodeKind](parseTsPythonString(str), str, 6,
+      unnamed = unnamed)
 
-func isMissing*(node: PythonNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsPythonNode; str: ptr string): HtsNode[TsPythonNode,
+    PythonNodeKind] =
+  toHtsNode[TsPythonNode, PythonNodeKind](node, str)
 
-func isExtra*(node: PythonNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsPythonNode; str: ptr string): PythonNode =
+  toHtsNode[TsPythonNode, PythonNodeKind](node, str)
 
-func hasChanges*(node: PythonNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parsePythonString*(str: ptr string; unnamed: bool = false): PythonNode =
+  let parser = newTsPythonParser()
+  return toHtsTree[TsPythonNode, PythonNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: PythonNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: PythonNode): PythonNode =
-  PythonNode(ts_node_parent(TSNode(node)))
-
-func child*(node: PythonNode; a2: int): PythonNode =
-  PythonNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: PythonNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: PythonNode; a2: int): PythonNode =
-  PythonNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: PythonNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: PythonNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: PythonNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: PythonNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: PythonNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: PythonNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: PythonNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: PythonNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parsePythonString*(str: string; unnamed: bool = false): PythonNode =
+  let parser = newTsPythonParser()
+  return toHtsTree[TsPythonNode, PythonNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

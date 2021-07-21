@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -565,11 +568,11 @@ type
     vhdlRCurlyTok,          ## }
     vhdlSyntaxError          ## Tree-sitter parser syntax error
 type
-  VhdlNode* = distinct TSNode
+  TsVhdlNode* = distinct TSNode
 type
   VhdlParser* = distinct PtsParser
-proc tsNodeType*(node: VhdlNode): string
-proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsVhdlNode): string
+proc kind*(node: TsVhdlNode): VhdlNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "PSL_Actual_Parameter":
@@ -1657,111 +1660,64 @@ proc kind*(node: VhdlNode): VhdlNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_vhdl(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: VhdlNode): string =
-  $ts_node_type(TSNode(node))
+type
+  VhdlNode* = HtsNode[TsVhdlNode, VhdlNodeKind]
+func isNil*(node: TsVhdlNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newVhdlParser*(): VhdlParser =
-  result = VhdlParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_vhdl())
-
-proc parseString*(parser: VhdlParser; str: string): VhdlNode =
-  VhdlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseVhdlString*(str: string): VhdlNode =
-  let parser = newVhdlParser()
-  return parseString(parser, str)
-
-func `[]`*(node: VhdlNode; idx: int; withUnnamed: bool = false): VhdlNode =
-  if withUnnamed:
-    VhdlNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    VhdlNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: VhdlNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsVhdlNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: VhdlNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsVhdlNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: VhdlNode; withUnnamed: bool = false): VhdlNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_vhdl(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsVhdlNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: VhdlNode; withUnnamed: bool = false): (int, VhdlNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsVhdlParser*(): VhdlParser =
+  result = VhdlParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_vhdl())
 
-func slice*(node: VhdlNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: VhdlParser; str: string): TsVhdlNode =
+  TsVhdlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: VhdlNode): string =
-  s[node.slice()]
+proc parseTsVhdlString*(str: string): TsVhdlNode =
+  let parser = newTsVhdlParser()
+  return parseString(parser, str)
 
-func nodeString*(node: VhdlNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsVhdlNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: VhdlNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsVhdlNode; idx: int; kind: VhdlNodeKind | set[VhdlNodeKind]): TsVhdlNode =
+  assert 0 <= idx and idx < node.len
+  result = TsVhdlNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: VhdlNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsVhdl*(str: string; unnamed: bool = false): string =
+  treeRepr[TsVhdlNode, VhdlNodeKind](parseTsVhdlString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: VhdlNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsVhdlNode; str: ptr string): HtsNode[TsVhdlNode,
+    VhdlNodeKind] =
+  toHtsNode[TsVhdlNode, VhdlNodeKind](node, str)
 
-func isExtra*(node: VhdlNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsVhdlNode; str: ptr string): VhdlNode =
+  toHtsNode[TsVhdlNode, VhdlNodeKind](node, str)
 
-func hasChanges*(node: VhdlNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseVhdlString*(str: ptr string; unnamed: bool = false): VhdlNode =
+  let parser = newTsVhdlParser()
+  return toHtsTree[TsVhdlNode, VhdlNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: VhdlNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: VhdlNode): VhdlNode =
-  VhdlNode(ts_node_parent(TSNode(node)))
-
-func child*(node: VhdlNode; a2: int): VhdlNode =
-  VhdlNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: VhdlNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: VhdlNode; a2: int): VhdlNode =
-  VhdlNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: VhdlNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: VhdlNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: VhdlNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: VhdlNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: VhdlNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: VhdlNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: VhdlNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: VhdlNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseVhdlString*(str: string; unnamed: bool = false): VhdlNode =
+  let parser = newTsVhdlParser()
+  return toHtsTree[TsVhdlNode, VhdlNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

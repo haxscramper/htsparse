@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -309,11 +312,11 @@ type
   CppExternalTok* = enum
     cppExternRaw_string_literal ## raw_string_literal
 type
-  CppNode* = distinct TSNode
+  TsCppNode* = distinct TSNode
 type
   CppParser* = distinct PtsParser
-proc tsNodeType*(node: CppNode): string
-proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsCppNode): string
+proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_abstract_declarator":
@@ -915,111 +918,64 @@ proc kind*(node: CppNode): CppNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_cpp(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: CppNode): string =
-  $ts_node_type(TSNode(node))
+type
+  CppNode* = HtsNode[TsCppNode, CppNodeKind]
+func isNil*(node: TsCppNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newCppParser*(): CppParser =
-  result = CppParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_cpp())
-
-proc parseString*(parser: CppParser; str: string): CppNode =
-  CppNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseCppString*(str: string): CppNode =
-  let parser = newCppParser()
-  return parseString(parser, str)
-
-func `[]`*(node: CppNode; idx: int; withUnnamed: bool = false): CppNode =
-  if withUnnamed:
-    CppNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    CppNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: CppNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsCppNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: CppNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsCppNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: CppNode; withUnnamed: bool = false): CppNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_cpp(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsCppNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: CppNode; withUnnamed: bool = false): (int, CppNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsCppParser*(): CppParser =
+  result = CppParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_cpp())
 
-func slice*(node: CppNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: CppParser; str: string): TsCppNode =
+  TsCppNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: CppNode): string =
-  s[node.slice()]
+proc parseTsCppString*(str: string): TsCppNode =
+  let parser = newTsCppParser()
+  return parseString(parser, str)
 
-func nodeString*(node: CppNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsCppNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: CppNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsCppNode; idx: int; kind: CppNodeKind | set[CppNodeKind]): TsCppNode =
+  assert 0 <= idx and idx < node.len
+  result = TsCppNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: CppNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsCpp*(str: string; unnamed: bool = false): string =
+  treeRepr[TsCppNode, CppNodeKind](parseTsCppString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: CppNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsCppNode; str: ptr string): HtsNode[TsCppNode,
+    CppNodeKind] =
+  toHtsNode[TsCppNode, CppNodeKind](node, str)
 
-func isExtra*(node: CppNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsCppNode; str: ptr string): CppNode =
+  toHtsNode[TsCppNode, CppNodeKind](node, str)
 
-func hasChanges*(node: CppNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseCppString*(str: ptr string; unnamed: bool = false): CppNode =
+  let parser = newTsCppParser()
+  return toHtsTree[TsCppNode, CppNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: CppNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: CppNode): CppNode =
-  CppNode(ts_node_parent(TSNode(node)))
-
-func child*(node: CppNode; a2: int): CppNode =
-  CppNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: CppNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: CppNode; a2: int): CppNode =
-  CppNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: CppNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: CppNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: CppNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: CppNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: CppNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: CppNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: CppNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: CppNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseCppString*(str: string; unnamed: bool = false): CppNode =
+  let parser = newTsCppParser()
+  return toHtsTree[TsCppNode, CppNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

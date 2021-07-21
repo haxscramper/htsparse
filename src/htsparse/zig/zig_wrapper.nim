@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -228,11 +231,11 @@ type
     zigTildeTok,            ## ~
     zigSyntaxError           ## Tree-sitter parser syntax error
 type
-  ZigNode* = distinct TSNode
+  TsZigNode* = distinct TSNode
 type
   ZigParser* = distinct PtsParser
-proc tsNodeType*(node: ZigNode): string
-proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsZigNode): string
+proc kind*(node: TsZigNode): ZigNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "anonymous_array_expr":
@@ -678,111 +681,64 @@ proc kind*(node: ZigNode): ZigNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_zig(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: ZigNode): string =
-  $ts_node_type(TSNode(node))
+type
+  ZigNode* = HtsNode[TsZigNode, ZigNodeKind]
+func isNil*(node: TsZigNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newZigParser*(): ZigParser =
-  result = ZigParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_zig())
-
-proc parseString*(parser: ZigParser; str: string): ZigNode =
-  ZigNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseZigString*(str: string): ZigNode =
-  let parser = newZigParser()
-  return parseString(parser, str)
-
-func `[]`*(node: ZigNode; idx: int; withUnnamed: bool = false): ZigNode =
-  if withUnnamed:
-    ZigNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    ZigNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: ZigNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsZigNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: ZigNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsZigNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: ZigNode; withUnnamed: bool = false): ZigNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_zig(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsZigNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: ZigNode; withUnnamed: bool = false): (int, ZigNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsZigParser*(): ZigParser =
+  result = ZigParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_zig())
 
-func slice*(node: ZigNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: ZigParser; str: string): TsZigNode =
+  TsZigNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: ZigNode): string =
-  s[node.slice()]
+proc parseTsZigString*(str: string): TsZigNode =
+  let parser = newTsZigParser()
+  return parseString(parser, str)
 
-func nodeString*(node: ZigNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsZigNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: ZigNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsZigNode; idx: int; kind: ZigNodeKind | set[ZigNodeKind]): TsZigNode =
+  assert 0 <= idx and idx < node.len
+  result = TsZigNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: ZigNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsZig*(str: string; unnamed: bool = false): string =
+  treeRepr[TsZigNode, ZigNodeKind](parseTsZigString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: ZigNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsZigNode; str: ptr string): HtsNode[TsZigNode,
+    ZigNodeKind] =
+  toHtsNode[TsZigNode, ZigNodeKind](node, str)
 
-func isExtra*(node: ZigNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsZigNode; str: ptr string): ZigNode =
+  toHtsNode[TsZigNode, ZigNodeKind](node, str)
 
-func hasChanges*(node: ZigNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseZigString*(str: ptr string; unnamed: bool = false): ZigNode =
+  let parser = newTsZigParser()
+  return toHtsTree[TsZigNode, ZigNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: ZigNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: ZigNode): ZigNode =
-  ZigNode(ts_node_parent(TSNode(node)))
-
-func child*(node: ZigNode; a2: int): ZigNode =
-  ZigNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: ZigNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: ZigNode; a2: int): ZigNode =
-  ZigNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: ZigNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: ZigNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: ZigNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: ZigNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: ZigNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: ZigNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: ZigNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: ZigNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseZigString*(str: string; unnamed: bool = false): ZigNode =
+  let parser = newTsZigParser()
+  return toHtsTree[TsZigNode, ZigNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

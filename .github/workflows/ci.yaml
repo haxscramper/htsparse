@@ -19,7 +19,7 @@ jobs:
           cd tree-sitter-$TS_VERSION && \
           sudo make install PREFIX=/usr
         env:
-          TS_VERSION: "0.17.3"
+          TS_VERSION: "0.20.0"
 
       - run: "nimble -y test && nimble install -y"
       - run: "nimble docgen"

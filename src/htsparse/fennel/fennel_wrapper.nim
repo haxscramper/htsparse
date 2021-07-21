@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -158,11 +161,11 @@ type
     fennelExternField,      ## field
     fennelExternColon        ## colon
 type
-  FennelNode* = distinct TSNode
+  TsFennelNode* = distinct TSNode
 type
   FennelParser* = distinct PtsParser
-proc tsNodeType*(node: FennelNode): string
-proc kind*(node: FennelNode): FennelNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsFennelNode): string
+proc kind*(node: TsFennelNode): FennelNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "assignment":
@@ -442,111 +445,65 @@ proc kind*(node: FennelNode): FennelNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_fennel(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: FennelNode): string =
-  $ts_node_type(TSNode(node))
+type
+  FennelNode* = HtsNode[TsFennelNode, FennelNodeKind]
+func isNil*(node: TsFennelNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newFennelParser*(): FennelParser =
-  result = FennelParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_fennel())
-
-proc parseString*(parser: FennelParser; str: string): FennelNode =
-  FennelNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseFennelString*(str: string): FennelNode =
-  let parser = newFennelParser()
-  return parseString(parser, str)
-
-func `[]`*(node: FennelNode; idx: int; withUnnamed: bool = false): FennelNode =
-  if withUnnamed:
-    FennelNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    FennelNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: FennelNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsFennelNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: FennelNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsFennelNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: FennelNode; withUnnamed: bool = false): FennelNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                           ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_fennel(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsFennelNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: FennelNode; withUnnamed: bool = false): (int, FennelNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                  ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsFennelParser*(): FennelParser =
+  result = FennelParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_fennel())
 
-func slice*(node: FennelNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: FennelParser; str: string): TsFennelNode =
+  TsFennelNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: FennelNode): string =
-  s[node.slice()]
+proc parseTsFennelString*(str: string): TsFennelNode =
+  let parser = newTsFennelParser()
+  return parseString(parser, str)
 
-func nodeString*(node: FennelNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsFennelNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: FennelNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsFennelNode; idx: int;
+           kind: FennelNodeKind | set[FennelNodeKind]): TsFennelNode =
+  assert 0 <= idx and idx < node.len
+  result = TsFennelNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: FennelNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsFennel*(str: string; unnamed: bool = false): string =
+  treeRepr[TsFennelNode, FennelNodeKind](parseTsFennelString(str), str, 6,
+      unnamed = unnamed)
 
-func isMissing*(node: FennelNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsFennelNode; str: ptr string): HtsNode[TsFennelNode,
+    FennelNodeKind] =
+  toHtsNode[TsFennelNode, FennelNodeKind](node, str)
 
-func isExtra*(node: FennelNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsFennelNode; str: ptr string): FennelNode =
+  toHtsNode[TsFennelNode, FennelNodeKind](node, str)
 
-func hasChanges*(node: FennelNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseFennelString*(str: ptr string; unnamed: bool = false): FennelNode =
+  let parser = newTsFennelParser()
+  return toHtsTree[TsFennelNode, FennelNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: FennelNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: FennelNode): FennelNode =
-  FennelNode(ts_node_parent(TSNode(node)))
-
-func child*(node: FennelNode; a2: int): FennelNode =
-  FennelNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: FennelNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: FennelNode; a2: int): FennelNode =
-  FennelNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: FennelNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: FennelNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: FennelNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: FennelNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: FennelNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: FennelNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: FennelNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: FennelNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseFennelString*(str: string; unnamed: bool = false): FennelNode =
+  let parser = newTsFennelParser()
+  return toHtsTree[TsFennelNode, FennelNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

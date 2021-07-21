@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -1020,11 +1023,11 @@ type
     verilog––Tok,       ## ––
     verilogSyntaxError       ## Tree-sitter parser syntax error
 type
-  VerilogNode* = distinct TSNode
+  TsVerilogNode* = distinct TSNode
 type
   VerilogParser* = distinct PtsParser
-proc tsNodeType*(node: VerilogNode): string
-proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsVerilogNode): string
+proc kind*(node: TsVerilogNode): VerilogNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "$fullskew_timing_check":
@@ -3054,112 +3057,66 @@ proc kind*(node: VerilogNode): VerilogNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_verilog(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: VerilogNode): string =
-  $ts_node_type(TSNode(node))
+type
+  VerilogNode* = HtsNode[TsVerilogNode, VerilogNodeKind]
+func isNil*(node: TsVerilogNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newVerilogParser*(): VerilogParser =
-  result = VerilogParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_verilog())
-
-proc parseString*(parser: VerilogParser; str: string): VerilogNode =
-  VerilogNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseVerilogString*(str: string): VerilogNode =
-  let parser = newVerilogParser()
-  return parseString(parser, str)
-
-func `[]`*(node: VerilogNode; idx: int; withUnnamed: bool = false): VerilogNode =
-  if withUnnamed:
-    VerilogNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    VerilogNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: VerilogNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsVerilogNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: VerilogNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsVerilogNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: VerilogNode; withUnnamed: bool = false): VerilogNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                             ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_verilog(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsVerilogNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: VerilogNode; withUnnamed: bool = false): (int, VerilogNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                    ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsVerilogParser*(): VerilogParser =
+  result = VerilogParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_verilog())
 
-func slice*(node: VerilogNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: VerilogParser; str: string): TsVerilogNode =
+  TsVerilogNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: VerilogNode): string =
-  s[node.slice()]
+proc parseTsVerilogString*(str: string): TsVerilogNode =
+  let parser = newTsVerilogParser()
+  return parseString(parser, str)
 
-func nodeString*(node: VerilogNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsVerilogNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: VerilogNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsVerilogNode; idx: int;
+           kind: VerilogNodeKind | set[VerilogNodeKind]): TsVerilogNode =
+  assert 0 <= idx and idx < node.len
+  result = TsVerilogNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: VerilogNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsVerilog*(str: string; unnamed: bool = false): string =
+  treeRepr[TsVerilogNode, VerilogNodeKind](parseTsVerilogString(str), str, 7,
+      unnamed = unnamed)
 
-func isMissing*(node: VerilogNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsVerilogNode; str: ptr string): HtsNode[TsVerilogNode,
+    VerilogNodeKind] =
+  toHtsNode[TsVerilogNode, VerilogNodeKind](node, str)
 
-func isExtra*(node: VerilogNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsVerilogNode; str: ptr string): VerilogNode =
+  toHtsNode[TsVerilogNode, VerilogNodeKind](node, str)
 
-func hasChanges*(node: VerilogNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseVerilogString*(str: ptr string; unnamed: bool = false): VerilogNode =
+  let parser = newTsVerilogParser()
+  return toHtsTree[TsVerilogNode, VerilogNodeKind](parseString(parser, str[]),
+      str)
 
-func hasError*(node: VerilogNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: VerilogNode): VerilogNode =
-  VerilogNode(ts_node_parent(TSNode(node)))
-
-func child*(node: VerilogNode; a2: int): VerilogNode =
-  VerilogNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: VerilogNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: VerilogNode; a2: int): VerilogNode =
-  VerilogNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: VerilogNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: VerilogNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: VerilogNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: VerilogNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: VerilogNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: VerilogNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: VerilogNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: VerilogNode; fieldName: string;
-                       fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseVerilogString*(str: string; unnamed: bool = false): VerilogNode =
+  let parser = newTsVerilogParser()
+  return toHtsTree[TsVerilogNode, VerilogNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

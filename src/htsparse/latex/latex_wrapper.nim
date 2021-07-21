@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -444,11 +447,11 @@ type
     latexExternVerb_end_delim, ## verb_end_delim
     latexExternVerbatim      ## verbatim
 type
-  LatexNode* = distinct TSNode
+  TsLatexNode* = distinct TSNode
 type
   LatexParser* = distinct PtsParser
-proc tsNodeType*(node: LatexNode): string
-proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsLatexNode): string
+proc kind*(node: TsLatexNode): LatexNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "At":
@@ -882,111 +885,64 @@ proc kind*(node: LatexNode): LatexNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_latex(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: LatexNode): string =
-  $ts_node_type(TSNode(node))
+type
+  LatexNode* = HtsNode[TsLatexNode, LatexNodeKind]
+func isNil*(node: TsLatexNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newLatexParser*(): LatexParser =
-  result = LatexParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_latex())
-
-proc parseString*(parser: LatexParser; str: string): LatexNode =
-  LatexNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseLatexString*(str: string): LatexNode =
-  let parser = newLatexParser()
-  return parseString(parser, str)
-
-func `[]`*(node: LatexNode; idx: int; withUnnamed: bool = false): LatexNode =
-  if withUnnamed:
-    LatexNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    LatexNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: LatexNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsLatexNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: LatexNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsLatexNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: LatexNode; withUnnamed: bool = false): LatexNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                         ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_latex(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsLatexNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: LatexNode; withUnnamed: bool = false): (int, LatexNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsLatexParser*(): LatexParser =
+  result = LatexParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_latex())
 
-func slice*(node: LatexNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: LatexParser; str: string): TsLatexNode =
+  TsLatexNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: LatexNode): string =
-  s[node.slice()]
+proc parseTsLatexString*(str: string): TsLatexNode =
+  let parser = newTsLatexParser()
+  return parseString(parser, str)
 
-func nodeString*(node: LatexNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsLatexNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: LatexNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsLatexNode; idx: int; kind: LatexNodeKind | set[LatexNodeKind]): TsLatexNode =
+  assert 0 <= idx and idx < node.len
+  result = TsLatexNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: LatexNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsLatex*(str: string; unnamed: bool = false): string =
+  treeRepr[TsLatexNode, LatexNodeKind](parseTsLatexString(str), str, 5,
+                                       unnamed = unnamed)
 
-func isMissing*(node: LatexNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsLatexNode; str: ptr string): HtsNode[TsLatexNode,
+    LatexNodeKind] =
+  toHtsNode[TsLatexNode, LatexNodeKind](node, str)
 
-func isExtra*(node: LatexNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsLatexNode; str: ptr string): LatexNode =
+  toHtsNode[TsLatexNode, LatexNodeKind](node, str)
 
-func hasChanges*(node: LatexNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseLatexString*(str: ptr string; unnamed: bool = false): LatexNode =
+  let parser = newTsLatexParser()
+  return toHtsTree[TsLatexNode, LatexNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: LatexNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: LatexNode): LatexNode =
-  LatexNode(ts_node_parent(TSNode(node)))
-
-func child*(node: LatexNode; a2: int): LatexNode =
-  LatexNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: LatexNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: LatexNode; a2: int): LatexNode =
-  LatexNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: LatexNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: LatexNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: LatexNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: LatexNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: LatexNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: LatexNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: LatexNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: LatexNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseLatexString*(str: string; unnamed: bool = false): LatexNode =
+  let parser = newTsLatexParser()
+  return toHtsTree[TsLatexNode, LatexNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -45,11 +48,11 @@ type
     enoExternMultilineFieldKey, ## multilineFieldKey
     enoExternMultilineFieldOperator ## multilineFieldOperator
 type
-  EnoNode* = distinct TSNode
+  TsEnoNode* = distinct TSNode
 type
   EnoParser* = distinct PtsParser
-proc tsNodeType*(node: EnoNode): string
-proc kind*(node: EnoNode): EnoNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsEnoNode): string
+proc kind*(node: TsEnoNode): EnoNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "comment":
@@ -107,111 +110,64 @@ proc kind*(node: EnoNode): EnoNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_eno(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: EnoNode): string =
-  $ts_node_type(TSNode(node))
+type
+  EnoNode* = HtsNode[TsEnoNode, EnoNodeKind]
+func isNil*(node: TsEnoNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newEnoParser*(): EnoParser =
-  result = EnoParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_eno())
-
-proc parseString*(parser: EnoParser; str: string): EnoNode =
-  EnoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseEnoString*(str: string): EnoNode =
-  let parser = newEnoParser()
-  return parseString(parser, str)
-
-func `[]`*(node: EnoNode; idx: int; withUnnamed: bool = false): EnoNode =
-  if withUnnamed:
-    EnoNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    EnoNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: EnoNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsEnoNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: EnoNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsEnoNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: EnoNode; withUnnamed: bool = false): EnoNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_eno(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsEnoNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: EnoNode; withUnnamed: bool = false): (int, EnoNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsEnoParser*(): EnoParser =
+  result = EnoParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_eno())
 
-func slice*(node: EnoNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: EnoParser; str: string): TsEnoNode =
+  TsEnoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: EnoNode): string =
-  s[node.slice()]
+proc parseTsEnoString*(str: string): TsEnoNode =
+  let parser = newTsEnoParser()
+  return parseString(parser, str)
 
-func nodeString*(node: EnoNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsEnoNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: EnoNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsEnoNode; idx: int; kind: EnoNodeKind | set[EnoNodeKind]): TsEnoNode =
+  assert 0 <= idx and idx < node.len
+  result = TsEnoNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: EnoNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsEno*(str: string; unnamed: bool = false): string =
+  treeRepr[TsEnoNode, EnoNodeKind](parseTsEnoString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: EnoNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsEnoNode; str: ptr string): HtsNode[TsEnoNode,
+    EnoNodeKind] =
+  toHtsNode[TsEnoNode, EnoNodeKind](node, str)
 
-func isExtra*(node: EnoNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsEnoNode; str: ptr string): EnoNode =
+  toHtsNode[TsEnoNode, EnoNodeKind](node, str)
 
-func hasChanges*(node: EnoNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseEnoString*(str: ptr string; unnamed: bool = false): EnoNode =
+  let parser = newTsEnoParser()
+  return toHtsTree[TsEnoNode, EnoNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: EnoNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: EnoNode): EnoNode =
-  EnoNode(ts_node_parent(TSNode(node)))
-
-func child*(node: EnoNode; a2: int): EnoNode =
-  EnoNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: EnoNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: EnoNode; a2: int): EnoNode =
-  EnoNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: EnoNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: EnoNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: EnoNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: EnoNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: EnoNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: EnoNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: EnoNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: EnoNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseEnoString*(str: string; unnamed: bool = false): EnoNode =
+  let parser = newTsEnoParser()
+  return toHtsTree[TsEnoNode, EnoNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

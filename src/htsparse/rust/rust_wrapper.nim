@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -276,11 +279,11 @@ type
     rustExternFloat_literal, ## float_literal
     rustExternBlock_comment  ## block_comment
 type
-  RustNode* = distinct TSNode
+  TsRustNode* = distinct TSNode
 type
   RustParser* = distinct PtsParser
-proc tsNodeType*(node: RustNode): string
-proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsRustNode): string
+proc kind*(node: TsRustNode): RustNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_declaration_statement":
@@ -806,111 +809,64 @@ proc kind*(node: RustNode): RustNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_rust(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: RustNode): string =
-  $ts_node_type(TSNode(node))
+type
+  RustNode* = HtsNode[TsRustNode, RustNodeKind]
+func isNil*(node: TsRustNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newRustParser*(): RustParser =
-  result = RustParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_rust())
-
-proc parseString*(parser: RustParser; str: string): RustNode =
-  RustNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseRustString*(str: string): RustNode =
-  let parser = newRustParser()
-  return parseString(parser, str)
-
-func `[]`*(node: RustNode; idx: int; withUnnamed: bool = false): RustNode =
-  if withUnnamed:
-    RustNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    RustNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: RustNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsRustNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: RustNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsRustNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: RustNode; withUnnamed: bool = false): RustNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_rust(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsRustNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: RustNode; withUnnamed: bool = false): (int, RustNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsRustParser*(): RustParser =
+  result = RustParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_rust())
 
-func slice*(node: RustNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: RustParser; str: string): TsRustNode =
+  TsRustNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: RustNode): string =
-  s[node.slice()]
+proc parseTsRustString*(str: string): TsRustNode =
+  let parser = newTsRustParser()
+  return parseString(parser, str)
 
-func nodeString*(node: RustNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsRustNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: RustNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsRustNode; idx: int; kind: RustNodeKind | set[RustNodeKind]): TsRustNode =
+  assert 0 <= idx and idx < node.len
+  result = TsRustNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: RustNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsRust*(str: string; unnamed: bool = false): string =
+  treeRepr[TsRustNode, RustNodeKind](parseTsRustString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: RustNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsRustNode; str: ptr string): HtsNode[TsRustNode,
+    RustNodeKind] =
+  toHtsNode[TsRustNode, RustNodeKind](node, str)
 
-func isExtra*(node: RustNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsRustNode; str: ptr string): RustNode =
+  toHtsNode[TsRustNode, RustNodeKind](node, str)
 
-func hasChanges*(node: RustNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseRustString*(str: ptr string; unnamed: bool = false): RustNode =
+  let parser = newTsRustParser()
+  return toHtsTree[TsRustNode, RustNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: RustNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: RustNode): RustNode =
-  RustNode(ts_node_parent(TSNode(node)))
-
-func child*(node: RustNode; a2: int): RustNode =
-  RustNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: RustNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: RustNode; a2: int): RustNode =
-  RustNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: RustNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: RustNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: RustNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: RustNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: RustNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: RustNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: RustNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: RustNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseRustString*(str: string; unnamed: bool = false): RustNode =
+  let parser = newTsRustParser()
+  return toHtsTree[TsRustNode, RustNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

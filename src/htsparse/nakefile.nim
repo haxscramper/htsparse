@@ -1,6 +1,9 @@
 import hparse/htreesitter/hts_wrapgen
-import hmisc/other/[oswrap, hlogger, hcligen]
-import std/[uri, options, httpclient, strutils]
+import
+  hmisc/other/[oswrap, hlogger, hargparse],
+  hmisc/algo/[halgorithm, clformat]
+
+import std/[uri, options, httpclient, strutils, sequtils, strformat]
 
 # let rawgh = "https://raw.githubusercontent.com/"
 
@@ -396,88 +399,125 @@ proc dartCompile*() =
     Url("https://raw.githubusercontent.com/UserNobody14/tree-sitter-dart/master/grammar.js"),
     some Url("https://raw.githubusercontent.com/UserNobody14/tree-sitter-dart/master/src/scanner.c")
   )
+type
+  Lang = enum
+    lTotal = "total"
+
+    lToml             = "toml"
+    lCpp              = "cpp"
+    lBash             = "bash"
+    lC                = "c"
+    lCsharp           = "csharp"
+    lCss              = "css"
+    lEno              = "eno"
+    lEmbeddedTemplate = "embeddedTemplate"
+    lGo               = "go"
+    lFennel           = "fennel"
+    lHtml             = "html"
+    lLatex            = "latex"
+    lJava             = "java"
+    lJavascript       = "javascrip"
+    lLua              = "lua"
+    lPhp              = "php"
+    lPython           = "python"
+    lRuby             = "ruby"
+    lRust             = "rust"
+    lSystemrdl        = "systemrdl"
+    lSystemVerilog    = "systemVer"
+    lVhdl             = "vhdl"
+    lVue              = "vue"
+    lYaml             = "yaml"
+    lWasmWat          = "wasmWat"
+    lWasmWast         = "wasmWast"
+    lAgda             = "agda"
+    lHaskell          = "haskell"
+    lJulia            = "julia"
+    lNix              = "nix"
+    lScala            = "scala"
+    lKotlin           = "kotlin"
+    lZig              = "zig"
+    lDart             = "dart"
+
+proc toClosure*(arg: proc() {.nimcall.}): proc() {.closure.} = arg
+
+func toCbMapArray*[K; Cb: proc](map: openarray[(K, Cb)]): auto =
+  var tmp: array[K, typeof(toClosure(map[0][1]))]
+  for (k, v) in map:
+    tmp[k] = toClosure(v)
+
+  return tmp
+
+proc compile*(lang: Lang) =
+  var list = toCbMapArray {
+    lToml: tomlCompile,
+    lCpp: cppCompile,
+    lBash: bashCompile,
+    lC: cCompile,
+    lCsharp: csharpCompile,
+    lCss: cssCompile,
+    lEno: enoCompile,
+    lEmbeddedTemplate: embeddedTemplateCompile,
+    lGo: goCompile,
+    lFennel: fennelCompile,
+    lHtml: htmlCompile,
+    lLatex: latexCompile,
+    lJava: javaCompile,
+    # : # javascriptCompile,
+    lLua: luaCompile,
+    lPhp: phpCompile,
+    lPython: pythonCompile,
+    lRuby: rubyCompile,
+    lRust: rustCompile,
+    lSystemrdl: systemrdlCompile,
+    lSystemVerilog: systemVerilogCompile,
+    lVhdl: vhdlCompile,
+    lVue: vueCompile,
+    lYaml: yamlCompile,
+    lWasmWat: wasmWatCompile,
+    lWasmWast: wasmWastCompile,
+    lAgda: agdaCompile,
+    lHaskell: haskellCompile,
+    lJulia: juliaCompile,
+    lNix: nixCompile,
+    lScala: scalaCompile,
+    lKotlin: kotlinCompile,
+    lZig: zigCompile,
+    lDart: dartCompile
+  }
+
+  list[lTotal] = proc() =
+    let startDir = cwd()
+    var fail: seq[Lang]
+    for lang, pr in list:
+      if lang != lTotal and not isNil(pr):
+        try:
+          cd startDir
+          pr()
+
+        except:
+          fail.add lang
 
 
-proc totalCompile*() =
-  let startDir = cwd()
-  for pr in [
-    tomlCompile,
-    cppCompile,
-    bashCompile,
-    cCompile,
-    csharpCompile,
-    cssCompile,
-    enoCompile,
-    embeddedTemplateCompile,
-    goCompile,
-    fennelCompile,
-    htmlCompile,
-    latexCompile,
-    javaCompile,
-    # javascriptCompile,
-    luaCompile,
-    phpCompile,
-    pythonCompile,
-    rubyCompile,
-    rustCompile,
-    systemrdlCompile,
-    systemVerilogCompile,
-    vhdlCompile,
-    vueCompile,
-    yamlCompile,
-    wasmWatCompile,
-    wasmWastCompile,
-    agdaCompile,
-    haskellCompile,
-    juliaCompile,
-    nixCompile,
-    scalaCompile,
-    kotlinCompile,
-    zigCompile,
-    dartCompile
-  ]:
-    cd startDir
-    pr()
+    if fail.len > 0:
+      logger.err "Failed wrapper generator for", joinWords(
+        mapIt(fail, $it), "and")
+
+  list[lang]()
+
+proc newApp*(): CliApp =
+  result = newCliApp(
+    "nakefile", (0, 1, 4), "haxscramper",
+    "Generate nim wrappers for tree-sitter grammars",
+    noDefault = cliDefaultHelpOnly)
+
+  result.add arg("lang", "Target language to compile", check = cliCheckFor(
+    Lang, toMapArray mapIt(Lang, (it, ""))))
+
+proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
+  var app = newApp()
+  logger = inLogger
+  app.acceptArgsAndRunBody(logger, args):
+    compile(app.getArg() as Lang)
 
 when isMainModule:
-  logger = newTermLogger()
-  dispatchMulti(
-    [tomlCompile],
-    [cppCompile],
-    [bashCompile],
-    [cCompile],
-    [csharpCompile],
-    [cssCompile],
-    [enoCompile],
-    [embeddedTemplateCompile],
-    [goCompile],
-    [fennelCompile],
-    [htmlCompile],
-    [latexCompile],
-    [javaCompile],
-    [javascriptCompile],
-    [luaCompile],
-    [phpCompile],
-    [pythonCompile],
-    [rubyCompile],
-    [rustCompile],
-    [systemrdlCompile],
-    [systemVerilogCompile],
-    [vhdlCompile],
-    [yamlCompile],
-    [vueCompile],
-    [wasmWatCompile],
-    [wasmWastCompile],
-    [agdaCompile],
-    [haskellCompile],
-    [juliaCompile],
-    [nixCompile],
-    [scalaCompile],
-    [kotlinCompile],
-    [zigCompile],
-    [dartCompile],
-
-    [totalCompile]
-  )
-
-# TODO add `zig` grammar
+  main(paramStrs())

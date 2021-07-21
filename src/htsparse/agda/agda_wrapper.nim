@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -159,11 +162,11 @@ type
     agdaExtern_indent,      ## _indent
     agdaExtern_dedent        ## _dedent
 type
-  AgdaNode* = distinct TSNode
+  TsAgdaNode* = distinct TSNode
 type
   AgdaParser* = distinct PtsParser
-proc tsNodeType*(node: AgdaNode): string
-proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsAgdaNode): string
+proc kind*(node: TsAgdaNode): AgdaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "abstract":
@@ -419,111 +422,64 @@ proc kind*(node: AgdaNode): AgdaNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_agda(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: AgdaNode): string =
-  $ts_node_type(TSNode(node))
+type
+  AgdaNode* = HtsNode[TsAgdaNode, AgdaNodeKind]
+func isNil*(node: TsAgdaNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newAgdaParser*(): AgdaParser =
-  result = AgdaParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_agda())
-
-proc parseString*(parser: AgdaParser; str: string): AgdaNode =
-  AgdaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseAgdaString*(str: string): AgdaNode =
-  let parser = newAgdaParser()
-  return parseString(parser, str)
-
-func `[]`*(node: AgdaNode; idx: int; withUnnamed: bool = false): AgdaNode =
-  if withUnnamed:
-    AgdaNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    AgdaNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: AgdaNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsAgdaNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: AgdaNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsAgdaNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: AgdaNode; withUnnamed: bool = false): AgdaNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_agda(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsAgdaNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: AgdaNode; withUnnamed: bool = false): (int, AgdaNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsAgdaParser*(): AgdaParser =
+  result = AgdaParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_agda())
 
-func slice*(node: AgdaNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: AgdaParser; str: string): TsAgdaNode =
+  TsAgdaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: AgdaNode): string =
-  s[node.slice()]
+proc parseTsAgdaString*(str: string): TsAgdaNode =
+  let parser = newTsAgdaParser()
+  return parseString(parser, str)
 
-func nodeString*(node: AgdaNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsAgdaNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: AgdaNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsAgdaNode; idx: int; kind: AgdaNodeKind | set[AgdaNodeKind]): TsAgdaNode =
+  assert 0 <= idx and idx < node.len
+  result = TsAgdaNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: AgdaNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsAgda*(str: string; unnamed: bool = false): string =
+  treeRepr[TsAgdaNode, AgdaNodeKind](parseTsAgdaString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: AgdaNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsAgdaNode; str: ptr string): HtsNode[TsAgdaNode,
+    AgdaNodeKind] =
+  toHtsNode[TsAgdaNode, AgdaNodeKind](node, str)
 
-func isExtra*(node: AgdaNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsAgdaNode; str: ptr string): AgdaNode =
+  toHtsNode[TsAgdaNode, AgdaNodeKind](node, str)
 
-func hasChanges*(node: AgdaNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseAgdaString*(str: ptr string; unnamed: bool = false): AgdaNode =
+  let parser = newTsAgdaParser()
+  return toHtsTree[TsAgdaNode, AgdaNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: AgdaNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: AgdaNode): AgdaNode =
-  AgdaNode(ts_node_parent(TSNode(node)))
-
-func child*(node: AgdaNode; a2: int): AgdaNode =
-  AgdaNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: AgdaNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: AgdaNode; a2: int): AgdaNode =
-  AgdaNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: AgdaNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: AgdaNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: AgdaNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: AgdaNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: AgdaNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: AgdaNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: AgdaNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: AgdaNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseAgdaString*(str: string; unnamed: bool = false): AgdaNode =
+  let parser = newTsAgdaParser()
+  return toHtsTree[TsAgdaNode, AgdaNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -46,11 +49,11 @@ type
     htmlExternRaw_text,     ## raw_text
     htmlExternComment        ## comment
 type
-  HtmlNode* = distinct TSNode
+  TsHtmlNode* = distinct TSNode
 type
   HtmlParser* = distinct PtsParser
-proc tsNodeType*(node: HtmlNode): string
-proc kind*(node: HtmlNode): HtmlNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsHtmlNode): string
+proc kind*(node: TsHtmlNode): HtmlNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "attribute":
@@ -110,111 +113,64 @@ proc kind*(node: HtmlNode): HtmlNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_html(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: HtmlNode): string =
-  $ts_node_type(TSNode(node))
+type
+  HtmlNode* = HtsNode[TsHtmlNode, HtmlNodeKind]
+func isNil*(node: TsHtmlNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newHtmlParser*(): HtmlParser =
-  result = HtmlParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_html())
-
-proc parseString*(parser: HtmlParser; str: string): HtmlNode =
-  HtmlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseHtmlString*(str: string): HtmlNode =
-  let parser = newHtmlParser()
-  return parseString(parser, str)
-
-func `[]`*(node: HtmlNode; idx: int; withUnnamed: bool = false): HtmlNode =
-  if withUnnamed:
-    HtmlNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    HtmlNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: HtmlNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsHtmlNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: HtmlNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsHtmlNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: HtmlNode; withUnnamed: bool = false): HtmlNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_html(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsHtmlNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: HtmlNode; withUnnamed: bool = false): (int, HtmlNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsHtmlParser*(): HtmlParser =
+  result = HtmlParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_html())
 
-func slice*(node: HtmlNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: HtmlParser; str: string): TsHtmlNode =
+  TsHtmlNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: HtmlNode): string =
-  s[node.slice()]
+proc parseTsHtmlString*(str: string): TsHtmlNode =
+  let parser = newTsHtmlParser()
+  return parseString(parser, str)
 
-func nodeString*(node: HtmlNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsHtmlNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: HtmlNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsHtmlNode; idx: int; kind: HtmlNodeKind | set[HtmlNodeKind]): TsHtmlNode =
+  assert 0 <= idx and idx < node.len
+  result = TsHtmlNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: HtmlNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsHtml*(str: string; unnamed: bool = false): string =
+  treeRepr[TsHtmlNode, HtmlNodeKind](parseTsHtmlString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: HtmlNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsHtmlNode; str: ptr string): HtsNode[TsHtmlNode,
+    HtmlNodeKind] =
+  toHtsNode[TsHtmlNode, HtmlNodeKind](node, str)
 
-func isExtra*(node: HtmlNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsHtmlNode; str: ptr string): HtmlNode =
+  toHtsNode[TsHtmlNode, HtmlNodeKind](node, str)
 
-func hasChanges*(node: HtmlNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseHtmlString*(str: ptr string; unnamed: bool = false): HtmlNode =
+  let parser = newTsHtmlParser()
+  return toHtsTree[TsHtmlNode, HtmlNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: HtmlNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: HtmlNode): HtmlNode =
-  HtmlNode(ts_node_parent(TSNode(node)))
-
-func child*(node: HtmlNode; a2: int): HtmlNode =
-  HtmlNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: HtmlNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: HtmlNode; a2: int): HtmlNode =
-  HtmlNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: HtmlNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: HtmlNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: HtmlNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: HtmlNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: HtmlNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: HtmlNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: HtmlNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: HtmlNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseHtmlString*(str: string; unnamed: bool = false): HtmlNode =
+  let parser = newTsHtmlParser()
+  return toHtsTree[TsHtmlNode, HtmlNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

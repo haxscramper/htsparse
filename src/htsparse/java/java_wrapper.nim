@@ -750,11 +750,6 @@ func len*(node: TsJavaNode; unnamed: bool = false): int =
 func has*(node: TsJavaNode; idx: int; unnamed: bool = false): bool =
   0 <= idx and idx < node.len(unnamed)
 
-func slice*(node: TsJavaNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
-
 proc tree_sitter_java(): PtsLanguage {.importc, cdecl.}
 proc tsNodeType*(node: TsJavaNode): string =
   $ts_node_type(TSNode(node))

@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -65,10 +68,12 @@ type
     scalaProjectedType,     ## projected_type
     scalaRenamedIdentifier, ## renamed_identifier
     scalaRepeatedParameterType, ## repeated_parameter_type
+    scalaReturnExpression,  ## return_expression
     scalaStableIdentifier,  ## stable_identifier
     scalaStableTypeIdentifier, ## stable_type_identifier
     scalaString,            ## string
     scalaTemplateBody,      ## template_body
+    scalaThrowExpression,   ## throw_expression
     scalaTraitDefinition,   ## trait_definition
     scalaTryExpression,     ## try_expression
     scalaTupleExpression,   ## tuple_expression
@@ -78,6 +83,7 @@ type
     scalaTypeDefinition,    ## type_definition
     scalaTypeParameters,    ## type_parameters
     scalaTypedPattern,      ## typed_pattern
+    scalaUnit,              ## unit
     scalaUpperBound,        ## upper_bound
     scalaValDeclaration,    ## val_declaration
     scalaValDefinition,     ## val_definition
@@ -125,14 +131,17 @@ type
     scalaLazyTok,           ## lazy
     scalaMatchTok,          ## match
     scalaNewTok,            ## new
+    scalaNullLiteral,       ## null_literal
     scalaObjectTok,         ## object
     scalaOperatorIdentifier, ## operator_identifier
     scalaOverrideTok,       ## override
     scalaPackageTok,        ## package
     scalaPrivateTok,        ## private
     scalaProtectedTok,      ## protected
+    scalaReturnTok,         ## return
     scalaSealedTok,         ## sealed
     scalaSymbolLiteral,     ## symbol_literal
+    scalaThrowTok,          ## throw
     scalaTraitTok,          ## trait
     scalaTrueTok,           ## true
     scalaTryTok,            ## try
@@ -157,11 +166,11 @@ type
     scalaExtern_interpolated_multiline_string_middle, ## _interpolated_multiline_string_middle
     scalaExtern_interpolated_multiline_string_end ## _interpolated_multiline_string_end
 type
-  ScalaNode* = distinct TSNode
+  TsScalaNode* = distinct TSNode
 type
   ScalaParser* = distinct PtsParser
-proc tsNodeType*(node: ScalaNode): string
-proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsScalaNode): string
+proc kind*(node: TsScalaNode): ScalaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_definition":
@@ -280,6 +289,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaRenamedIdentifier
     of "repeated_parameter_type":
       scalaRepeatedParameterType
+    of "return_expression":
+      scalaReturnExpression
     of "stable_identifier":
       scalaStableIdentifier
     of "stable_type_identifier":
@@ -288,6 +299,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaString
     of "template_body":
       scalaTemplateBody
+    of "throw_expression":
+      scalaThrowExpression
     of "trait_definition":
       scalaTraitDefinition
     of "try_expression":
@@ -306,6 +319,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaTypeParameters
     of "typed_pattern":
       scalaTypedPattern
+    of "unit":
+      scalaUnit
     of "upper_bound":
       scalaUpperBound
     of "val_declaration":
@@ -400,6 +415,8 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaMatchTok
     of "new":
       scalaNewTok
+    of "null_literal":
+      scalaNullLiteral
     of "object":
       scalaObjectTok
     of "operator_identifier":
@@ -412,10 +429,14 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
       scalaPrivateTok
     of "protected":
       scalaProtectedTok
+    of "return":
+      scalaReturnTok
     of "sealed":
       scalaSealedTok
     of "symbol_literal":
       scalaSymbolLiteral
+    of "throw":
+      scalaThrowTok
     of "trait":
       scalaTraitTok
     of "true":
@@ -447,111 +468,64 @@ proc kind*(node: ScalaNode): ScalaNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_scala(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: ScalaNode): string =
-  $ts_node_type(TSNode(node))
+type
+  ScalaNode* = HtsNode[TsScalaNode, ScalaNodeKind]
+func isNil*(node: TsScalaNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newScalaParser*(): ScalaParser =
-  result = ScalaParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_scala())
-
-proc parseString*(parser: ScalaParser; str: string): ScalaNode =
-  ScalaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseScalaString*(str: string): ScalaNode =
-  let parser = newScalaParser()
-  return parseString(parser, str)
-
-func `[]`*(node: ScalaNode; idx: int; withUnnamed: bool = false): ScalaNode =
-  if withUnnamed:
-    ScalaNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    ScalaNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: ScalaNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsScalaNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: ScalaNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsScalaNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: ScalaNode; withUnnamed: bool = false): ScalaNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                         ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_scala(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsScalaNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: ScalaNode; withUnnamed: bool = false): (int, ScalaNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsScalaParser*(): ScalaParser =
+  result = ScalaParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_scala())
 
-func slice*(node: ScalaNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: ScalaParser; str: string): TsScalaNode =
+  TsScalaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: ScalaNode): string =
-  s[node.slice()]
+proc parseTsScalaString*(str: string): TsScalaNode =
+  let parser = newTsScalaParser()
+  return parseString(parser, str)
 
-func nodeString*(node: ScalaNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsScalaNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: ScalaNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsScalaNode; idx: int; kind: ScalaNodeKind | set[ScalaNodeKind]): TsScalaNode =
+  assert 0 <= idx and idx < node.len
+  result = TsScalaNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: ScalaNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsScala*(str: string; unnamed: bool = false): string =
+  treeRepr[TsScalaNode, ScalaNodeKind](parseTsScalaString(str), str, 5,
+                                       unnamed = unnamed)
 
-func isMissing*(node: ScalaNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsScalaNode; str: ptr string): HtsNode[TsScalaNode,
+    ScalaNodeKind] =
+  toHtsNode[TsScalaNode, ScalaNodeKind](node, str)
 
-func isExtra*(node: ScalaNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsScalaNode; str: ptr string): ScalaNode =
+  toHtsNode[TsScalaNode, ScalaNodeKind](node, str)
 
-func hasChanges*(node: ScalaNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseScalaString*(str: ptr string; unnamed: bool = false): ScalaNode =
+  let parser = newTsScalaParser()
+  return toHtsTree[TsScalaNode, ScalaNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: ScalaNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: ScalaNode): ScalaNode =
-  ScalaNode(ts_node_parent(TSNode(node)))
-
-func child*(node: ScalaNode; a2: int): ScalaNode =
-  ScalaNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: ScalaNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: ScalaNode; a2: int): ScalaNode =
-  ScalaNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: ScalaNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: ScalaNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: ScalaNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: ScalaNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: ScalaNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: ScalaNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: ScalaNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: ScalaNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseScalaString*(str: string; unnamed: bool = false): ScalaNode =
+  let parser = newTsScalaParser()
+  return toHtsTree[TsScalaNode, ScalaNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

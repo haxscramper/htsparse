@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -162,11 +165,11 @@ type
     juliaExternTriple_string, ## triple_string
     juliaExtern_immediate_paren ## _immediate_paren
 type
-  JuliaNode* = distinct TSNode
+  TsJuliaNode* = distinct TSNode
 type
   JuliaParser* = distinct PtsParser
-proc tsNodeType*(node: JuliaNode): string
-proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsJuliaNode): string
+proc kind*(node: TsJuliaNode): JuliaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_definition":
@@ -470,111 +473,64 @@ proc kind*(node: JuliaNode): JuliaNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_julia(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: JuliaNode): string =
-  $ts_node_type(TSNode(node))
+type
+  JuliaNode* = HtsNode[TsJuliaNode, JuliaNodeKind]
+func isNil*(node: TsJuliaNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newJuliaParser*(): JuliaParser =
-  result = JuliaParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_julia())
-
-proc parseString*(parser: JuliaParser; str: string): JuliaNode =
-  JuliaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseJuliaString*(str: string): JuliaNode =
-  let parser = newJuliaParser()
-  return parseString(parser, str)
-
-func `[]`*(node: JuliaNode; idx: int; withUnnamed: bool = false): JuliaNode =
-  if withUnnamed:
-    JuliaNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    JuliaNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: JuliaNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsJuliaNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: JuliaNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsJuliaNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: JuliaNode; withUnnamed: bool = false): JuliaNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                         ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_julia(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsJuliaNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: JuliaNode; withUnnamed: bool = false): (int, JuliaNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsJuliaParser*(): JuliaParser =
+  result = JuliaParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_julia())
 
-func slice*(node: JuliaNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: JuliaParser; str: string): TsJuliaNode =
+  TsJuliaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: JuliaNode): string =
-  s[node.slice()]
+proc parseTsJuliaString*(str: string): TsJuliaNode =
+  let parser = newTsJuliaParser()
+  return parseString(parser, str)
 
-func nodeString*(node: JuliaNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsJuliaNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: JuliaNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsJuliaNode; idx: int; kind: JuliaNodeKind | set[JuliaNodeKind]): TsJuliaNode =
+  assert 0 <= idx and idx < node.len
+  result = TsJuliaNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: JuliaNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsJulia*(str: string; unnamed: bool = false): string =
+  treeRepr[TsJuliaNode, JuliaNodeKind](parseTsJuliaString(str), str, 5,
+                                       unnamed = unnamed)
 
-func isMissing*(node: JuliaNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsJuliaNode; str: ptr string): HtsNode[TsJuliaNode,
+    JuliaNodeKind] =
+  toHtsNode[TsJuliaNode, JuliaNodeKind](node, str)
 
-func isExtra*(node: JuliaNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsJuliaNode; str: ptr string): JuliaNode =
+  toHtsNode[TsJuliaNode, JuliaNodeKind](node, str)
 
-func hasChanges*(node: JuliaNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseJuliaString*(str: ptr string; unnamed: bool = false): JuliaNode =
+  let parser = newTsJuliaParser()
+  return toHtsTree[TsJuliaNode, JuliaNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: JuliaNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: JuliaNode): JuliaNode =
-  JuliaNode(ts_node_parent(TSNode(node)))
-
-func child*(node: JuliaNode; a2: int): JuliaNode =
-  JuliaNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: JuliaNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: JuliaNode; a2: int): JuliaNode =
-  JuliaNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: JuliaNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: JuliaNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: JuliaNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: JuliaNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: JuliaNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: JuliaNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: JuliaNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: JuliaNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseJuliaString*(str: string; unnamed: bool = false): JuliaNode =
+  let parser = newTsJuliaParser()
+  return toHtsTree[TsJuliaNode, JuliaNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

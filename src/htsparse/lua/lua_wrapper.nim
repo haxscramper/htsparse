@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -110,11 +113,11 @@ type
     luaExternComment,       ## comment
     luaExternString          ## string
 type
-  LuaNode* = distinct TSNode
+  TsLuaNode* = distinct TSNode
 type
   LuaParser* = distinct PtsParser
-proc tsNodeType*(node: LuaNode): string
-proc kind*(node: LuaNode): LuaNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsLuaNode): string
+proc kind*(node: TsLuaNode): LuaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "arguments":
@@ -310,111 +313,64 @@ proc kind*(node: LuaNode): LuaNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_lua(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: LuaNode): string =
-  $ts_node_type(TSNode(node))
+type
+  LuaNode* = HtsNode[TsLuaNode, LuaNodeKind]
+func isNil*(node: TsLuaNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newLuaParser*(): LuaParser =
-  result = LuaParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_lua())
-
-proc parseString*(parser: LuaParser; str: string): LuaNode =
-  LuaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseLuaString*(str: string): LuaNode =
-  let parser = newLuaParser()
-  return parseString(parser, str)
-
-func `[]`*(node: LuaNode; idx: int; withUnnamed: bool = false): LuaNode =
-  if withUnnamed:
-    LuaNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    LuaNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: LuaNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsLuaNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: LuaNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsLuaNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: LuaNode; withUnnamed: bool = false): LuaNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_lua(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsLuaNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: LuaNode; withUnnamed: bool = false): (int, LuaNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsLuaParser*(): LuaParser =
+  result = LuaParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_lua())
 
-func slice*(node: LuaNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: LuaParser; str: string): TsLuaNode =
+  TsLuaNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: LuaNode): string =
-  s[node.slice()]
+proc parseTsLuaString*(str: string): TsLuaNode =
+  let parser = newTsLuaParser()
+  return parseString(parser, str)
 
-func nodeString*(node: LuaNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsLuaNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: LuaNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsLuaNode; idx: int; kind: LuaNodeKind | set[LuaNodeKind]): TsLuaNode =
+  assert 0 <= idx and idx < node.len
+  result = TsLuaNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: LuaNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsLua*(str: string; unnamed: bool = false): string =
+  treeRepr[TsLuaNode, LuaNodeKind](parseTsLuaString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: LuaNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsLuaNode; str: ptr string): HtsNode[TsLuaNode,
+    LuaNodeKind] =
+  toHtsNode[TsLuaNode, LuaNodeKind](node, str)
 
-func isExtra*(node: LuaNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsLuaNode; str: ptr string): LuaNode =
+  toHtsNode[TsLuaNode, LuaNodeKind](node, str)
 
-func hasChanges*(node: LuaNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseLuaString*(str: ptr string; unnamed: bool = false): LuaNode =
+  let parser = newTsLuaParser()
+  return toHtsTree[TsLuaNode, LuaNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: LuaNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: LuaNode): LuaNode =
-  LuaNode(ts_node_parent(TSNode(node)))
-
-func child*(node: LuaNode; a2: int): LuaNode =
-  LuaNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: LuaNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: LuaNode; a2: int): LuaNode =
-  LuaNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: LuaNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: LuaNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: LuaNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: LuaNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: LuaNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: LuaNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: LuaNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: LuaNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseLuaString*(str: string; unnamed: bool = false): LuaNode =
+  let parser = newTsLuaParser()
+  return toHtsTree[TsLuaNode, LuaNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

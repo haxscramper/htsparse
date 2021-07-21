@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -95,11 +98,11 @@ type
     nixExternEscape_sequence, ## escape_sequence
     nixExternInd_escape_sequence ## ind_escape_sequence
 type
-  NixNode* = distinct TSNode
+  TsNixNode* = distinct TSNode
 type
   NixParser* = distinct PtsParser
-proc tsNodeType*(node: NixNode): string
-proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsNixNode): string
+proc kind*(node: TsNixNode): NixNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_expression":
@@ -257,111 +260,64 @@ proc kind*(node: NixNode): NixNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_nix(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: NixNode): string =
-  $ts_node_type(TSNode(node))
+type
+  NixNode* = HtsNode[TsNixNode, NixNodeKind]
+func isNil*(node: TsNixNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newNixParser*(): NixParser =
-  result = NixParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_nix())
-
-proc parseString*(parser: NixParser; str: string): NixNode =
-  NixNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseNixString*(str: string): NixNode =
-  let parser = newNixParser()
-  return parseString(parser, str)
-
-func `[]`*(node: NixNode; idx: int; withUnnamed: bool = false): NixNode =
-  if withUnnamed:
-    NixNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    NixNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: NixNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsNixNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: NixNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsNixNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: NixNode; withUnnamed: bool = false): NixNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                     ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_nix(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsNixNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: NixNode; withUnnamed: bool = false): (int, NixNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                            ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsNixParser*(): NixParser =
+  result = NixParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_nix())
 
-func slice*(node: NixNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: NixParser; str: string): TsNixNode =
+  TsNixNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: NixNode): string =
-  s[node.slice()]
+proc parseTsNixString*(str: string): TsNixNode =
+  let parser = newTsNixParser()
+  return parseString(parser, str)
 
-func nodeString*(node: NixNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsNixNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: NixNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsNixNode; idx: int; kind: NixNodeKind | set[NixNodeKind]): TsNixNode =
+  assert 0 <= idx and idx < node.len
+  result = TsNixNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: NixNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsNix*(str: string; unnamed: bool = false): string =
+  treeRepr[TsNixNode, NixNodeKind](parseTsNixString(str), str, 3,
+                                   unnamed = unnamed)
 
-func isMissing*(node: NixNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsNixNode; str: ptr string): HtsNode[TsNixNode,
+    NixNodeKind] =
+  toHtsNode[TsNixNode, NixNodeKind](node, str)
 
-func isExtra*(node: NixNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsNixNode; str: ptr string): NixNode =
+  toHtsNode[TsNixNode, NixNodeKind](node, str)
 
-func hasChanges*(node: NixNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseNixString*(str: ptr string; unnamed: bool = false): NixNode =
+  let parser = newTsNixParser()
+  return toHtsTree[TsNixNode, NixNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: NixNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: NixNode): NixNode =
-  NixNode(ts_node_parent(TSNode(node)))
-
-func child*(node: NixNode; a2: int): NixNode =
-  NixNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: NixNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: NixNode; a2: int): NixNode =
-  NixNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: NixNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: NixNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: NixNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: NixNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: NixNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: NixNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: NixNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: NixNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseNixString*(str: string; unnamed: bool = false): NixNode =
+  let parser = newTsNixParser()
+  return toHtsTree[TsNixNode, NixNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

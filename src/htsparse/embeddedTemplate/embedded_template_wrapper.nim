@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -29,11 +32,11 @@ type
     embedded_templateUnderscorePercentGreaterThanTok, ## _%>
     embedded_templateSyntaxError ## Tree-sitter parser syntax error
 type
-  Embedded_templateNode* = distinct TSNode
+  TsEmbedded_templateNode* = distinct TSNode
 type
   Embedded_templateParser* = distinct PtsParser
-proc tsNodeType*(node: Embedded_templateNode): string
-proc kind*(node: Embedded_templateNode): Embedded_templateNodeKind {.
+proc tsNodeType*(node: TsEmbedded_templateNode): string
+proc kind*(node: TsEmbedded_templateNode): Embedded_templateNodeKind {.
     noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
@@ -82,114 +85,68 @@ proc kind*(node: Embedded_templateNode): Embedded_templateNodeKind {.
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_embedded_template(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: Embedded_templateNode): string =
-  $ts_node_type(TSNode(node))
+type
+  Embedded_templateNode* = HtsNode[TsEmbedded_templateNode,
+                                   Embedded_templateNodeKind]
+func isNil*(node: TsEmbedded_templateNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newEmbedded_templateParser*(): Embedded_templateParser =
-  result = Embedded_templateParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result),
-                                 tree_sitter_embedded_template())
-
-proc parseString*(parser: Embedded_templateParser; str: string): Embedded_templateNode =
-  Embedded_templateNode(ts_tree_root_node(ts_parser_parse_string(
-      PtsParser(parser), nil, str.cstring, uint32(len(str)))))
-
-proc parseEmbedded_templateString*(str: string): Embedded_templateNode =
-  let parser = newEmbedded_templateParser()
-  return parseString(parser, str)
-
-func `[]`*(node: Embedded_templateNode; idx: int; withUnnamed: bool = false): Embedded_templateNode =
-  if withUnnamed:
-    Embedded_templateNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    Embedded_templateNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: Embedded_templateNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsEmbedded_templateNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: Embedded_templateNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsEmbedded_templateNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: Embedded_templateNode; withUnnamed: bool = false): Embedded_templateNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                                 ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_embedded_template(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsEmbedded_templateNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: Embedded_templateNode; withUnnamed: bool = false): (int,
-    Embedded_templateNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                             ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsEmbedded_templateParser*(): Embedded_templateParser =
+  result = Embedded_templateParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result),
+                                 tree_sitter_embedded_template())
 
-func slice*(node: Embedded_templateNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: Embedded_templateParser; str: string): TsEmbedded_templateNode =
+  TsEmbedded_templateNode(ts_tree_root_node(ts_parser_parse_string(
+      PtsParser(parser), nil, str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: Embedded_templateNode): string =
-  s[node.slice()]
+proc parseTsEmbedded_templateString*(str: string): TsEmbedded_templateNode =
+  let parser = newTsEmbedded_templateParser()
+  return parseString(parser, str)
 
-func nodeString*(node: Embedded_templateNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsEmbedded_templateNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: Embedded_templateNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsEmbedded_templateNode; idx: int;
+           kind: Embedded_templateNodeKind | set[Embedded_templateNodeKind]): TsEmbedded_templateNode =
+  assert 0 <= idx and idx < node.len
+  result = TsEmbedded_templateNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: Embedded_templateNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsEmbedded_template*(str: string; unnamed: bool = false): string =
+  treeRepr[TsEmbedded_templateNode, Embedded_templateNodeKind](
+      parseTsEmbedded_templateString(str), str, 17, unnamed = unnamed)
 
-func isMissing*(node: Embedded_templateNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsEmbedded_templateNode; str: ptr string): HtsNode[
+    TsEmbedded_templateNode, Embedded_templateNodeKind] =
+  toHtsNode[TsEmbedded_templateNode, Embedded_templateNodeKind](node, str)
 
-func isExtra*(node: Embedded_templateNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsEmbedded_templateNode; str: ptr string): Embedded_templateNode =
+  toHtsNode[TsEmbedded_templateNode, Embedded_templateNodeKind](node, str)
 
-func hasChanges*(node: Embedded_templateNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseEmbedded_templateString*(str: ptr string; unnamed: bool = false): Embedded_templateNode =
+  let parser = newTsEmbedded_templateParser()
+  return toHtsTree[TsEmbedded_templateNode, Embedded_templateNodeKind](
+      parseString(parser, str[]), str)
 
-func hasError*(node: Embedded_templateNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: Embedded_templateNode): Embedded_templateNode =
-  Embedded_templateNode(ts_node_parent(TSNode(node)))
-
-func child*(node: Embedded_templateNode; a2: int): Embedded_templateNode =
-  Embedded_templateNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: Embedded_templateNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: Embedded_templateNode; a2: int): Embedded_templateNode =
-  Embedded_templateNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: Embedded_templateNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: Embedded_templateNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: Embedded_templateNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: Embedded_templateNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: Embedded_templateNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: Embedded_templateNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: Embedded_templateNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: Embedded_templateNode; fieldName: string;
-                       fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseEmbedded_templateString*(str: string; unnamed: bool = false): Embedded_templateNode =
+  let parser = newTsEmbedded_templateParser()
+  return toHtsTree[TsEmbedded_templateNode, Embedded_templateNodeKind](
+      parseString(parser, str), unsafeAddr str, storePtr = false)

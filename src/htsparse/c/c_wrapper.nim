@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -219,11 +222,11 @@ type
     cTildeTok,              ## ~
     cSyntaxError             ## Tree-sitter parser syntax error
 type
-  CNode* = distinct TSNode
+  TsCNode* = distinct TSNode
 type
   CParser* = distinct PtsParser
-proc tsNodeType*(node: CNode): string
-proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsCNode): string
+proc kind*(node: TsCNode): CNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_abstract_declarator":
@@ -655,111 +658,62 @@ proc kind*(node: CNode): CNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_c(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: CNode): string =
-  $ts_node_type(TSNode(node))
+type
+  CNode* = HtsNode[TsCNode, CNodeKind]
+func isNil*(node: TsCNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newCParser*(): CParser =
-  result = CParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_c())
-
-proc parseString*(parser: CParser; str: string): CNode =
-  CNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseCString*(str: string): CNode =
-  let parser = newCParser()
-  return parseString(parser, str)
-
-func `[]`*(node: CNode; idx: int; withUnnamed: bool = false): CNode =
-  if withUnnamed:
-    CNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    CNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: CNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsCNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: CNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsCNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: CNode; withUnnamed: bool = false): CNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                 ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_c(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsCNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: CNode; withUnnamed: bool = false): (int, CNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                        ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsCParser*(): CParser =
+  result = CParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_c())
 
-func slice*(node: CNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: CParser; str: string): TsCNode =
+  TsCNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: CNode): string =
-  s[node.slice()]
+proc parseTsCString*(str: string): TsCNode =
+  let parser = newTsCParser()
+  return parseString(parser, str)
 
-func nodeString*(node: CNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsCNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: CNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsCNode; idx: int; kind: CNodeKind | set[CNodeKind]): TsCNode =
+  assert 0 <= idx and idx < node.len
+  result = TsCNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: CNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsC*(str: string; unnamed: bool = false): string =
+  treeRepr[TsCNode, CNodeKind](parseTsCString(str), str, 1, unnamed = unnamed)
 
-func isMissing*(node: CNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsCNode; str: ptr string): HtsNode[TsCNode, CNodeKind] =
+  toHtsNode[TsCNode, CNodeKind](node, str)
 
-func isExtra*(node: CNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsCNode; str: ptr string): CNode =
+  toHtsNode[TsCNode, CNodeKind](node, str)
 
-func hasChanges*(node: CNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseCString*(str: ptr string; unnamed: bool = false): CNode =
+  let parser = newTsCParser()
+  return toHtsTree[TsCNode, CNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: CNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: CNode): CNode =
-  CNode(ts_node_parent(TSNode(node)))
-
-func child*(node: CNode; a2: int): CNode =
-  CNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: CNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: CNode; a2: int): CNode =
-  CNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: CNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: CNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: CNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: CNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: CNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: CNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: CNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: CNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseCString*(str: string; unnamed: bool = false): CNode =
+  let parser = newTsCParser()
+  return toHtsTree[TsCNode, CNodeKind](parseString(parser, str), unsafeAddr str,
+                                       storePtr = false)

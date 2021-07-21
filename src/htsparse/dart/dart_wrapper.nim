@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -309,11 +312,11 @@ type
     dartExtern_template_chars_single_single, ## _template_chars_single_single
     dartExtern_template_chars_raw_slash ## _template_chars_raw_slash
 type
-  DartNode* = distinct TSNode
+  TsDartNode* = distinct TSNode
 type
   DartParser* = distinct PtsParser
-proc tsNodeType*(node: DartNode): string
-proc kind*(node: DartNode): DartNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsDartNode): string
+proc kind*(node: TsDartNode): DartNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_declaration":
@@ -895,111 +898,64 @@ proc kind*(node: DartNode): DartNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_dart(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: DartNode): string =
-  $ts_node_type(TSNode(node))
+type
+  DartNode* = HtsNode[TsDartNode, DartNodeKind]
+func isNil*(node: TsDartNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newDartParser*(): DartParser =
-  result = DartParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_dart())
-
-proc parseString*(parser: DartParser; str: string): DartNode =
-  DartNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseDartString*(str: string): DartNode =
-  let parser = newDartParser()
-  return parseString(parser, str)
-
-func `[]`*(node: DartNode; idx: int; withUnnamed: bool = false): DartNode =
-  if withUnnamed:
-    DartNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    DartNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: DartNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsDartNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: DartNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsDartNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: DartNode; withUnnamed: bool = false): DartNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_dart(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsDartNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: DartNode; withUnnamed: bool = false): (int, DartNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsDartParser*(): DartParser =
+  result = DartParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_dart())
 
-func slice*(node: DartNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: DartParser; str: string): TsDartNode =
+  TsDartNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: DartNode): string =
-  s[node.slice()]
+proc parseTsDartString*(str: string): TsDartNode =
+  let parser = newTsDartParser()
+  return parseString(parser, str)
 
-func nodeString*(node: DartNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsDartNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: DartNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsDartNode; idx: int; kind: DartNodeKind | set[DartNodeKind]): TsDartNode =
+  assert 0 <= idx and idx < node.len
+  result = TsDartNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: DartNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsDart*(str: string; unnamed: bool = false): string =
+  treeRepr[TsDartNode, DartNodeKind](parseTsDartString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: DartNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsDartNode; str: ptr string): HtsNode[TsDartNode,
+    DartNodeKind] =
+  toHtsNode[TsDartNode, DartNodeKind](node, str)
 
-func isExtra*(node: DartNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsDartNode; str: ptr string): DartNode =
+  toHtsNode[TsDartNode, DartNodeKind](node, str)
 
-func hasChanges*(node: DartNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseDartString*(str: ptr string; unnamed: bool = false): DartNode =
+  let parser = newTsDartParser()
+  return toHtsTree[TsDartNode, DartNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: DartNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: DartNode): DartNode =
-  DartNode(ts_node_parent(TSNode(node)))
-
-func child*(node: DartNode; a2: int): DartNode =
-  DartNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: DartNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: DartNode; a2: int): DartNode =
-  DartNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: DartNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: DartNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: DartNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: DartNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: DartNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: DartNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: DartNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: DartNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseDartString*(str: string; unnamed: bool = false): DartNode =
+  let parser = newTsDartParser()
+  return toHtsTree[TsDartNode, DartNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

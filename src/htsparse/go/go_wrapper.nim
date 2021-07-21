@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -183,11 +186,11 @@ type
     goRCurlyTok,            ## }
     goSyntaxError            ## Tree-sitter parser syntax error
 type
-  GoNode* = distinct TSNode
+  TsGoNode* = distinct TSNode
 type
   GoParser* = distinct PtsParser
-proc tsNodeType*(node: GoNode): string
-proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsGoNode): string
+proc kind*(node: TsGoNode): GoNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_expression":
@@ -541,111 +544,62 @@ proc kind*(node: GoNode): GoNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_go(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: GoNode): string =
-  $ts_node_type(TSNode(node))
+type
+  GoNode* = HtsNode[TsGoNode, GoNodeKind]
+func isNil*(node: TsGoNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newGoParser*(): GoParser =
-  result = GoParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_go())
-
-proc parseString*(parser: GoParser; str: string): GoNode =
-  GoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseGoString*(str: string): GoNode =
-  let parser = newGoParser()
-  return parseString(parser, str)
-
-func `[]`*(node: GoNode; idx: int; withUnnamed: bool = false): GoNode =
-  if withUnnamed:
-    GoNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    GoNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: GoNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsGoNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: GoNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsGoNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: GoNode; withUnnamed: bool = false): GoNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                   ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_go(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsGoNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: GoNode; withUnnamed: bool = false): (int, GoNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                          ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsGoParser*(): GoParser =
+  result = GoParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_go())
 
-func slice*(node: GoNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: GoParser; str: string): TsGoNode =
+  TsGoNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: GoNode): string =
-  s[node.slice()]
+proc parseTsGoString*(str: string): TsGoNode =
+  let parser = newTsGoParser()
+  return parseString(parser, str)
 
-func nodeString*(node: GoNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsGoNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: GoNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsGoNode; idx: int; kind: GoNodeKind | set[GoNodeKind]): TsGoNode =
+  assert 0 <= idx and idx < node.len
+  result = TsGoNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: GoNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsGo*(str: string; unnamed: bool = false): string =
+  treeRepr[TsGoNode, GoNodeKind](parseTsGoString(str), str, 2, unnamed = unnamed)
 
-func isMissing*(node: GoNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsGoNode; str: ptr string): HtsNode[TsGoNode, GoNodeKind] =
+  toHtsNode[TsGoNode, GoNodeKind](node, str)
 
-func isExtra*(node: GoNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsGoNode; str: ptr string): GoNode =
+  toHtsNode[TsGoNode, GoNodeKind](node, str)
 
-func hasChanges*(node: GoNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseGoString*(str: ptr string; unnamed: bool = false): GoNode =
+  let parser = newTsGoParser()
+  return toHtsTree[TsGoNode, GoNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: GoNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: GoNode): GoNode =
-  GoNode(ts_node_parent(TSNode(node)))
-
-func child*(node: GoNode; a2: int): GoNode =
-  GoNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: GoNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: GoNode; a2: int): GoNode =
-  GoNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: GoNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: GoNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: GoNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: GoNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: GoNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: GoNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: GoNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: GoNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseGoString*(str: string; unnamed: bool = false): GoNode =
+  let parser = newTsGoParser()
+  return toHtsTree[TsGoNode, GoNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

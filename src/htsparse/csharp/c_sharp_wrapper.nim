@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -416,11 +419,11 @@ type
   C_sharpExternalTok* = enum
     c_sharpExtern_preproc_directive_end ## _preproc_directive_end
 type
-  C_sharpNode* = distinct TSNode
+  TsC_sharpNode* = distinct TSNode
 type
   C_sharpParser* = distinct PtsParser
-proc tsNodeType*(node: C_sharpNode): string
-proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsC_sharpNode): string
+proc kind*(node: TsC_sharpNode): C_sharpNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_declaration":
@@ -1234,112 +1237,66 @@ proc kind*(node: C_sharpNode): C_sharpNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_c_sharp(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: C_sharpNode): string =
-  $ts_node_type(TSNode(node))
+type
+  C_sharpNode* = HtsNode[TsC_sharpNode, C_sharpNodeKind]
+func isNil*(node: TsC_sharpNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newC_sharpParser*(): C_sharpParser =
-  result = C_sharpParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_c_sharp())
-
-proc parseString*(parser: C_sharpParser; str: string): C_sharpNode =
-  C_sharpNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseC_sharpString*(str: string): C_sharpNode =
-  let parser = newC_sharpParser()
-  return parseString(parser, str)
-
-func `[]`*(node: C_sharpNode; idx: int; withUnnamed: bool = false): C_sharpNode =
-  if withUnnamed:
-    C_sharpNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    C_sharpNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: C_sharpNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsC_sharpNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: C_sharpNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsC_sharpNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: C_sharpNode; withUnnamed: bool = false): C_sharpNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                             ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_c_sharp(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsC_sharpNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: C_sharpNode; withUnnamed: bool = false): (int, C_sharpNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                                    ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsC_sharpParser*(): C_sharpParser =
+  result = C_sharpParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_c_sharp())
 
-func slice*(node: C_sharpNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: C_sharpParser; str: string): TsC_sharpNode =
+  TsC_sharpNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: C_sharpNode): string =
-  s[node.slice()]
+proc parseTsC_sharpString*(str: string): TsC_sharpNode =
+  let parser = newTsC_sharpParser()
+  return parseString(parser, str)
 
-func nodeString*(node: C_sharpNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsC_sharpNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: C_sharpNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsC_sharpNode; idx: int;
+           kind: C_sharpNodeKind | set[C_sharpNodeKind]): TsC_sharpNode =
+  assert 0 <= idx and idx < node.len
+  result = TsC_sharpNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: C_sharpNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsC_sharp*(str: string; unnamed: bool = false): string =
+  treeRepr[TsC_sharpNode, C_sharpNodeKind](parseTsC_sharpString(str), str, 7,
+      unnamed = unnamed)
 
-func isMissing*(node: C_sharpNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsC_sharpNode; str: ptr string): HtsNode[TsC_sharpNode,
+    C_sharpNodeKind] =
+  toHtsNode[TsC_sharpNode, C_sharpNodeKind](node, str)
 
-func isExtra*(node: C_sharpNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsC_sharpNode; str: ptr string): C_sharpNode =
+  toHtsNode[TsC_sharpNode, C_sharpNodeKind](node, str)
 
-func hasChanges*(node: C_sharpNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseC_sharpString*(str: ptr string; unnamed: bool = false): C_sharpNode =
+  let parser = newTsC_sharpParser()
+  return toHtsTree[TsC_sharpNode, C_sharpNodeKind](parseString(parser, str[]),
+      str)
 
-func hasError*(node: C_sharpNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: C_sharpNode): C_sharpNode =
-  C_sharpNode(ts_node_parent(TSNode(node)))
-
-func child*(node: C_sharpNode; a2: int): C_sharpNode =
-  C_sharpNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: C_sharpNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: C_sharpNode; a2: int): C_sharpNode =
-  C_sharpNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: C_sharpNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: C_sharpNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: C_sharpNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: C_sharpNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: C_sharpNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: C_sharpNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: C_sharpNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: C_sharpNode; fieldName: string;
-                       fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseC_sharpString*(str: string; unnamed: bool = false): C_sharpNode =
+  let parser = newTsC_sharpParser()
+  return toHtsTree[TsC_sharpNode, C_sharpNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)

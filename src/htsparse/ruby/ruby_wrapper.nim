@@ -3,6 +3,9 @@ import
   hmisc / wrappers / treesitter
 
 import
+  hmisc / base_errors
+
+import
   strutils
 
 type
@@ -252,11 +255,11 @@ type
     rubyExtern_binary_star_star, ## _binary_star_star
     rubyExtern_element_reference_bracket ## _element_reference_bracket
 type
-  RubyNode* = distinct TSNode
+  TsRubyNode* = distinct TSNode
 type
   RubyParser* = distinct PtsParser
-proc tsNodeType*(node: RubyNode): string
-proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
+proc tsNodeType*(node: TsRubyNode): string
+proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType
     of "_arg":
@@ -650,111 +653,64 @@ proc kind*(node: RubyNode): RubyNodeKind {.noSideEffect.} =
     else:
       raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-proc tree_sitter_ruby(): PtsLanguage {.importc, cdecl.}
-proc tsNodeType*(node: RubyNode): string =
-  $ts_node_type(TSNode(node))
+type
+  RubyNode* = HtsNode[TsRubyNode, RubyNodeKind]
+func isNil*(node: TsRubyNode): bool =
+  ts_node_is_null(TSNode(node))
 
-proc newRubyParser*(): RubyParser =
-  result = RubyParser(ts_parser_new())
-  discard ts_parser_set_language(PtsParser(result), tree_sitter_ruby())
-
-proc parseString*(parser: RubyParser; str: string): RubyNode =
-  RubyNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
-      str.cstring, uint32(len(str)))))
-
-proc parseRubyString*(str: string): RubyNode =
-  let parser = newRubyParser()
-  return parseString(parser, str)
-
-func `[]`*(node: RubyNode; idx: int; withUnnamed: bool = false): RubyNode =
-  if withUnnamed:
-    RubyNode(ts_node_child(TSNode(node), uint32(idx)))
-  else:
-    RubyNode(ts_node_named_child(TSNode(node), uint32(idx)))
-
-func len*(node: RubyNode; withUnnamed: bool = false): int =
-  if withUnnamed:
+func len*(node: TsRubyNode; unnamed: bool = false): int =
+  if unnamed:
     int(ts_node_child_count(TSNode(node)))
   else:
     int(ts_node_named_child_count(TSNode(node)))
 
-proc isNil*(node: RubyNode): bool =
-  ts_node_is_null(TsNode(node))
+func has*(node: TsRubyNode; idx: int; unnamed: bool = false): bool =
+  0 <= idx and idx < node.len(unnamed)
 
-iterator items*(node: RubyNode; withUnnamed: bool = false): RubyNode =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                       ## nodes (usually things like punctuation, braces and so on).
-  for i in 0 ..< node.len(withUnnamed):
-    yield node[i, withUnnamed]
+proc tree_sitter_ruby(): PtsLanguage {.importc, cdecl.}
+proc tsNodeType*(node: TsRubyNode): string =
+  $ts_node_type(TSNode(node))
 
-iterator pairs*(node: RubyNode; withUnnamed: bool = false): (int, RubyNode) =
-  ## Iterate over subnodes. `withUnnamed` - also iterate over unnamed
-                                                                              ## nodes.
-  for i in 0 ..< node.len(withUnnamed):
-    yield (i, node[i, withUnnamed])
+proc newTsRubyParser*(): RubyParser =
+  result = RubyParser(ts_parser_new())
+  discard ts_parser_set_language(PtsParser(result), tree_sitter_ruby())
 
-func slice*(node: RubyNode): Slice[int] =
-  {.cast(noSideEffect).}:
-    ## Get range of source code **bytes** for the node
-    ts_node_start_byte(TsNode(node)).int ..< ts_node_end_byte(TsNode(node)).int
+proc parseString*(parser: RubyParser; str: string): TsRubyNode =
+  TsRubyNode(ts_tree_root_node(ts_parser_parse_string(PtsParser(parser), nil,
+      str.cstring, uint32(len(str)))))
 
-func `[]`*(s: string; node: RubyNode): string =
-  s[node.slice()]
+proc parseTsRubyString*(str: string): TsRubyNode =
+  let parser = newTsRubyParser()
+  return parseString(parser, str)
 
-func nodeString*(node: RubyNode): string =
-  $ts_node_string(TSNode(node))
+func `$`*(node: TsRubyNode): string =
+  if isNil(node):
+    "<nil tree>"
+  else:
+    $node.kind
 
-func isNull*(node: RubyNode): bool =
-  ts_node_is_null(TSNode(node))
+func `[]`*(node: TsRubyNode; idx: int; kind: RubyNodeKind | set[RubyNodeKind]): TsRubyNode =
+  assert 0 <= idx and idx < node.len
+  result = TsRubyNode(ts_node_named_child(TSNode(node), uint32(idx)))
+  assertKind(result, kind,
+             "Child node at index " & $idx & " for node kind " & $node.kind)
 
-func isNamed*(node: RubyNode): bool =
-  ts_node_is_named(TSNode(node))
+proc treeReprTsRuby*(str: string; unnamed: bool = false): string =
+  treeRepr[TsRubyNode, RubyNodeKind](parseTsRubyString(str), str, 4,
+                                     unnamed = unnamed)
 
-func isMissing*(node: RubyNode): bool =
-  ts_node_is_missing(TSNode(node))
+proc toHtsNode*(node: TsRubyNode; str: ptr string): HtsNode[TsRubyNode,
+    RubyNodeKind] =
+  toHtsNode[TsRubyNode, RubyNodeKind](node, str)
 
-func isExtra*(node: RubyNode): bool =
-  ts_node_is_extra(TSNode(node))
+proc toHtsTree*(node: TsRubyNode; str: ptr string): RubyNode =
+  toHtsNode[TsRubyNode, RubyNodeKind](node, str)
 
-func hasChanges*(node: RubyNode): bool =
-  ts_node_has_changes(TSNode(node))
+proc parseRubyString*(str: ptr string; unnamed: bool = false): RubyNode =
+  let parser = newTsRubyParser()
+  return toHtsTree[TsRubyNode, RubyNodeKind](parseString(parser, str[]), str)
 
-func hasError*(node: RubyNode): bool =
-  ts_node_has_error(TSNode(node))
-
-func parent*(node: RubyNode): RubyNode =
-  RubyNode(ts_node_parent(TSNode(node)))
-
-func child*(node: RubyNode; a2: int): RubyNode =
-  RubyNode(ts_node_child(TSNode(node), a2.uint32))
-
-func childCount*(node: RubyNode): int =
-  ts_node_child_count(TSNode(node)).int
-
-func namedChild*(node: RubyNode; a2: int): RubyNode =
-  RubyNode(ts_node_named_child(TSNode(node), a2.uint32))
-
-func namedChildCount*(node: RubyNode): int =
-  ts_node_named_child_count(TSNode(node)).int
-
-func startPoint*(node: RubyNode): TSPoint =
-  ts_node_start_point(TSNode(node))
-
-func endPoint*(node: RubyNode): TSPoint =
-  ts_node_end_point(TSNode(node))
-
-func startLine*(node: RubyNode): int =
-  node.startPoint().row.int
-
-func endLine*(node: RubyNode): int =
-  node.endPoint().row.int
-
-func startColumn*(node: RubyNode): int =
-  node.startPoint().column.int
-
-func endColumn*(node: RubyNode): int =
-  node.endPoint().column.int
-
-func childByFieldName*(self: RubyNode; fieldName: string; fieldNameLength: int): TSNode =
-  ts_node_child_by_field_name(TSNode(self), fieldName.cstring,
-                              fieldNameLength.uint32)
+proc parseRubyString*(str: string; unnamed: bool = false): RubyNode =
+  let parser = newTsRubyParser()
+  return toHtsTree[TsRubyNode, RubyNodeKind](parseString(parser, str),
+      unsafeAddr str, storePtr = false)
