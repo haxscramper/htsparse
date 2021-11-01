@@ -3,7 +3,8 @@ import
   hmisc / wrappers / treesitter
 
 import
-  hmisc / base_errors
+  hmisc / core / all,
+  hmisc/ types/colorstring
 
 import
   strutils
@@ -153,8 +154,8 @@ type
     cppVirtualFunctionSpecifier, ## virtual_function_specifier
     cppVirtualSpecifier,    ## virtual_specifier
     cppWhileStatement,      ## while_statement
-    cppNewlineTok,          ## 
-                             ## 
+    cppNewlineTok,          ##
+                             ##
     cppExclamationTok,      ## !
     cppExclamationEqualTok, ## !=
     cppQuoteTok,            ## "
@@ -960,7 +961,7 @@ func `[]`*(node: TsCppNode; idx: int; kind: CppNodeKind | set[CppNodeKind]): TsC
   assertKind(result, kind,
              "Child node at index " & $idx & " for node kind " & $node.kind)
 
-proc treeReprTsCpp*(str: string; unnamed: bool = false): string =
+proc treeReprTsCpp*(str: string; unnamed: bool = false): ColoredText =
   treeRepr[TsCppNode, CppNodeKind](parseTsCppString(str), str, 3,
                                    unnamed = unnamed)
 

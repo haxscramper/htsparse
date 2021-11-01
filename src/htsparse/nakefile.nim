@@ -1,4 +1,6 @@
-import hparse/htreesitter/hts_wrapgen
+import
+  hnimast/codegen/hts_wrapgen
+
 import
   hmisc/other/[oswrap, hlogger, hargparse],
   hmisc/algo/[halgorithm, clformat]

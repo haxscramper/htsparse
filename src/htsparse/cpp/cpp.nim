@@ -9,7 +9,10 @@ export cpp_wrapper
 
 import
   hmisc/wrappers/treesitter,
-  hmisc/algo/halgorithm
+  hmisc/core/all,
+  hmisc/algo/[halgorithm, clformat]
+
+export treesitter, clformat
 
 const cppNodeKindMap* = toMapArray {
   cppComment: tskComment

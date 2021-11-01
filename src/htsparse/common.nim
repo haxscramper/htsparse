@@ -2,9 +2,10 @@ import std/[macros]
 import
   hmisc/wrappers/treesitter,
   hmisc/macros/argpass,
-  hmisc/algo/halgorithm
+  hmisc/algo/[halgorithm, clformat],
+  hmisc/core/all
 
-export halgorithm, argpass, treesitter
+export halgorithm, argpass, treesitter, clformat, all
 
 
 macro initTreeRepr*(
@@ -22,14 +23,17 @@ macro initTreeRepr*(
         node {.inject.}: `tsNode` | `node`,
         base {.inject.}: string = "",
         unnamed {.inject.}: bool = false,
-        indexed {.inject.}: bool = false,
-        maxdepth {.inject.}: int = high(int),
-        pathIndexed {.inject.}: bool = false
-      ): string =
+        opts {.inject.}: HDisplayOpts = defaultHDisplay
+        # indexed {.inject.}: bool = false,
+        # maxdepth {.inject.}: int = high(int),
+        # pathIndexed {.inject.}: bool = false
+      ): ColoredText =
 
       argpass(
         treeRepr(node, base, `prefixLen`, `kindMap`),
         unnamed,
-        indexed,
-        maxdepth,
-        pathIndexed)
+        opts
+        # indexed,
+        # maxdepth,
+        # pathIndexed
+      )

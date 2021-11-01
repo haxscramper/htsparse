@@ -3,7 +3,7 @@ import
   hmisc / wrappers / treesitter
 
 import
-  hmisc / base_errors
+  hmisc / core / all
 
 import
   strutils
@@ -84,8 +84,8 @@ type
     juliaUnaryExpression,   ## unary_expression
     juliaVariableDeclaration, ## variable_declaration
     juliaWhileStatement,    ## while_statement
-    juliaNewlineTok,        ## 
-                             ## 
+    juliaNewlineTok,        ##
+                             ##
     juliaExclamationTok,    ## !
     juliaQuoteTok,          ## "
     juliaDollarTok,         ## $

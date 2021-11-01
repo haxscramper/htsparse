@@ -10,22 +10,6 @@ import
   std/[sequtils, strutils, options, sugar,
        strformat, tables, sets]
 
-proc `=~`(
-  node: PNode,
-  check: tuple[kind: TNodeKind, strVals: seq[string]]): bool =
-
-  node.kind == check.kind and node.getStrVal() in check.strVals
-
-proc `=~`(node: PNode, kind: TNodeKind): bool =
-  node.kind == kind
-
-proc `=~`[R](nodes: seq[PNode], kinds: array[R, TNodeKind]): bool =
-  for (node, kind) in zip(nodes, kinds):
-    if node.kind != kind:
-      return false
-
-  return true
-
 
 
 proc convTypeName(name: string): string =

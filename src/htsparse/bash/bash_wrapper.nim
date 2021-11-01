@@ -3,7 +3,10 @@ import
   hmisc / wrappers / treesitter
 
 import
-  hmisc / base_errors
+  hmisc / core / all
+
+import
+  hmisc / types / colorstring
 
 import
   strutils
@@ -55,8 +58,8 @@ type
     bashVariableAssignment, ## variable_assignment
     bashWhileStatement,     ## while_statement
     bashWord,               ## word
-    bashNewlineTok,         ## 
-                             ## 
+    bashNewlineTok,         ##
+                             ##
     bashExclamationTok,     ## !
     bashExclamationEqualTok, ## !=
     bashQuoteTok,           ## "
@@ -475,7 +478,7 @@ func `[]`*(node: TsBashNode; idx: int; kind: BashNodeKind | set[BashNodeKind]): 
   assertKind(result, kind,
              "Child node at index " & $idx & " for node kind " & $node.kind)
 
-proc treeReprTsBash*(str: string; unnamed: bool = false): string =
+proc treeReprTsBash*(str: string; unnamed: bool = false): ColoredText =
   treeRepr[TsBashNode, BashNodeKind](parseTsBashString(str), str, 4,
                                      unnamed = unnamed)
 
