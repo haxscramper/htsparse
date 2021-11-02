@@ -3,7 +3,7 @@ import
   hmisc/other/oswrap,
   hmisc/algo/[namegen, htemplates, hseq_mapping],
   hmisc/wrappers/treesitter,
-  hmisc/hdebug_misc,
+  hmisc/core/all,
   hnimast
 
 import
@@ -86,7 +86,7 @@ proc toNType(node: JavaNode, str: string): PNtype =
       result = toNType(node[1], str)
 
     else:
-      raise newImplementKindError(node, node.treeRepr(str, pathIndexed = true))
+      raise newImplementKindError(node, node.treeRepr(str))
 
 proc procBody(node: JavaNode): JavaNode =
   if node[4].kind == javaThrows:
@@ -428,7 +428,9 @@ proc conv(
           of "++": (if post: "postInc" else: "preInc")
           of "--": (if post: "postDec" else: "preDec")
           else: raise newUnexpectedKindError(
-            str[node{opIdx}] & node.treeRepr(str, unnamed = true)),
+            str[node{opIdx}],
+            node.treeRepr(str, unnamed = true)),
+
         conv(node{exprIdx}, str))
 
     of javaIfStatement:
@@ -443,7 +445,7 @@ proc conv(
 
         else:
           raise newImplementError(
-            str[node] & "\n" & node.treeRepr(str, indexed = true))
+            str[node] & "\n" & node.treeRepr(str))
 
 
     of javaCatchFormalParameter:
@@ -503,8 +505,7 @@ proc conv(
       echo node.treeRepr()
       raise newImplementKindError(
         node, "\n" & str[node], node.treeRepr(
-          str, pathIndexed = true, maxDepth = 5,
-          unnamed = false))
+          str, unnamed = false))
 
 
 

@@ -2,7 +2,8 @@ import
   htsparse/java/java
 
 import
-  hmisc/hdebug_misc,
+  hmisc/core/all,
+  hmisc/types/colorstring,
   hmisc/other/hpprint
 
 import
