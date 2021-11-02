@@ -172,6 +172,7 @@ struct Scanner {
       if (!(
         lexer->lookahead == 0 ||
         iswspace(lexer->lookahead) ||
+        lexer->lookahead == '\\' ||
         lexer->lookahead == '>' ||
         lexer->lookahead == '<' ||
         lexer->lookahead == ')' ||
@@ -219,6 +220,9 @@ struct Scanner {
           skip(lexer);
         } else if (lexer->lookahead == '\\') {
           skip(lexer);
+          if (lexer->lookahead == '\r') {
+            skip(lexer);
+          }
           if (lexer->lookahead == '\n') {
             skip(lexer);
           } else {

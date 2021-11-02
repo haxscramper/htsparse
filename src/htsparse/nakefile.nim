@@ -24,17 +24,20 @@ proc build*(
   grammarFromUrl(
     grammarUrl  = grammarUrl,
     scannerUrl  = scannerUrl,
-    scannerFile = scannerFile,
-    parserOut   = parserOut,
+    grammarFile = cwd() /. "grammar.js",
+    scannerFile = if scannerUrl.isSome(): some cwd() / scannerFile else: none(AbsFile),
+    parserOut   = some cwd() / parserOut,
     l           = logger,
     testLink = false
   )
+
+  # execShell shellCmd(nim, check, errormax = 2, )
 
 proc build*(
     lang: string,
     downUrls: seq[(Url, RelFile)],
     scannerMain: Option[RelFile],
-    grammarJs: FsFile,
+    grammarJs: RelFile,
     buildDir: Option[RelDir] = none(RelDir),
     parserOut: RelFile = RelFile(lang & "_parser.c")
   ) =
@@ -53,9 +56,9 @@ proc build*(
 
   grammarFromFile(
     langPrefix  = lang,
-    grammarJs   = grammarJs,
-    scannerFile = scannerMain,
-    parserOut   = some(parserOut),
+    grammarJs   = cwd() / grammarJs,
+    scannerFile = scannerMain.mapItSome(cwd() / it),
+    parserOut   = some(cwd() / parserOut),
     extraFiles  = extraFiles,
     l           = logger,
     testLink = false
@@ -72,8 +75,8 @@ proc tomlCompile*() =
 proc cppCompile*() =
   ## Compile sources for cpp parser
   build("cpp",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-cpp/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-cpp/master/src/scanner.cc"),
+    Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/grammar.js"),
+    some Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/src/scanner.cc"),
     scannerFile = RelFile("cpp_scanner.cc"),
   )
 
@@ -124,8 +127,13 @@ proc embeddedTemplateCompile*() =
 proc fennelCompile*() =
   build("fennel",
     Url("https://raw.githubusercontent.com/TravonteD/tree-sitter-fennel/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/TravonteD/tree-sitter-fennel/master/src/scanner.c"),
+    # some Url("https://raw.githubusercontent.com/TravonteD/tree-sitter-fennel/master/src/scanner.c"),
   )
+
+proc clojureCompile*() =
+  build(
+    "clojure",
+    Url("https://raw.githubusercontent.com/sogaiu/tree-sitter-clojure/master/grammar.js"))
 
 proc goCompile*() =
   build("go",
@@ -439,6 +447,7 @@ type
     lKotlin           = "kotlin"
     lZig              = "zig"
     lDart             = "dart"
+    lClojure          = "clojure"
 
 proc toClosure*(arg: proc() {.nimcall.}): proc() {.closure.} = arg
 
@@ -484,7 +493,8 @@ proc compile*(lang: Lang) =
     lScala: scalaCompile,
     lKotlin: kotlinCompile,
     lZig: zigCompile,
-    lDart: dartCompile
+    lDart: dartCompile,
+    lClojure: clojureCompile
   }
 
   list[lTotal] = proc() =
@@ -492,17 +502,23 @@ proc compile*(lang: Lang) =
     var fail: seq[Lang]
     for lang, pr in list:
       if lang != lTotal and not isNil(pr):
-        try:
-          cd startDir
-          pr()
+        logger.info "Generating wrappers for", $lang
+        logger.indented():
+          try:
+            cd startDir
+            pr()
 
-        except:
-          fail.add lang
+          except:
+            fail.add lang
 
 
     if fail.len > 0:
-      logger.err "Failed wrapper generator for", joinWords(
-        mapIt(fail, $it), "and")
+      logger.err "Failed wrapper generator for",
+       joinWords(
+         mapIt(fail, clt($it)),
+         clt"and",
+         quote = '"'
+       )
 
   list[lang]()
 
@@ -522,4 +538,7 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
     compile(app.getArg() as Lang)
 
 when isMainModule:
-  main(paramStrs())
+  main(@["clojure"])
+  # main(@["cpp"])
+  # main(paramStrs())
+  echo "all ok"

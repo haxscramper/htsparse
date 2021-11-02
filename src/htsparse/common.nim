@@ -6,6 +6,7 @@ import
   hmisc/core/all
 
 export halgorithm, argpass, treesitter, clformat, all
+export toMapArray
 
 
 macro initTreeRepr*(

@@ -4,6 +4,7 @@
 
 import julia_wrapper
 export julia_wrapper
+import ../common
 
 import
   hmisc/wrappers/treesitter,
@@ -13,7 +14,6 @@ const juliaNodeKindMap* = toMapArray {
   juliaComment: tskComment
 }
 
-import ../common
 initTreeRepr("Julia", 5, juliaNodeKindMap)
 
 # proc treeRepr*(

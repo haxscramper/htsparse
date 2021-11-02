@@ -23,7 +23,8 @@ import htsparse/[
   zig/zig,
   systemVerilog/systemVerilog,
   julia/julia,
-  dart/dart
+  dart/dart,
+  clojure/clojure
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -121,10 +122,10 @@ int main() {
 suite "Php":
   test "Parse string":
     let str = """
-  $color = "black";  
-  echo "My car is ". $ColoR ."</br>";  
-  echo "My dog is ". $color ."</br>";  
-  echo "My Phone is ". $COLOR ."</br>";  
+  $color = "black";
+  echo "My car is ". $ColoR ."</br>";
+  echo "My dog is ". $color ."</br>";
+  echo "My Phone is ". $COLOR ."</br>";
 """
     let parser = newTsPhpParser()
     discard parser.parseString(str).treeRepr(str)
@@ -171,7 +172,7 @@ h1 {
 }
 p {
   color: red;
-} 
+}
 """
     let parser = newTsCssParser()
     discard parser.parseString(str).treeRepr(str)
@@ -309,7 +310,12 @@ suite "cpp":
   test "Parse string":
     let parser = newTsCppParser()
     let str = """
-int main() {}
+class Counter {
+    Q_PROPERTY(QColor color MEMBER m_color NOTIFY colorChanged)
+
+    public slots: void setValue(int value);
+    public: void test();
+};
 """
     echo parser.parseString(str).treeRepr(str)
     echo parser.parseString(str).treeRepr(str, true)
@@ -391,3 +397,14 @@ class Term {
 """
 
     echo parseDartString(str).treeRepr(str)
+
+suite "Clojure":
+  test "Clojure":
+    let str = """
+(ns code-maat.parsers.svn
+  (:require [code-maat.parsers.time-parser :as tp]
+            [clojure.data.zip.xml :as zip-xml]
+            [clojure.string :as s]))
+"""
+
+    echo parseClojureString(str).treeRepr(str)

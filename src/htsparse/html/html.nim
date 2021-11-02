@@ -9,11 +9,12 @@ import
   hmisc/wrappers/treesitter,
   hmisc/algo/halgorithm
 
+import ../common
+
 const htmlNodeKindMap* = toMapArray {
   htmlComment: tskComment
 }
 
-import ../common
 
 initTreeRepr("Html", 4, htmlNodeKindMap)
 

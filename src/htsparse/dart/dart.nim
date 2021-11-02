@@ -5,6 +5,7 @@
 
 import dart_wrapper
 export dart_wrapper
+import ../common
 
 import
   hmisc/wrappers/treesitter,
@@ -18,6 +19,4 @@ let dartNodeKindMap* = toMapArray {
 }
 
 
-proc treeRepr*(
-  node: DartNode, base: string, withUnnamed: bool = false): string =
-  treeRepr(node, base, 4, dartNodeKindMap, withUnnamed)
+initTreeRepr("Dart", 4, dartNodeKindMap)

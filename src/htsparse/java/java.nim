@@ -8,6 +8,8 @@ import
   hmisc/wrappers/treesitter,
   hmisc/algo/halgorithm
 
+import ../common
+
 const
   javaPrimitiveTypes* = {
     javaFloatingPointType,
@@ -21,7 +23,6 @@ const
     javaPrimitiveTypes: tskPrimitiveType
   }
 
-import ../common
 
 initTreeRepr("Java", 4, javaNodeKindMap)
 

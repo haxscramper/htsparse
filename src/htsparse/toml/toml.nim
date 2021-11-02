@@ -9,11 +9,12 @@ import
   hmisc/wrappers/treesitter,
   hmisc/algo/halgorithm
 
+import ../common
+
 const tomlNodeKindMap* = toMapArray {
   tomlComment: tskComment
 }
 
-import ../common
 initTreeRepr("Toml", 4, tomlNodeKindMap)
 
 # proc treeRepr*(

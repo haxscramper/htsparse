@@ -4,6 +4,7 @@
 
 import rust_wrapper
 export rust_wrapper
+import ../common
 
 import
   hmisc/wrappers/treesitter,
@@ -13,6 +14,5 @@ const rustNodeKindMap* = toMapArray {
   rustBlockComment, rustLineComment: tskComment
 }
 
-import ../common
 
 initTreeRepr("Rust", 4, rustNodeKindMap)

@@ -11,6 +11,7 @@
 
 import latex_wrapper
 export latex_wrapper
+import ../common
 
 import
   hmisc/wrappers/treesitter,
@@ -20,7 +21,6 @@ const latexNodeKindMap* = toMapArray {
   latexComment: tskComment
 }
 
-import ../common
 
 initTreeRepr("Latex", 5, latexNodeKindMap)
 
