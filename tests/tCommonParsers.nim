@@ -24,7 +24,8 @@ import htsparse/[
   systemVerilog/systemVerilog,
   julia/julia,
   dart/dart,
-  clojure/clojure
+  clojure/clojure,
+  fennel/fennel
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -408,3 +409,13 @@ suite "Clojure":
 """
 
     echo parseClojureString(str).treeRepr(str)
+
+suite "Fennel":
+  test "Fennel":
+    let str = """
+(fn print-and-add [a b c]
+  (print a)
+  (+ b c))
+"""
+
+    echo parseFennelString(str).treeRepr(str)
