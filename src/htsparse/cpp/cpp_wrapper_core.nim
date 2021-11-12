@@ -87,6 +87,7 @@ type
     cppMsDeclspecModifier                   ## ms_declspec_modifier
     cppMsPointerModifier                    ## ms_pointer_modifier
     cppMsUnalignedPtrModifier               ## ms_unaligned_ptr_modifier
+    cppNamespaceAliasDefinition             ## namespace_alias_definition
     cppNamespaceDefinition                  ## namespace_definition
     cppNamespaceDefinitionName              ## namespace_definition_name
     cppNewDeclarator                        ## new_declarator
@@ -113,6 +114,7 @@ type
     cppPreprocIfdef                         ## preproc_ifdef
     cppPreprocInclude                       ## preproc_include
     cppPreprocParams                        ## preproc_params
+    cppQpropertyDeclaration                 ## qproperty_declaration
     cppQualifiedIdentifier                  ## qualified_identifier
     cppRefQualifier                         ## ref_qualifier
     cppReferenceDeclarator                  ## reference_declarator
@@ -209,6 +211,7 @@ type
     cppQuestionTok                          ## ?
     cppLQuoteTok                            ## L"
     cppLApostropheTok                       ## L'
+    cppQPROPERTYTok                         ## Q_PROPERTY
     cppUQuoteTok                            ## U"
     cppUApostropheTok                       ## U'
     cppLBrackTok                            ## [
@@ -286,8 +289,10 @@ type
     cppRestrictTok                          ## restrict
     cppReturnTok                            ## return
     cppShortTok                             ## short
+    cppSignalsTok                           ## signals
     cppSignedTok                            ## signed
     cppSizeofTok                            ## sizeof
+    cppSlotsTok                             ## slots
     cppStatementIdentifier                  ## statement_identifier
     cppStaticTok                            ## static
     cppStaticAssertTok                      ## static_assert
@@ -423,6 +428,7 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "ms_declspec_modifier":                    cppMsDeclspecModifier
       of "ms_pointer_modifier":                     cppMsPointerModifier
       of "ms_unaligned_ptr_modifier":               cppMsUnalignedPtrModifier
+      of "namespace_alias_definition":              cppNamespaceAliasDefinition
       of "namespace_definition":                    cppNamespaceDefinition
       of "namespace_definition_name":               cppNamespaceDefinitionName
       of "new_declarator":                          cppNewDeclarator
@@ -449,6 +455,7 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "preproc_ifdef":                           cppPreprocIfdef
       of "preproc_include":                         cppPreprocInclude
       of "preproc_params":                          cppPreprocParams
+      of "qproperty_declaration":                   cppQpropertyDeclaration
       of "qualified_identifier":                    cppQualifiedIdentifier
       of "ref_qualifier":                           cppRefQualifier
       of "reference_declarator":                    cppReferenceDeclarator
@@ -544,6 +551,7 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "?":                                       cppQuestionTok
       of "L\"":                                     cppLQuoteTok
       of "L\'":                                     cppLApostropheTok
+      of "Q_PROPERTY":                              cppQPROPERTYTok
       of "U\"":                                     cppUQuoteTok
       of "U\'":                                     cppUApostropheTok
       of "[":                                       cppLBrackTok
@@ -620,8 +628,10 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "restrict":                                cppRestrictTok
       of "return":                                  cppReturnTok
       of "short":                                   cppShortTok
+      of "signals":                                 cppSignalsTok
       of "signed":                                  cppSignedTok
       of "sizeof":                                  cppSizeofTok
+      of "slots":                                   cppSlotsTok
       of "statement_identifier":                    cppStatementIdentifier
       of "static":                                  cppStaticTok
       of "static_assert":                           cppStaticAssertTok

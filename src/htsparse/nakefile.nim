@@ -76,8 +76,8 @@ proc tomlCompile*() =
 proc cppCompile*() =
   ## Compile sources for cpp parser
   build("cpp",
-    Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/v0.20.0/grammar.js"),
-    some Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/v0.20.0/src/scanner.cc"),
+    Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/grammar.js"),
+    some Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/src/scanner.cc"),
     scannerFile = RelFile("cpp_scanner.cc"),
   )
 
@@ -136,6 +136,12 @@ proc clojureCompile*() =
   build(
     "clojure",
     Url("https://raw.githubusercontent.com/sogaiu/tree-sitter-clojure/v0.0.8/grammar.js"))
+
+proc graphqlCompile*() =
+  # https://github.com/sogaiu/tree-sitter-clojure
+  build(
+    "graphql",
+    Url("https://raw.githubusercontent.com/bkegley/tree-sitter-graphql/master/grammar.js"))
 
 proc goCompile*() =
   # https://github.com/tree-sitter/tree-sitter-go
@@ -451,6 +457,7 @@ type
     lZig              = "zig"
     lDart             = "dart"
     lClojure          = "clojure"
+    lGraphql          = "graphql"
 
 proc toClosure*(arg: proc() {.nimcall.}): proc() {.closure.} = arg
 
@@ -497,7 +504,8 @@ proc compile*(lang: Lang) =
     # lKotlin: kotlinCompile,
     lZig: zigCompile,
     lDart: dartCompile,
-    lClojure: clojureCompile
+    lClojure: clojureCompile,
+    lGraphql: graphqlCompile,
   }
 
   list[lTotal] = proc() =
@@ -543,6 +551,6 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
 when isMainModule:
   startHax()
   # main(@["total"])
-  main(@["go"])
+  main(@["graphql"])
   # main(paramStrs())
   echo "all ok"

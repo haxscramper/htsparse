@@ -24,7 +24,8 @@ import htsparse/[
   julia/julia,
   dart/dart,
   clojure/clojure,
-  fennel/fennel
+  fennel/fennel,
+  graphql/graphql
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -421,3 +422,26 @@ suite "Fennel":
 """
 
     echo parseFennelString(str).treeRepr(str)
+
+suite "Graphql":
+  test "Graphql":
+    let str = """
+{
+  leftComparison: hero(episode: EMPIRE) {
+    ...comparisonFields
+  }
+  rightComparison: hero(episode: JEDI) {
+    ...comparisonFields
+  }
+}
+
+fragment comparisonFields on Character {
+  name
+  appearsIn
+  friends {
+    name
+  }
+}
+"""
+
+    echo parseGraphqlString(str).treeRepr(str)

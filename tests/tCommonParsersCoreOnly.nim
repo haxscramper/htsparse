@@ -24,7 +24,8 @@ import htsparse/[
   julia/julia_core_only,
   dart/dart_core_only,
   clojure/clojure_core_only,
-  fennel/fennel_core_only
+  fennel/fennel_core_only,
+  graphql/graphql_core_only,
 ]
 
 suite "Main":
@@ -407,4 +408,28 @@ suite "Fennel":
 
     let node = parseTsFennelString(str)
     doAssert node.kind == fennelProgram
+    echo node.treeRepr(str)
+
+suite "Graphql":
+  test "Graphql":
+    let str = """
+{
+  leftComparison: hero(episode: EMPIRE) {
+    ...comparisonFields
+  }
+  rightComparison: hero(episode: JEDI) {
+    ...comparisonFields
+  }
+}
+
+fragment comparisonFields on Character {
+  name
+  appearsIn
+  friends {
+    name
+  }
+}
+"""
+
+    let node = parseTsGraphqlString(str)
     echo node.treeRepr(str)
