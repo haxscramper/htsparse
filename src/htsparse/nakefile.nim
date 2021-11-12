@@ -3,7 +3,8 @@ import
 
 import
   hmisc/other/[oswrap, hlogger, hargparse],
-  hmisc/algo/[halgorithm, clformat]
+  hmisc/algo/[halgorithm, clformat],
+  hmisc/core/all
 
 import std/[uri, options, httpclient, strutils, sequtils, strformat]
 
@@ -67,48 +68,48 @@ proc build*(
 proc tomlCompile*() =
   ## Compile sources for toml parser
   build("toml",
-    Url("https://raw.githubusercontent.com/ikatyang/tree-sitter-toml/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/ikatyang/tree-sitter-toml/master/src/scanner.c"),
+    Url("https://raw.githubusercontent.com/ikatyang/tree-sitter-toml/v0.5.1/grammar.js"),
+    some Url("https://raw.githubusercontent.com/ikatyang/tree-sitter-toml/v0.5.1/src/scanner.c"),
   )
 
 
 proc cppCompile*() =
   ## Compile sources for cpp parser
   build("cpp",
-    Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/master/src/scanner.cc"),
+    Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/v0.20.0/grammar.js"),
+    some Url("https://raw.githubusercontent.com/haxscramper/tree-sitter-cpp/v0.20.0/src/scanner.cc"),
     scannerFile = RelFile("cpp_scanner.cc"),
   )
 
 proc bashCompile*() =
   build("bash",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-bash/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-bash/master/src/scanner.cc"),
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-bash/v0.19.0/grammar.js"),
+    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-bash/v0.19.0/src/scanner.cc"),
     scannerFile = RelFile("bash_scanner.cc")
   )
 
 proc cCompile*() =
   build("c",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c/master/grammar.js")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c/v0.20.1/grammar.js")
   )
 
 proc csharpCompile*() =
   build("csharp",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c-sharp/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c-sharp/master/src/scanner.c"),
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c-sharp/v0.19.0/grammar.js"),
+    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-c-sharp/v0.19.0/src/scanner.c"),
   )
 
 proc cssCompile*() =
   build(
     "css",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-css/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-css/master/src/scanner.c")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-css/v0.19.0/grammar.js"),
+    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-css/v0.19.0/src/scanner.c")
   )
 
 proc elmCompile*() =
   build("elm",
-    Url("https://raw.githubusercontent.com/Razzeee/tree-sitter-elm/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/Razzeee/tree-sitter-elm/master/src/scanner.cc"),
+    Url("https://raw.githubusercontent.com/Razzeee/tree-sitter-elm/v5.3.7/grammar.js"),
+    some Url("https://raw.githubusercontent.com/Razzeee/tree-sitter-elm/v5.3.7/src/scanner.cc"),
     scannerFile = RelFile("elm_scanner.cc")
   )
 
@@ -131,13 +132,15 @@ proc fennelCompile*() =
   )
 
 proc clojureCompile*() =
+  # https://github.com/sogaiu/tree-sitter-clojure
   build(
     "clojure",
-    Url("https://raw.githubusercontent.com/sogaiu/tree-sitter-clojure/master/grammar.js"))
+    Url("https://raw.githubusercontent.com/sogaiu/tree-sitter-clojure/v0.0.8/grammar.js"))
 
 proc goCompile*() =
+  # https://github.com/tree-sitter/tree-sitter-go
   build("go",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-go/master/grammar.js")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-go/v0.19.1/grammar.js")
   )
 
 proc htmlCompile*() =
@@ -394,7 +397,7 @@ proc scalaCompile*() =
 proc kotlinCompile*() =
   build(
     "kotlin",
-    Url("https://raw.githubusercontent.com/fwcd/tree-sitter-kotlin/master/grammar.js")
+    Url("https://raw.githubusercontent.com/fwcd/tree-sitter-kotlin/0.2.11/grammar.js"),
   )
 
 proc zigCompile*() =
@@ -491,7 +494,7 @@ proc compile*(lang: Lang) =
     lJulia: juliaCompile,
     lNix: nixCompile,
     lScala: scalaCompile,
-    lKotlin: kotlinCompile,
+    # lKotlin: kotlinCompile,
     lZig: zigCompile,
     lDart: dartCompile,
     lClojure: clojureCompile
@@ -538,7 +541,8 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
     compile(app.getArg() as Lang)
 
 when isMainModule:
-  main(@["clojure"])
-  # main(@["cpp"])
+  startHax()
+  # main(@["total"])
+  main(@["go"])
   # main(paramStrs())
   echo "all ok"

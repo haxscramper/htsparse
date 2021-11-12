@@ -19,7 +19,6 @@ import htsparse/[
   embeddedTemplate/embedded_template,
   go/go,
   vhdl/vhdl,
-  kotlin/kotlin,
   zig/zig,
   systemVerilog/systemVerilog,
   julia/julia,
@@ -73,18 +72,21 @@ echo $sum
     echo parseBashString(str).treeRepr()
 
 
-suite "Kotlin":
-  test "Parse string":
-    let str = """
+
+when false:
+  import htsparse/kotlin/kotlin
+  suite "Kotlin":
+    test "Parse string":
+      let str = """
 package org.kotlinlang.play         // 1
 
 fun main() {                        // 2
     println("Hello, World!")        // 3
 }
 """
-    let parser = newTsKotlinParser()
-    discard parser.parseString(str).treeRepr(str)
-    echo parseKotlinString(str).treeRepr()
+      let parser = newTsKotlinParser()
+      discard parser.parseString(str).treeRepr(str)
+      echo parseKotlinString(str).treeRepr()
 
 suite "Lua":
   test "Parse string":
