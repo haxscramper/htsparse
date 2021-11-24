@@ -2,30 +2,37 @@
 
 import std/[sugar, strutils, sequtils, strformat, unittest]
 import htsparse/[
-  toml/toml,
-  cpp/cpp,
-  java/java,
-  html/html,
-  latex/latex,
-  scala/scala,
-  ruby/ruby,
-  rust/rust,
-  lua/lua,
-  php/php,
+  agda/agda,
   bash/bash,
   c/c,
+  clojure/clojure,
+  cpp/cpp,
   csharp/csharp,
   css/css,
+  dart/dart,
   embeddedTemplate/embedded_template,
+  eno/eno,
+  fennel/fennel,
   go/go,
+  graphql/graphql,
+  html/html,
+  java/java,
+  js/js,
+  julia/julia,
+  kotlin/kotlin,
+  latex/latex,
+  lua/lua,
+  nix/nix,
+  php/php,
+  python/python,
+  ruby/ruby,
+  rust/rust,
+  scala/scala,
+  systemVerilog/systemVerilog,
+  systemrdl/systemrdl,
+  toml/toml,
   vhdl/vhdl,
   zig/zig,
-  systemVerilog/systemVerilog,
-  julia/julia,
-  dart/dart,
-  clojure/clojure,
-  fennel/fennel,
-  graphql/graphql
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -445,3 +452,47 @@ fragment comparisonFields on Character {
 """
 
     echo parseGraphqlString(str).treeRepr(str)
+
+
+suite "Js":
+  test "Js":
+    let str = """
+// `return` keyword, otherwise you'll always return `undefined` due to
+// automatic semicolon insertion. Watch out for this when using Allman style.
+function myFunction(){
+    return // <- semicolon automatically inserted here
+    {thisIsAn: 'object literal'};
+}
+myFunction(); // = undefined
+"""
+
+    echo parseJsString(str).treeRepr(str)
+
+
+suite "Nix":
+  test "Nix":
+    let str = """
+buildPythonPackage rec {
+  pname = "hello";
+  version = "1.0";
+  src = fetchPypi {
+    inherit pname version;
+   sha256 = "01ba..0";
+  };
+}
+"""
+
+    echo parseNixString(str).treeRepr(str)
+
+
+suite "Eno":
+  test "Eno":
+    let str = """
+
+# cities
+Den Haag: 52.069961, 4.302315
+Málaga: 36.721447, -4.421291
+서울특별시: 37.566984, 126.977041
+"""
+
+    echo parseEnoString(str).treeRepr(str)

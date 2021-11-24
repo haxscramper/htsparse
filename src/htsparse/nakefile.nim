@@ -29,6 +29,7 @@ proc build*(
     scannerFile = if scannerUrl.isSome(): some cwd() / scannerFile else: none(AbsFile),
     parserOut   = some cwd() / parserOut,
     l           = logger,
+    langPrefix = lang,
     testLink = false
   )
 
@@ -253,7 +254,7 @@ proc javaCompile*() =
 proc javascriptCompile*() =
   # https://github.com/tree-sitter/tree-sitter-javascript/tree/v0.19.0
   build(
-    "javascript",
+    "js",
     Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/v0.19.0/grammar.js"),
     some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/v0.19.0/src/scanner.c")
   )
@@ -390,9 +391,11 @@ proc juliaCompile*() =
   )
 
 proc nixCompile*() =
+  # https://github.com/cstrahan/tree-sitter-nix
   build(
     "nix",
-    Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/master/grammar.js")
+    Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/83ee5993560bf15854c69b77d92e34456f8fb655/grammar.js"),
+    some Url("https://raw.githubusercontent.com/cstrahan/tree-sitter-nix/83ee5993560bf15854c69b77d92e34456f8fb655/src/scanner.c")
   )
 
 proc scalaCompile*() =
@@ -438,7 +441,6 @@ type
     lHtml             = "html"
     lLatex            = "latex"
     lJava             = "java"
-    lJavascript       = "javascrip"
     lLua              = "lua"
     lPhp              = "php"
     lPython           = "python"
@@ -555,7 +557,7 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
 
 when isMainModule:
   startHax()
-  main(@["total"])
+  main(@["js"])
   # main(@["kotlin"])
   # main(@["verilog"])
   # main(paramStrs())
