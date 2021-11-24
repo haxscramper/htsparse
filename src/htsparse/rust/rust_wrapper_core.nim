@@ -268,6 +268,272 @@ type
     rustSyntaxError                        ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: RustNodeKind): string =
+  case kind:
+    of rustDeclarationStatement:               "_declaration_statement"
+    of rustExpression:                         "_expression"
+    of rustLiteral:                            "_literal"
+    of rustLiteralPattern:                     "_literal_pattern"
+    of rustPattern:                            "_pattern"
+    of rustType:                               "_type"
+    of rustAbstractType:                       "abstract_type"
+    of rustArguments:                          "arguments"
+    of rustArrayExpression:                    "array_expression"
+    of rustArrayType:                          "array_type"
+    of rustAssignmentExpression:               "assignment_expression"
+    of rustAssociatedType:                     "associated_type"
+    of rustAsyncBlock:                         "async_block"
+    of rustAttributeItem:                      "attribute_item"
+    of rustAwaitExpression:                    "await_expression"
+    of rustBaseFieldInitializer:               "base_field_initializer"
+    of rustBinaryExpression:                   "binary_expression"
+    of rustBlock:                              "block"
+    of rustBooleanLiteral:                     "boolean_literal"
+    of rustBoundedType:                        "bounded_type"
+    of rustBracketedType:                      "bracketed_type"
+    of rustBreakExpression:                    "break_expression"
+    of rustCallExpression:                     "call_expression"
+    of rustCapturedPattern:                    "captured_pattern"
+    of rustClosureExpression:                  "closure_expression"
+    of rustClosureParameters:                  "closure_parameters"
+    of rustCompoundAssignmentExpr:             "compound_assignment_expr"
+    of rustConstBlock:                         "const_block"
+    of rustConstItem:                          "const_item"
+    of rustConstParameter:                     "const_parameter"
+    of rustConstrainedTypeParameter:           "constrained_type_parameter"
+    of rustContinueExpression:                 "continue_expression"
+    of rustDeclarationList:                    "declaration_list"
+    of rustDynamicType:                        "dynamic_type"
+    of rustElseClause:                         "else_clause"
+    of rustEmptyStatement:                     "empty_statement"
+    of rustEmptyType:                          "empty_type"
+    of rustEnumItem:                           "enum_item"
+    of rustEnumVariant:                        "enum_variant"
+    of rustEnumVariantList:                    "enum_variant_list"
+    of rustExternCrateDeclaration:             "extern_crate_declaration"
+    of rustExternModifier:                     "extern_modifier"
+    of rustFieldDeclaration:                   "field_declaration"
+    of rustFieldDeclarationList:               "field_declaration_list"
+    of rustFieldExpression:                    "field_expression"
+    of rustFieldInitializer:                   "field_initializer"
+    of rustFieldInitializerList:               "field_initializer_list"
+    of rustFieldPattern:                       "field_pattern"
+    of rustForExpression:                      "for_expression"
+    of rustForLifetimes:                       "for_lifetimes"
+    of rustForeignModItem:                     "foreign_mod_item"
+    of rustFragmentSpecifier:                  "fragment_specifier"
+    of rustFunctionItem:                       "function_item"
+    of rustFunctionModifiers:                  "function_modifiers"
+    of rustFunctionSignatureItem:              "function_signature_item"
+    of rustFunctionType:                       "function_type"
+    of rustGenericFunction:                    "generic_function"
+    of rustGenericType:                        "generic_type"
+    of rustGenericTypeWithTurbofish:           "generic_type_with_turbofish"
+    of rustHigherRankedTraitBound:             "higher_ranked_trait_bound"
+    of rustIfExpression:                       "if_expression"
+    of rustIfLetExpression:                    "if_let_expression"
+    of rustImplItem:                           "impl_item"
+    of rustIndexExpression:                    "index_expression"
+    of rustInnerAttributeItem:                 "inner_attribute_item"
+    of rustLetDeclaration:                     "let_declaration"
+    of rustLifetime:                           "lifetime"
+    of rustLoopExpression:                     "loop_expression"
+    of rustLoopLabel:                          "loop_label"
+    of rustMacroDefinition:                    "macro_definition"
+    of rustMacroInvocation:                    "macro_invocation"
+    of rustMacroRule:                          "macro_rule"
+    of rustMatchArm:                           "match_arm"
+    of rustMatchBlock:                         "match_block"
+    of rustMatchExpression:                    "match_expression"
+    of rustMatchPattern:                       "match_pattern"
+    of rustMetaArguments:                      "meta_arguments"
+    of rustMetaItem:                           "meta_item"
+    of rustModItem:                            "mod_item"
+    of rustMutPattern:                         "mut_pattern"
+    of rustNegativeLiteral:                    "negative_literal"
+    of rustOptionalTypeParameter:              "optional_type_parameter"
+    of rustOrPattern:                          "or_pattern"
+    of rustOrderedFieldDeclarationList:        "ordered_field_declaration_list"
+    of rustParameter:                          "parameter"
+    of rustParameters:                         "parameters"
+    of rustParenthesizedExpression:            "parenthesized_expression"
+    of rustPointerType:                        "pointer_type"
+    of rustQualifiedType:                      "qualified_type"
+    of rustRangeExpression:                    "range_expression"
+    of rustRangePattern:                       "range_pattern"
+    of rustRefPattern:                         "ref_pattern"
+    of rustReferenceExpression:                "reference_expression"
+    of rustReferencePattern:                   "reference_pattern"
+    of rustReferenceType:                      "reference_type"
+    of rustRemainingFieldPattern:              "remaining_field_pattern"
+    of rustRemovedTraitBound:                  "removed_trait_bound"
+    of rustReturnExpression:                   "return_expression"
+    of rustScopedIdentifier:                   "scoped_identifier"
+    of rustScopedTypeIdentifier:               "scoped_type_identifier"
+    of rustScopedUseList:                      "scoped_use_list"
+    of rustSelfParameter:                      "self_parameter"
+    of rustShorthandFieldInitializer:          "shorthand_field_initializer"
+    of rustSlicePattern:                       "slice_pattern"
+    of rustSourceFile:                         "source_file"
+    of rustStaticItem:                         "static_item"
+    of rustStringLiteral:                      "string_literal"
+    of rustStructExpression:                   "struct_expression"
+    of rustStructItem:                         "struct_item"
+    of rustStructPattern:                      "struct_pattern"
+    of rustTokenBindingPattern:                "token_binding_pattern"
+    of rustTokenRepetition:                    "token_repetition"
+    of rustTokenRepetitionPattern:             "token_repetition_pattern"
+    of rustTokenTree:                          "token_tree"
+    of rustTokenTreePattern:                   "token_tree_pattern"
+    of rustTraitBounds:                        "trait_bounds"
+    of rustTraitItem:                          "trait_item"
+    of rustTryExpression:                      "try_expression"
+    of rustTupleExpression:                    "tuple_expression"
+    of rustTuplePattern:                       "tuple_pattern"
+    of rustTupleStructPattern:                 "tuple_struct_pattern"
+    of rustTupleType:                          "tuple_type"
+    of rustTypeArguments:                      "type_arguments"
+    of rustTypeBinding:                        "type_binding"
+    of rustTypeCastExpression:                 "type_cast_expression"
+    of rustTypeItem:                           "type_item"
+    of rustTypeParameters:                     "type_parameters"
+    of rustUnaryExpression:                    "unary_expression"
+    of rustUnionItem:                          "union_item"
+    of rustUnitExpression:                     "unit_expression"
+    of rustUnitType:                           "unit_type"
+    of rustUnsafeBlock:                        "unsafe_block"
+    of rustUseAsClause:                        "use_as_clause"
+    of rustUseDeclaration:                     "use_declaration"
+    of rustUseList:                            "use_list"
+    of rustUseWildcard:                        "use_wildcard"
+    of rustVariadicParameter:                  "variadic_parameter"
+    of rustVisibilityModifier:                 "visibility_modifier"
+    of rustWhereClause:                        "where_clause"
+    of rustWherePredicate:                     "where_predicate"
+    of rustWhileExpression:                    "while_expression"
+    of rustWhileLetExpression:                 "while_let_expression"
+    of rustExclamationTok:                     "!"
+    of rustExclamationEqualTok:                "!="
+    of rustQuoteTok:                           "\""
+    of rustHashTok:                            "#"
+    of rustDollarTok:                          "$"
+    of rustPercentTok:                         "%"
+    of rustPercentEqualTok:                    "%="
+    of rustAmpersandTok:                       "&"
+    of rustDoubleAmpersandTok:                 "&&"
+    of rustAmpersandEqualTok:                  "&="
+    of rustApostropheTok:                      "\'"
+    of rustLParTok:                            "("
+    of rustRParTok:                            ")"
+    of rustAsteriskTok:                        "*"
+    of rustAsteriskEqualTok:                   "*="
+    of rustPlusTok:                            "+"
+    of rustPlusEqualTok:                       "+="
+    of rustCommaTok:                           ","
+    of rustMinusTok:                           "-"
+    of rustMinusEqualTok:                      "-="
+    of rustMinusGreaterThanTok:                "->"
+    of rustDotTok:                             "."
+    of rustDoubleDotTok:                       ".."
+    of rustTripleDotTok:                       "..."
+    of rustDoubleDotEqualTok:                  "..="
+    of rustSlashTok:                           "/"
+    of rustSlashEqualTok:                      "/="
+    of rustColonTok:                           ":"
+    of rustDoubleColonTok:                     "::"
+    of rustSemicolonTok:                       ";"
+    of rustLessThanTok:                        "<"
+    of rustDoubleLessThanTok:                  "<<"
+    of rustDoubleLessThanEqualTok:             "<<="
+    of rustLessThanEqualTok:                   "<="
+    of rustEqualTok:                           "="
+    of rustDoubleEqualTok:                     "=="
+    of rustEqualGreaterThanTok:                "=>"
+    of rustGreaterThanTok:                     ">"
+    of rustGreaterThanEqualTok:                ">="
+    of rustDoubleGreaterThanTok:               ">>"
+    of rustDoubleGreaterThanEqualTok:          ">>="
+    of rustQuestionTok:                        "?"
+    of rustAtTok:                              "@"
+    of rustLBrackTok:                          "["
+    of rustRBrackTok:                          "]"
+    of rustAccentTok:                          "^"
+    of rustAccentEqualTok:                     "^="
+    of rustUnderscoreTok:                      "_"
+    of rustAsTok:                              "as"
+    of rustAsyncTok:                           "async"
+    of rustAwaitTok:                           "await"
+    of rustBlockTok:                           "block"
+    of rustBlockComment:                       "block_comment"
+    of rustBreakTok:                           "break"
+    of rustCharLiteral:                        "char_literal"
+    of rustConstTok:                           "const"
+    of rustContinueTok:                        "continue"
+    of rustCrate:                              "crate"
+    of rustDefaultTok:                         "default"
+    of rustDynTok:                             "dyn"
+    of rustElseTok:                            "else"
+    of rustEnumTok:                            "enum"
+    of rustEscapeSequence:                     "escape_sequence"
+    of rustExprTok:                            "expr"
+    of rustExternTok:                          "extern"
+    of rustFalseTok:                           "false"
+    of rustFieldIdentifier:                    "field_identifier"
+    of rustFloatLiteral:                       "float_literal"
+    of rustFnTok:                              "fn"
+    of rustForTok:                             "for"
+    of rustIdentTok:                           "ident"
+    of rustIdentifier:                         "identifier"
+    of rustIfTok:                              "if"
+    of rustImplTok:                            "impl"
+    of rustInTok:                              "in"
+    of rustIntegerLiteral:                     "integer_literal"
+    of rustItemTok:                            "item"
+    of rustLetTok:                             "let"
+    of rustLifetimeTok:                        "lifetime"
+    of rustLineComment:                        "line_comment"
+    of rustLiteralTok:                         "literal"
+    of rustLoopTok:                            "loop"
+    of rustMacroUnderscorerulesExclamationTok: "macro_rules!"
+    of rustMatchTok:                           "match"
+    of rustMetaTok:                            "meta"
+    of rustMetavariable:                       "metavariable"
+    of rustModTok:                             "mod"
+    of rustMoveTok:                            "move"
+    of rustMutableSpecifier:                   "mutable_specifier"
+    of rustPatTok:                             "pat"
+    of rustPathTok:                            "path"
+    of rustPrimitiveType:                      "primitive_type"
+    of rustPubTok:                             "pub"
+    of rustRawStringLiteral:                   "raw_string_literal"
+    of rustRefTok:                             "ref"
+    of rustReturnTok:                          "return"
+    of rustSelf:                               "self"
+    of rustShorthandFieldIdentifier:           "shorthand_field_identifier"
+    of rustStaticTok:                          "static"
+    of rustStmtTok:                            "stmt"
+    of rustStructTok:                          "struct"
+    of rustSuper:                              "super"
+    of rustTraitTok:                           "trait"
+    of rustTrueTok:                            "true"
+    of rustTtTok:                              "tt"
+    of rustTyTok:                              "ty"
+    of rustTypeTok:                            "type"
+    of rustTypeIdentifier:                     "type_identifier"
+    of rustUnionTok:                           "union"
+    of rustUnsafeTok:                          "unsafe"
+    of rustUseTok:                             "use"
+    of rustVisTok:                             "vis"
+    of rustWhereTok:                           "where"
+    of rustWhileTok:                           "while"
+    of rustLCurlyTok:                          "{"
+    of rustPipeTok:                            "|"
+    of rustPipeEqualTok:                       "|="
+    of rustDoublePipeTok:                      "||"
+    of rustRCurlyTok:                          "}"
+    of rustSyntaxError:                        "ERROR"
+
+
 type
   RustExternalTok* = enum
     rustExtern_string_content    ## _string_content
@@ -283,6 +549,275 @@ type
 type
   RustParser* = distinct PtsParser
 
+
+const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
+                                                                       var tmp: array[RustNodeKind, set[RustNodeKind]]
+                                                                       tmp[rustArguments] = {rustExpression, rustAttributeItem}
+                                                                       tmp[rustArrayExpression] = {rustExpression, rustAttributeItem}
+                                                                       tmp[rustAsyncBlock] = {rustBlock}
+                                                                       tmp[rustAttributeItem] = {rustMetaItem}
+                                                                       tmp[rustAwaitExpression] = {rustExpression}
+                                                                       tmp[rustBaseFieldInitializer] = {rustExpression}
+                                                                       tmp[rustBlock] = {rustDeclarationStatement, rustExpression}
+                                                                       tmp[rustBoundedType] = {rustType, rustLifetime}
+                                                                       tmp[rustBracketedType] = {rustType, rustQualifiedType}
+                                                                       tmp[rustBreakExpression] = {rustExpression, rustLoopLabel}
+                                                                       tmp[rustCapturedPattern] = {rustPattern}
+                                                                       tmp[rustClosureParameters] = {rustPattern, rustParameter}
+                                                                       tmp[rustConstItem] = {rustVisibilityModifier}
+                                                                       tmp[rustContinueExpression] = {rustLoopLabel}
+                                                                       tmp[rustDeclarationList] = {rustDeclarationStatement}
+                                                                       tmp[rustElseClause] = {rustBlock, rustIfExpression, rustIfLetExpression}
+                                                                       tmp[rustEnumItem] = {rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustEnumVariant] = {rustVisibilityModifier}
+                                                                       tmp[rustEnumVariantList] = {rustAttributeItem, rustEnumVariant}
+                                                                       tmp[rustExternCrateDeclaration] = {rustCrate, rustVisibilityModifier}
+                                                                       tmp[rustExternModifier] = {rustStringLiteral}
+                                                                       tmp[rustFieldDeclaration] = {rustVisibilityModifier}
+                                                                       tmp[rustFieldDeclarationList] = {rustAttributeItem, rustFieldDeclaration}
+                                                                       tmp[rustFieldInitializer] = {rustAttributeItem}
+                                                                       tmp[rustFieldInitializerList] = {rustBaseFieldInitializer, rustFieldInitializer, rustShorthandFieldInitializer}
+                                                                       tmp[rustFieldPattern] = {rustMutableSpecifier}
+                                                                       tmp[rustForExpression] = {rustLoopLabel}
+                                                                       tmp[rustForLifetimes] = {rustLifetime}
+                                                                       tmp[rustForeignModItem] = {rustExternModifier, rustVisibilityModifier}
+                                                                       tmp[rustFunctionItem] = {rustFunctionModifiers, rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustFunctionModifiers] = {rustExternModifier}
+                                                                       tmp[rustFunctionSignatureItem] = {rustFunctionModifiers, rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustFunctionType] = {rustForLifetimes, rustFunctionModifiers}
+                                                                       tmp[rustImplItem] = {rustWhereClause}
+                                                                       tmp[rustIndexExpression] = {rustExpression}
+                                                                       tmp[rustInnerAttributeItem] = {rustMetaItem}
+                                                                       tmp[rustLetDeclaration] = {rustMutableSpecifier}
+                                                                       tmp[rustLifetime] = {rustIdentifier}
+                                                                       tmp[rustLoopExpression] = {rustLoopLabel}
+                                                                       tmp[rustLoopLabel] = {rustIdentifier}
+                                                                       tmp[rustMacroDefinition] = {rustMacroRule}
+                                                                       tmp[rustMacroInvocation] = {rustTokenTree}
+                                                                       tmp[rustMatchArm] = {rustAttributeItem}
+                                                                       tmp[rustMatchBlock] = {rustMatchArm}
+                                                                       tmp[rustMatchPattern] = {rustPattern}
+                                                                       tmp[rustMetaArguments] = {rustLiteral, rustMetaItem}
+                                                                       tmp[rustMetaItem] = {rustCrate, rustIdentifier, rustMetavariable, rustScopedIdentifier, rustSelf, rustSuper}
+                                                                       tmp[rustModItem] = {rustVisibilityModifier}
+                                                                       tmp[rustMutPattern] = {rustPattern, rustMutableSpecifier}
+                                                                       tmp[rustNegativeLiteral] = {rustFloatLiteral, rustIntegerLiteral}
+                                                                       tmp[rustOrPattern] = {rustPattern}
+                                                                       tmp[rustOrderedFieldDeclarationList] = {rustAttributeItem, rustVisibilityModifier}
+                                                                       tmp[rustParameter] = {rustMutableSpecifier}
+                                                                       tmp[rustParameters] = {rustType, rustAttributeItem, rustParameter, rustSelfParameter, rustVariadicParameter}
+                                                                       tmp[rustParenthesizedExpression] = {rustExpression}
+                                                                       tmp[rustPointerType] = {rustMutableSpecifier}
+                                                                       tmp[rustRangeExpression] = {rustExpression}
+                                                                       tmp[rustRangePattern] = {
+                                                                                                 rustLiteralPattern,
+                                                                                                 rustCrate,
+                                                                                                 rustIdentifier,
+                                                                                                 rustMetavariable,
+                                                                                                 rustScopedIdentifier,
+                                                                                                 rustSelf,
+                                                                                                 rustSuper
+                                                                                               }
+                                                                       tmp[rustRefPattern] = {rustPattern}
+                                                                       tmp[rustReferenceExpression] = {rustMutableSpecifier}
+                                                                       tmp[rustReferencePattern] = {rustPattern, rustMutableSpecifier}
+                                                                       tmp[rustReferenceType] = {rustLifetime, rustMutableSpecifier}
+                                                                       tmp[rustRemovedTraitBound] = {rustType}
+                                                                       tmp[rustReturnExpression] = {rustExpression}
+                                                                       tmp[rustSelfParameter] = {rustLifetime, rustMutableSpecifier, rustSelf}
+                                                                       tmp[rustShorthandFieldInitializer] = {rustAttributeItem, rustIdentifier}
+                                                                       tmp[rustSlicePattern] = {rustPattern}
+                                                                       tmp[rustSourceFile] = {rustDeclarationStatement, rustExpression}
+                                                                       tmp[rustStaticItem] = {rustMutableSpecifier, rustVisibilityModifier}
+                                                                       tmp[rustStringLiteral] = {rustEscapeSequence}
+                                                                       tmp[rustStructItem] = {rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustStructPattern] = {rustFieldPattern, rustRemainingFieldPattern}
+                                                                       tmp[rustTokenRepetition] = {
+                                                                                                    rustLiteral,
+                                                                                                    rustCrate,
+                                                                                                    rustIdentifier,
+                                                                                                    rustMetavariable,
+                                                                                                    rustMutableSpecifier,
+                                                                                                    rustPrimitiveType,
+                                                                                                    rustSelf,
+                                                                                                    rustSuper,
+                                                                                                    rustTokenRepetition,
+                                                                                                    rustTokenTree
+                                                                                                  }
+                                                                       tmp[rustTokenRepetitionPattern] = {
+                                                                                                           rustLiteral,
+                                                                                                           rustCrate,
+                                                                                                           rustIdentifier,
+                                                                                                           rustMetavariable,
+                                                                                                           rustMutableSpecifier,
+                                                                                                           rustPrimitiveType,
+                                                                                                           rustSelf,
+                                                                                                           rustSuper,
+                                                                                                           rustTokenBindingPattern,
+                                                                                                           rustTokenRepetitionPattern,
+                                                                                                           rustTokenTreePattern
+                                                                                                         }
+                                                                       tmp[rustTokenTree] = {
+                                                                                              rustLiteral,
+                                                                                              rustCrate,
+                                                                                              rustIdentifier,
+                                                                                              rustMetavariable,
+                                                                                              rustMutableSpecifier,
+                                                                                              rustPrimitiveType,
+                                                                                              rustSelf,
+                                                                                              rustSuper,
+                                                                                              rustTokenRepetition,
+                                                                                              rustTokenTree
+                                                                                            }
+                                                                       tmp[rustTokenTreePattern] = {
+                                                                                                     rustLiteral,
+                                                                                                     rustCrate,
+                                                                                                     rustIdentifier,
+                                                                                                     rustMetavariable,
+                                                                                                     rustMutableSpecifier,
+                                                                                                     rustPrimitiveType,
+                                                                                                     rustSelf,
+                                                                                                     rustSuper,
+                                                                                                     rustTokenBindingPattern,
+                                                                                                     rustTokenRepetitionPattern,
+                                                                                                     rustTokenTreePattern
+                                                                                                   }
+                                                                       tmp[rustTraitBounds] = {rustType, rustHigherRankedTraitBound, rustLifetime, rustRemovedTraitBound}
+                                                                       tmp[rustTraitItem] = {rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustTryExpression] = {rustExpression}
+                                                                       tmp[rustTupleExpression] = {rustExpression, rustAttributeItem}
+                                                                       tmp[rustTuplePattern] = {rustPattern}
+                                                                       tmp[rustTupleStructPattern] = {rustPattern}
+                                                                       tmp[rustTupleType] = {rustType}
+                                                                       tmp[rustTypeArguments] = {rustLiteral, rustType, rustBlock, rustLifetime, rustTypeBinding}
+                                                                       tmp[rustTypeItem] = {rustVisibilityModifier}
+                                                                       tmp[rustTypeParameters] = {rustConstParameter, rustConstrainedTypeParameter, rustLifetime, rustMetavariable, rustOptionalTypeParameter, rustTypeIdentifier}
+                                                                       tmp[rustUnaryExpression] = {rustExpression}
+                                                                       tmp[rustUnionItem] = {rustVisibilityModifier, rustWhereClause}
+                                                                       tmp[rustUnsafeBlock] = {rustBlock}
+                                                                       tmp[rustUseDeclaration] = {rustVisibilityModifier}
+                                                                       tmp[rustUseList] = {
+                                                                                            rustCrate,
+                                                                                            rustIdentifier,
+                                                                                            rustMetavariable,
+                                                                                            rustScopedIdentifier,
+                                                                                            rustScopedUseList,
+                                                                                            rustSelf,
+                                                                                            rustSuper,
+                                                                                            rustUseAsClause,
+                                                                                            rustUseList,
+                                                                                            rustUseWildcard
+                                                                                          }
+                                                                       tmp[rustUseWildcard] = {rustCrate, rustIdentifier, rustMetavariable, rustScopedIdentifier, rustSelf, rustSuper}
+                                                                       tmp[rustVisibilityModifier] = {rustCrate, rustIdentifier, rustMetavariable, rustScopedIdentifier, rustSelf, rustSuper}
+                                                                       tmp[rustWhereClause] = {rustWherePredicate}
+                                                                       tmp[rustWhileExpression] = {rustLoopLabel}
+                                                                       tmp[rustWhileLetExpression] = {rustLoopLabel}
+                                                                       tmp
+const rustTokenKinds*: set[RustNodeKind] = {
+                                             rustExclamationTok,
+                                             rustExclamationEqualTok,
+                                             rustQuoteTok,
+                                             rustHashTok,
+                                             rustDollarTok,
+                                             rustPercentTok,
+                                             rustPercentEqualTok,
+                                             rustAmpersandTok,
+                                             rustDoubleAmpersandTok,
+                                             rustAmpersandEqualTok,
+                                             rustApostropheTok,
+                                             rustLParTok,
+                                             rustRParTok,
+                                             rustAsteriskTok,
+                                             rustAsteriskEqualTok,
+                                             rustPlusTok,
+                                             rustPlusEqualTok,
+                                             rustCommaTok,
+                                             rustMinusTok,
+                                             rustMinusEqualTok,
+                                             rustMinusGreaterThanTok,
+                                             rustDotTok,
+                                             rustDoubleDotTok,
+                                             rustTripleDotTok,
+                                             rustDoubleDotEqualTok,
+                                             rustSlashTok,
+                                             rustSlashEqualTok,
+                                             rustColonTok,
+                                             rustDoubleColonTok,
+                                             rustSemicolonTok,
+                                             rustLessThanTok,
+                                             rustDoubleLessThanTok,
+                                             rustDoubleLessThanEqualTok,
+                                             rustLessThanEqualTok,
+                                             rustEqualTok,
+                                             rustDoubleEqualTok,
+                                             rustEqualGreaterThanTok,
+                                             rustGreaterThanTok,
+                                             rustGreaterThanEqualTok,
+                                             rustDoubleGreaterThanTok,
+                                             rustDoubleGreaterThanEqualTok,
+                                             rustQuestionTok,
+                                             rustAtTok,
+                                             rustLBrackTok,
+                                             rustRBrackTok,
+                                             rustAccentTok,
+                                             rustAccentEqualTok,
+                                             rustUnderscoreTok,
+                                             rustAsTok,
+                                             rustAsyncTok,
+                                             rustAwaitTok,
+                                             rustBlockTok,
+                                             rustBreakTok,
+                                             rustConstTok,
+                                             rustContinueTok,
+                                             rustDefaultTok,
+                                             rustDynTok,
+                                             rustElseTok,
+                                             rustEnumTok,
+                                             rustExprTok,
+                                             rustExternTok,
+                                             rustFalseTok,
+                                             rustFnTok,
+                                             rustForTok,
+                                             rustIdentTok,
+                                             rustIfTok,
+                                             rustImplTok,
+                                             rustInTok,
+                                             rustItemTok,
+                                             rustLetTok,
+                                             rustLifetimeTok,
+                                             rustLiteralTok,
+                                             rustLoopTok,
+                                             rustMacroUnderscorerulesExclamationTok,
+                                             rustMatchTok,
+                                             rustMetaTok,
+                                             rustModTok,
+                                             rustMoveTok,
+                                             rustPatTok,
+                                             rustPathTok,
+                                             rustPubTok,
+                                             rustRefTok,
+                                             rustReturnTok,
+                                             rustStaticTok,
+                                             rustStmtTok,
+                                             rustStructTok,
+                                             rustTraitTok,
+                                             rustTrueTok,
+                                             rustTtTok,
+                                             rustTyTok,
+                                             rustTypeTok,
+                                             rustUnionTok,
+                                             rustUnsafeTok,
+                                             rustUseTok,
+                                             rustVisTok,
+                                             rustWhereTok,
+                                             rustWhileTok,
+                                             rustLCurlyTok,
+                                             rustPipeTok,
+                                             rustPipeEqualTok,
+                                             rustDoublePipeTok,
+                                             rustRCurlyTok
+                                           }
 
 proc tsNodeType*(node: TsRustNode): string
 

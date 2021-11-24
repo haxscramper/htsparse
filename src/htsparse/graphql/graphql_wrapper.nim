@@ -137,6 +137,138 @@ type
     graphqlSyntaxError                 ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: GraphqlNodeKind): string =
+  case kind:
+    of graphqlAlias:                       "alias"
+    of graphqlArgument:                    "argument"
+    of graphqlArguments:                   "arguments"
+    of graphqlArgumentsDefinition:         "arguments_definition"
+    of graphqlBooleanValue:                "boolean_value"
+    of graphqlDefaultValue:                "default_value"
+    of graphqlDefinition:                  "definition"
+    of graphqlDescription:                 "description"
+    of graphqlDirective:                   "directive"
+    of graphqlDirectiveDefinition:         "directive_definition"
+    of graphqlDirectiveLocation:           "directive_location"
+    of graphqlDirectiveLocations:          "directive_locations"
+    of graphqlDirectives:                  "directives"
+    of graphqlDocument:                    "document"
+    of graphqlEnumTypeDefinition:          "enum_type_definition"
+    of graphqlEnumTypeExtension:           "enum_type_extension"
+    of graphqlEnumValue:                   "enum_value"
+    of graphqlEnumValueDefinition:         "enum_value_definition"
+    of graphqlEnumValuesDefinition:        "enum_values_definition"
+    of graphqlExecutableDefinition:        "executable_definition"
+    of graphqlExecutableDirectiveLocation: "executable_directive_location"
+    of graphqlField:                       "field"
+    of graphqlFieldDefinition:             "field_definition"
+    of graphqlFieldsDefinition:            "fields_definition"
+    of graphqlFragmentDefinition:          "fragment_definition"
+    of graphqlFragmentName:                "fragment_name"
+    of graphqlFragmentSpread:              "fragment_spread"
+    of graphqlImplementsInterfaces:        "implements_interfaces"
+    of graphqlInlineFragment:              "inline_fragment"
+    of graphqlInputFieldsDefinition:       "input_fields_definition"
+    of graphqlInputObjectTypeDefinition:   "input_object_type_definition"
+    of graphqlInputObjectTypeExtension:    "input_object_type_extension"
+    of graphqlInputValueDefinition:        "input_value_definition"
+    of graphqlInterfaceTypeDefinition:     "interface_type_definition"
+    of graphqlInterfaceTypeExtension:      "interface_type_extension"
+    of graphqlListType:                    "list_type"
+    of graphqlListValue:                   "list_value"
+    of graphqlNamedType:                   "named_type"
+    of graphqlNonNullType:                 "non_null_type"
+    of graphqlObjectField:                 "object_field"
+    of graphqlObjectTypeDefinition:        "object_type_definition"
+    of graphqlObjectTypeExtension:         "object_type_extension"
+    of graphqlObjectValue:                 "object_value"
+    of graphqlOperationDefinition:         "operation_definition"
+    of graphqlOperationType:               "operation_type"
+    of graphqlRootOperationTypeDefinition: "root_operation_type_definition"
+    of graphqlScalarTypeDefinition:        "scalar_type_definition"
+    of graphqlScalarTypeExtension:         "scalar_type_extension"
+    of graphqlSchemaDefinition:            "schema_definition"
+    of graphqlSchemaExtension:             "schema_extension"
+    of graphqlSelection:                   "selection"
+    of graphqlSelectionSet:                "selection_set"
+    of graphqlSourceFile:                  "source_file"
+    of graphqlStringValue:                 "string_value"
+    of graphqlType:                        "type"
+    of graphqlTypeCondition:               "type_condition"
+    of graphqlTypeDefinition:              "type_definition"
+    of graphqlTypeExtension:               "type_extension"
+    of graphqlTypeSystemDefinition:        "type_system_definition"
+    of graphqlTypeSystemDirectiveLocation: "type_system_directive_location"
+    of graphqlTypeSystemExtension:         "type_system_extension"
+    of graphqlUnionMemberTypes:            "union_member_types"
+    of graphqlUnionTypeDefinition:         "union_type_definition"
+    of graphqlUnionTypeExtension:          "union_type_extension"
+    of graphqlValue:                       "value"
+    of graphqlVariable:                    "variable"
+    of graphqlVariableDefinition:          "variable_definition"
+    of graphqlVariableDefinitions:         "variable_definitions"
+    of graphqlExclamationTok:              "!"
+    of graphqlQuoteTok:                    "\""
+    of graphqlTripleQuoteTok:              "\"\"\""
+    of graphqlDollarTok:                   "$"
+    of graphqlAmpersandTok:                "&"
+    of graphqlLParTok:                     "("
+    of graphqlRParTok:                     ")"
+    of graphqlTripleDotTok:                "..."
+    of graphqlColonTok:                    ":"
+    of graphqlEqualTok:                    "="
+    of graphqlAtTok:                       "@"
+    of graphqlARGUMENTDEFINITIONTok:       "ARGUMENT_DEFINITION"
+    of graphqlENUMTok:                     "ENUM"
+    of graphqlENUMVALUETok:                "ENUM_VALUE"
+    of graphqlFIELDTok:                    "FIELD"
+    of graphqlFIELDDEFINITIONTok:          "FIELD_DEFINITION"
+    of graphqlFRAGMENTDEFINITIONTok:       "FRAGMENT_DEFINITION"
+    of graphqlFRAGMENTSPREADTok:           "FRAGMENT_SPREAD"
+    of graphqlINLINEFRAGMENTTok:           "INLINE_FRAGMENT"
+    of graphqlINPUTFIELDDEFINITIONTok:     "INPUT_FIELD_DEFINITION"
+    of graphqlINPUTOBJECTTok:              "INPUT_OBJECT"
+    of graphqlINTERFACETok:                "INTERFACE"
+    of graphqlMUTATIONTok:                 "MUTATION"
+    of graphqlOBJECTTok:                   "OBJECT"
+    of graphqlQUERYTok:                    "QUERY"
+    of graphqlSCALARTok:                   "SCALAR"
+    of graphqlSCHEMATok:                   "SCHEMA"
+    of graphqlSUBSCRIPTIONTok:             "SUBSCRIPTION"
+    of graphqlUNIONTok:                    "UNION"
+    of graphqlVARIABLEDEFINITIONTok:       "VARIABLE_DEFINITION"
+    of graphqlLBrackTok:                   "["
+    of graphqlRBrackTok:                   "]"
+    of graphqlComma:                       "comma"
+    of graphqlComment:                     "comment"
+    of graphqlDirectiveTok:                "directive"
+    of graphqlEnumTok1:                    "enum"
+    of graphqlExtendTok:                   "extend"
+    of graphqlFalseTok:                    "false"
+    of graphqlFloatValue:                  "float_value"
+    of graphqlFragmentTok:                 "fragment"
+    of graphqlImplementsTok:               "implements"
+    of graphqlInputTok:                    "input"
+    of graphqlIntValue:                    "int_value"
+    of graphqlInterfaceTok1:               "interface"
+    of graphqlMutationTok1:                "mutation"
+    of graphqlName:                        "name"
+    of graphqlNullValue:                   "null_value"
+    of graphqlOnTok:                       "on"
+    of graphqlQueryTok1:                   "query"
+    of graphqlRepeatableTok:               "repeatable"
+    of graphqlScalarTok1:                  "scalar"
+    of graphqlSchemaTok1:                  "schema"
+    of graphqlSubscriptionTok1:            "subscription"
+    of graphqlTrueTok:                     "true"
+    of graphqlTypeTok:                     "type"
+    of graphqlUnionTok1:                   "union"
+    of graphqlLCurlyTok:                   "{"
+    of graphqlPipeTok:                     "|"
+    of graphqlRCurlyTok:                   "}"
+    of graphqlSyntaxError:                 "ERROR"
+
+
 type
   TsGraphqlNode* = distinct TSNode
 
@@ -144,6 +276,138 @@ type
 type
   GraphqlParser* = distinct PtsParser
 
+
+const graphqlAllowedSubnodes*: array[GraphqlNodeKind, set[GraphqlNodeKind]] = block:
+                                                                                var tmp: array[GraphqlNodeKind, set[GraphqlNodeKind]]
+                                                                                tmp[graphqlAlias] = {graphqlName}
+                                                                                tmp[graphqlArgument] = {graphqlName, graphqlValue}
+                                                                                tmp[graphqlArguments] = {graphqlArgument}
+                                                                                tmp[graphqlArgumentsDefinition] = {graphqlInputValueDefinition}
+                                                                                tmp[graphqlDefaultValue] = {graphqlValue}
+                                                                                tmp[graphqlDefinition] = {graphqlExecutableDefinition, graphqlTypeSystemDefinition, graphqlTypeSystemExtension}
+                                                                                tmp[graphqlDescription] = {graphqlStringValue}
+                                                                                tmp[graphqlDirective] = {graphqlArguments, graphqlName}
+                                                                                tmp[graphqlDirectiveDefinition] = {graphqlArgumentsDefinition, graphqlDescription, graphqlDirectiveLocations, graphqlName}
+                                                                                tmp[graphqlDirectiveLocation] = {graphqlExecutableDirectiveLocation, graphqlTypeSystemDirectiveLocation}
+                                                                                tmp[graphqlDirectiveLocations] = {graphqlDirectiveLocation, graphqlDirectiveLocations}
+                                                                                tmp[graphqlDirectives] = {graphqlDirective}
+                                                                                tmp[graphqlDocument] = {graphqlDefinition}
+                                                                                tmp[graphqlEnumTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlEnumValuesDefinition, graphqlName}
+                                                                                tmp[graphqlEnumTypeExtension] = {graphqlDirectives, graphqlEnumValuesDefinition, graphqlName}
+                                                                                tmp[graphqlEnumValue] = {graphqlName}
+                                                                                tmp[graphqlEnumValueDefinition] = {graphqlDescription, graphqlDirectives, graphqlEnumValue}
+                                                                                tmp[graphqlEnumValuesDefinition] = {graphqlEnumValueDefinition}
+                                                                                tmp[graphqlExecutableDefinition] = {graphqlFragmentDefinition, graphqlOperationDefinition}
+                                                                                tmp[graphqlField] = {graphqlAlias, graphqlArguments, graphqlDirective, graphqlName, graphqlSelectionSet}
+                                                                                tmp[graphqlFieldDefinition] = {graphqlArgumentsDefinition, graphqlDescription, graphqlDirectives, graphqlName, graphqlType}
+                                                                                tmp[graphqlFieldsDefinition] = {graphqlFieldDefinition}
+                                                                                tmp[graphqlFragmentDefinition] = {graphqlDirectives, graphqlFragmentName, graphqlSelectionSet, graphqlTypeCondition}
+                                                                                tmp[graphqlFragmentName] = {graphqlName}
+                                                                                tmp[graphqlFragmentSpread] = {graphqlDirectives, graphqlFragmentName}
+                                                                                tmp[graphqlImplementsInterfaces] = {graphqlImplementsInterfaces, graphqlNamedType}
+                                                                                tmp[graphqlInlineFragment] = {graphqlDirectives, graphqlSelectionSet, graphqlTypeCondition}
+                                                                                tmp[graphqlInputFieldsDefinition] = {graphqlInputValueDefinition}
+                                                                                tmp[graphqlInputObjectTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlInputFieldsDefinition, graphqlName}
+                                                                                tmp[graphqlInputObjectTypeExtension] = {graphqlDirectives, graphqlInputFieldsDefinition, graphqlName}
+                                                                                tmp[graphqlInputValueDefinition] = {graphqlDefaultValue, graphqlDescription, graphqlDirectives, graphqlName, graphqlType}
+                                                                                tmp[graphqlInterfaceTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlFieldsDefinition, graphqlImplementsInterfaces, graphqlName}
+                                                                                tmp[graphqlInterfaceTypeExtension] = {graphqlDirectives, graphqlFieldsDefinition, graphqlImplementsInterfaces, graphqlName}
+                                                                                tmp[graphqlListType] = {graphqlType}
+                                                                                tmp[graphqlListValue] = {graphqlValue}
+                                                                                tmp[graphqlNamedType] = {graphqlName}
+                                                                                tmp[graphqlNonNullType] = {graphqlListType, graphqlNamedType}
+                                                                                tmp[graphqlObjectField] = {graphqlComma, graphqlName, graphqlValue}
+                                                                                tmp[graphqlObjectTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlFieldsDefinition, graphqlImplementsInterfaces, graphqlName}
+                                                                                tmp[graphqlObjectTypeExtension] = {graphqlDirectives, graphqlFieldsDefinition, graphqlImplementsInterfaces, graphqlName}
+                                                                                tmp[graphqlObjectValue] = {graphqlObjectField}
+                                                                                tmp[graphqlOperationDefinition] = {graphqlDirectives, graphqlName, graphqlOperationType, graphqlSelectionSet, graphqlVariableDefinitions}
+                                                                                tmp[graphqlRootOperationTypeDefinition] = {graphqlNamedType, graphqlOperationType}
+                                                                                tmp[graphqlScalarTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlName}
+                                                                                tmp[graphqlScalarTypeExtension] = {graphqlDirectives, graphqlName}
+                                                                                tmp[graphqlSchemaDefinition] = {graphqlDescription, graphqlDirectives, graphqlRootOperationTypeDefinition}
+                                                                                tmp[graphqlSchemaExtension] = {graphqlDirectives, graphqlRootOperationTypeDefinition}
+                                                                                tmp[graphqlSelection] = {graphqlField, graphqlFragmentSpread, graphqlInlineFragment}
+                                                                                tmp[graphqlSelectionSet] = {graphqlSelection}
+                                                                                tmp[graphqlSourceFile] = {graphqlDocument}
+                                                                                tmp[graphqlType] = {graphqlListType, graphqlNamedType, graphqlNonNullType}
+                                                                                tmp[graphqlTypeCondition] = {graphqlNamedType}
+                                                                                tmp[graphqlTypeDefinition] = {graphqlEnumTypeDefinition, graphqlInputObjectTypeDefinition, graphqlInterfaceTypeDefinition, graphqlObjectTypeDefinition, graphqlScalarTypeDefinition, graphqlUnionTypeDefinition}
+                                                                                tmp[graphqlTypeExtension] = {graphqlEnumTypeExtension, graphqlInputObjectTypeExtension, graphqlInterfaceTypeExtension, graphqlObjectTypeExtension, graphqlScalarTypeExtension, graphqlUnionTypeExtension}
+                                                                                tmp[graphqlTypeSystemDefinition] = {graphqlDirectiveDefinition, graphqlSchemaDefinition, graphqlTypeDefinition}
+                                                                                tmp[graphqlTypeSystemExtension] = {graphqlSchemaExtension, graphqlTypeExtension}
+                                                                                tmp[graphqlUnionMemberTypes] = {graphqlNamedType, graphqlUnionMemberTypes}
+                                                                                tmp[graphqlUnionTypeDefinition] = {graphqlDescription, graphqlDirectives, graphqlName, graphqlUnionMemberTypes}
+                                                                                tmp[graphqlUnionTypeExtension] = {graphqlDirectives, graphqlName, graphqlUnionMemberTypes}
+                                                                                tmp[graphqlValue] = {
+                                                                                                      graphqlBooleanValue,
+                                                                                                      graphqlEnumValue,
+                                                                                                      graphqlFloatValue,
+                                                                                                      graphqlIntValue,
+                                                                                                      graphqlListValue,
+                                                                                                      graphqlNullValue,
+                                                                                                      graphqlObjectValue,
+                                                                                                      graphqlStringValue,
+                                                                                                      graphqlVariable
+                                                                                                    }
+                                                                                tmp[graphqlVariable] = {graphqlName}
+                                                                                tmp[graphqlVariableDefinition] = {graphqlComma, graphqlDefaultValue, graphqlDirectives, graphqlType, graphqlVariable}
+                                                                                tmp[graphqlVariableDefinitions] = {graphqlVariableDefinition}
+                                                                                tmp
+const graphqlTokenKinds*: set[GraphqlNodeKind] = {
+                                                   graphqlExclamationTok,
+                                                   graphqlQuoteTok,
+                                                   graphqlTripleQuoteTok,
+                                                   graphqlDollarTok,
+                                                   graphqlAmpersandTok,
+                                                   graphqlLParTok,
+                                                   graphqlRParTok,
+                                                   graphqlTripleDotTok,
+                                                   graphqlColonTok,
+                                                   graphqlEqualTok,
+                                                   graphqlAtTok,
+                                                   graphqlARGUMENTDEFINITIONTok,
+                                                   graphqlENUMTok,
+                                                   graphqlENUMVALUETok,
+                                                   graphqlFIELDTok,
+                                                   graphqlFIELDDEFINITIONTok,
+                                                   graphqlFRAGMENTDEFINITIONTok,
+                                                   graphqlFRAGMENTSPREADTok,
+                                                   graphqlINLINEFRAGMENTTok,
+                                                   graphqlINPUTFIELDDEFINITIONTok,
+                                                   graphqlINPUTOBJECTTok,
+                                                   graphqlINTERFACETok,
+                                                   graphqlMUTATIONTok,
+                                                   graphqlOBJECTTok,
+                                                   graphqlQUERYTok,
+                                                   graphqlSCALARTok,
+                                                   graphqlSCHEMATok,
+                                                   graphqlSUBSCRIPTIONTok,
+                                                   graphqlUNIONTok,
+                                                   graphqlVARIABLEDEFINITIONTok,
+                                                   graphqlLBrackTok,
+                                                   graphqlRBrackTok,
+                                                   graphqlDirectiveTok,
+                                                   graphqlEnumTok1,
+                                                   graphqlExtendTok,
+                                                   graphqlFalseTok,
+                                                   graphqlFragmentTok,
+                                                   graphqlImplementsTok,
+                                                   graphqlInputTok,
+                                                   graphqlInterfaceTok1,
+                                                   graphqlMutationTok1,
+                                                   graphqlOnTok,
+                                                   graphqlQueryTok1,
+                                                   graphqlRepeatableTok,
+                                                   graphqlScalarTok1,
+                                                   graphqlSchemaTok1,
+                                                   graphqlSubscriptionTok1,
+                                                   graphqlTrueTok,
+                                                   graphqlTypeTok,
+                                                   graphqlUnionTok1,
+                                                   graphqlLCurlyTok,
+                                                   graphqlPipeTok,
+                                                   graphqlRCurlyTok
+                                                 }
 
 proc tsNodeType*(node: TsGraphqlNode): string
 
@@ -332,6 +596,7 @@ func `[]`*(
 
 type
   GraphqlNode* = HtsNode[TsGraphqlNode, GraphqlNodeKind]
+
 
 proc treeReprTsGraphql*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsGraphqlNode, GraphqlNodeKind](parseTsGraphqlString(str), str, 7, unnamed = unnamed)

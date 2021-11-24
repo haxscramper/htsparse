@@ -118,6 +118,7 @@ type
     phpSimpleParameter                     ## simple_parameter
     phpStaticModifier                      ## static_modifier
     phpStaticVariableDeclaration           ## static_variable_declaration
+    phpString                              ## string
     phpSubscriptExpression                 ## subscript_expression
     phpSwitchBlock                         ## switch_block
     phpSwitchStatement                     ## switch_statement
@@ -151,6 +152,7 @@ type
     phpAmpersandTok                        ## &
     phpDoubleAmpersandTok                  ## &&
     phpAmpersandEqualTok                   ## &=
+    phpApostropheTok                       ## '
     phpLParTok                             ## (
     phpRParTok                             ## )
     phpAsteriskTok                         ## *
@@ -232,8 +234,8 @@ type
     phpFalseTok                            ## false
     phpFinalTok                            ## final
     phpFinallyTok                          ## finally
-    phpFloatTok                            ## float
     phpFloat                               ## float
+    phpFloatTok                            ## float
     phpFnTok                               ## fn
     phpForTok                              ## for
     phpForeachTok                          ## foreach
@@ -257,8 +259,8 @@ type
     phpMixedTok                            ## mixed
     phpNamespaceTok                        ## namespace
     phpNewTok                              ## new
-    phpNullTok                             ## null
     phpNull                                ## null
+    phpNullTok                             ## null
     phpOrTok                               ## or
     phpParentTok                           ## parent
     phpPhpTag                              ## php_tag
@@ -274,7 +276,6 @@ type
     phpStaticTok                           ## static
     phpStrictTypesTok                      ## strict_types
     phpStringTok                           ## string
-    phpString                              ## string
     phpSwitchTok                           ## switch
     phpThrowTok                            ## throw
     phpTicksTok                            ## ticks
@@ -296,6 +297,298 @@ type
     phpSyntaxError                         ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: PhpNodeKind): string =
+  case kind:
+    of phpExpression:                          "_expression"
+    of phpLiteral:                             "_literal"
+    of phpPrimaryExpression:                   "_primary_expression"
+    of phpStatement:                           "_statement"
+    of phpType:                                "_type"
+    of phpAbstractModifier:                    "abstract_modifier"
+    of phpAnonymousFunctionCreationExpression: "anonymous_function_creation_expression"
+    of phpAnonymousFunctionUseClause:          "anonymous_function_use_clause"
+    of phpArgument:                            "argument"
+    of phpArguments:                           "arguments"
+    of phpArrayCreationExpression:             "array_creation_expression"
+    of phpArrayElementInitializer:             "array_element_initializer"
+    of phpArrowFunction:                       "arrow_function"
+    of phpAssignmentExpression:                "assignment_expression"
+    of phpAttribute:                           "attribute"
+    of phpAttributeList:                       "attribute_list"
+    of phpAugmentedAssignmentExpression:       "augmented_assignment_expression"
+    of phpBaseClause:                          "base_clause"
+    of phpBinaryExpression:                    "binary_expression"
+    of phpBreakStatement:                      "break_statement"
+    of phpByRef:                               "by_ref"
+    of phpCaseStatement:                       "case_statement"
+    of phpCastExpression:                      "cast_expression"
+    of phpCastType:                            "cast_type"
+    of phpCatchClause:                         "catch_clause"
+    of phpClassConstantAccessExpression:       "class_constant_access_expression"
+    of phpClassDeclaration:                    "class_declaration"
+    of phpClassInterfaceClause:                "class_interface_clause"
+    of phpCloneExpression:                     "clone_expression"
+    of phpColonBlock:                          "colon_block"
+    of phpCompoundStatement:                   "compound_statement"
+    of phpConditionalExpression:               "conditional_expression"
+    of phpConstDeclaration:                    "const_declaration"
+    of phpConstElement:                        "const_element"
+    of phpContinueStatement:                   "continue_statement"
+    of phpDeclarationList:                     "declaration_list"
+    of phpDeclareDirective:                    "declare_directive"
+    of phpDeclareStatement:                    "declare_statement"
+    of phpDefaultStatement:                    "default_statement"
+    of phpDoStatement:                         "do_statement"
+    of phpDynamicVariableName:                 "dynamic_variable_name"
+    of phpEchoStatement:                       "echo_statement"
+    of phpElseClause:                          "else_clause"
+    of phpElseIfClause:                        "else_if_clause"
+    of phpEmptyStatement:                      "empty_statement"
+    of phpEncapsedString:                      "encapsed_string"
+    of phpEnumCase:                            "enum_case"
+    of phpEnumDeclaration:                     "enum_declaration"
+    of phpEnumDeclarationList:                 "enum_declaration_list"
+    of phpExponentiationExpression:            "exponentiation_expression"
+    of phpExpressionStatement:                 "expression_statement"
+    of phpFinalModifier:                       "final_modifier"
+    of phpFinallyClause:                       "finally_clause"
+    of phpForStatement:                        "for_statement"
+    of phpForeachStatement:                    "foreach_statement"
+    of phpFormalParameters:                    "formal_parameters"
+    of phpFunctionCallExpression:              "function_call_expression"
+    of phpFunctionDefinition:                  "function_definition"
+    of phpFunctionStaticDeclaration:           "function_static_declaration"
+    of phpGlobalDeclaration:                   "global_declaration"
+    of phpGotoStatement:                       "goto_statement"
+    of phpIfStatement:                         "if_statement"
+    of phpIncludeExpression:                   "include_expression"
+    of phpIncludeOnceExpression:               "include_once_expression"
+    of phpInterfaceDeclaration:                "interface_declaration"
+    of phpListLiteral:                         "list_literal"
+    of phpMatchBlock:                          "match_block"
+    of phpMatchConditionList:                  "match_condition_list"
+    of phpMatchConditionalExpression:          "match_conditional_expression"
+    of phpMatchDefaultExpression:              "match_default_expression"
+    of phpMatchExpression:                     "match_expression"
+    of phpMemberAccessExpression:              "member_access_expression"
+    of phpMemberCallExpression:                "member_call_expression"
+    of phpMethodDeclaration:                   "method_declaration"
+    of phpName:                                "name"
+    of phpNamedLabelStatement:                 "named_label_statement"
+    of phpNamedType:                           "named_type"
+    of phpNamespaceAliasingClause:             "namespace_aliasing_clause"
+    of phpNamespaceDefinition:                 "namespace_definition"
+    of phpNamespaceName:                       "namespace_name"
+    of phpNamespaceNameAsPrefix:               "namespace_name_as_prefix"
+    of phpNamespaceUseClause:                  "namespace_use_clause"
+    of phpNamespaceUseDeclaration:             "namespace_use_declaration"
+    of phpNamespaceUseGroup:                   "namespace_use_group"
+    of phpNamespaceUseGroupClause:             "namespace_use_group_clause"
+    of phpNullsafeMemberAccessExpression:      "nullsafe_member_access_expression"
+    of phpNullsafeMemberCallExpression:        "nullsafe_member_call_expression"
+    of phpObjectCreationExpression:            "object_creation_expression"
+    of phpOptionalType:                        "optional_type"
+    of phpPair:                                "pair"
+    of phpParenthesizedExpression:             "parenthesized_expression"
+    of phpPrimitiveType:                       "primitive_type"
+    of phpPrintIntrinsic:                      "print_intrinsic"
+    of phpProgram:                             "program"
+    of phpPropertyDeclaration:                 "property_declaration"
+    of phpPropertyElement:                     "property_element"
+    of phpPropertyInitializer:                 "property_initializer"
+    of phpPropertyPromotionParameter:          "property_promotion_parameter"
+    of phpQualifiedName:                       "qualified_name"
+    of phpReferenceAssignmentExpression:       "reference_assignment_expression"
+    of phpReferenceModifier:                   "reference_modifier"
+    of phpRelativeScope:                       "relative_scope"
+    of phpRequireExpression:                   "require_expression"
+    of phpRequireOnceExpression:               "require_once_expression"
+    of phpReturnStatement:                     "return_statement"
+    of phpScopedCallExpression:                "scoped_call_expression"
+    of phpScopedPropertyAccessExpression:      "scoped_property_access_expression"
+    of phpSequenceExpression:                  "sequence_expression"
+    of phpSimpleParameter:                     "simple_parameter"
+    of phpStaticModifier:                      "static_modifier"
+    of phpStaticVariableDeclaration:           "static_variable_declaration"
+    of phpString:                              "string"
+    of phpSubscriptExpression:                 "subscript_expression"
+    of phpSwitchBlock:                         "switch_block"
+    of phpSwitchStatement:                     "switch_statement"
+    of phpText:                                "text"
+    of phpTextInterpolation:                   "text_interpolation"
+    of phpThrowExpression:                     "throw_expression"
+    of phpTraitDeclaration:                    "trait_declaration"
+    of phpTryStatement:                        "try_statement"
+    of phpTypeList:                            "type_list"
+    of phpUnaryOpExpression:                   "unary_op_expression"
+    of phpUnsetStatement:                      "unset_statement"
+    of phpUpdateExpression:                    "update_expression"
+    of phpUseAsClause:                         "use_as_clause"
+    of phpUseDeclaration:                      "use_declaration"
+    of phpUseInsteadOfClause:                  "use_instead_of_clause"
+    of phpUseList:                             "use_list"
+    of phpVariableName:                        "variable_name"
+    of phpVariadicParameter:                   "variadic_parameter"
+    of phpVariadicUnpacking:                   "variadic_unpacking"
+    of phpVisibilityModifier:                  "visibility_modifier"
+    of phpWhileStatement:                      "while_statement"
+    of phpYieldExpression:                     "yield_expression"
+    of phpExclamationTok:                      "!"
+    of phpExclamationEqualTok:                 "!="
+    of phpExclamationDoubleEqualTok:           "!=="
+    of phpQuoteTok:                            "\""
+    of phpHashLBrackTok:                       "#["
+    of phpDollarTok:                           "$"
+    of phpPercentTok:                          "%"
+    of phpPercentEqualTok:                     "%="
+    of phpAmpersandTok:                        "&"
+    of phpDoubleAmpersandTok:                  "&&"
+    of phpAmpersandEqualTok:                   "&="
+    of phpApostropheTok:                       "\'"
+    of phpLParTok:                             "("
+    of phpRParTok:                             ")"
+    of phpAsteriskTok:                         "*"
+    of phpDoubleAsteriskTok:                   "**"
+    of phpDoubleAsteriskEqualTok:              "**="
+    of phpAsteriskEqualTok:                    "*="
+    of phpPlusTok:                             "+"
+    of phpDoublePlusTok:                       "++"
+    of phpPlusEqualTok:                        "+="
+    of phpCommaTok:                            ","
+    of phpMinusTok:                            "-"
+    of phpDoubleMinusTok:                      "--"
+    of phpMinusEqualTok:                       "-="
+    of phpMinusGreaterThanTok:                 "->"
+    of phpDotTok:                              "."
+    of phpTripleDotTok:                        "..."
+    of phpDotEqualTok:                         ".="
+    of phpSlashTok:                            "/"
+    of phpSlashEqualTok:                       "/="
+    of phpColonTok:                            ":"
+    of phpDoubleColonTok:                      "::"
+    of phpSemicolonTok:                        ";"
+    of phpLessThanTok:                         "<"
+    of phpDoubleLessThanTok:                   "<<"
+    of phpDoubleLessThanEqualTok:              "<<="
+    of phpLessThanEqualTok:                    "<="
+    of phpLessThanEqualGreaterThanTok:         "<=>"
+    of phpLessThanGreaterThanTok:              "<>"
+    of phpEqualTok:                            "="
+    of phpDoubleEqualTok:                      "=="
+    of phpTripleEqualTok:                      "==="
+    of phpEqualGreaterThanTok:                 "=>"
+    of phpGreaterThanTok:                      ">"
+    of phpGreaterThanEqualTok:                 ">="
+    of phpDoubleGreaterThanTok:                ">>"
+    of phpDoubleGreaterThanEqualTok:           ">>="
+    of phpQuestionTok:                         "?"
+    of phpQuestionMinusGreaterThanTok:         "?->"
+    of phpQuestionGreaterThanTok:              "?>"
+    of phpDoubleQuestionTok:                   "??"
+    of phpDoubleQuestionEqualTok:              "??="
+    of phpAtTok:                               "@"
+    of phpLBrackTok:                           "["
+    of phpBackslashTok:                        "\\"
+    of phpRBrackTok:                           "]"
+    of phpAccentTok:                           "^"
+    of phpAccentEqualTok:                      "^="
+    of phpAbstractTok:                         "abstract"
+    of phpAndTok:                              "and"
+    of phpArrayTok:                            "array"
+    of phpAsTok:                               "as"
+    of phpBoolTok:                             "bool"
+    of phpBoolean:                             "boolean"
+    of phpBreakTok:                            "break"
+    of phpCallableTok:                         "callable"
+    of phpCaseTok:                             "case"
+    of phpCatchTok:                            "catch"
+    of phpClassTok:                            "class"
+    of phpCloneTok:                            "clone"
+    of phpComment:                             "comment"
+    of phpConstTok:                            "const"
+    of phpContinueTok:                         "continue"
+    of phpDeclareTok:                          "declare"
+    of phpDefaultTok:                          "default"
+    of phpDoTok:                               "do"
+    of phpEchoTok:                             "echo"
+    of phpElseTok:                             "else"
+    of phpElseifTok:                           "elseif"
+    of phpEncodingTok:                         "encoding"
+    of phpEnddeclareTok:                       "enddeclare"
+    of phpEndforTok:                           "endfor"
+    of phpEndforeachTok:                       "endforeach"
+    of phpEndifTok:                            "endif"
+    of phpEndswitchTok:                        "endswitch"
+    of phpEndwhileTok:                         "endwhile"
+    of phpEnumTok:                             "enum"
+    of phpEscapeSequence:                      "escape_sequence"
+    of phpExtendsTok:                          "extends"
+    of phpFalseTok:                            "false"
+    of phpFinalTok:                            "final"
+    of phpFinallyTok:                          "finally"
+    of phpFloat:                               "float"
+    of phpFloatTok:                            "float"
+    of phpFnTok:                               "fn"
+    of phpForTok:                              "for"
+    of phpForeachTok:                          "foreach"
+    of phpFromTok:                             "from"
+    of phpFunctionTok:                         "function"
+    of phpGlobalTok:                           "global"
+    of phpGotoTok:                             "goto"
+    of phpHeredoc:                             "heredoc"
+    of phpIfTok:                               "if"
+    of phpImplementsTok:                       "implements"
+    of phpIncludeTok:                          "include"
+    of phpIncludeOnceTok:                      "include_once"
+    of phpInstanceofTok:                       "instanceof"
+    of phpInsteadofTok:                        "insteadof"
+    of phpIntTok:                              "int"
+    of phpInteger:                             "integer"
+    of phpInterfaceTok:                        "interface"
+    of phpIterableTok:                         "iterable"
+    of phpListTok:                             "list"
+    of phpMatchTok:                            "match"
+    of phpMixedTok:                            "mixed"
+    of phpNamespaceTok:                        "namespace"
+    of phpNewTok:                              "new"
+    of phpNull:                                "null"
+    of phpNullTok:                             "null"
+    of phpOrTok:                               "or"
+    of phpParentTok:                           "parent"
+    of phpPhpTag:                              "php_tag"
+    of phpPrintTok:                            "print"
+    of phpPrivateTok:                          "private"
+    of phpProtectedTok:                        "protected"
+    of phpPublicTok:                           "public"
+    of phpRequireTok:                          "require"
+    of phpRequireOnceTok:                      "require_once"
+    of phpReturnTok:                           "return"
+    of phpSelfTok:                             "self"
+    of phpShellCommandExpression:              "shell_command_expression"
+    of phpStaticTok:                           "static"
+    of phpStrictTypesTok:                      "strict_types"
+    of phpStringTok:                           "string"
+    of phpSwitchTok:                           "switch"
+    of phpThrowTok:                            "throw"
+    of phpTicksTok:                            "ticks"
+    of phpTraitTok:                            "trait"
+    of phpTryTok:                              "try"
+    of phpUnsetTok:                            "unset"
+    of phpUseTok:                              "use"
+    of phpVarModifier:                         "var_modifier"
+    of phpVoidTok:                             "void"
+    of phpWhileTok:                            "while"
+    of phpXorTok:                              "xor"
+    of phpYieldTok:                            "yield"
+    of phpLCurlyTok:                           "{"
+    of phpPipeTok:                             "|"
+    of phpPipeEqualTok:                        "|="
+    of phpDoublePipeTok:                       "||"
+    of phpRCurlyTok:                           "}"
+    of phpTildeTok:                            "~"
+    of phpSyntaxError:                         "ERROR"
+
+
 type
   PhpExternalTok* = enum
     phpExtern_automatic_semicolon                 ## _automatic_semicolon
@@ -313,6 +606,351 @@ type
 type
   PhpParser* = distinct PtsParser
 
+
+const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
+                                                                    var tmp: array[PhpNodeKind, set[PhpNodeKind]]
+                                                                    tmp[phpAnonymousFunctionCreationExpression] = {phpAnonymousFunctionUseClause}
+                                                                    tmp[phpAnonymousFunctionUseClause] = {phpByRef, phpVariableName}
+                                                                    tmp[phpArgument] = {phpExpression, phpVariadicUnpacking}
+                                                                    tmp[phpArguments] = {phpArgument}
+                                                                    tmp[phpArrayCreationExpression] = {phpArrayElementInitializer}
+                                                                    tmp[phpArrayElementInitializer] = {phpExpression, phpByRef, phpVariadicUnpacking}
+                                                                    tmp[phpArrowFunction] = {phpStaticModifier}
+                                                                    tmp[phpAttribute] = {phpName, phpQualifiedName}
+                                                                    tmp[phpAttributeList] = {phpAttribute}
+                                                                    tmp[phpBaseClause] = {phpName, phpQualifiedName}
+                                                                    tmp[phpBinaryExpression] = {phpExpression}
+                                                                    tmp[phpBreakStatement] = {phpExpression}
+                                                                    tmp[phpByRef] = {
+                                                                                      phpDynamicVariableName,
+                                                                                      phpFunctionCallExpression,
+                                                                                      phpMemberAccessExpression,
+                                                                                      phpMemberCallExpression,
+                                                                                      phpNullsafeMemberAccessExpression,
+                                                                                      phpNullsafeMemberCallExpression,
+                                                                                      phpScopedCallExpression,
+                                                                                      phpSubscriptExpression,
+                                                                                      phpVariableName
+                                                                                    }
+                                                                    tmp[phpCaseStatement] = {phpStatement}
+                                                                    tmp[phpClassConstantAccessExpression] = {
+                                                                                                              phpArrayCreationExpression,
+                                                                                                              phpCastExpression,
+                                                                                                              phpClassConstantAccessExpression,
+                                                                                                              phpDynamicVariableName,
+                                                                                                              phpEncapsedString,
+                                                                                                              phpFunctionCallExpression,
+                                                                                                              phpHeredoc,
+                                                                                                              phpMemberAccessExpression,
+                                                                                                              phpMemberCallExpression,
+                                                                                                              phpName,
+                                                                                                              phpNullsafeMemberAccessExpression,
+                                                                                                              phpNullsafeMemberCallExpression,
+                                                                                                              phpParenthesizedExpression,
+                                                                                                              phpQualifiedName,
+                                                                                                              phpRelativeScope,
+                                                                                                              phpScopedCallExpression,
+                                                                                                              phpScopedPropertyAccessExpression,
+                                                                                                              phpString,
+                                                                                                              phpSubscriptExpression,
+                                                                                                              phpVariableName
+                                                                                                            }
+                                                                    tmp[phpClassDeclaration] = {phpBaseClause, phpClassInterfaceClause}
+                                                                    tmp[phpClassInterfaceClause] = {phpName, phpQualifiedName}
+                                                                    tmp[phpCloneExpression] = {phpPrimaryExpression}
+                                                                    tmp[phpColonBlock] = {phpStatement}
+                                                                    tmp[phpCompoundStatement] = {phpStatement}
+                                                                    tmp[phpConstDeclaration] = {phpConstElement, phpVisibilityModifier}
+                                                                    tmp[phpConstElement] = {phpExpression, phpName}
+                                                                    tmp[phpContinueStatement] = {phpExpression}
+                                                                    tmp[phpDeclarationList] = {phpConstDeclaration, phpMethodDeclaration, phpPropertyDeclaration, phpUseDeclaration}
+                                                                    tmp[phpDeclareDirective] = {phpLiteral}
+                                                                    tmp[phpDeclareStatement] = {phpStatement, phpDeclareDirective}
+                                                                    tmp[phpDefaultStatement] = {phpStatement}
+                                                                    tmp[phpDynamicVariableName] = {phpExpression, phpDynamicVariableName, phpVariableName}
+                                                                    tmp[phpEchoStatement] = {phpExpression, phpSequenceExpression}
+                                                                    tmp[phpEncapsedString] = {
+                                                                                               phpExpression,
+                                                                                               phpDynamicVariableName,
+                                                                                               phpEscapeSequence,
+                                                                                               phpMemberAccessExpression,
+                                                                                               phpString,
+                                                                                               phpSubscriptExpression,
+                                                                                               phpVariableName
+                                                                                             }
+                                                                    tmp[phpEnumDeclaration] = {phpType, phpClassInterfaceClause}
+                                                                    tmp[phpEnumDeclarationList] = {phpEnumCase, phpMethodDeclaration, phpUseDeclaration}
+                                                                    tmp[phpExpressionStatement] = {phpExpression}
+                                                                    tmp[phpForStatement] = {phpExpression, phpStatement, phpSequenceExpression}
+                                                                    tmp[phpForeachStatement] = {phpExpression, phpByRef, phpListLiteral, phpPair}
+                                                                    tmp[phpFormalParameters] = {phpPropertyPromotionParameter, phpSimpleParameter, phpVariadicParameter}
+                                                                    tmp[phpFunctionStaticDeclaration] = {phpStaticVariableDeclaration}
+                                                                    tmp[phpGlobalDeclaration] = {phpDynamicVariableName, phpVariableName}
+                                                                    tmp[phpGotoStatement] = {phpName}
+                                                                    tmp[phpIncludeExpression] = {phpExpression}
+                                                                    tmp[phpIncludeOnceExpression] = {phpExpression}
+                                                                    tmp[phpInterfaceDeclaration] = {phpBaseClause}
+                                                                    tmp[phpListLiteral] = {
+                                                                                            phpExpression,
+                                                                                            phpByRef,
+                                                                                            phpDynamicVariableName,
+                                                                                            phpFunctionCallExpression,
+                                                                                            phpListLiteral,
+                                                                                            phpMemberAccessExpression,
+                                                                                            phpMemberCallExpression,
+                                                                                            phpNullsafeMemberAccessExpression,
+                                                                                            phpNullsafeMemberCallExpression,
+                                                                                            phpScopedCallExpression,
+                                                                                            phpScopedPropertyAccessExpression,
+                                                                                            phpSubscriptExpression,
+                                                                                            phpVariableName
+                                                                                          }
+                                                                    tmp[phpMatchBlock] = {phpMatchConditionalExpression, phpMatchDefaultExpression}
+                                                                    tmp[phpMatchConditionList] = {phpExpression}
+                                                                    tmp[phpMethodDeclaration] = {phpAbstractModifier, phpFinalModifier, phpStaticModifier, phpVarModifier, phpVisibilityModifier}
+                                                                    tmp[phpNamedLabelStatement] = {phpName}
+                                                                    tmp[phpNamedType] = {phpName, phpQualifiedName}
+                                                                    tmp[phpNamespaceAliasingClause] = {phpName}
+                                                                    tmp[phpNamespaceName] = {phpName}
+                                                                    tmp[phpNamespaceNameAsPrefix] = {phpNamespaceName}
+                                                                    tmp[phpNamespaceUseClause] = {phpName, phpNamespaceAliasingClause, phpQualifiedName}
+                                                                    tmp[phpNamespaceUseDeclaration] = {phpNamespaceName, phpNamespaceUseClause, phpNamespaceUseGroup}
+                                                                    tmp[phpNamespaceUseGroup] = {phpNamespaceUseGroupClause}
+                                                                    tmp[phpNamespaceUseGroupClause] = {phpNamespaceAliasingClause, phpNamespaceName}
+                                                                    tmp[phpObjectCreationExpression] = {
+                                                                                                         phpArguments,
+                                                                                                         phpBaseClause,
+                                                                                                         phpClassInterfaceClause,
+                                                                                                         phpDeclarationList,
+                                                                                                         phpDynamicVariableName,
+                                                                                                         phpMemberAccessExpression,
+                                                                                                         phpName,
+                                                                                                         phpNullsafeMemberAccessExpression,
+                                                                                                         phpQualifiedName,
+                                                                                                         phpScopedPropertyAccessExpression,
+                                                                                                         phpSubscriptExpression,
+                                                                                                         phpVariableName
+                                                                                                       }
+                                                                    tmp[phpOptionalType] = {phpNamedType, phpPrimitiveType}
+                                                                    tmp[phpPair] = {phpExpression, phpByRef, phpListLiteral}
+                                                                    tmp[phpParenthesizedExpression] = {phpExpression}
+                                                                    tmp[phpPrintIntrinsic] = {phpExpression}
+                                                                    tmp[phpProgram] = {phpStatement, phpPhpTag, phpText}
+                                                                    tmp[phpPropertyDeclaration] = {phpAbstractModifier, phpFinalModifier, phpPropertyElement, phpStaticModifier, phpVarModifier, phpVisibilityModifier}
+                                                                    tmp[phpPropertyElement] = {phpPropertyInitializer, phpVariableName}
+                                                                    tmp[phpPropertyInitializer] = {phpExpression}
+                                                                    tmp[phpQualifiedName] = {phpName, phpNamespaceNameAsPrefix}
+                                                                    tmp[phpRequireExpression] = {phpExpression}
+                                                                    tmp[phpRequireOnceExpression] = {phpExpression}
+                                                                    tmp[phpReturnStatement] = {phpExpression}
+                                                                    tmp[phpSequenceExpression] = {phpExpression, phpSequenceExpression}
+                                                                    tmp[phpSubscriptExpression] = {
+                                                                                                    phpExpression,
+                                                                                                    phpArrayCreationExpression,
+                                                                                                    phpClassConstantAccessExpression,
+                                                                                                    phpDynamicVariableName,
+                                                                                                    phpEncapsedString,
+                                                                                                    phpFunctionCallExpression,
+                                                                                                    phpHeredoc,
+                                                                                                    phpInteger,
+                                                                                                    phpMemberAccessExpression,
+                                                                                                    phpMemberCallExpression,
+                                                                                                    phpName,
+                                                                                                    phpNullsafeMemberAccessExpression,
+                                                                                                    phpNullsafeMemberCallExpression,
+                                                                                                    phpParenthesizedExpression,
+                                                                                                    phpQualifiedName,
+                                                                                                    phpScopedCallExpression,
+                                                                                                    phpScopedPropertyAccessExpression,
+                                                                                                    phpString,
+                                                                                                    phpSubscriptExpression,
+                                                                                                    phpVariableName
+                                                                                                  }
+                                                                    tmp[phpSwitchBlock] = {phpCaseStatement, phpDefaultStatement}
+                                                                    tmp[phpTextInterpolation] = {phpPhpTag, phpText}
+                                                                    tmp[phpThrowExpression] = {phpExpression}
+                                                                    tmp[phpTryStatement] = {phpCatchClause, phpFinallyClause}
+                                                                    tmp[phpTypeList] = {phpNamedType, phpOptionalType, phpPrimitiveType}
+                                                                    tmp[phpUnaryOpExpression] = {phpExpression, phpInteger}
+                                                                    tmp[phpUnsetStatement] = {
+                                                                                               phpCastExpression,
+                                                                                               phpDynamicVariableName,
+                                                                                               phpFunctionCallExpression,
+                                                                                               phpMemberAccessExpression,
+                                                                                               phpMemberCallExpression,
+                                                                                               phpNullsafeMemberAccessExpression,
+                                                                                               phpNullsafeMemberCallExpression,
+                                                                                               phpScopedCallExpression,
+                                                                                               phpScopedPropertyAccessExpression,
+                                                                                               phpSubscriptExpression,
+                                                                                               phpVariableName
+                                                                                             }
+                                                                    tmp[phpUpdateExpression] = {
+                                                                                                 phpCastExpression,
+                                                                                                 phpDynamicVariableName,
+                                                                                                 phpFunctionCallExpression,
+                                                                                                 phpMemberAccessExpression,
+                                                                                                 phpMemberCallExpression,
+                                                                                                 phpNullsafeMemberAccessExpression,
+                                                                                                 phpNullsafeMemberCallExpression,
+                                                                                                 phpScopedCallExpression,
+                                                                                                 phpScopedPropertyAccessExpression,
+                                                                                                 phpSubscriptExpression,
+                                                                                                 phpVariableName
+                                                                                               }
+                                                                    tmp[phpUseAsClause] = {phpClassConstantAccessExpression, phpName, phpVisibilityModifier}
+                                                                    tmp[phpUseDeclaration] = {phpName, phpQualifiedName, phpUseList}
+                                                                    tmp[phpUseInsteadOfClause] = {phpClassConstantAccessExpression, phpName}
+                                                                    tmp[phpUseList] = {phpUseAsClause, phpUseInsteadOfClause}
+                                                                    tmp[phpVariableName] = {phpName}
+                                                                    tmp[phpVariadicUnpacking] = {phpExpression}
+                                                                    tmp[phpYieldExpression] = {phpExpression, phpArrayElementInitializer}
+                                                                    tmp
+const phpTokenKinds*: set[PhpNodeKind] = {
+                                           phpExclamationTok,
+                                           phpExclamationEqualTok,
+                                           phpExclamationDoubleEqualTok,
+                                           phpQuoteTok,
+                                           phpHashLBrackTok,
+                                           phpDollarTok,
+                                           phpPercentTok,
+                                           phpPercentEqualTok,
+                                           phpAmpersandTok,
+                                           phpDoubleAmpersandTok,
+                                           phpAmpersandEqualTok,
+                                           phpApostropheTok,
+                                           phpLParTok,
+                                           phpRParTok,
+                                           phpAsteriskTok,
+                                           phpDoubleAsteriskTok,
+                                           phpDoubleAsteriskEqualTok,
+                                           phpAsteriskEqualTok,
+                                           phpPlusTok,
+                                           phpDoublePlusTok,
+                                           phpPlusEqualTok,
+                                           phpCommaTok,
+                                           phpMinusTok,
+                                           phpDoubleMinusTok,
+                                           phpMinusEqualTok,
+                                           phpMinusGreaterThanTok,
+                                           phpDotTok,
+                                           phpTripleDotTok,
+                                           phpDotEqualTok,
+                                           phpSlashTok,
+                                           phpSlashEqualTok,
+                                           phpColonTok,
+                                           phpDoubleColonTok,
+                                           phpSemicolonTok,
+                                           phpLessThanTok,
+                                           phpDoubleLessThanTok,
+                                           phpDoubleLessThanEqualTok,
+                                           phpLessThanEqualTok,
+                                           phpLessThanEqualGreaterThanTok,
+                                           phpLessThanGreaterThanTok,
+                                           phpEqualTok,
+                                           phpDoubleEqualTok,
+                                           phpTripleEqualTok,
+                                           phpEqualGreaterThanTok,
+                                           phpGreaterThanTok,
+                                           phpGreaterThanEqualTok,
+                                           phpDoubleGreaterThanTok,
+                                           phpDoubleGreaterThanEqualTok,
+                                           phpQuestionTok,
+                                           phpQuestionMinusGreaterThanTok,
+                                           phpQuestionGreaterThanTok,
+                                           phpDoubleQuestionTok,
+                                           phpDoubleQuestionEqualTok,
+                                           phpAtTok,
+                                           phpLBrackTok,
+                                           phpBackslashTok,
+                                           phpRBrackTok,
+                                           phpAccentTok,
+                                           phpAccentEqualTok,
+                                           phpAbstractTok,
+                                           phpAndTok,
+                                           phpArrayTok,
+                                           phpAsTok,
+                                           phpBoolTok,
+                                           phpBreakTok,
+                                           phpCallableTok,
+                                           phpCaseTok,
+                                           phpCatchTok,
+                                           phpClassTok,
+                                           phpCloneTok,
+                                           phpConstTok,
+                                           phpContinueTok,
+                                           phpDeclareTok,
+                                           phpDefaultTok,
+                                           phpDoTok,
+                                           phpEchoTok,
+                                           phpElseTok,
+                                           phpElseifTok,
+                                           phpEncodingTok,
+                                           phpEnddeclareTok,
+                                           phpEndforTok,
+                                           phpEndforeachTok,
+                                           phpEndifTok,
+                                           phpEndswitchTok,
+                                           phpEndwhileTok,
+                                           phpEnumTok,
+                                           phpExtendsTok,
+                                           phpFalseTok,
+                                           phpFinalTok,
+                                           phpFinallyTok,
+                                           phpFloatTok,
+                                           phpFnTok,
+                                           phpForTok,
+                                           phpForeachTok,
+                                           phpFromTok,
+                                           phpFunctionTok,
+                                           phpGlobalTok,
+                                           phpGotoTok,
+                                           phpIfTok,
+                                           phpImplementsTok,
+                                           phpIncludeTok,
+                                           phpIncludeOnceTok,
+                                           phpInstanceofTok,
+                                           phpInsteadofTok,
+                                           phpIntTok,
+                                           phpInterfaceTok,
+                                           phpIterableTok,
+                                           phpListTok,
+                                           phpMatchTok,
+                                           phpMixedTok,
+                                           phpNamespaceTok,
+                                           phpNewTok,
+                                           phpNullTok,
+                                           phpOrTok,
+                                           phpParentTok,
+                                           phpPrintTok,
+                                           phpPrivateTok,
+                                           phpProtectedTok,
+                                           phpPublicTok,
+                                           phpRequireTok,
+                                           phpRequireOnceTok,
+                                           phpReturnTok,
+                                           phpSelfTok,
+                                           phpStaticTok,
+                                           phpStrictTypesTok,
+                                           phpStringTok,
+                                           phpSwitchTok,
+                                           phpThrowTok,
+                                           phpTicksTok,
+                                           phpTraitTok,
+                                           phpTryTok,
+                                           phpUnsetTok,
+                                           phpUseTok,
+                                           phpVoidTok,
+                                           phpWhileTok,
+                                           phpXorTok,
+                                           phpYieldTok,
+                                           phpLCurlyTok,
+                                           phpPipeTok,
+                                           phpPipeEqualTok,
+                                           phpDoublePipeTok,
+                                           phpRCurlyTok,
+                                           phpTildeTok
+                                         }
 
 proc tsNodeType*(node: TsPhpNode): string
 
@@ -432,6 +1070,7 @@ proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
       of "simple_parameter":                       phpSimpleParameter
       of "static_modifier":                        phpStaticModifier
       of "static_variable_declaration":            phpStaticVariableDeclaration
+      of "string":                                 phpString
       of "subscript_expression":                   phpSubscriptExpression
       of "switch_block":                           phpSwitchBlock
       of "switch_statement":                       phpSwitchStatement
@@ -465,6 +1104,7 @@ proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
       of "&":                                      phpAmpersandTok
       of "&&":                                     phpDoubleAmpersandTok
       of "&=":                                     phpAmpersandEqualTok
+      of "\'":                                     phpApostropheTok
       of "(":                                      phpLParTok
       of ")":                                      phpRParTok
       of "*":                                      phpAsteriskTok
@@ -546,7 +1186,7 @@ proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
       of "false":                                  phpFalseTok
       of "final":                                  phpFinalTok
       of "finally":                                phpFinallyTok
-      of "float":                                  phpFloatTok
+      of "float":                                  phpFloat
       of "fn":                                     phpFnTok
       of "for":                                    phpForTok
       of "foreach":                                phpForeachTok
@@ -570,7 +1210,7 @@ proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
       of "mixed":                                  phpMixedTok
       of "namespace":                              phpNamespaceTok
       of "new":                                    phpNewTok
-      of "null":                                   phpNullTok
+      of "null":                                   phpNull
       of "or":                                     phpOrTok
       of "parent":                                 phpParentTok
       of "php_tag":                                phpPhpTag
@@ -585,7 +1225,6 @@ proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
       of "shell_command_expression":               phpShellCommandExpression
       of "static":                                 phpStaticTok
       of "strict_types":                           phpStrictTypesTok
-      of "string":                                 phpStringTok
       of "switch":                                 phpSwitchTok
       of "throw":                                  phpThrowTok
       of "ticks":                                  phpTicksTok
@@ -659,6 +1298,7 @@ func `[]`*(
 
 type
   PhpNode* = HtsNode[TsPhpNode, PhpNodeKind]
+
 
 proc treeReprTsPhp*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsPhpNode, PhpNodeKind](parseTsPhpString(str), str, 3, unnamed = unnamed)

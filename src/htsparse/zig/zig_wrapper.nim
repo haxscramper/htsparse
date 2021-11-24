@@ -229,6 +229,230 @@ type
     zigSyntaxError               ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: ZigNodeKind): string =
+  case kind:
+    of zigAnonymousArrayExpr:        "anonymous_array_expr"
+    of zigAnonymousStructEnum:       "anonymous_struct_enum"
+    of zigArguments:                 "arguments"
+    of zigArrayExpression:           "array_expression"
+    of zigArrayType:                 "array_type"
+    of zigArrayValues:               "array_values"
+    of zigAssignmentExpression:      "assignment_expression"
+    of zigAssignmentOperator:        "assignment_operator"
+    of zigAssignmentStatement:       "assignment_statement"
+    of zigAwaitExpression:           "await_expression"
+    of zigBinaryExpression:          "binary_expression"
+    of zigBlock:                     "block"
+    of zigBooleanLiteral:            "boolean_literal"
+    of zigBreakExpression:           "break_expression"
+    of zigBuildInCallExpr:           "build_in_call_expr"
+    of zigCallExpression:            "call_expression"
+    of zigCharLiteral:               "char_literal"
+    of zigCompoundAssignmentExpr:    "compound_assignment_expr"
+    of zigComptimeBlock:             "comptime_block"
+    of zigContinueExpression:        "continue_expression"
+    of zigDeferBlock:                "defer_block"
+    of zigDeferExpression:           "defer_expression"
+    of zigDereferenceExpression:     "dereference_expression"
+    of zigEmptyStatement:            "empty_statement"
+    of zigEnumExpression:            "enum_expression"
+    of zigEnumIdentifier:            "enum_identifier"
+    of zigEnumLiteral:               "enum_literal"
+    of zigErrorExpression:           "error_expression"
+    of zigErrorIdentifier:           "error_identifier"
+    of zigErrorType:                 "error_type"
+    of zigExternModifier:            "extern_modifier"
+    of zigFieldDeclaration:          "field_declaration"
+    of zigFieldExpression:           "field_expression"
+    of zigFieldIdentifier:           "field_identifier"
+    of zigFieldInit:                 "field_init"
+    of zigFieldPattern:              "field_pattern"
+    of zigForExpression:             "for_expression"
+    of zigFunctionDeclaration:       "function_declaration"
+    of zigFunctionModifiers:         "function_modifiers"
+    of zigFunctionSignature:         "function_signature"
+    of zigIdentifier:                "identifier"
+    of zigIfExpression:              "if_expression"
+    of zigIndexExpression:           "index_expression"
+    of zigLabelIdentifier:           "label_identifier"
+    of zigLiteralPattern:            "literal_pattern"
+    of zigLoopLabel:                 "loop_label"
+    of zigLoopLabelInverse:          "loop_label_inverse"
+    of zigMultilineStringLiteral:    "multiline_string_literal"
+    of zigNullLiteral:               "null_literal"
+    of zigOptionalType:              "optional_type"
+    of zigOrelsePostfixExpression:   "orelse_postfix_expression"
+    of zigParameter:                 "parameter"
+    of zigParameters:                "parameters"
+    of zigPayload:                   "payload"
+    of zigPayloadExpression:         "payload_expression"
+    of zigPayloadIdentifier:         "payload_identifier"
+    of zigPointerType:               "pointer_type"
+    of zigPrimitiveType:             "primitive_type"
+    of zigRangePattern:              "range_pattern"
+    of zigReferenceExpression:       "reference_expression"
+    of zigResumeBlock:               "resume_block"
+    of zigResumeExpression:          "resume_expression"
+    of zigReturnExpression:          "return_expression"
+    of zigSlicePattern:              "slice_pattern"
+    of zigSourceFile:                "source_file"
+    of zigStringLiteral:             "string_literal"
+    of zigStructConstruction:        "struct_construction"
+    of zigStructExpression:          "struct_expression"
+    of zigSuspendBlock:              "suspend_block"
+    of zigSuspendExpression:         "suspend_expression"
+    of zigSwitchArm:                 "switch_arm"
+    of zigSwitchBlock:               "switch_block"
+    of zigSwitchExpression:          "switch_expression"
+    of zigSwitchLastArm:             "switch_last_arm"
+    of zigSwitchPattern:             "switch_pattern"
+    of zigTestExpression:            "test_expression"
+    of zigTryExpression:             "try_expression"
+    of zigTypeIdentifier:            "type_identifier"
+    of zigTypePrefix:                "type_prefix"
+    of zigUnaryExpression:           "unary_expression"
+    of zigUnaryOperator:             "unary_operator"
+    of zigUnionExpression:           "union_expression"
+    of zigUnionFieldVariant:         "union_field_variant"
+    of zigUnionIdentifier:           "union_identifier"
+    of zigUsingnamespaceExpression:  "usingnamespace_expression"
+    of zigVariadicParameter:         "variadic_parameter"
+    of zigVariantDeclaration:        "variant_declaration"
+    of zigVisibilityModifier:        "visibility_modifier"
+    of zigWhileExpression:           "while_expression"
+    of zigExclamationTok:            "!"
+    of zigQuoteTok:                  "\""
+    of zigPercentEqualTok:           "%="
+    of zigAmpersandTok:              "&"
+    of zigAmpersandEqualTok:         "&="
+    of zigApostropheTok:             "\'"
+    of zigLParTok:                   "("
+    of zigRParTok:                   ")"
+    of zigAsteriskTok:               "*"
+    of zigAsteriskPercentEqualTok:   "*%="
+    of zigAsteriskEqualTok:          "*="
+    of zigPlusPercentEqualTok:       "+%="
+    of zigPlusEqualTok:              "+="
+    of zigCommaTok:                  ","
+    of zigMinusTok:                  "-"
+    of zigMinusPercentTok:           "-%"
+    of zigMinusPercentEqualTok:      "-%="
+    of zigMinusEqualTok:             "-="
+    of zigDotTok:                    "."
+    of zigDotAsteriskTok:            ".*"
+    of zigDoubleDotTok:              ".."
+    of zigTripleDotTok:              "..."
+    of zigDotQuestionTok:            ".?"
+    of zigDotLCurlyTok:              ".{"
+    of zigSlashEqualTok:             "/="
+    of zigColonTok:                  ":"
+    of zigSemicolonTok:              ";"
+    of zigDoubleLessThanEqualTok:    "<<="
+    of zigEqualTok:                  "="
+    of zigEqualGreaterThanTok:       "=>"
+    of zigDoubleGreaterThanEqualTok: ">>="
+    of zigQuestionTok:               "?"
+    of zigAtQuoteTok:                "@\""
+    of zigLBrackTok:                 "["
+    of zigDoubleBackslashTok:        "\\\\"
+    of zigRBrackTok:                 "]"
+    of zigAccentEqualTok:            "^="
+    of zigAlignTok:                  "align"
+    of zigAllowzeroTok:              "allowzero"
+    of zigAnyerrorTok:               "anyerror"
+    of zigAssignmentModifier:        "assignment_modifier"
+    of zigAwaitTok:                  "await"
+    of zigBinaryOperator:            "binary_operator"
+    of zigBoolTok:                   "bool"
+    of zigBreakTok:                  "break"
+    of zigCIntTok:                   "c_int"
+    of zigCLongTok:                  "c_long"
+    of zigCLongdoubleTok:            "c_longdouble"
+    of zigCLonglongTok:              "c_longlong"
+    of zigCShortTok:                 "c_short"
+    of zigCUintTok:                  "c_uint"
+    of zigCUlongTok:                 "c_ulong"
+    of zigCUlonglongTok:             "c_ulonglong"
+    of zigCUshortTok:                "c_ushort"
+    of zigCVoidTok:                  "c_void"
+    of zigCallModifier:              "call_modifier"
+    of zigComptimeTok:               "comptime"
+    of zigComptimeFloatTok:          "comptime_float"
+    of zigComptimeIntTok:            "comptime_int"
+    of zigConstTok:                  "const"
+    of zigContinueTok:               "continue"
+    of zigCustomNumberType:          "custom_number_type"
+    of zigDeferTok:                  "defer"
+    of zigDocComment:                "doc_comment"
+    of zigElseTok:                   "else"
+    of zigElseSwitch:                "else_switch"
+    of zigEnumTok:                   "enum"
+    of zigEnumModifier:              "enum_modifier"
+    of zigErrdeferTok:               "errdefer"
+    of zigErrorTok:                  "error"
+    of zigEscapeSequence:            "escape_sequence"
+    of zigExportTok:                 "export"
+    of zigExternTok:                 "extern"
+    of zigF128Tok:                   "f128"
+    of zigF16Tok:                    "f16"
+    of zigF32Tok:                    "f32"
+    of zigF64Tok:                    "f64"
+    of zigFalseTok:                  "false"
+    of zigFloatLiteral:              "float_literal"
+    of zigFnTok:                     "fn"
+    of zigForTok:                    "for"
+    of zigI128Tok:                   "i128"
+    of zigI16Tok:                    "i16"
+    of zigI32Tok:                    "i32"
+    of zigI64Tok:                    "i64"
+    of zigI8Tok:                     "i8"
+    of zigIfTok:                     "if"
+    of zigInferenceType:             "inference_type"
+    of zigInlineTok:                 "inline"
+    of zigIntegerLiteral:            "integer_literal"
+    of zigIsizeTok:                  "isize"
+    of zigLineComment:               "line_comment"
+    of zigLoopModifier:              "loop_modifier"
+    of zigNakedccTok:                "nakedcc"
+    of zigNoreturnTok:               "noreturn"
+    of zigNullTok:                   "null"
+    of zigPointer:                   "pointer"
+    of zigPromiseTok:                "promise"
+    of zigPubTok:                    "pub"
+    of zigResumeTok:                 "resume"
+    of zigReturnTok:                 "return"
+    of zigStdcallccTok:              "stdcallcc"
+    of zigStructTok:                 "struct"
+    of zigStructModifier:            "struct_modifier"
+    of zigSuspendTok:                "suspend"
+    of zigSwitchTok:                 "switch"
+    of zigTestTok:                   "test"
+    of zigTrueTok:                   "true"
+    of zigTryTok:                    "try"
+    of zigTypeTok:                   "type"
+    of zigU128Tok:                   "u128"
+    of zigU16Tok:                    "u16"
+    of zigU32Tok:                    "u32"
+    of zigU64Tok:                    "u64"
+    of zigU8Tok:                     "u8"
+    of zigUndefinedLiteral:          "undefined_literal"
+    of zigUnionTok:                  "union"
+    of zigUnionModifier:             "union_modifier"
+    of zigUnreachableExpression:     "unreachable_expression"
+    of zigUsingnamespaceTok:         "usingnamespace"
+    of zigUsizeTok:                  "usize"
+    of zigVarTok:                    "var"
+    of zigVoidTok:                   "void"
+    of zigVolatileTok:               "volatile"
+    of zigWhileTok:                  "while"
+    of zigLCurlyTok:                 "{"
+    of zigPipeTok:                   "|"
+    of zigPipeEqualTok:              "|="
+    of zigRCurlyTok:                 "}"
+    of zigTildeTok:                  "~"
+    of zigSyntaxError:               "ERROR"
+
+
 type
   TsZigNode* = distinct TSNode
 
@@ -236,6 +460,1120 @@ type
 type
   ZigParser* = distinct PtsParser
 
+
+const zigAllowedSubnodes*: array[ZigNodeKind, set[ZigNodeKind]] = block:
+                                                                    var tmp: array[ZigNodeKind, set[ZigNodeKind]]
+                                                                    tmp[zigArguments] = {
+                                                                                          zigAnonymousArrayExpr,
+                                                                                          zigAnonymousStructEnum,
+                                                                                          zigArrayExpression,
+                                                                                          zigArrayType,
+                                                                                          zigAssignmentExpression,
+                                                                                          zigAwaitExpression,
+                                                                                          zigBinaryExpression,
+                                                                                          zigBlock,
+                                                                                          zigBooleanLiteral,
+                                                                                          zigBreakExpression,
+                                                                                          zigBuildInCallExpr,
+                                                                                          zigCallExpression,
+                                                                                          zigCharLiteral,
+                                                                                          zigCompoundAssignmentExpr,
+                                                                                          zigComptimeBlock,
+                                                                                          zigContinueExpression,
+                                                                                          zigCustomNumberType,
+                                                                                          zigDeferBlock,
+                                                                                          zigDeferExpression,
+                                                                                          zigDereferenceExpression,
+                                                                                          zigEnumExpression,
+                                                                                          zigEnumLiteral,
+                                                                                          zigErrorExpression,
+                                                                                          zigErrorType,
+                                                                                          zigFieldExpression,
+                                                                                          zigFloatLiteral,
+                                                                                          zigForExpression,
+                                                                                          zigIdentifier,
+                                                                                          zigIfExpression,
+                                                                                          zigIndexExpression,
+                                                                                          zigIntegerLiteral,
+                                                                                          zigMultilineStringLiteral,
+                                                                                          zigNullLiteral,
+                                                                                          zigOptionalType,
+                                                                                          zigOrelsePostfixExpression,
+                                                                                          zigPayloadExpression,
+                                                                                          zigPointerType,
+                                                                                          zigPrimitiveType,
+                                                                                          zigRangePattern,
+                                                                                          zigReferenceExpression,
+                                                                                          zigResumeBlock,
+                                                                                          zigResumeExpression,
+                                                                                          zigReturnExpression,
+                                                                                          zigStringLiteral,
+                                                                                          zigStructConstruction,
+                                                                                          zigStructExpression,
+                                                                                          zigSuspendBlock,
+                                                                                          zigSuspendExpression,
+                                                                                          zigSwitchExpression,
+                                                                                          zigTestExpression,
+                                                                                          zigTryExpression,
+                                                                                          zigTypeIdentifier,
+                                                                                          zigUnaryExpression,
+                                                                                          zigUndefinedLiteral,
+                                                                                          zigUnionExpression,
+                                                                                          zigUnreachableExpression,
+                                                                                          zigUsingnamespaceExpression,
+                                                                                          zigWhileExpression
+                                                                                        }
+                                                                    tmp[zigArrayType] = {
+                                                                                          zigCustomNumberType,
+                                                                                          zigErrorType,
+                                                                                          zigOptionalType,
+                                                                                          zigPointerType,
+                                                                                          zigPrimitiveType,
+                                                                                          zigTypeIdentifier,
+                                                                                          zigTypePrefix
+                                                                                        }
+                                                                    tmp[zigArrayValues] = {
+                                                                                            zigAnonymousArrayExpr,
+                                                                                            zigAnonymousStructEnum,
+                                                                                            zigArrayExpression,
+                                                                                            zigArrayType,
+                                                                                            zigAssignmentExpression,
+                                                                                            zigAwaitExpression,
+                                                                                            zigBinaryExpression,
+                                                                                            zigBlock,
+                                                                                            zigBooleanLiteral,
+                                                                                            zigBreakExpression,
+                                                                                            zigBuildInCallExpr,
+                                                                                            zigCallExpression,
+                                                                                            zigCharLiteral,
+                                                                                            zigCompoundAssignmentExpr,
+                                                                                            zigComptimeBlock,
+                                                                                            zigContinueExpression,
+                                                                                            zigCustomNumberType,
+                                                                                            zigDeferBlock,
+                                                                                            zigDeferExpression,
+                                                                                            zigDereferenceExpression,
+                                                                                            zigEnumExpression,
+                                                                                            zigEnumLiteral,
+                                                                                            zigErrorExpression,
+                                                                                            zigErrorType,
+                                                                                            zigFieldExpression,
+                                                                                            zigFloatLiteral,
+                                                                                            zigForExpression,
+                                                                                            zigIdentifier,
+                                                                                            zigIfExpression,
+                                                                                            zigIndexExpression,
+                                                                                            zigIntegerLiteral,
+                                                                                            zigMultilineStringLiteral,
+                                                                                            zigNullLiteral,
+                                                                                            zigOptionalType,
+                                                                                            zigOrelsePostfixExpression,
+                                                                                            zigPayloadExpression,
+                                                                                            zigPointerType,
+                                                                                            zigPrimitiveType,
+                                                                                            zigRangePattern,
+                                                                                            zigReferenceExpression,
+                                                                                            zigResumeBlock,
+                                                                                            zigResumeExpression,
+                                                                                            zigReturnExpression,
+                                                                                            zigStringLiteral,
+                                                                                            zigStructConstruction,
+                                                                                            zigStructExpression,
+                                                                                            zigSuspendBlock,
+                                                                                            zigSuspendExpression,
+                                                                                            zigSwitchExpression,
+                                                                                            zigTestExpression,
+                                                                                            zigTryExpression,
+                                                                                            zigTypeIdentifier,
+                                                                                            zigUnaryExpression,
+                                                                                            zigUndefinedLiteral,
+                                                                                            zigUnionExpression,
+                                                                                            zigUnreachableExpression,
+                                                                                            zigUsingnamespaceExpression,
+                                                                                            zigWhileExpression
+                                                                                          }
+                                                                    tmp[zigAssignmentStatement] = {zigAssignmentModifier, zigVisibilityModifier}
+                                                                    tmp[zigAwaitExpression] = {
+                                                                                                zigAnonymousArrayExpr,
+                                                                                                zigAnonymousStructEnum,
+                                                                                                zigArrayExpression,
+                                                                                                zigArrayType,
+                                                                                                zigAssignmentExpression,
+                                                                                                zigAwaitExpression,
+                                                                                                zigBinaryExpression,
+                                                                                                zigBlock,
+                                                                                                zigBooleanLiteral,
+                                                                                                zigBreakExpression,
+                                                                                                zigBuildInCallExpr,
+                                                                                                zigCallExpression,
+                                                                                                zigCharLiteral,
+                                                                                                zigCompoundAssignmentExpr,
+                                                                                                zigComptimeBlock,
+                                                                                                zigContinueExpression,
+                                                                                                zigCustomNumberType,
+                                                                                                zigDeferBlock,
+                                                                                                zigDeferExpression,
+                                                                                                zigDereferenceExpression,
+                                                                                                zigEnumExpression,
+                                                                                                zigEnumLiteral,
+                                                                                                zigErrorExpression,
+                                                                                                zigErrorType,
+                                                                                                zigFieldExpression,
+                                                                                                zigFloatLiteral,
+                                                                                                zigForExpression,
+                                                                                                zigIdentifier,
+                                                                                                zigIfExpression,
+                                                                                                zigIndexExpression,
+                                                                                                zigIntegerLiteral,
+                                                                                                zigMultilineStringLiteral,
+                                                                                                zigNullLiteral,
+                                                                                                zigOptionalType,
+                                                                                                zigOrelsePostfixExpression,
+                                                                                                zigPayloadExpression,
+                                                                                                zigPointerType,
+                                                                                                zigPrimitiveType,
+                                                                                                zigRangePattern,
+                                                                                                zigReferenceExpression,
+                                                                                                zigResumeBlock,
+                                                                                                zigResumeExpression,
+                                                                                                zigReturnExpression,
+                                                                                                zigStringLiteral,
+                                                                                                zigStructConstruction,
+                                                                                                zigStructExpression,
+                                                                                                zigSuspendBlock,
+                                                                                                zigSuspendExpression,
+                                                                                                zigSwitchExpression,
+                                                                                                zigTestExpression,
+                                                                                                zigTryExpression,
+                                                                                                zigTypeIdentifier,
+                                                                                                zigUnaryExpression,
+                                                                                                zigUndefinedLiteral,
+                                                                                                zigUnionExpression,
+                                                                                                zigUnreachableExpression,
+                                                                                                zigUsingnamespaceExpression,
+                                                                                                zigWhileExpression
+                                                                                              }
+                                                                    tmp[zigBlock] = {
+                                                                                      zigAnonymousArrayExpr,
+                                                                                      zigAnonymousStructEnum,
+                                                                                      zigArrayExpression,
+                                                                                      zigArrayType,
+                                                                                      zigAssignmentExpression,
+                                                                                      zigAssignmentStatement,
+                                                                                      zigAwaitExpression,
+                                                                                      zigBinaryExpression,
+                                                                                      zigBlock,
+                                                                                      zigBooleanLiteral,
+                                                                                      zigBreakExpression,
+                                                                                      zigBuildInCallExpr,
+                                                                                      zigCallExpression,
+                                                                                      zigCharLiteral,
+                                                                                      zigCompoundAssignmentExpr,
+                                                                                      zigComptimeBlock,
+                                                                                      zigContinueExpression,
+                                                                                      zigCustomNumberType,
+                                                                                      zigDeferBlock,
+                                                                                      zigDeferExpression,
+                                                                                      zigDereferenceExpression,
+                                                                                      zigEmptyStatement,
+                                                                                      zigEnumExpression,
+                                                                                      zigEnumLiteral,
+                                                                                      zigErrorExpression,
+                                                                                      zigErrorType,
+                                                                                      zigFieldExpression,
+                                                                                      zigFloatLiteral,
+                                                                                      zigForExpression,
+                                                                                      zigFunctionDeclaration,
+                                                                                      zigFunctionSignature,
+                                                                                      zigIdentifier,
+                                                                                      zigIfExpression,
+                                                                                      zigIndexExpression,
+                                                                                      zigIntegerLiteral,
+                                                                                      zigMultilineStringLiteral,
+                                                                                      zigNullLiteral,
+                                                                                      zigOptionalType,
+                                                                                      zigOrelsePostfixExpression,
+                                                                                      zigPayloadExpression,
+                                                                                      zigPointerType,
+                                                                                      zigPrimitiveType,
+                                                                                      zigRangePattern,
+                                                                                      zigReferenceExpression,
+                                                                                      zigResumeBlock,
+                                                                                      zigResumeExpression,
+                                                                                      zigReturnExpression,
+                                                                                      zigStringLiteral,
+                                                                                      zigStructConstruction,
+                                                                                      zigStructExpression,
+                                                                                      zigSuspendBlock,
+                                                                                      zigSuspendExpression,
+                                                                                      zigSwitchExpression,
+                                                                                      zigTestExpression,
+                                                                                      zigTryExpression,
+                                                                                      zigTypeIdentifier,
+                                                                                      zigUnaryExpression,
+                                                                                      zigUndefinedLiteral,
+                                                                                      zigUnionExpression,
+                                                                                      zigUnreachableExpression,
+                                                                                      zigUsingnamespaceExpression,
+                                                                                      zigWhileExpression
+                                                                                    }
+                                                                    tmp[zigCallExpression] = {zigCallModifier}
+                                                                    tmp[zigCharLiteral] = {zigEscapeSequence}
+                                                                    tmp[zigComptimeBlock] = {zigBlock}
+                                                                    tmp[zigDeferBlock] = {zigBlock}
+                                                                    tmp[zigDeferExpression] = {
+                                                                                                zigAnonymousArrayExpr,
+                                                                                                zigAnonymousStructEnum,
+                                                                                                zigArrayExpression,
+                                                                                                zigArrayType,
+                                                                                                zigAssignmentExpression,
+                                                                                                zigAwaitExpression,
+                                                                                                zigBinaryExpression,
+                                                                                                zigBlock,
+                                                                                                zigBooleanLiteral,
+                                                                                                zigBreakExpression,
+                                                                                                zigBuildInCallExpr,
+                                                                                                zigCallExpression,
+                                                                                                zigCharLiteral,
+                                                                                                zigCompoundAssignmentExpr,
+                                                                                                zigComptimeBlock,
+                                                                                                zigContinueExpression,
+                                                                                                zigCustomNumberType,
+                                                                                                zigDeferBlock,
+                                                                                                zigDeferExpression,
+                                                                                                zigDereferenceExpression,
+                                                                                                zigEnumExpression,
+                                                                                                zigEnumLiteral,
+                                                                                                zigErrorExpression,
+                                                                                                zigErrorType,
+                                                                                                zigFieldExpression,
+                                                                                                zigFloatLiteral,
+                                                                                                zigForExpression,
+                                                                                                zigIdentifier,
+                                                                                                zigIfExpression,
+                                                                                                zigIndexExpression,
+                                                                                                zigIntegerLiteral,
+                                                                                                zigMultilineStringLiteral,
+                                                                                                zigNullLiteral,
+                                                                                                zigOptionalType,
+                                                                                                zigOrelsePostfixExpression,
+                                                                                                zigPayloadExpression,
+                                                                                                zigPointerType,
+                                                                                                zigPrimitiveType,
+                                                                                                zigRangePattern,
+                                                                                                zigReferenceExpression,
+                                                                                                zigResumeBlock,
+                                                                                                zigResumeExpression,
+                                                                                                zigReturnExpression,
+                                                                                                zigStringLiteral,
+                                                                                                zigStructConstruction,
+                                                                                                zigStructExpression,
+                                                                                                zigSuspendBlock,
+                                                                                                zigSuspendExpression,
+                                                                                                zigSwitchExpression,
+                                                                                                zigTestExpression,
+                                                                                                zigTryExpression,
+                                                                                                zigTypeIdentifier,
+                                                                                                zigUnaryExpression,
+                                                                                                zigUndefinedLiteral,
+                                                                                                zigUnionExpression,
+                                                                                                zigUnreachableExpression,
+                                                                                                zigUsingnamespaceExpression,
+                                                                                                zigWhileExpression
+                                                                                              }
+                                                                    tmp[zigEnumExpression] = {
+                                                                                               zigAnonymousArrayExpr,
+                                                                                               zigAnonymousStructEnum,
+                                                                                               zigArrayExpression,
+                                                                                               zigArrayType,
+                                                                                               zigAssignmentExpression,
+                                                                                               zigAssignmentStatement,
+                                                                                               zigAwaitExpression,
+                                                                                               zigBinaryExpression,
+                                                                                               zigBlock,
+                                                                                               zigBooleanLiteral,
+                                                                                               zigBreakExpression,
+                                                                                               zigBuildInCallExpr,
+                                                                                               zigCallExpression,
+                                                                                               zigCharLiteral,
+                                                                                               zigCompoundAssignmentExpr,
+                                                                                               zigComptimeBlock,
+                                                                                               zigContinueExpression,
+                                                                                               zigCustomNumberType,
+                                                                                               zigDeferBlock,
+                                                                                               zigDeferExpression,
+                                                                                               zigDereferenceExpression,
+                                                                                               zigEmptyStatement,
+                                                                                               zigEnumExpression,
+                                                                                               zigEnumLiteral,
+                                                                                               zigEnumModifier,
+                                                                                               zigErrorExpression,
+                                                                                               zigErrorType,
+                                                                                               zigFieldExpression,
+                                                                                               zigFloatLiteral,
+                                                                                               zigForExpression,
+                                                                                               zigFunctionDeclaration,
+                                                                                               zigFunctionSignature,
+                                                                                               zigIdentifier,
+                                                                                               zigIfExpression,
+                                                                                               zigIndexExpression,
+                                                                                               zigIntegerLiteral,
+                                                                                               zigMultilineStringLiteral,
+                                                                                               zigNullLiteral,
+                                                                                               zigOptionalType,
+                                                                                               zigOrelsePostfixExpression,
+                                                                                               zigPayloadExpression,
+                                                                                               zigPointerType,
+                                                                                               zigPrimitiveType,
+                                                                                               zigRangePattern,
+                                                                                               zigReferenceExpression,
+                                                                                               zigResumeBlock,
+                                                                                               zigResumeExpression,
+                                                                                               zigReturnExpression,
+                                                                                               zigStringLiteral,
+                                                                                               zigStructConstruction,
+                                                                                               zigStructExpression,
+                                                                                               zigSuspendBlock,
+                                                                                               zigSuspendExpression,
+                                                                                               zigSwitchExpression,
+                                                                                               zigTestExpression,
+                                                                                               zigTryExpression,
+                                                                                               zigTypeIdentifier,
+                                                                                               zigUnaryExpression,
+                                                                                               zigUndefinedLiteral,
+                                                                                               zigUnionExpression,
+                                                                                               zigUnreachableExpression,
+                                                                                               zigUsingnamespaceExpression,
+                                                                                               zigWhileExpression
+                                                                                             }
+                                                                    tmp[zigEnumIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigErrorIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigExternModifier] = {zigStringLiteral}
+                                                                    tmp[zigFieldDeclaration] = {zigVisibilityModifier}
+                                                                    tmp[zigFieldIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigForExpression] = {zigLoopLabel, zigLoopModifier, zigPayload}
+                                                                    tmp[zigFunctionDeclaration] = {zigFunctionModifiers, zigVisibilityModifier}
+                                                                    tmp[zigFunctionModifiers] = {zigExternModifier}
+                                                                    tmp[zigFunctionSignature] = {zigFunctionModifiers, zigVisibilityModifier}
+                                                                    tmp[zigIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigIfExpression] = {zigPayload}
+                                                                    tmp[zigIndexExpression] = {
+                                                                                                zigAnonymousArrayExpr,
+                                                                                                zigAnonymousStructEnum,
+                                                                                                zigArrayExpression,
+                                                                                                zigArrayType,
+                                                                                                zigAssignmentExpression,
+                                                                                                zigAwaitExpression,
+                                                                                                zigBinaryExpression,
+                                                                                                zigBlock,
+                                                                                                zigBooleanLiteral,
+                                                                                                zigBreakExpression,
+                                                                                                zigBuildInCallExpr,
+                                                                                                zigCallExpression,
+                                                                                                zigCharLiteral,
+                                                                                                zigCompoundAssignmentExpr,
+                                                                                                zigComptimeBlock,
+                                                                                                zigContinueExpression,
+                                                                                                zigCustomNumberType,
+                                                                                                zigDeferBlock,
+                                                                                                zigDeferExpression,
+                                                                                                zigDereferenceExpression,
+                                                                                                zigEnumExpression,
+                                                                                                zigEnumLiteral,
+                                                                                                zigErrorExpression,
+                                                                                                zigErrorType,
+                                                                                                zigFieldExpression,
+                                                                                                zigFloatLiteral,
+                                                                                                zigForExpression,
+                                                                                                zigIdentifier,
+                                                                                                zigIfExpression,
+                                                                                                zigIndexExpression,
+                                                                                                zigIntegerLiteral,
+                                                                                                zigMultilineStringLiteral,
+                                                                                                zigNullLiteral,
+                                                                                                zigOptionalType,
+                                                                                                zigOrelsePostfixExpression,
+                                                                                                zigPayloadExpression,
+                                                                                                zigPointerType,
+                                                                                                zigPrimitiveType,
+                                                                                                zigRangePattern,
+                                                                                                zigReferenceExpression,
+                                                                                                zigResumeBlock,
+                                                                                                zigResumeExpression,
+                                                                                                zigReturnExpression,
+                                                                                                zigSlicePattern,
+                                                                                                zigStringLiteral,
+                                                                                                zigStructConstruction,
+                                                                                                zigStructExpression,
+                                                                                                zigSuspendBlock,
+                                                                                                zigSuspendExpression,
+                                                                                                zigSwitchExpression,
+                                                                                                zigTestExpression,
+                                                                                                zigTryExpression,
+                                                                                                zigTypeIdentifier,
+                                                                                                zigUnaryExpression,
+                                                                                                zigUndefinedLiteral,
+                                                                                                zigUnionExpression,
+                                                                                                zigUnreachableExpression,
+                                                                                                zigUsingnamespaceExpression,
+                                                                                                zigWhileExpression
+                                                                                              }
+                                                                    tmp[zigLabelIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigLiteralPattern] = {
+                                                                                               zigBooleanLiteral,
+                                                                                               zigCharLiteral,
+                                                                                               zigEnumLiteral,
+                                                                                               zigFloatLiteral,
+                                                                                               zigIntegerLiteral,
+                                                                                               zigMultilineStringLiteral,
+                                                                                               zigNullLiteral,
+                                                                                               zigStringLiteral,
+                                                                                               zigUndefinedLiteral
+                                                                                             }
+                                                                    tmp[zigMultilineStringLiteral] = {zigStringLiteral}
+                                                                    tmp[zigOptionalType] = {
+                                                                                             zigArrayType,
+                                                                                             zigCustomNumberType,
+                                                                                             zigErrorType,
+                                                                                             zigOptionalType,
+                                                                                             zigPointerType,
+                                                                                             zigPrimitiveType,
+                                                                                             zigStructExpression,
+                                                                                             zigTypeIdentifier
+                                                                                           }
+                                                                    tmp[zigParameters] = {zigParameter}
+                                                                    tmp[zigPayloadExpression] = {
+                                                                                                  zigAnonymousArrayExpr,
+                                                                                                  zigAnonymousStructEnum,
+                                                                                                  zigArrayExpression,
+                                                                                                  zigArrayType,
+                                                                                                  zigAssignmentExpression,
+                                                                                                  zigAwaitExpression,
+                                                                                                  zigBinaryExpression,
+                                                                                                  zigBlock,
+                                                                                                  zigBooleanLiteral,
+                                                                                                  zigBreakExpression,
+                                                                                                  zigBuildInCallExpr,
+                                                                                                  zigCallExpression,
+                                                                                                  zigCharLiteral,
+                                                                                                  zigCompoundAssignmentExpr,
+                                                                                                  zigComptimeBlock,
+                                                                                                  zigContinueExpression,
+                                                                                                  zigCustomNumberType,
+                                                                                                  zigDeferBlock,
+                                                                                                  zigDeferExpression,
+                                                                                                  zigDereferenceExpression,
+                                                                                                  zigEnumExpression,
+                                                                                                  zigEnumLiteral,
+                                                                                                  zigErrorExpression,
+                                                                                                  zigErrorType,
+                                                                                                  zigFieldExpression,
+                                                                                                  zigFloatLiteral,
+                                                                                                  zigForExpression,
+                                                                                                  zigIdentifier,
+                                                                                                  zigIfExpression,
+                                                                                                  zigIndexExpression,
+                                                                                                  zigIntegerLiteral,
+                                                                                                  zigMultilineStringLiteral,
+                                                                                                  zigNullLiteral,
+                                                                                                  zigOptionalType,
+                                                                                                  zigOrelsePostfixExpression,
+                                                                                                  zigPayload,
+                                                                                                  zigPayloadExpression,
+                                                                                                  zigPointerType,
+                                                                                                  zigPrimitiveType,
+                                                                                                  zigRangePattern,
+                                                                                                  zigReferenceExpression,
+                                                                                                  zigResumeBlock,
+                                                                                                  zigResumeExpression,
+                                                                                                  zigReturnExpression,
+                                                                                                  zigStringLiteral,
+                                                                                                  zigStructConstruction,
+                                                                                                  zigStructExpression,
+                                                                                                  zigSuspendBlock,
+                                                                                                  zigSuspendExpression,
+                                                                                                  zigSwitchExpression,
+                                                                                                  zigTestExpression,
+                                                                                                  zigTryExpression,
+                                                                                                  zigTypeIdentifier,
+                                                                                                  zigUnaryExpression,
+                                                                                                  zigUndefinedLiteral,
+                                                                                                  zigUnionExpression,
+                                                                                                  zigUnreachableExpression,
+                                                                                                  zigUsingnamespaceExpression,
+                                                                                                  zigWhileExpression
+                                                                                                }
+                                                                    tmp[zigPayloadIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigPointerType] = {
+                                                                                            zigArrayType,
+                                                                                            zigCustomNumberType,
+                                                                                            zigErrorType,
+                                                                                            zigOptionalType,
+                                                                                            zigPointerType,
+                                                                                            zigPrimitiveType,
+                                                                                            zigStructExpression,
+                                                                                            zigTypeIdentifier,
+                                                                                            zigTypePrefix
+                                                                                          }
+                                                                    tmp[zigResumeBlock] = {zigBlock}
+                                                                    tmp[zigResumeExpression] = {
+                                                                                                 zigAnonymousArrayExpr,
+                                                                                                 zigAnonymousStructEnum,
+                                                                                                 zigArrayExpression,
+                                                                                                 zigArrayType,
+                                                                                                 zigAssignmentExpression,
+                                                                                                 zigAwaitExpression,
+                                                                                                 zigBinaryExpression,
+                                                                                                 zigBlock,
+                                                                                                 zigBooleanLiteral,
+                                                                                                 zigBreakExpression,
+                                                                                                 zigBuildInCallExpr,
+                                                                                                 zigCallExpression,
+                                                                                                 zigCharLiteral,
+                                                                                                 zigCompoundAssignmentExpr,
+                                                                                                 zigComptimeBlock,
+                                                                                                 zigContinueExpression,
+                                                                                                 zigCustomNumberType,
+                                                                                                 zigDeferBlock,
+                                                                                                 zigDeferExpression,
+                                                                                                 zigDereferenceExpression,
+                                                                                                 zigEnumExpression,
+                                                                                                 zigEnumLiteral,
+                                                                                                 zigErrorExpression,
+                                                                                                 zigErrorType,
+                                                                                                 zigFieldExpression,
+                                                                                                 zigFloatLiteral,
+                                                                                                 zigForExpression,
+                                                                                                 zigIdentifier,
+                                                                                                 zigIfExpression,
+                                                                                                 zigIndexExpression,
+                                                                                                 zigIntegerLiteral,
+                                                                                                 zigMultilineStringLiteral,
+                                                                                                 zigNullLiteral,
+                                                                                                 zigOptionalType,
+                                                                                                 zigOrelsePostfixExpression,
+                                                                                                 zigPayloadExpression,
+                                                                                                 zigPointerType,
+                                                                                                 zigPrimitiveType,
+                                                                                                 zigRangePattern,
+                                                                                                 zigReferenceExpression,
+                                                                                                 zigResumeBlock,
+                                                                                                 zigResumeExpression,
+                                                                                                 zigReturnExpression,
+                                                                                                 zigStringLiteral,
+                                                                                                 zigStructConstruction,
+                                                                                                 zigStructExpression,
+                                                                                                 zigSuspendBlock,
+                                                                                                 zigSuspendExpression,
+                                                                                                 zigSwitchExpression,
+                                                                                                 zigTestExpression,
+                                                                                                 zigTryExpression,
+                                                                                                 zigTypeIdentifier,
+                                                                                                 zigUnaryExpression,
+                                                                                                 zigUndefinedLiteral,
+                                                                                                 zigUnionExpression,
+                                                                                                 zigUnreachableExpression,
+                                                                                                 zigUsingnamespaceExpression,
+                                                                                                 zigWhileExpression
+                                                                                               }
+                                                                    tmp[zigReturnExpression] = {
+                                                                                                 zigAnonymousArrayExpr,
+                                                                                                 zigAnonymousStructEnum,
+                                                                                                 zigArrayExpression,
+                                                                                                 zigArrayType,
+                                                                                                 zigAssignmentExpression,
+                                                                                                 zigAwaitExpression,
+                                                                                                 zigBinaryExpression,
+                                                                                                 zigBlock,
+                                                                                                 zigBooleanLiteral,
+                                                                                                 zigBreakExpression,
+                                                                                                 zigBuildInCallExpr,
+                                                                                                 zigCallExpression,
+                                                                                                 zigCharLiteral,
+                                                                                                 zigCompoundAssignmentExpr,
+                                                                                                 zigComptimeBlock,
+                                                                                                 zigContinueExpression,
+                                                                                                 zigCustomNumberType,
+                                                                                                 zigDeferBlock,
+                                                                                                 zigDeferExpression,
+                                                                                                 zigDereferenceExpression,
+                                                                                                 zigEnumExpression,
+                                                                                                 zigEnumLiteral,
+                                                                                                 zigErrorExpression,
+                                                                                                 zigErrorType,
+                                                                                                 zigFieldExpression,
+                                                                                                 zigFloatLiteral,
+                                                                                                 zigForExpression,
+                                                                                                 zigIdentifier,
+                                                                                                 zigIfExpression,
+                                                                                                 zigIndexExpression,
+                                                                                                 zigIntegerLiteral,
+                                                                                                 zigMultilineStringLiteral,
+                                                                                                 zigNullLiteral,
+                                                                                                 zigOptionalType,
+                                                                                                 zigOrelsePostfixExpression,
+                                                                                                 zigPayloadExpression,
+                                                                                                 zigPointerType,
+                                                                                                 zigPrimitiveType,
+                                                                                                 zigRangePattern,
+                                                                                                 zigReferenceExpression,
+                                                                                                 zigResumeBlock,
+                                                                                                 zigResumeExpression,
+                                                                                                 zigReturnExpression,
+                                                                                                 zigStringLiteral,
+                                                                                                 zigStructConstruction,
+                                                                                                 zigStructExpression,
+                                                                                                 zigSuspendBlock,
+                                                                                                 zigSuspendExpression,
+                                                                                                 zigSwitchExpression,
+                                                                                                 zigTestExpression,
+                                                                                                 zigTryExpression,
+                                                                                                 zigTypeIdentifier,
+                                                                                                 zigUnaryExpression,
+                                                                                                 zigUndefinedLiteral,
+                                                                                                 zigUnionExpression,
+                                                                                                 zigUnreachableExpression,
+                                                                                                 zigUsingnamespaceExpression,
+                                                                                                 zigWhileExpression
+                                                                                               }
+                                                                    tmp[zigSourceFile] = {
+                                                                                           zigAnonymousArrayExpr,
+                                                                                           zigAnonymousStructEnum,
+                                                                                           zigArrayExpression,
+                                                                                           zigArrayType,
+                                                                                           zigAssignmentExpression,
+                                                                                           zigAssignmentStatement,
+                                                                                           zigAwaitExpression,
+                                                                                           zigBinaryExpression,
+                                                                                           zigBlock,
+                                                                                           zigBooleanLiteral,
+                                                                                           zigBreakExpression,
+                                                                                           zigBuildInCallExpr,
+                                                                                           zigCallExpression,
+                                                                                           zigCharLiteral,
+                                                                                           zigCompoundAssignmentExpr,
+                                                                                           zigComptimeBlock,
+                                                                                           zigContinueExpression,
+                                                                                           zigCustomNumberType,
+                                                                                           zigDeferBlock,
+                                                                                           zigDeferExpression,
+                                                                                           zigDereferenceExpression,
+                                                                                           zigEmptyStatement,
+                                                                                           zigEnumExpression,
+                                                                                           zigEnumLiteral,
+                                                                                           zigErrorExpression,
+                                                                                           zigErrorType,
+                                                                                           zigFieldExpression,
+                                                                                           zigFloatLiteral,
+                                                                                           zigForExpression,
+                                                                                           zigFunctionDeclaration,
+                                                                                           zigFunctionSignature,
+                                                                                           zigIdentifier,
+                                                                                           zigIfExpression,
+                                                                                           zigIndexExpression,
+                                                                                           zigIntegerLiteral,
+                                                                                           zigMultilineStringLiteral,
+                                                                                           zigNullLiteral,
+                                                                                           zigOptionalType,
+                                                                                           zigOrelsePostfixExpression,
+                                                                                           zigPayloadExpression,
+                                                                                           zigPointerType,
+                                                                                           zigPrimitiveType,
+                                                                                           zigRangePattern,
+                                                                                           zigReferenceExpression,
+                                                                                           zigResumeBlock,
+                                                                                           zigResumeExpression,
+                                                                                           zigReturnExpression,
+                                                                                           zigStringLiteral,
+                                                                                           zigStructConstruction,
+                                                                                           zigStructExpression,
+                                                                                           zigSuspendBlock,
+                                                                                           zigSuspendExpression,
+                                                                                           zigSwitchExpression,
+                                                                                           zigTestExpression,
+                                                                                           zigTryExpression,
+                                                                                           zigTypeIdentifier,
+                                                                                           zigUnaryExpression,
+                                                                                           zigUndefinedLiteral,
+                                                                                           zigUnionExpression,
+                                                                                           zigUnreachableExpression,
+                                                                                           zigUsingnamespaceExpression,
+                                                                                           zigWhileExpression
+                                                                                         }
+                                                                    tmp[zigStringLiteral] = {zigEscapeSequence}
+                                                                    tmp[zigStructConstruction] = {zigTypeIdentifier}
+                                                                    tmp[zigStructExpression] = {
+                                                                                                 zigAnonymousArrayExpr,
+                                                                                                 zigAnonymousStructEnum,
+                                                                                                 zigArrayExpression,
+                                                                                                 zigArrayType,
+                                                                                                 zigAssignmentExpression,
+                                                                                                 zigAssignmentStatement,
+                                                                                                 zigAwaitExpression,
+                                                                                                 zigBinaryExpression,
+                                                                                                 zigBlock,
+                                                                                                 zigBooleanLiteral,
+                                                                                                 zigBreakExpression,
+                                                                                                 zigBuildInCallExpr,
+                                                                                                 zigCallExpression,
+                                                                                                 zigCharLiteral,
+                                                                                                 zigCompoundAssignmentExpr,
+                                                                                                 zigComptimeBlock,
+                                                                                                 zigContinueExpression,
+                                                                                                 zigCustomNumberType,
+                                                                                                 zigDeferBlock,
+                                                                                                 zigDeferExpression,
+                                                                                                 zigDereferenceExpression,
+                                                                                                 zigEmptyStatement,
+                                                                                                 zigEnumExpression,
+                                                                                                 zigEnumLiteral,
+                                                                                                 zigErrorExpression,
+                                                                                                 zigErrorType,
+                                                                                                 zigFieldExpression,
+                                                                                                 zigFloatLiteral,
+                                                                                                 zigForExpression,
+                                                                                                 zigFunctionDeclaration,
+                                                                                                 zigFunctionSignature,
+                                                                                                 zigIdentifier,
+                                                                                                 zigIfExpression,
+                                                                                                 zigIndexExpression,
+                                                                                                 zigIntegerLiteral,
+                                                                                                 zigMultilineStringLiteral,
+                                                                                                 zigNullLiteral,
+                                                                                                 zigOptionalType,
+                                                                                                 zigOrelsePostfixExpression,
+                                                                                                 zigPayloadExpression,
+                                                                                                 zigPointerType,
+                                                                                                 zigPrimitiveType,
+                                                                                                 zigRangePattern,
+                                                                                                 zigReferenceExpression,
+                                                                                                 zigResumeBlock,
+                                                                                                 zigResumeExpression,
+                                                                                                 zigReturnExpression,
+                                                                                                 zigStringLiteral,
+                                                                                                 zigStructConstruction,
+                                                                                                 zigStructExpression,
+                                                                                                 zigStructModifier,
+                                                                                                 zigSuspendBlock,
+                                                                                                 zigSuspendExpression,
+                                                                                                 zigSwitchExpression,
+                                                                                                 zigTestExpression,
+                                                                                                 zigTryExpression,
+                                                                                                 zigTypeIdentifier,
+                                                                                                 zigUnaryExpression,
+                                                                                                 zigUndefinedLiteral,
+                                                                                                 zigUnionExpression,
+                                                                                                 zigUnreachableExpression,
+                                                                                                 zigUsingnamespaceExpression,
+                                                                                                 zigWhileExpression
+                                                                                               }
+                                                                    tmp[zigSuspendBlock] = {zigBlock}
+                                                                    tmp[zigSuspendExpression] = {
+                                                                                                  zigAnonymousArrayExpr,
+                                                                                                  zigAnonymousStructEnum,
+                                                                                                  zigArrayExpression,
+                                                                                                  zigArrayType,
+                                                                                                  zigAssignmentExpression,
+                                                                                                  zigAwaitExpression,
+                                                                                                  zigBinaryExpression,
+                                                                                                  zigBlock,
+                                                                                                  zigBooleanLiteral,
+                                                                                                  zigBreakExpression,
+                                                                                                  zigBuildInCallExpr,
+                                                                                                  zigCallExpression,
+                                                                                                  zigCharLiteral,
+                                                                                                  zigCompoundAssignmentExpr,
+                                                                                                  zigComptimeBlock,
+                                                                                                  zigContinueExpression,
+                                                                                                  zigCustomNumberType,
+                                                                                                  zigDeferBlock,
+                                                                                                  zigDeferExpression,
+                                                                                                  zigDereferenceExpression,
+                                                                                                  zigEnumExpression,
+                                                                                                  zigEnumLiteral,
+                                                                                                  zigErrorExpression,
+                                                                                                  zigErrorType,
+                                                                                                  zigFieldExpression,
+                                                                                                  zigFloatLiteral,
+                                                                                                  zigForExpression,
+                                                                                                  zigIdentifier,
+                                                                                                  zigIfExpression,
+                                                                                                  zigIndexExpression,
+                                                                                                  zigIntegerLiteral,
+                                                                                                  zigMultilineStringLiteral,
+                                                                                                  zigNullLiteral,
+                                                                                                  zigOptionalType,
+                                                                                                  zigOrelsePostfixExpression,
+                                                                                                  zigPayloadExpression,
+                                                                                                  zigPointerType,
+                                                                                                  zigPrimitiveType,
+                                                                                                  zigRangePattern,
+                                                                                                  zigReferenceExpression,
+                                                                                                  zigResumeBlock,
+                                                                                                  zigResumeExpression,
+                                                                                                  zigReturnExpression,
+                                                                                                  zigStringLiteral,
+                                                                                                  zigStructConstruction,
+                                                                                                  zigStructExpression,
+                                                                                                  zigSuspendBlock,
+                                                                                                  zigSuspendExpression,
+                                                                                                  zigSwitchExpression,
+                                                                                                  zigTestExpression,
+                                                                                                  zigTryExpression,
+                                                                                                  zigTypeIdentifier,
+                                                                                                  zigUnaryExpression,
+                                                                                                  zigUndefinedLiteral,
+                                                                                                  zigUnionExpression,
+                                                                                                  zigUnreachableExpression,
+                                                                                                  zigUsingnamespaceExpression,
+                                                                                                  zigWhileExpression
+                                                                                                }
+                                                                    tmp[zigSwitchBlock] = {zigSwitchArm, zigSwitchLastArm}
+                                                                    tmp[zigSwitchPattern] = {zigFieldPattern, zigLiteralPattern, zigRangePattern, zigSlicePattern}
+                                                                    tmp[zigTypeIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigTypePrefix] = {
+                                                                                           zigAnonymousArrayExpr,
+                                                                                           zigAnonymousStructEnum,
+                                                                                           zigArrayExpression,
+                                                                                           zigArrayType,
+                                                                                           zigAssignmentExpression,
+                                                                                           zigAwaitExpression,
+                                                                                           zigBinaryExpression,
+                                                                                           zigBlock,
+                                                                                           zigBooleanLiteral,
+                                                                                           zigBreakExpression,
+                                                                                           zigBuildInCallExpr,
+                                                                                           zigCallExpression,
+                                                                                           zigCharLiteral,
+                                                                                           zigCompoundAssignmentExpr,
+                                                                                           zigComptimeBlock,
+                                                                                           zigContinueExpression,
+                                                                                           zigCustomNumberType,
+                                                                                           zigDeferBlock,
+                                                                                           zigDeferExpression,
+                                                                                           zigDereferenceExpression,
+                                                                                           zigEnumExpression,
+                                                                                           zigEnumLiteral,
+                                                                                           zigErrorExpression,
+                                                                                           zigErrorType,
+                                                                                           zigFieldExpression,
+                                                                                           zigFloatLiteral,
+                                                                                           zigForExpression,
+                                                                                           zigIdentifier,
+                                                                                           zigIfExpression,
+                                                                                           zigIndexExpression,
+                                                                                           zigIntegerLiteral,
+                                                                                           zigMultilineStringLiteral,
+                                                                                           zigNullLiteral,
+                                                                                           zigOptionalType,
+                                                                                           zigOrelsePostfixExpression,
+                                                                                           zigPayloadExpression,
+                                                                                           zigPointerType,
+                                                                                           zigPrimitiveType,
+                                                                                           zigRangePattern,
+                                                                                           zigReferenceExpression,
+                                                                                           zigResumeBlock,
+                                                                                           zigResumeExpression,
+                                                                                           zigReturnExpression,
+                                                                                           zigStringLiteral,
+                                                                                           zigStructConstruction,
+                                                                                           zigStructExpression,
+                                                                                           zigSuspendBlock,
+                                                                                           zigSuspendExpression,
+                                                                                           zigSwitchExpression,
+                                                                                           zigTestExpression,
+                                                                                           zigTryExpression,
+                                                                                           zigTypeIdentifier,
+                                                                                           zigUnaryExpression,
+                                                                                           zigUndefinedLiteral,
+                                                                                           zigUnionExpression,
+                                                                                           zigUnreachableExpression,
+                                                                                           zigUsingnamespaceExpression,
+                                                                                           zigWhileExpression
+                                                                                         }
+                                                                    tmp[zigUnionExpression] = {
+                                                                                                zigAnonymousArrayExpr,
+                                                                                                zigAnonymousStructEnum,
+                                                                                                zigArrayExpression,
+                                                                                                zigArrayType,
+                                                                                                zigAssignmentExpression,
+                                                                                                zigAssignmentStatement,
+                                                                                                zigAwaitExpression,
+                                                                                                zigBinaryExpression,
+                                                                                                zigBlock,
+                                                                                                zigBooleanLiteral,
+                                                                                                zigBreakExpression,
+                                                                                                zigBuildInCallExpr,
+                                                                                                zigCallExpression,
+                                                                                                zigCharLiteral,
+                                                                                                zigCompoundAssignmentExpr,
+                                                                                                zigComptimeBlock,
+                                                                                                zigContinueExpression,
+                                                                                                zigCustomNumberType,
+                                                                                                zigDeferBlock,
+                                                                                                zigDeferExpression,
+                                                                                                zigDereferenceExpression,
+                                                                                                zigEmptyStatement,
+                                                                                                zigEnumExpression,
+                                                                                                zigEnumLiteral,
+                                                                                                zigErrorExpression,
+                                                                                                zigErrorType,
+                                                                                                zigFieldExpression,
+                                                                                                zigFloatLiteral,
+                                                                                                zigForExpression,
+                                                                                                zigFunctionDeclaration,
+                                                                                                zigFunctionSignature,
+                                                                                                zigIdentifier,
+                                                                                                zigIfExpression,
+                                                                                                zigIndexExpression,
+                                                                                                zigIntegerLiteral,
+                                                                                                zigMultilineStringLiteral,
+                                                                                                zigNullLiteral,
+                                                                                                zigOptionalType,
+                                                                                                zigOrelsePostfixExpression,
+                                                                                                zigPayloadExpression,
+                                                                                                zigPointerType,
+                                                                                                zigPrimitiveType,
+                                                                                                zigRangePattern,
+                                                                                                zigReferenceExpression,
+                                                                                                zigResumeBlock,
+                                                                                                zigResumeExpression,
+                                                                                                zigReturnExpression,
+                                                                                                zigStringLiteral,
+                                                                                                zigStructConstruction,
+                                                                                                zigStructExpression,
+                                                                                                zigSuspendBlock,
+                                                                                                zigSuspendExpression,
+                                                                                                zigSwitchExpression,
+                                                                                                zigTestExpression,
+                                                                                                zigTryExpression,
+                                                                                                zigTypeIdentifier,
+                                                                                                zigUnaryExpression,
+                                                                                                zigUndefinedLiteral,
+                                                                                                zigUnionExpression,
+                                                                                                zigUnionModifier,
+                                                                                                zigUnreachableExpression,
+                                                                                                zigUsingnamespaceExpression,
+                                                                                                zigWhileExpression
+                                                                                              }
+                                                                    tmp[zigUnionIdentifier] = {zigStringLiteral}
+                                                                    tmp[zigUsingnamespaceExpression] = {zigVisibilityModifier}
+                                                                    tmp[zigWhileExpression] = {zigLoopLabel, zigLoopModifier, zigPayload}
+                                                                    tmp
+const zigTokenKinds*: set[ZigNodeKind] = {
+                                           zigExclamationTok,
+                                           zigQuoteTok,
+                                           zigPercentEqualTok,
+                                           zigAmpersandTok,
+                                           zigAmpersandEqualTok,
+                                           zigApostropheTok,
+                                           zigLParTok,
+                                           zigRParTok,
+                                           zigAsteriskTok,
+                                           zigAsteriskPercentEqualTok,
+                                           zigAsteriskEqualTok,
+                                           zigPlusPercentEqualTok,
+                                           zigPlusEqualTok,
+                                           zigCommaTok,
+                                           zigMinusTok,
+                                           zigMinusPercentTok,
+                                           zigMinusPercentEqualTok,
+                                           zigMinusEqualTok,
+                                           zigDotTok,
+                                           zigDotAsteriskTok,
+                                           zigDoubleDotTok,
+                                           zigTripleDotTok,
+                                           zigDotQuestionTok,
+                                           zigDotLCurlyTok,
+                                           zigSlashEqualTok,
+                                           zigColonTok,
+                                           zigSemicolonTok,
+                                           zigDoubleLessThanEqualTok,
+                                           zigEqualTok,
+                                           zigEqualGreaterThanTok,
+                                           zigDoubleGreaterThanEqualTok,
+                                           zigQuestionTok,
+                                           zigAtQuoteTok,
+                                           zigLBrackTok,
+                                           zigDoubleBackslashTok,
+                                           zigRBrackTok,
+                                           zigAccentEqualTok,
+                                           zigAlignTok,
+                                           zigAllowzeroTok,
+                                           zigAnyerrorTok,
+                                           zigAwaitTok,
+                                           zigBoolTok,
+                                           zigBreakTok,
+                                           zigCIntTok,
+                                           zigCLongTok,
+                                           zigCLongdoubleTok,
+                                           zigCLonglongTok,
+                                           zigCShortTok,
+                                           zigCUintTok,
+                                           zigCUlongTok,
+                                           zigCUlonglongTok,
+                                           zigCUshortTok,
+                                           zigCVoidTok,
+                                           zigComptimeTok,
+                                           zigComptimeFloatTok,
+                                           zigComptimeIntTok,
+                                           zigConstTok,
+                                           zigContinueTok,
+                                           zigDeferTok,
+                                           zigElseTok,
+                                           zigEnumTok,
+                                           zigErrdeferTok,
+                                           zigErrorTok,
+                                           zigExportTok,
+                                           zigExternTok,
+                                           zigF128Tok,
+                                           zigF16Tok,
+                                           zigF32Tok,
+                                           zigF64Tok,
+                                           zigFalseTok,
+                                           zigFnTok,
+                                           zigForTok,
+                                           zigI128Tok,
+                                           zigI16Tok,
+                                           zigI32Tok,
+                                           zigI64Tok,
+                                           zigI8Tok,
+                                           zigIfTok,
+                                           zigInlineTok,
+                                           zigIsizeTok,
+                                           zigNakedccTok,
+                                           zigNoreturnTok,
+                                           zigNullTok,
+                                           zigPromiseTok,
+                                           zigPubTok,
+                                           zigResumeTok,
+                                           zigReturnTok,
+                                           zigStdcallccTok,
+                                           zigStructTok,
+                                           zigSuspendTok,
+                                           zigSwitchTok,
+                                           zigTestTok,
+                                           zigTrueTok,
+                                           zigTryTok,
+                                           zigTypeTok,
+                                           zigU128Tok,
+                                           zigU16Tok,
+                                           zigU32Tok,
+                                           zigU64Tok,
+                                           zigU8Tok,
+                                           zigUnionTok,
+                                           zigUsingnamespaceTok,
+                                           zigUsizeTok,
+                                           zigVarTok,
+                                           zigVoidTok,
+                                           zigVolatileTok,
+                                           zigWhileTok,
+                                           zigLCurlyTok,
+                                           zigPipeTok,
+                                           zigPipeEqualTok,
+                                           zigRCurlyTok,
+                                           zigTildeTok
+                                         }
 
 proc tsNodeType*(node: TsZigNode): string
 
@@ -518,6 +1856,7 @@ func `[]`*(
 
 type
   ZigNode* = HtsNode[TsZigNode, ZigNodeKind]
+
 
 proc treeReprTsZig*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsZigNode, ZigNodeKind](parseTsZigString(str), str, 3, unnamed = unnamed)

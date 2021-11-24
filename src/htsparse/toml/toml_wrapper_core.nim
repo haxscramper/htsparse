@@ -39,6 +39,43 @@ type
     tomlSyntaxError         ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: TomlNodeKind): string =
+  case kind:
+    of tomlArray:               "array"
+    of tomlDocument:            "document"
+    of tomlDottedKey:           "dotted_key"
+    of tomlFloat:               "float"
+    of tomlInlineTable:         "inline_table"
+    of tomlInteger:             "integer"
+    of tomlPair:                "pair"
+    of tomlQuotedKey:           "quoted_key"
+    of tomlString:              "string"
+    of tomlTable:               "table"
+    of tomlTableArrayElement:   "table_array_element"
+    of tomlQuoteTok:            "\""
+    of tomlTripleQuoteTok:      "\"\"\""
+    of tomlApostropheTok:       "\'"
+    of tomlTripleApostropheTok: "\'\'\'"
+    of tomlCommaTok:            ","
+    of tomlDotTok:              "."
+    of tomlEqualTok:            "="
+    of tomlLBrackTok:           "["
+    of tomlDoubleLBrackTok:     "[["
+    of tomlRBrackTok:           "]"
+    of tomlDoubleRBrackTok:     "]]"
+    of tomlBareKey:             "bare_key"
+    of tomlBoolean:             "boolean"
+    of tomlComment:             "comment"
+    of tomlEscapeSequence:      "escape_sequence"
+    of tomlLocalDate:           "local_date"
+    of tomlLocalDateTime:       "local_date_time"
+    of tomlLocalTime:           "local_time"
+    of tomlOffsetDateTime:      "offset_date_time"
+    of tomlLCurlyTok:           "{"
+    of tomlRCurlyTok:           "}"
+    of tomlSyntaxError:         "ERROR"
+
+
 type
   TomlExternalTok* = enum
     tomlExtern_line_ending_or_eof               ## _line_ending_or_eof
@@ -55,6 +92,59 @@ type
 type
   TomlParser* = distinct PtsParser
 
+
+const tomlAllowedSubnodes*: array[TomlNodeKind, set[TomlNodeKind]] = block:
+                                                                       var tmp: array[TomlNodeKind, set[TomlNodeKind]]
+                                                                       tmp[tomlArray] = {
+                                                                                          tomlArray,
+                                                                                          tomlBoolean,
+                                                                                          tomlFloat,
+                                                                                          tomlInlineTable,
+                                                                                          tomlInteger,
+                                                                                          tomlLocalDate,
+                                                                                          tomlLocalDateTime,
+                                                                                          tomlLocalTime,
+                                                                                          tomlOffsetDateTime,
+                                                                                          tomlString
+                                                                                        }
+                                                                       tmp[tomlDocument] = {tomlPair, tomlTable, tomlTableArrayElement}
+                                                                       tmp[tomlDottedKey] = {tomlBareKey, tomlDottedKey, tomlQuotedKey}
+                                                                       tmp[tomlInlineTable] = {tomlPair}
+                                                                       tmp[tomlPair] = {
+                                                                                         tomlArray,
+                                                                                         tomlBareKey,
+                                                                                         tomlBoolean,
+                                                                                         tomlDottedKey,
+                                                                                         tomlFloat,
+                                                                                         tomlInlineTable,
+                                                                                         tomlInteger,
+                                                                                         tomlLocalDate,
+                                                                                         tomlLocalDateTime,
+                                                                                         tomlLocalTime,
+                                                                                         tomlOffsetDateTime,
+                                                                                         tomlQuotedKey,
+                                                                                         tomlString
+                                                                                       }
+                                                                       tmp[tomlQuotedKey] = {tomlEscapeSequence}
+                                                                       tmp[tomlString] = {tomlEscapeSequence}
+                                                                       tmp[tomlTable] = {tomlBareKey, tomlDottedKey, tomlPair, tomlQuotedKey}
+                                                                       tmp[tomlTableArrayElement] = {tomlBareKey, tomlDottedKey, tomlPair, tomlQuotedKey}
+                                                                       tmp
+const tomlTokenKinds*: set[TomlNodeKind] = {
+                                             tomlQuoteTok,
+                                             tomlTripleQuoteTok,
+                                             tomlApostropheTok,
+                                             tomlTripleApostropheTok,
+                                             tomlCommaTok,
+                                             tomlDotTok,
+                                             tomlEqualTok,
+                                             tomlLBrackTok,
+                                             tomlDoubleLBrackTok,
+                                             tomlRBrackTok,
+                                             tomlDoubleRBrackTok,
+                                             tomlLCurlyTok,
+                                             tomlRCurlyTok
+                                           }
 
 proc tsNodeType*(node: TsTomlNode): string
 

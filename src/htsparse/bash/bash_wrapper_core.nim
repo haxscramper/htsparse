@@ -140,6 +140,143 @@ type
     bashSyntaxError                   ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: BashNodeKind): string =
+  case kind:
+    of bashExpression:                    "_expression"
+    of bashPrimaryExpression:             "_primary_expression"
+    of bashStatement:                     "_statement"
+    of bashArray:                         "array"
+    of bashBinaryExpression:              "binary_expression"
+    of bashCStyleForStatement:            "c_style_for_statement"
+    of bashCaseItem:                      "case_item"
+    of bashCaseStatement:                 "case_statement"
+    of bashCommand:                       "command"
+    of bashCommandName:                   "command_name"
+    of bashCommandSubstitution:           "command_substitution"
+    of bashCompoundStatement:             "compound_statement"
+    of bashConcatenation:                 "concatenation"
+    of bashDeclarationCommand:            "declaration_command"
+    of bashDoGroup:                       "do_group"
+    of bashElifClause:                    "elif_clause"
+    of bashElseClause:                    "else_clause"
+    of bashExpansion:                     "expansion"
+    of bashFileRedirect:                  "file_redirect"
+    of bashForStatement:                  "for_statement"
+    of bashFunctionDefinition:            "function_definition"
+    of bashHeredocBody:                   "heredoc_body"
+    of bashHeredocRedirect:               "heredoc_redirect"
+    of bashHerestringRedirect:            "herestring_redirect"
+    of bashIfStatement:                   "if_statement"
+    of bashList:                          "list"
+    of bashNegatedCommand:                "negated_command"
+    of bashParenthesizedExpression:       "parenthesized_expression"
+    of bashPipeline:                      "pipeline"
+    of bashPostfixExpression:             "postfix_expression"
+    of bashProcessSubstitution:           "process_substitution"
+    of bashProgram:                       "program"
+    of bashRedirectedStatement:           "redirected_statement"
+    of bashSimpleExpansion:               "simple_expansion"
+    of bashString:                        "string"
+    of bashStringExpansion:               "string_expansion"
+    of bashSubscript:                     "subscript"
+    of bashSubshell:                      "subshell"
+    of bashTernaryExpression:             "ternary_expression"
+    of bashTestCommand:                   "test_command"
+    of bashUnaryExpression:               "unary_expression"
+    of bashUnsetCommand:                  "unset_command"
+    of bashVariableAssignment:            "variable_assignment"
+    of bashWhileStatement:                "while_statement"
+    of bashWord:                          "word"
+    of bashNewlineTok:                    "\x0A"
+    of bashExclamationTok:                "!"
+    of bashExclamationEqualTok:           "!="
+    of bashQuoteTok:                      "\""
+    of bashHashTok:                       "#"
+    of bashDollarTok:                     "$"
+    of bashDollarLParTok:                 "$("
+    of bashDollarLCurlyTok:               "${"
+    of bashPercentTok:                    "%"
+    of bashAmpersandTok:                  "&"
+    of bashDoubleAmpersandTok:            "&&"
+    of bashAmpersandGreaterThanTok:       "&>"
+    of bashAmpersandDoubleGreaterThanTok: "&>>"
+    of bashLParTok:                       "("
+    of bashDoubleLParTok:                 "(("
+    of bashRParTok:                       ")"
+    of bashDoubleRParTok:                 "))"
+    of bashPlusTok:                       "+"
+    of bashDoublePlusTok:                 "++"
+    of bashPlusEqualTok:                  "+="
+    of bashMinusTok:                      "-"
+    of bashDoubleMinusTok:                "--"
+    of bashMinusEqualTok:                 "-="
+    of bashSlashTok:                      "/"
+    of bashColonTok:                      ":"
+    of bashColonMinusTok:                 ":-"
+    of bashColonQuestionTok:              ":?"
+    of bashSemicolonTok:                  ";"
+    of bashSemicolonAmpersandTok:         ";&"
+    of bashDoubleSemicolonTok:            ";;"
+    of bashDoubleSemicolonAmpersandTok:   ";;&"
+    of bashLessThanTok:                   "<"
+    of bashLessThanAmpersandTok:          "<&"
+    of bashLessThanLParTok:               "<("
+    of bashDoubleLessThanTok:             "<<"
+    of bashDoubleLessThanMinusTok:        "<<-"
+    of bashTripleLessThanTok:             "<<<"
+    of bashLessThanEqualTok:              "<="
+    of bashEqualTok:                      "="
+    of bashDoubleEqualTok:                "=="
+    of bashEqualTildeTok:                 "=~"
+    of bashGreaterThanTok:                ">"
+    of bashGreaterThanAmpersandTok:       ">&"
+    of bashGreaterThanLParTok:            ">("
+    of bashGreaterThanEqualTok:           ">="
+    of bashDoubleGreaterThanTok:          ">>"
+    of bashGreaterThanPipeTok:            ">|"
+    of bashQuestionTok:                   "?"
+    of bashLBrackTok:                     "["
+    of bashDoubleLBrackTok:               "[["
+    of bashRBrackTok:                     "]"
+    of bashDoubleRBrackTok:               "]]"
+    of bashBacktickTok:                   "`"
+    of bashAnsiiCString:                  "ansii_c_string"
+    of bashCaseTok:                       "case"
+    of bashComment:                       "comment"
+    of bashDeclareTok:                    "declare"
+    of bashDoTok:                         "do"
+    of bashDoneTok:                       "done"
+    of bashElifTok:                       "elif"
+    of bashElseTok:                       "else"
+    of bashEsacTok:                       "esac"
+    of bashExportTok:                     "export"
+    of bashFiTok:                         "fi"
+    of bashFileDescriptor:                "file_descriptor"
+    of bashForTok:                        "for"
+    of bashFunctionTok:                   "function"
+    of bashHeredocStart:                  "heredoc_start"
+    of bashIfTok:                         "if"
+    of bashInTok:                         "in"
+    of bashLocalTok:                      "local"
+    of bashRawString:                     "raw_string"
+    of bashReadonlyTok:                   "readonly"
+    of bashRegex:                         "regex"
+    of bashSpecialVariableName:           "special_variable_name"
+    of bashTestOperator:                  "test_operator"
+    of bashThenTok:                       "then"
+    of bashTypesetTok:                    "typeset"
+    of bashUnsetTok:                      "unset"
+    of bashUnsetenvTok:                   "unsetenv"
+    of bashVariableName:                  "variable_name"
+    of bashWhileTok:                      "while"
+    of bashLCurlyTok:                     "{"
+    of bashPipeTok:                       "|"
+    of bashPipeAmpersandTok:              "|&"
+    of bashDoublePipeTok:                 "||"
+    of bashRCurlyTok:                     "}"
+    of bashSyntaxError:                   "ERROR"
+
+
 type
   BashExternalTok* = enum
     bashExternHeredoc_start           ## heredoc_start
@@ -161,6 +298,121 @@ type
 type
   BashParser* = distinct PtsParser
 
+
+const bashAllowedSubnodes*: array[BashNodeKind, set[BashNodeKind]] = block:
+                                                                       var tmp: array[BashNodeKind, set[BashNodeKind]]
+                                                                       tmp[bashArray] = {bashPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCaseItem] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashCaseStatement] = {bashCaseItem}
+                                                                       tmp[bashCommand] = {bashFileRedirect, bashVariableAssignment}
+                                                                       tmp[bashCommandName] = {bashPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCommandSubstitution] = {bashStatement, bashFileRedirect, bashHeredocBody}
+                                                                       tmp[bashCompoundStatement] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashConcatenation] = {bashPrimaryExpression}
+                                                                       tmp[bashDeclarationCommand] = {bashPrimaryExpression, bashConcatenation, bashVariableAssignment, bashVariableName}
+                                                                       tmp[bashDoGroup] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashElifClause] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashElseClause] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashExpansion] = {bashPrimaryExpression, bashConcatenation, bashRegex, bashSpecialVariableName, bashSubscript, bashVariableName}
+                                                                       tmp[bashHeredocBody] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
+                                                                       tmp[bashHeredocRedirect] = {bashHeredocStart}
+                                                                       tmp[bashHerestringRedirect] = {bashPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashIfStatement] = {bashStatement, bashElifClause, bashElseClause, bashHeredocBody}
+                                                                       tmp[bashList] = {bashStatement}
+                                                                       tmp[bashNegatedCommand] = {bashCommand, bashSubshell, bashTestCommand}
+                                                                       tmp[bashParenthesizedExpression] = {bashExpression}
+                                                                       tmp[bashPipeline] = {bashStatement}
+                                                                       tmp[bashPostfixExpression] = {bashExpression}
+                                                                       tmp[bashProcessSubstitution] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashProgram] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashSimpleExpansion] = {bashSpecialVariableName, bashVariableName}
+                                                                       tmp[bashString] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
+                                                                       tmp[bashStringExpansion] = {bashRawString, bashString}
+                                                                       tmp[bashSubshell] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashTestCommand] = {bashExpression}
+                                                                       tmp[bashUnaryExpression] = {bashExpression, bashTestOperator}
+                                                                       tmp[bashUnsetCommand] = {bashPrimaryExpression, bashConcatenation, bashVariableName}
+                                                                       tmp
+const bashTokenKinds*: set[BashNodeKind] = {
+                                             bashNewlineTok,
+                                             bashExclamationTok,
+                                             bashExclamationEqualTok,
+                                             bashQuoteTok,
+                                             bashHashTok,
+                                             bashDollarTok,
+                                             bashDollarLParTok,
+                                             bashDollarLCurlyTok,
+                                             bashPercentTok,
+                                             bashAmpersandTok,
+                                             bashDoubleAmpersandTok,
+                                             bashAmpersandGreaterThanTok,
+                                             bashAmpersandDoubleGreaterThanTok,
+                                             bashLParTok,
+                                             bashDoubleLParTok,
+                                             bashRParTok,
+                                             bashDoubleRParTok,
+                                             bashPlusTok,
+                                             bashDoublePlusTok,
+                                             bashPlusEqualTok,
+                                             bashMinusTok,
+                                             bashDoubleMinusTok,
+                                             bashMinusEqualTok,
+                                             bashSlashTok,
+                                             bashColonTok,
+                                             bashColonMinusTok,
+                                             bashColonQuestionTok,
+                                             bashSemicolonTok,
+                                             bashSemicolonAmpersandTok,
+                                             bashDoubleSemicolonTok,
+                                             bashDoubleSemicolonAmpersandTok,
+                                             bashLessThanTok,
+                                             bashLessThanAmpersandTok,
+                                             bashLessThanLParTok,
+                                             bashDoubleLessThanTok,
+                                             bashDoubleLessThanMinusTok,
+                                             bashTripleLessThanTok,
+                                             bashLessThanEqualTok,
+                                             bashEqualTok,
+                                             bashDoubleEqualTok,
+                                             bashEqualTildeTok,
+                                             bashGreaterThanTok,
+                                             bashGreaterThanAmpersandTok,
+                                             bashGreaterThanLParTok,
+                                             bashGreaterThanEqualTok,
+                                             bashDoubleGreaterThanTok,
+                                             bashGreaterThanPipeTok,
+                                             bashQuestionTok,
+                                             bashLBrackTok,
+                                             bashDoubleLBrackTok,
+                                             bashRBrackTok,
+                                             bashDoubleRBrackTok,
+                                             bashBacktickTok,
+                                             bashCaseTok,
+                                             bashDeclareTok,
+                                             bashDoTok,
+                                             bashDoneTok,
+                                             bashElifTok,
+                                             bashElseTok,
+                                             bashEsacTok,
+                                             bashExportTok,
+                                             bashFiTok,
+                                             bashForTok,
+                                             bashFunctionTok,
+                                             bashIfTok,
+                                             bashInTok,
+                                             bashLocalTok,
+                                             bashReadonlyTok,
+                                             bashThenTok,
+                                             bashTypesetTok,
+                                             bashUnsetTok,
+                                             bashUnsetenvTok,
+                                             bashWhileTok,
+                                             bashLCurlyTok,
+                                             bashPipeTok,
+                                             bashPipeAmpersandTok,
+                                             bashDoublePipeTok,
+                                             bashRCurlyTok
+                                           }
 
 proc tsNodeType*(node: TsBashNode): string
 

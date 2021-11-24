@@ -225,6 +225,228 @@ type
     cSyntaxError                     ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: CNodeKind): string =
+  case kind:
+    of cAbstractDeclarator:              "_abstract_declarator"
+    of cDeclarator:                      "_declarator"
+    of cExpression:                      "_expression"
+    of cFieldDeclarator:                 "_field_declarator"
+    of cStatement:                       "_statement"
+    of cTypeDeclarator:                  "_type_declarator"
+    of cTypeSpecifier:                   "_type_specifier"
+    of cAbstractArrayDeclarator:         "abstract_array_declarator"
+    of cAbstractFunctionDeclarator:      "abstract_function_declarator"
+    of cAbstractParenthesizedDeclarator: "abstract_parenthesized_declarator"
+    of cAbstractPointerDeclarator:       "abstract_pointer_declarator"
+    of cArgumentList:                    "argument_list"
+    of cArrayDeclarator:                 "array_declarator"
+    of cAssignmentExpression:            "assignment_expression"
+    of cAttribute:                       "attribute"
+    of cAttributeDeclaration:            "attribute_declaration"
+    of cAttributeSpecifier:              "attribute_specifier"
+    of cAttributedDeclarator:            "attributed_declarator"
+    of cAttributedStatement:             "attributed_statement"
+    of cBinaryExpression:                "binary_expression"
+    of cBitfieldClause:                  "bitfield_clause"
+    of cBreakStatement:                  "break_statement"
+    of cCallExpression:                  "call_expression"
+    of cCaseStatement:                   "case_statement"
+    of cCastExpression:                  "cast_expression"
+    of cCharLiteral:                     "char_literal"
+    of cCommaExpression:                 "comma_expression"
+    of cCompoundLiteralExpression:       "compound_literal_expression"
+    of cCompoundStatement:               "compound_statement"
+    of cConcatenatedString:              "concatenated_string"
+    of cConditionalExpression:           "conditional_expression"
+    of cContinueStatement:               "continue_statement"
+    of cDeclaration:                     "declaration"
+    of cDeclarationList:                 "declaration_list"
+    of cDoStatement:                     "do_statement"
+    of cEnumSpecifier:                   "enum_specifier"
+    of cEnumerator:                      "enumerator"
+    of cEnumeratorList:                  "enumerator_list"
+    of cExpressionStatement:             "expression_statement"
+    of cFieldDeclaration:                "field_declaration"
+    of cFieldDeclarationList:            "field_declaration_list"
+    of cFieldDesignator:                 "field_designator"
+    of cFieldExpression:                 "field_expression"
+    of cForStatement:                    "for_statement"
+    of cFunctionDeclarator:              "function_declarator"
+    of cFunctionDefinition:              "function_definition"
+    of cGotoStatement:                   "goto_statement"
+    of cIfStatement:                     "if_statement"
+    of cInitDeclarator:                  "init_declarator"
+    of cInitializerList:                 "initializer_list"
+    of cInitializerPair:                 "initializer_pair"
+    of cLabeledStatement:                "labeled_statement"
+    of cLinkageSpecification:            "linkage_specification"
+    of cMacroTypeSpecifier:              "macro_type_specifier"
+    of cMsBasedModifier:                 "ms_based_modifier"
+    of cMsCallModifier:                  "ms_call_modifier"
+    of cMsDeclspecModifier:              "ms_declspec_modifier"
+    of cMsPointerModifier:               "ms_pointer_modifier"
+    of cMsUnalignedPtrModifier:          "ms_unaligned_ptr_modifier"
+    of cParameterDeclaration:            "parameter_declaration"
+    of cParameterList:                   "parameter_list"
+    of cParenthesizedDeclarator:         "parenthesized_declarator"
+    of cParenthesizedExpression:         "parenthesized_expression"
+    of cPointerDeclarator:               "pointer_declarator"
+    of cPointerExpression:               "pointer_expression"
+    of cPreprocCall:                     "preproc_call"
+    of cPreprocDef:                      "preproc_def"
+    of cPreprocDefined:                  "preproc_defined"
+    of cPreprocElif:                     "preproc_elif"
+    of cPreprocElse:                     "preproc_else"
+    of cPreprocFunctionDef:              "preproc_function_def"
+    of cPreprocIf:                       "preproc_if"
+    of cPreprocIfdef:                    "preproc_ifdef"
+    of cPreprocInclude:                  "preproc_include"
+    of cPreprocParams:                   "preproc_params"
+    of cReturnStatement:                 "return_statement"
+    of cSizedTypeSpecifier:              "sized_type_specifier"
+    of cSizeofExpression:                "sizeof_expression"
+    of cStorageClassSpecifier:           "storage_class_specifier"
+    of cStringLiteral:                   "string_literal"
+    of cStructSpecifier:                 "struct_specifier"
+    of cSubscriptDesignator:             "subscript_designator"
+    of cSubscriptExpression:             "subscript_expression"
+    of cSwitchStatement:                 "switch_statement"
+    of cTranslationUnit:                 "translation_unit"
+    of cTypeDefinition:                  "type_definition"
+    of cTypeDescriptor:                  "type_descriptor"
+    of cTypeQualifier:                   "type_qualifier"
+    of cUnaryExpression:                 "unary_expression"
+    of cUnionSpecifier:                  "union_specifier"
+    of cUpdateExpression:                "update_expression"
+    of cVariadicParameter:               "variadic_parameter"
+    of cWhileStatement:                  "while_statement"
+    of cNewlineTok:                      "\x0A"
+    of cExclamationTok:                  "!"
+    of cExclamationEqualTok:             "!="
+    of cQuoteTok:                        "\""
+    of cHashdefineTok:                   "#define"
+    of cHashelifTok:                     "#elif"
+    of cHashelseTok:                     "#else"
+    of cHashendifTok:                    "#endif"
+    of cHashifTok:                       "#if"
+    of cHashifdefTok:                    "#ifdef"
+    of cHashifndefTok:                   "#ifndef"
+    of cHashincludeTok:                  "#include"
+    of cPercentTok:                      "%"
+    of cPercentEqualTok:                 "%="
+    of cAmpersandTok:                    "&"
+    of cDoubleAmpersandTok:              "&&"
+    of cAmpersandEqualTok:               "&="
+    of cApostropheTok:                   "\'"
+    of cLParTok:                         "("
+    of cRParTok:                         ")"
+    of cAsteriskTok:                     "*"
+    of cAsteriskEqualTok:                "*="
+    of cPlusTok:                         "+"
+    of cDoublePlusTok:                   "++"
+    of cPlusEqualTok:                    "+="
+    of cCommaTok:                        ","
+    of cMinusTok:                        "-"
+    of cDoubleMinusTok:                  "--"
+    of cMinusEqualTok:                   "-="
+    of cMinusGreaterThanTok:             "->"
+    of cDotTok:                          "."
+    of cTripleDotTok:                    "..."
+    of cSlashTok:                        "/"
+    of cSlashEqualTok:                   "/="
+    of cColonTok:                        ":"
+    of cDoubleColonTok:                  "::"
+    of cSemicolonTok:                    ";"
+    of cLessThanTok:                     "<"
+    of cDoubleLessThanTok:               "<<"
+    of cDoubleLessThanEqualTok:          "<<="
+    of cLessThanEqualTok:                "<="
+    of cEqualTok:                        "="
+    of cDoubleEqualTok:                  "=="
+    of cGreaterThanTok:                  ">"
+    of cGreaterThanEqualTok:             ">="
+    of cDoubleGreaterThanTok:            ">>"
+    of cDoubleGreaterThanEqualTok:       ">>="
+    of cQuestionTok:                     "?"
+    of cLQuoteTok:                       "L\""
+    of cLApostropheTok:                  "L\'"
+    of cUQuoteTok:                       "U\""
+    of cUApostropheTok:                  "U\'"
+    of cLBrackTok:                       "["
+    of cDoubleLBrackTok:                 "[["
+    of cRBrackTok:                       "]"
+    of cDoubleRBrackTok:                 "]]"
+    of cAccentTok:                       "^"
+    of cAccentEqualTok:                  "^="
+    of cAtomicTok:                       "_Atomic"
+    of cAttributeTok:                    "__attribute__"
+    of cBasedTok:                        "__based"
+    of cCdeclTok:                        "__cdecl"
+    of cClrcallTok:                      "__clrcall"
+    of cDeclspecTok:                     "__declspec"
+    of cFastcallTok:                     "__fastcall"
+    of cStdcallTok:                      "__stdcall"
+    of cThiscallTok:                     "__thiscall"
+    of cUnalignedTok:                    "__unaligned"
+    of cVectorcallTok:                   "__vectorcall"
+    of cAutoTok:                         "auto"
+    of cBreakTok:                        "break"
+    of cCaseTok:                         "case"
+    of cComment:                         "comment"
+    of cConstTok:                        "const"
+    of cContinueTok:                     "continue"
+    of cDefaultTok:                      "default"
+    of cDefinedTok:                      "defined"
+    of cDoTok:                           "do"
+    of cElseTok:                         "else"
+    of cEnumTok:                         "enum"
+    of cEscapeSequence:                  "escape_sequence"
+    of cExternTok:                       "extern"
+    of cFalse:                           "false"
+    of cFieldIdentifier:                 "field_identifier"
+    of cForTok:                          "for"
+    of cGotoTok:                         "goto"
+    of cIdentifier:                      "identifier"
+    of cIfTok:                           "if"
+    of cInlineTok:                       "inline"
+    of cLongTok:                         "long"
+    of cMsRestrictModifier:              "ms_restrict_modifier"
+    of cMsSignedPtrModifier:             "ms_signed_ptr_modifier"
+    of cMsUnsignedPtrModifier:           "ms_unsigned_ptr_modifier"
+    of cNull:                            "null"
+    of cNumberLiteral:                   "number_literal"
+    of cPreprocArg:                      "preproc_arg"
+    of cPreprocDirective:                "preproc_directive"
+    of cPrimitiveType:                   "primitive_type"
+    of cRegisterTok:                     "register"
+    of cRestrictTok:                     "restrict"
+    of cReturnTok:                       "return"
+    of cShortTok:                        "short"
+    of cSignedTok:                       "signed"
+    of cSizeofTok:                       "sizeof"
+    of cStatementIdentifier:             "statement_identifier"
+    of cStaticTok:                       "static"
+    of cStructTok:                       "struct"
+    of cSwitchTok:                       "switch"
+    of cSystemLibString:                 "system_lib_string"
+    of cTrue:                            "true"
+    of cTypeIdentifier:                  "type_identifier"
+    of cTypedefTok:                      "typedef"
+    of cU8QuoteTok:                      "u8\""
+    of cU8ApostropheTok:                 "u8\'"
+    of cUnionTok:                        "union"
+    of cUnsignedTok:                     "unsigned"
+    of cVolatileTok:                     "volatile"
+    of cWhileTok:                        "while"
+    of cLCurlyTok:                       "{"
+    of cPipeTok:                         "|"
+    of cPipeEqualTok:                    "|="
+    of cDoublePipeTok:                   "||"
+    of cRCurlyTok:                       "}"
+    of cTildeTok:                        "~"
+    of cSyntaxError:                     "ERROR"
+
+
 type
   TsCNode* = distinct TSNode
 
@@ -232,6 +454,289 @@ type
 type
   CParser* = distinct PtsParser
 
+
+const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
+                                                              var tmp: array[CNodeKind, set[CNodeKind]]
+                                                              tmp[cAbstractArrayDeclarator] = {cTypeQualifier}
+                                                              tmp[cAbstractParenthesizedDeclarator] = {cAbstractDeclarator}
+                                                              tmp[cAbstractPointerDeclarator] = {cTypeQualifier}
+                                                              tmp[cArgumentList] = {cExpression, cPreprocDefined}
+                                                              tmp[cArrayDeclarator] = {cTypeQualifier}
+                                                              tmp[cAttribute] = {cArgumentList}
+                                                              tmp[cAttributeDeclaration] = {cAttribute}
+                                                              tmp[cAttributeSpecifier] = {cArgumentList}
+                                                              tmp[cAttributedDeclarator] = {cDeclarator, cFieldDeclarator, cTypeDeclarator, cAttributeDeclaration}
+                                                              tmp[cAttributedStatement] = {cStatement, cAttributeDeclaration}
+                                                              tmp[cBitfieldClause] = {cExpression}
+                                                              tmp[cCaseStatement] = {
+                                                                                      cAttributedStatement,
+                                                                                      cBreakStatement,
+                                                                                      cCompoundStatement,
+                                                                                      cContinueStatement,
+                                                                                      cDeclaration,
+                                                                                      cDoStatement,
+                                                                                      cExpressionStatement,
+                                                                                      cForStatement,
+                                                                                      cGotoStatement,
+                                                                                      cIfStatement,
+                                                                                      cLabeledStatement,
+                                                                                      cReturnStatement,
+                                                                                      cSwitchStatement,
+                                                                                      cTypeDefinition,
+                                                                                      cWhileStatement
+                                                                                    }
+                                                              tmp[cCharLiteral] = {cEscapeSequence}
+                                                              tmp[cCompoundStatement] = {
+                                                                                          cStatement,
+                                                                                          cTypeSpecifier,
+                                                                                          cAttributedStatement,
+                                                                                          cDeclaration,
+                                                                                          cFunctionDefinition,
+                                                                                          cLinkageSpecification,
+                                                                                          cPreprocCall,
+                                                                                          cPreprocDef,
+                                                                                          cPreprocFunctionDef,
+                                                                                          cPreprocIf,
+                                                                                          cPreprocIfdef,
+                                                                                          cPreprocInclude,
+                                                                                          cTypeDefinition
+                                                                                        }
+                                                              tmp[cConcatenatedString] = {cStringLiteral}
+                                                              tmp[cDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
+                                                              tmp[cDeclarationList] = {
+                                                                                        cStatement,
+                                                                                        cTypeSpecifier,
+                                                                                        cAttributedStatement,
+                                                                                        cDeclaration,
+                                                                                        cFunctionDefinition,
+                                                                                        cLinkageSpecification,
+                                                                                        cPreprocCall,
+                                                                                        cPreprocDef,
+                                                                                        cPreprocFunctionDef,
+                                                                                        cPreprocIf,
+                                                                                        cPreprocIfdef,
+                                                                                        cPreprocInclude,
+                                                                                        cTypeDefinition
+                                                                                      }
+                                                              tmp[cEnumeratorList] = {cEnumerator}
+                                                              tmp[cExpressionStatement] = {cExpression, cCommaExpression}
+                                                              tmp[cFieldDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cBitfieldClause, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
+                                                              tmp[cFieldDeclarationList] = {cFieldDeclaration, cPreprocCall, cPreprocDef, cPreprocFunctionDef, cPreprocIf, cPreprocIfdef}
+                                                              tmp[cFieldDesignator] = {cFieldIdentifier}
+                                                              tmp[cForStatement] = {cStatement}
+                                                              tmp[cFunctionDeclarator] = {cAttributeSpecifier}
+                                                              tmp[cFunctionDefinition] = {cAttributeDeclaration, cAttributeSpecifier, cMsCallModifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
+                                                              tmp[cInitializerList] = {cExpression, cInitializerList, cInitializerPair}
+                                                              tmp[cLabeledStatement] = {cStatement}
+                                                              tmp[cMsBasedModifier] = {cArgumentList}
+                                                              tmp[cMsDeclspecModifier] = {cIdentifier}
+                                                              tmp[cMsPointerModifier] = {cMsRestrictModifier, cMsSignedPtrModifier, cMsUnalignedPtrModifier, cMsUnsignedPtrModifier}
+                                                              tmp[cParameterDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
+                                                              tmp[cParameterList] = {cParameterDeclaration, cVariadicParameter}
+                                                              tmp[cParenthesizedDeclarator] = {cDeclarator, cFieldDeclarator, cTypeDeclarator}
+                                                              tmp[cParenthesizedExpression] = {cExpression, cCommaExpression, cPreprocDefined}
+                                                              tmp[cPointerDeclarator] = {cMsBasedModifier, cMsPointerModifier, cTypeQualifier}
+                                                              tmp[cPreprocDefined] = {cIdentifier}
+                                                              tmp[cPreprocElif] = {
+                                                                                    cStatement,
+                                                                                    cTypeSpecifier,
+                                                                                    cAttributedStatement,
+                                                                                    cDeclaration,
+                                                                                    cFieldDeclaration,
+                                                                                    cFunctionDefinition,
+                                                                                    cLinkageSpecification,
+                                                                                    cPreprocCall,
+                                                                                    cPreprocDef,
+                                                                                    cPreprocFunctionDef,
+                                                                                    cPreprocIf,
+                                                                                    cPreprocIfdef,
+                                                                                    cPreprocInclude,
+                                                                                    cTypeDefinition
+                                                                                  }
+                                                              tmp[cPreprocElse] = {
+                                                                                    cStatement,
+                                                                                    cTypeSpecifier,
+                                                                                    cAttributedStatement,
+                                                                                    cDeclaration,
+                                                                                    cFieldDeclaration,
+                                                                                    cFunctionDefinition,
+                                                                                    cLinkageSpecification,
+                                                                                    cPreprocCall,
+                                                                                    cPreprocDef,
+                                                                                    cPreprocFunctionDef,
+                                                                                    cPreprocIf,
+                                                                                    cPreprocIfdef,
+                                                                                    cPreprocInclude,
+                                                                                    cTypeDefinition
+                                                                                  }
+                                                              tmp[cPreprocIf] = {
+                                                                                  cStatement,
+                                                                                  cTypeSpecifier,
+                                                                                  cAttributedStatement,
+                                                                                  cDeclaration,
+                                                                                  cFieldDeclaration,
+                                                                                  cFunctionDefinition,
+                                                                                  cLinkageSpecification,
+                                                                                  cPreprocCall,
+                                                                                  cPreprocDef,
+                                                                                  cPreprocFunctionDef,
+                                                                                  cPreprocIf,
+                                                                                  cPreprocIfdef,
+                                                                                  cPreprocInclude,
+                                                                                  cTypeDefinition
+                                                                                }
+                                                              tmp[cPreprocIfdef] = {
+                                                                                     cStatement,
+                                                                                     cTypeSpecifier,
+                                                                                     cAttributedStatement,
+                                                                                     cDeclaration,
+                                                                                     cFieldDeclaration,
+                                                                                     cFunctionDefinition,
+                                                                                     cLinkageSpecification,
+                                                                                     cPreprocCall,
+                                                                                     cPreprocDef,
+                                                                                     cPreprocFunctionDef,
+                                                                                     cPreprocIf,
+                                                                                     cPreprocIfdef,
+                                                                                     cPreprocInclude,
+                                                                                     cTypeDefinition
+                                                                                   }
+                                                              tmp[cPreprocParams] = {cIdentifier}
+                                                              tmp[cReturnStatement] = {cExpression, cCommaExpression}
+                                                              tmp[cStringLiteral] = {cEscapeSequence}
+                                                              tmp[cStructSpecifier] = {cMsDeclspecModifier}
+                                                              tmp[cSubscriptDesignator] = {cExpression}
+                                                              tmp[cTranslationUnit] = {
+                                                                                        cStatement,
+                                                                                        cTypeSpecifier,
+                                                                                        cAttributedStatement,
+                                                                                        cDeclaration,
+                                                                                        cFunctionDefinition,
+                                                                                        cLinkageSpecification,
+                                                                                        cPreprocCall,
+                                                                                        cPreprocDef,
+                                                                                        cPreprocFunctionDef,
+                                                                                        cPreprocIf,
+                                                                                        cPreprocIfdef,
+                                                                                        cPreprocInclude,
+                                                                                        cTypeDefinition
+                                                                                      }
+                                                              tmp[cTypeDefinition] = {cTypeQualifier}
+                                                              tmp[cTypeDescriptor] = {cTypeQualifier}
+                                                              tmp[cUnionSpecifier] = {cMsDeclspecModifier}
+                                                              tmp
+const cTokenKinds*: set[CNodeKind] = {
+                                       cNewlineTok,
+                                       cExclamationTok,
+                                       cExclamationEqualTok,
+                                       cQuoteTok,
+                                       cHashdefineTok,
+                                       cHashelifTok,
+                                       cHashelseTok,
+                                       cHashendifTok,
+                                       cHashifTok,
+                                       cHashifdefTok,
+                                       cHashifndefTok,
+                                       cHashincludeTok,
+                                       cPercentTok,
+                                       cPercentEqualTok,
+                                       cAmpersandTok,
+                                       cDoubleAmpersandTok,
+                                       cAmpersandEqualTok,
+                                       cApostropheTok,
+                                       cLParTok,
+                                       cRParTok,
+                                       cAsteriskTok,
+                                       cAsteriskEqualTok,
+                                       cPlusTok,
+                                       cDoublePlusTok,
+                                       cPlusEqualTok,
+                                       cCommaTok,
+                                       cMinusTok,
+                                       cDoubleMinusTok,
+                                       cMinusEqualTok,
+                                       cMinusGreaterThanTok,
+                                       cDotTok,
+                                       cTripleDotTok,
+                                       cSlashTok,
+                                       cSlashEqualTok,
+                                       cColonTok,
+                                       cDoubleColonTok,
+                                       cSemicolonTok,
+                                       cLessThanTok,
+                                       cDoubleLessThanTok,
+                                       cDoubleLessThanEqualTok,
+                                       cLessThanEqualTok,
+                                       cEqualTok,
+                                       cDoubleEqualTok,
+                                       cGreaterThanTok,
+                                       cGreaterThanEqualTok,
+                                       cDoubleGreaterThanTok,
+                                       cDoubleGreaterThanEqualTok,
+                                       cQuestionTok,
+                                       cLQuoteTok,
+                                       cLApostropheTok,
+                                       cUQuoteTok,
+                                       cUApostropheTok,
+                                       cLBrackTok,
+                                       cDoubleLBrackTok,
+                                       cRBrackTok,
+                                       cDoubleRBrackTok,
+                                       cAccentTok,
+                                       cAccentEqualTok,
+                                       cAtomicTok,
+                                       cAttributeTok,
+                                       cBasedTok,
+                                       cCdeclTok,
+                                       cClrcallTok,
+                                       cDeclspecTok,
+                                       cFastcallTok,
+                                       cStdcallTok,
+                                       cThiscallTok,
+                                       cUnalignedTok,
+                                       cVectorcallTok,
+                                       cUnalignedTok,
+                                       cAutoTok,
+                                       cBreakTok,
+                                       cCaseTok,
+                                       cConstTok,
+                                       cContinueTok,
+                                       cDefaultTok,
+                                       cDefinedTok,
+                                       cDoTok,
+                                       cElseTok,
+                                       cEnumTok,
+                                       cExternTok,
+                                       cForTok,
+                                       cGotoTok,
+                                       cIfTok,
+                                       cInlineTok,
+                                       cLongTok,
+                                       cRegisterTok,
+                                       cRestrictTok,
+                                       cReturnTok,
+                                       cShortTok,
+                                       cSignedTok,
+                                       cSizeofTok,
+                                       cStaticTok,
+                                       cStructTok,
+                                       cSwitchTok,
+                                       cTypedefTok,
+                                       cUQuoteTok,
+                                       cUApostropheTok,
+                                       cU8QuoteTok,
+                                       cU8ApostropheTok,
+                                       cUnionTok,
+                                       cUnsignedTok,
+                                       cVolatileTok,
+                                       cWhileTok,
+                                       cLCurlyTok,
+                                       cPipeTok,
+                                       cPipeEqualTok,
+                                       cDoublePipeTok,
+                                       cRCurlyTok,
+                                       cTildeTok
+                                     }
 
 proc tsNodeType*(node: TsCNode): string
 

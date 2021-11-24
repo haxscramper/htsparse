@@ -152,6 +152,156 @@ type
     agdaSyntaxError                ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: AgdaNodeKind): string =
+  case kind:
+    of agdaAbstract:                   "abstract"
+    of agdaAtom:                       "atom"
+    of agdaAttribute:                  "attribute"
+    of agdaAttributes:                 "attributes"
+    of agdaBid:                        "bid"
+    of agdaCatchallPragma:             "catchall_pragma"
+    of agdaData:                       "data"
+    of agdaDataName:                   "data_name"
+    of agdaDataSignature:              "data_signature"
+    of agdaDo:                         "do"
+    of agdaDoWhere:                    "do_where"
+    of agdaExpr:                       "expr"
+    of agdaFieldAssignment:            "field_assignment"
+    of agdaFields:                     "fields"
+    of agdaForall:                     "forall"
+    of agdaFunction:                   "function"
+    of agdaFunctionName:               "function_name"
+    of agdaGeneralize:                 "generalize"
+    of agdaHoleName:                   "hole_name"
+    of agdaHoleNames:                  "hole_names"
+    of agdaImportDirective:            "import_directive"
+    of agdaInfix:                      "infix"
+    of agdaInstance:                   "instance"
+    of agdaInteger:                    "integer"
+    of agdaLambda:                     "lambda"
+    of agdaLambdaClause:               "lambda_clause"
+    of agdaLambdaClauseAbsurd:         "lambda_clause_absurd"
+    of agdaLet:                        "let"
+    of agdaLhs:                        "lhs"
+    of agdaLiteral:                    "literal"
+    of agdaMacro:                      "macro"
+    of agdaModule:                     "module"
+    of agdaModuleApplication:          "module_application"
+    of agdaModuleAssignment:           "module_assignment"
+    of agdaModuleMacro:                "module_macro"
+    of agdaModuleName:                 "module_name"
+    of agdaMutual:                     "mutual"
+    of agdaOpen:                       "open"
+    of agdaPattern:                    "pattern"
+    of agdaPostulate:                  "postulate"
+    of agdaPrimitive:                  "primitive"
+    of agdaPrivate:                    "private"
+    of agdaQid:                        "qid"
+    of agdaRecord:                     "record"
+    of agdaRecordAssignments:          "record_assignments"
+    of agdaRecordConstructor:          "record_constructor"
+    of agdaRecordConstructorInstance:  "record_constructor_instance"
+    of agdaRecordDeclarationsBlock:    "record_declarations_block"
+    of agdaRecordEta:                  "record_eta"
+    of agdaRecordInduction:            "record_induction"
+    of agdaRecordName:                 "record_name"
+    of agdaRecordSignature:            "record_signature"
+    of agdaRenaming:                   "renaming"
+    of agdaRewriteEquations:           "rewrite_equations"
+    of agdaRhs:                        "rhs"
+    of agdaSignature:                  "signature"
+    of agdaSourceFile:                 "source_file"
+    of agdaStmt:                       "stmt"
+    of agdaSyntax:                     "syntax"
+    of agdaTypeSignature:              "type_signature"
+    of agdaTypedBinding:               "typed_binding"
+    of agdaUnquoteDecl:                "unquote_decl"
+    of agdaUntypedBinding:             "untyped_binding"
+    of agdaWhere:                      "where"
+    of agdaWithExpressions:            "with_expressions"
+    of agdaHashMinusRCurlyTok:         "#-}"
+    of agdaLParTok:                    "("
+    of agdaLParPipeTok:                "(|"
+    of agdaRParTok:                    ")"
+    of agdaMinusTok:                   "-"
+    of agdaDotTok:                     "."
+    of agdaDoubleDotTok:               ".."
+    of agdaColonTok:                   ":"
+    of agdaSemicolonTok:               ";"
+    of agdaEqualTok:                   "="
+    of agdaAtTok:                      "@"
+    of agdaCATCHALLTok:                "CATCHALL"
+    of agdaPropTok:                    "Prop"
+    of agdaPropN:                      "PropN"
+    of agdaSetTok:                     "Set"
+    of agdaSetN:                       "SetN"
+    of agdaUnderscoreTok:              "_"
+    of agdaAbstractTok:                "abstract"
+    of agdaBidTok:                     "bid"
+    of agdaCodataTok:                  "codata"
+    of agdaCoinductiveTok:             "coinductive"
+    of agdaComment:                    "comment"
+    of agdaConstructorTok:             "constructor"
+    of agdaDataTok:                    "data"
+    of agdaDataNameTok:                "data_name"
+    of agdaDoTok:                      "do"
+    of agdaEtaMinusequalityTok:        "eta-equality"
+    of agdaFieldTok:                   "field"
+    of agdaFieldName:                  "field_name"
+    of agdaHidingTok:                  "hiding"
+    of agdaId:                         "id"
+    of agdaImportTok:                  "import"
+    of agdaInTok:                      "in"
+    of agdaInductiveTok:               "inductive"
+    of agdaInfixTok:                   "infix"
+    of agdaInfixlTok:                  "infixl"
+    of agdaInfixrTok:                  "infixr"
+    of agdaInstanceTok:                "instance"
+    of agdaLetTok:                     "let"
+    of agdaMacroTok:                   "macro"
+    of agdaModuleTok:                  "module"
+    of agdaMutualTok:                  "mutual"
+    of agdaNoMinusetaMinusequalityTok: "no-eta-equality"
+    of agdaOpenTok:                    "open"
+    of agdaOverlapTok:                 "overlap"
+    of agdaPatternTok:                 "pattern"
+    of agdaPostulateTok:               "postulate"
+    of agdaPragma:                     "pragma"
+    of agdaPrimitiveTok:               "primitive"
+    of agdaPrivateTok:                 "private"
+    of agdaPublicTok:                  "public"
+    of agdaQidTok:                     "qid"
+    of agdaQuoteTok:                   "quote"
+    of agdaQuoteContextTok:            "quoteContext"
+    of agdaQuoteGoalTok:               "quoteGoal"
+    of agdaQuoteTermTok:               "quoteTerm"
+    of agdaRecordTok:                  "record"
+    of agdaRenamingTok:                "renaming"
+    of agdaRewriteTok:                 "rewrite"
+    of agdaSyntaxTok:                  "syntax"
+    of agdaTacticTok:                  "tactic"
+    of agdaToTok:                      "to"
+    of agdaUnquoteTok:                 "unquote"
+    of agdaUnquoteDeclTok:             "unquoteDecl"
+    of agdaUnquoteDefTok:              "unquoteDef"
+    of agdaUsingTok:                   "using"
+    of agdaVariableTok:                "variable"
+    of agdaWhereTok:                   "where"
+    of agdaWithTok:                    "with"
+    of agdaLCurlyTok:                  "{"
+    of agdaLCurlyMinusHashTok:         "{-#"
+    of agdaDoubleLCurlyTok:            "{{"
+    of agdaPipeTok:                    "|"
+    of agdaPipeRParTok:                "|)"
+    of agdaRCurlyTok:                  "}"
+    of agdaDoubleRCurlyTok:            "}}"
+    of agda⦃Tok:                       "\xE2\xA6\x83"
+    of agda⦄Tok:                       "\xE2\xA6\x84"
+    of agda⦇Tok:                       "\xE2\xA6\x87"
+    of agda⦈Tok:                       "\xE2\xA6\x88"
+    of agdaSyntaxError:                "ERROR"
+
+
 type
   AgdaExternalTok* = enum
     agdaExtern_newline ## _newline
@@ -166,6 +316,559 @@ type
 type
   AgdaParser* = distinct PtsParser
 
+
+const agdaAllowedSubnodes*: array[AgdaNodeKind, set[AgdaNodeKind]] = block:
+                                                                       var tmp: array[AgdaNodeKind, set[AgdaNodeKind]]
+                                                                       tmp[agdaAbstract] = {
+                                                                                             agdaAbstract,
+                                                                                             agdaData,
+                                                                                             agdaDataSignature,
+                                                                                             agdaFields,
+                                                                                             agdaFunction,
+                                                                                             agdaGeneralize,
+                                                                                             agdaInfix,
+                                                                                             agdaInstance,
+                                                                                             agdaMacro,
+                                                                                             agdaModule,
+                                                                                             agdaModuleMacro,
+                                                                                             agdaMutual,
+                                                                                             agdaOpen,
+                                                                                             agdaPattern,
+                                                                                             agdaPostulate,
+                                                                                             agdaPragma,
+                                                                                             agdaPrimitive,
+                                                                                             agdaPrivate,
+                                                                                             agdaRecord,
+                                                                                             agdaRecordSignature,
+                                                                                             agdaSyntax,
+                                                                                             agdaUnquoteDecl
+                                                                                           }
+                                                                       tmp[agdaAtom] = {
+                                                                                         agdaPropN,
+                                                                                         agdaSetN,
+                                                                                         agdaAtom,
+                                                                                         agdaExpr,
+                                                                                         agdaId,
+                                                                                         agdaLiteral,
+                                                                                         agdaQid,
+                                                                                         agdaRecordAssignments
+                                                                                       }
+                                                                       tmp[agdaAttribute] = {agdaExpr, agdaLiteral, agdaQid}
+                                                                       tmp[agdaAttributes] = {agdaAttribute}
+                                                                       tmp[agdaData] = {
+                                                                                         agdaAbstract,
+                                                                                         agdaData,
+                                                                                         agdaDataName,
+                                                                                         agdaDataSignature,
+                                                                                         agdaExpr,
+                                                                                         agdaFields,
+                                                                                         agdaFunction,
+                                                                                         agdaGeneralize,
+                                                                                         agdaInfix,
+                                                                                         agdaInstance,
+                                                                                         agdaMacro,
+                                                                                         agdaModule,
+                                                                                         agdaModuleMacro,
+                                                                                         agdaMutual,
+                                                                                         agdaOpen,
+                                                                                         agdaPattern,
+                                                                                         agdaPostulate,
+                                                                                         agdaPragma,
+                                                                                         agdaPrimitive,
+                                                                                         agdaPrivate,
+                                                                                         agdaRecord,
+                                                                                         agdaRecordSignature,
+                                                                                         agdaSyntax,
+                                                                                         agdaTypedBinding,
+                                                                                         agdaUnquoteDecl,
+                                                                                         agdaUntypedBinding
+                                                                                       }
+                                                                       tmp[agdaDataSignature] = {agdaDataName, agdaExpr, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaDo] = {agdaDoWhere, agdaStmt}
+                                                                       tmp[agdaDoWhere] = {agdaLambdaClause, agdaLambdaClauseAbsurd}
+                                                                       tmp[agdaExpr] = {
+                                                                                         agdaAtom,
+                                                                                         agdaAttributes,
+                                                                                         agdaDo,
+                                                                                         agdaExpr,
+                                                                                         agdaForall,
+                                                                                         agdaId,
+                                                                                         agdaLambda,
+                                                                                         agdaLet,
+                                                                                         agdaTypedBinding
+                                                                                       }
+                                                                       tmp[agdaFieldAssignment] = {agdaExpr, agdaFieldName}
+                                                                       tmp[agdaFields] = {agdaSignature}
+                                                                       tmp[agdaForall] = {agdaExpr, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaFunction] = {agdaAttributes, agdaLhs, agdaRhs, agdaWhere}
+                                                                       tmp[agdaFunctionName] = {
+                                                                                                 agdaAtom,
+                                                                                                 agdaDo,
+                                                                                                 agdaExpr,
+                                                                                                 agdaForall,
+                                                                                                 agdaId,
+                                                                                                 agdaLambda,
+                                                                                                 agdaLet
+                                                                                               }
+                                                                       tmp[agdaGeneralize] = {agdaSignature}
+                                                                       tmp[agdaHoleName] = {agdaBid, agdaId}
+                                                                       tmp[agdaHoleNames] = {agdaHoleName}
+                                                                       tmp[agdaImportDirective] = {agdaId, agdaRenaming}
+                                                                       tmp[agdaInfix] = {agdaBid, agdaInteger}
+                                                                       tmp[agdaInstance] = {
+                                                                                             agdaAbstract,
+                                                                                             agdaData,
+                                                                                             agdaDataSignature,
+                                                                                             agdaFields,
+                                                                                             agdaFunction,
+                                                                                             agdaGeneralize,
+                                                                                             agdaInfix,
+                                                                                             agdaInstance,
+                                                                                             agdaMacro,
+                                                                                             agdaModule,
+                                                                                             agdaModuleMacro,
+                                                                                             agdaMutual,
+                                                                                             agdaOpen,
+                                                                                             agdaPattern,
+                                                                                             agdaPostulate,
+                                                                                             agdaPragma,
+                                                                                             agdaPrimitive,
+                                                                                             agdaPrivate,
+                                                                                             agdaRecord,
+                                                                                             agdaRecordSignature,
+                                                                                             agdaSyntax,
+                                                                                             agdaUnquoteDecl
+                                                                                           }
+                                                                       tmp[agdaLambda] = {agdaExpr, agdaLambdaClause, agdaLambdaClauseAbsurd, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaLambdaClause] = {agdaAtom, agdaCatchallPragma, agdaExpr}
+                                                                       tmp[agdaLambdaClauseAbsurd] = {
+                                                                                                       agdaAtom,
+                                                                                                       agdaCatchallPragma,
+                                                                                                       agdaDo,
+                                                                                                       agdaExpr,
+                                                                                                       agdaForall,
+                                                                                                       agdaId,
+                                                                                                       agdaLambda,
+                                                                                                       agdaLet
+                                                                                                     }
+                                                                       tmp[agdaLet] = {
+                                                                                        agdaAbstract,
+                                                                                        agdaData,
+                                                                                        agdaDataSignature,
+                                                                                        agdaExpr,
+                                                                                        agdaFields,
+                                                                                        agdaFunction,
+                                                                                        agdaGeneralize,
+                                                                                        agdaInfix,
+                                                                                        agdaInstance,
+                                                                                        agdaMacro,
+                                                                                        agdaModule,
+                                                                                        agdaModuleMacro,
+                                                                                        agdaMutual,
+                                                                                        agdaOpen,
+                                                                                        agdaPattern,
+                                                                                        agdaPostulate,
+                                                                                        agdaPragma,
+                                                                                        agdaPrimitive,
+                                                                                        agdaPrivate,
+                                                                                        agdaRecord,
+                                                                                        agdaRecordSignature,
+                                                                                        agdaSyntax,
+                                                                                        agdaUnquoteDecl
+                                                                                      }
+                                                                       tmp[agdaLhs] = {
+                                                                                        agdaAtom,
+                                                                                        agdaDo,
+                                                                                        agdaExpr,
+                                                                                        agdaForall,
+                                                                                        agdaFunctionName,
+                                                                                        agdaId,
+                                                                                        agdaLambda,
+                                                                                        agdaLet,
+                                                                                        agdaRewriteEquations,
+                                                                                        agdaWithExpressions
+                                                                                      }
+                                                                       tmp[agdaMacro] = {
+                                                                                          agdaAbstract,
+                                                                                          agdaData,
+                                                                                          agdaDataSignature,
+                                                                                          agdaFields,
+                                                                                          agdaFunction,
+                                                                                          agdaGeneralize,
+                                                                                          agdaInfix,
+                                                                                          agdaInstance,
+                                                                                          agdaMacro,
+                                                                                          agdaModule,
+                                                                                          agdaModuleMacro,
+                                                                                          agdaMutual,
+                                                                                          agdaOpen,
+                                                                                          agdaPattern,
+                                                                                          agdaPostulate,
+                                                                                          agdaPragma,
+                                                                                          agdaPrimitive,
+                                                                                          agdaPrivate,
+                                                                                          agdaRecord,
+                                                                                          agdaRecordSignature,
+                                                                                          agdaSyntax,
+                                                                                          agdaUnquoteDecl
+                                                                                        }
+                                                                       tmp[agdaModule] = {
+                                                                                           agdaAbstract,
+                                                                                           agdaData,
+                                                                                           agdaDataSignature,
+                                                                                           agdaFields,
+                                                                                           agdaFunction,
+                                                                                           agdaGeneralize,
+                                                                                           agdaInfix,
+                                                                                           agdaInstance,
+                                                                                           agdaMacro,
+                                                                                           agdaModule,
+                                                                                           agdaModuleMacro,
+                                                                                           agdaModuleName,
+                                                                                           agdaMutual,
+                                                                                           agdaOpen,
+                                                                                           agdaPattern,
+                                                                                           agdaPostulate,
+                                                                                           agdaPragma,
+                                                                                           agdaPrimitive,
+                                                                                           agdaPrivate,
+                                                                                           agdaRecord,
+                                                                                           agdaRecordSignature,
+                                                                                           agdaSyntax,
+                                                                                           agdaTypedBinding,
+                                                                                           agdaUnquoteDecl,
+                                                                                           agdaUntypedBinding
+                                                                                         }
+                                                                       tmp[agdaModuleApplication] = {agdaAtom, agdaModuleName}
+                                                                       tmp[agdaModuleAssignment] = {agdaAtom, agdaImportDirective, agdaModuleName}
+                                                                       tmp[agdaModuleMacro] = {agdaImportDirective, agdaModuleApplication, agdaModuleName, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaMutual] = {
+                                                                                           agdaAbstract,
+                                                                                           agdaData,
+                                                                                           agdaDataSignature,
+                                                                                           agdaFields,
+                                                                                           agdaFunction,
+                                                                                           agdaGeneralize,
+                                                                                           agdaInfix,
+                                                                                           agdaInstance,
+                                                                                           agdaMacro,
+                                                                                           agdaModule,
+                                                                                           agdaModuleMacro,
+                                                                                           agdaMutual,
+                                                                                           agdaOpen,
+                                                                                           agdaPattern,
+                                                                                           agdaPostulate,
+                                                                                           agdaPragma,
+                                                                                           agdaPrimitive,
+                                                                                           agdaPrivate,
+                                                                                           agdaRecord,
+                                                                                           agdaRecordSignature,
+                                                                                           agdaSyntax,
+                                                                                           agdaUnquoteDecl
+                                                                                         }
+                                                                       tmp[agdaOpen] = {agdaAtom, agdaImportDirective, agdaModuleName}
+                                                                       tmp[agdaPattern] = {agdaExpr, agdaId, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaPostulate] = {
+                                                                                              agdaAbstract,
+                                                                                              agdaData,
+                                                                                              agdaDataSignature,
+                                                                                              agdaFields,
+                                                                                              agdaFunction,
+                                                                                              agdaGeneralize,
+                                                                                              agdaInfix,
+                                                                                              agdaInstance,
+                                                                                              agdaMacro,
+                                                                                              agdaModule,
+                                                                                              agdaModuleMacro,
+                                                                                              agdaMutual,
+                                                                                              agdaOpen,
+                                                                                              agdaPattern,
+                                                                                              agdaPostulate,
+                                                                                              agdaPragma,
+                                                                                              agdaPrimitive,
+                                                                                              agdaPrivate,
+                                                                                              agdaRecord,
+                                                                                              agdaRecordSignature,
+                                                                                              agdaSyntax,
+                                                                                              agdaUnquoteDecl
+                                                                                            }
+                                                                       tmp[agdaPrimitive] = {agdaTypeSignature}
+                                                                       tmp[agdaPrivate] = {
+                                                                                            agdaAbstract,
+                                                                                            agdaData,
+                                                                                            agdaDataSignature,
+                                                                                            agdaFields,
+                                                                                            agdaFunction,
+                                                                                            agdaGeneralize,
+                                                                                            agdaInfix,
+                                                                                            agdaInstance,
+                                                                                            agdaMacro,
+                                                                                            agdaModule,
+                                                                                            agdaModuleMacro,
+                                                                                            agdaMutual,
+                                                                                            agdaOpen,
+                                                                                            agdaPattern,
+                                                                                            agdaPostulate,
+                                                                                            agdaPragma,
+                                                                                            agdaPrimitive,
+                                                                                            agdaPrivate,
+                                                                                            agdaRecord,
+                                                                                            agdaRecordSignature,
+                                                                                            agdaSyntax,
+                                                                                            agdaUnquoteDecl
+                                                                                          }
+                                                                       tmp[agdaRecord] = {agdaExpr, agdaRecordDeclarationsBlock, agdaRecordName, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaRecordAssignments] = {
+                                                                                                      agdaPropN,
+                                                                                                      agdaSetN,
+                                                                                                      agdaAtom,
+                                                                                                      agdaExpr,
+                                                                                                      agdaFieldAssignment,
+                                                                                                      agdaId,
+                                                                                                      agdaLiteral,
+                                                                                                      agdaModuleAssignment,
+                                                                                                      agdaQid,
+                                                                                                      agdaRecordAssignments
+                                                                                                    }
+                                                                       tmp[agdaRecordConstructor] = {agdaId}
+                                                                       tmp[agdaRecordConstructorInstance] = {agdaRecordConstructor}
+                                                                       tmp[agdaRecordDeclarationsBlock] = {
+                                                                                                            agdaAbstract,
+                                                                                                            agdaData,
+                                                                                                            agdaDataSignature,
+                                                                                                            agdaFields,
+                                                                                                            agdaFunction,
+                                                                                                            agdaGeneralize,
+                                                                                                            agdaInfix,
+                                                                                                            agdaInstance,
+                                                                                                            agdaMacro,
+                                                                                                            agdaModule,
+                                                                                                            agdaModuleMacro,
+                                                                                                            agdaMutual,
+                                                                                                            agdaOpen,
+                                                                                                            agdaPattern,
+                                                                                                            agdaPostulate,
+                                                                                                            agdaPragma,
+                                                                                                            agdaPrimitive,
+                                                                                                            agdaPrivate,
+                                                                                                            agdaRecord,
+                                                                                                            agdaRecordConstructor,
+                                                                                                            agdaRecordConstructorInstance,
+                                                                                                            agdaRecordEta,
+                                                                                                            agdaRecordInduction,
+                                                                                                            agdaRecordSignature,
+                                                                                                            agdaSyntax,
+                                                                                                            agdaUnquoteDecl
+                                                                                                          }
+                                                                       tmp[agdaRecordName] = {
+                                                                                               agdaPropN,
+                                                                                               agdaSetN,
+                                                                                               agdaAtom,
+                                                                                               agdaExpr,
+                                                                                               agdaId,
+                                                                                               agdaLiteral,
+                                                                                               agdaQid,
+                                                                                               agdaRecordAssignments
+                                                                                             }
+                                                                       tmp[agdaRecordSignature] = {agdaExpr, agdaRecordName, agdaTypedBinding, agdaUntypedBinding}
+                                                                       tmp[agdaRenaming] = {agdaId}
+                                                                       tmp[agdaRewriteEquations] = {
+                                                                                                     agdaAtom,
+                                                                                                     agdaDo,
+                                                                                                     agdaExpr,
+                                                                                                     agdaForall,
+                                                                                                     agdaId,
+                                                                                                     agdaLambda,
+                                                                                                     agdaLet
+                                                                                                   }
+                                                                       tmp[agdaRhs] = {agdaExpr}
+                                                                       tmp[agdaSignature] = {agdaAttribute, agdaExpr, agdaFieldName, agdaSignature}
+                                                                       tmp[agdaSourceFile] = {
+                                                                                               agdaAbstract,
+                                                                                               agdaData,
+                                                                                               agdaDataSignature,
+                                                                                               agdaFields,
+                                                                                               agdaFunction,
+                                                                                               agdaGeneralize,
+                                                                                               agdaInfix,
+                                                                                               agdaInstance,
+                                                                                               agdaMacro,
+                                                                                               agdaModule,
+                                                                                               agdaModuleMacro,
+                                                                                               agdaMutual,
+                                                                                               agdaOpen,
+                                                                                               agdaPattern,
+                                                                                               agdaPostulate,
+                                                                                               agdaPragma,
+                                                                                               agdaPrimitive,
+                                                                                               agdaPrivate,
+                                                                                               agdaRecord,
+                                                                                               agdaRecordSignature,
+                                                                                               agdaSyntax,
+                                                                                               agdaUnquoteDecl
+                                                                                             }
+                                                                       tmp[agdaStmt] = {
+                                                                                         agdaAtom,
+                                                                                         agdaAttributes,
+                                                                                         agdaDo,
+                                                                                         agdaExpr,
+                                                                                         agdaForall,
+                                                                                         agdaId,
+                                                                                         agdaLambda,
+                                                                                         agdaLet,
+                                                                                         agdaTypedBinding
+                                                                                       }
+                                                                       tmp[agdaSyntax] = {agdaHoleNames, agdaId}
+                                                                       tmp[agdaTypeSignature] = {agdaExpr, agdaFieldName}
+                                                                       tmp[agdaTypedBinding] = {
+                                                                                                 agdaAbstract,
+                                                                                                 agdaAtom,
+                                                                                                 agdaAttributes,
+                                                                                                 agdaData,
+                                                                                                 agdaDataSignature,
+                                                                                                 agdaDo,
+                                                                                                 agdaExpr,
+                                                                                                 agdaFields,
+                                                                                                 agdaForall,
+                                                                                                 agdaFunction,
+                                                                                                 agdaGeneralize,
+                                                                                                 agdaId,
+                                                                                                 agdaInfix,
+                                                                                                 agdaInstance,
+                                                                                                 agdaLambda,
+                                                                                                 agdaLet,
+                                                                                                 agdaMacro,
+                                                                                                 agdaModule,
+                                                                                                 agdaModuleMacro,
+                                                                                                 agdaMutual,
+                                                                                                 agdaOpen,
+                                                                                                 agdaPattern,
+                                                                                                 agdaPostulate,
+                                                                                                 agdaPragma,
+                                                                                                 agdaPrimitive,
+                                                                                                 agdaPrivate,
+                                                                                                 agdaQid,
+                                                                                                 agdaRecord,
+                                                                                                 agdaRecordSignature,
+                                                                                                 agdaSyntax,
+                                                                                                 agdaUnquoteDecl
+                                                                                               }
+                                                                       tmp[agdaUnquoteDecl] = {agdaExpr, agdaId}
+                                                                       tmp[agdaUntypedBinding] = {
+                                                                                                   agdaAtom,
+                                                                                                   agdaAttributes,
+                                                                                                   agdaBid,
+                                                                                                   agdaDo,
+                                                                                                   agdaExpr,
+                                                                                                   agdaForall,
+                                                                                                   agdaId,
+                                                                                                   agdaLambda,
+                                                                                                   agdaLet,
+                                                                                                   agdaQid
+                                                                                                 }
+                                                                       tmp[agdaWhere] = {
+                                                                                          agdaAbstract,
+                                                                                          agdaBid,
+                                                                                          agdaData,
+                                                                                          agdaDataSignature,
+                                                                                          agdaFields,
+                                                                                          agdaFunction,
+                                                                                          agdaGeneralize,
+                                                                                          agdaInfix,
+                                                                                          agdaInstance,
+                                                                                          agdaMacro,
+                                                                                          agdaModule,
+                                                                                          agdaModuleMacro,
+                                                                                          agdaMutual,
+                                                                                          agdaOpen,
+                                                                                          agdaPattern,
+                                                                                          agdaPostulate,
+                                                                                          agdaPragma,
+                                                                                          agdaPrimitive,
+                                                                                          agdaPrivate,
+                                                                                          agdaRecord,
+                                                                                          agdaRecordSignature,
+                                                                                          agdaSyntax,
+                                                                                          agdaUnquoteDecl
+                                                                                        }
+                                                                       tmp[agdaWithExpressions] = {agdaExpr}
+                                                                       tmp
+const agdaTokenKinds*: set[AgdaNodeKind] = {
+                                             agdaHashMinusRCurlyTok,
+                                             agdaLParTok,
+                                             agdaLParPipeTok,
+                                             agdaRParTok,
+                                             agdaMinusTok,
+                                             agdaDotTok,
+                                             agdaDoubleDotTok,
+                                             agdaColonTok,
+                                             agdaSemicolonTok,
+                                             agdaEqualTok,
+                                             agdaAtTok,
+                                             agdaCATCHALLTok,
+                                             agdaPropTok,
+                                             agdaSetTok,
+                                             agdaUnderscoreTok,
+                                             agdaAbstractTok,
+                                             agdaBidTok,
+                                             agdaCodataTok,
+                                             agdaCoinductiveTok,
+                                             agdaConstructorTok,
+                                             agdaDataTok,
+                                             agdaDataNameTok,
+                                             agdaDoTok,
+                                             agdaEtaMinusequalityTok,
+                                             agdaFieldTok,
+                                             agdaHidingTok,
+                                             agdaImportTok,
+                                             agdaInTok,
+                                             agdaInductiveTok,
+                                             agdaInfixTok,
+                                             agdaInfixlTok,
+                                             agdaInfixrTok,
+                                             agdaInstanceTok,
+                                             agdaLetTok,
+                                             agdaMacroTok,
+                                             agdaModuleTok,
+                                             agdaMutualTok,
+                                             agdaNoMinusetaMinusequalityTok,
+                                             agdaOpenTok,
+                                             agdaOverlapTok,
+                                             agdaPatternTok,
+                                             agdaPostulateTok,
+                                             agdaPrimitiveTok,
+                                             agdaPrivateTok,
+                                             agdaPublicTok,
+                                             agdaQidTok,
+                                             agdaQuoteTok,
+                                             agdaQuoteContextTok,
+                                             agdaQuoteGoalTok,
+                                             agdaQuoteTermTok,
+                                             agdaRecordTok,
+                                             agdaRenamingTok,
+                                             agdaRewriteTok,
+                                             agdaSyntaxTok,
+                                             agdaTacticTok,
+                                             agdaToTok,
+                                             agdaUnquoteTok,
+                                             agdaUnquoteDeclTok,
+                                             agdaUnquoteDefTok,
+                                             agdaUsingTok,
+                                             agdaVariableTok,
+                                             agdaWhereTok,
+                                             agdaWithTok,
+                                             agdaLCurlyTok,
+                                             agdaLCurlyMinusHashTok,
+                                             agdaDoubleLCurlyTok,
+                                             agdaPipeTok,
+                                             agdaPipeRParTok,
+                                             agdaRCurlyTok,
+                                             agdaDoubleRCurlyTok,
+                                             agda⦃Tok,
+                                             agda⦄Tok,
+                                             agda⦇Tok,
+                                             agda⦈Tok
+                                           }
 
 proc tsNodeType*(node: TsAgdaNode): string
 

@@ -87,6 +87,91 @@ type
     nixSyntaxError         ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: NixNodeKind): string =
+  case kind:
+    of nixExpression:          "_expression"
+    of nixApp:                 "app"
+    of nixAssert:              "assert"
+    of nixAttrpath:            "attrpath"
+    of nixAttrsInherited:      "attrs_inherited"
+    of nixAttrsInheritedFrom:  "attrs_inherited_from"
+    of nixAttrset:             "attrset"
+    of nixBinary:              "binary"
+    of nixBind:                "bind"
+    of nixFormal:              "formal"
+    of nixFormals:             "formals"
+    of nixFunction:            "function"
+    of nixIf:                  "if"
+    of nixIndentedString:      "indented_string"
+    of nixInherit:             "inherit"
+    of nixInheritFrom:         "inherit_from"
+    of nixInterpolation:       "interpolation"
+    of nixLet:                 "let"
+    of nixLetAttrset:          "let_attrset"
+    of nixList:                "list"
+    of nixParenthesized:       "parenthesized"
+    of nixRecAttrset:          "rec_attrset"
+    of nixSelect:              "select"
+    of nixSourceExpression:    "source_expression"
+    of nixString:              "string"
+    of nixUnary:               "unary"
+    of nixWith:                "with"
+    of nixExclamationTok:      "!"
+    of nixExclamationEqualTok: "!="
+    of nixQuoteTok:            "\""
+    of nixDollarLCurlyTok:     "${"
+    of nixDoubleAmpersandTok:  "&&"
+    of nixDoubleApostropheTok: "\'\'"
+    of nixLParTok:             "("
+    of nixRParTok:             ")"
+    of nixAsteriskTok:         "*"
+    of nixPlusTok:             "+"
+    of nixDoublePlusTok:       "++"
+    of nixCommaTok:            ","
+    of nixMinusTok:            "-"
+    of nixMinusGreaterThanTok: "->"
+    of nixDotTok:              "."
+    of nixSlashTok:            "/"
+    of nixDoubleSlashTok:      "//"
+    of nixColonTok:            ":"
+    of nixSemicolonTok:        ";"
+    of nixLessThanTok:         "<"
+    of nixLessThanEqualTok:    "<="
+    of nixEqualTok:            "="
+    of nixDoubleEqualTok:      "=="
+    of nixGreaterThanTok:      ">"
+    of nixGreaterThanEqualTok: ">="
+    of nixQuestionTok:         "?"
+    of nixAtTok:               "@"
+    of nixLBrackTok:           "["
+    of nixRBrackTok:           "]"
+    of nixAssertTok:           "assert"
+    of nixAttrIdentifier:      "attr_identifier"
+    of nixComment:             "comment"
+    of nixEllipses:            "ellipses"
+    of nixElseTok:             "else"
+    of nixEscapeSequence:      "escape_sequence"
+    of nixFloat:               "float"
+    of nixHpath:               "hpath"
+    of nixIdentifier:          "identifier"
+    of nixIfTok:               "if"
+    of nixInTok:               "in"
+    of nixInheritTok:          "inherit"
+    of nixInteger:             "integer"
+    of nixLetTok:              "let"
+    of nixOrTok:               "or"
+    of nixPath:                "path"
+    of nixRecTok:              "rec"
+    of nixSpath:               "spath"
+    of nixThenTok:             "then"
+    of nixUri:                 "uri"
+    of nixWithTok:             "with"
+    of nixLCurlyTok:           "{"
+    of nixDoublePipeTok:       "||"
+    of nixRCurlyTok:           "}"
+    of nixSyntaxError:         "ERROR"
+
+
 type
   NixExternalTok* = enum
     nixExtern_str_content        ## _str_content
@@ -102,6 +187,56 @@ type
 type
   NixParser* = distinct PtsParser
 
+
+const nixAllowedSubnodes*: array[NixNodeKind, set[NixNodeKind]] = block:
+                                                                    var tmp: array[NixNodeKind, set[NixNodeKind]]
+                                                                    tmp[nixIndentedString] = {nixEscapeSequence, nixInterpolation}
+                                                                    tmp[nixString] = {nixEscapeSequence, nixInterpolation}
+                                                                    tmp
+const nixTokenKinds*: set[NixNodeKind] = {
+                                           nixExclamationTok,
+                                           nixExclamationEqualTok,
+                                           nixQuoteTok,
+                                           nixDollarLCurlyTok,
+                                           nixDoubleAmpersandTok,
+                                           nixDoubleApostropheTok,
+                                           nixLParTok,
+                                           nixRParTok,
+                                           nixAsteriskTok,
+                                           nixPlusTok,
+                                           nixDoublePlusTok,
+                                           nixCommaTok,
+                                           nixMinusTok,
+                                           nixMinusGreaterThanTok,
+                                           nixDotTok,
+                                           nixSlashTok,
+                                           nixDoubleSlashTok,
+                                           nixColonTok,
+                                           nixSemicolonTok,
+                                           nixLessThanTok,
+                                           nixLessThanEqualTok,
+                                           nixEqualTok,
+                                           nixDoubleEqualTok,
+                                           nixGreaterThanTok,
+                                           nixGreaterThanEqualTok,
+                                           nixQuestionTok,
+                                           nixAtTok,
+                                           nixLBrackTok,
+                                           nixRBrackTok,
+                                           nixAssertTok,
+                                           nixElseTok,
+                                           nixIfTok,
+                                           nixInTok,
+                                           nixInheritTok,
+                                           nixLetTok,
+                                           nixOrTok,
+                                           nixRecTok,
+                                           nixThenTok,
+                                           nixWithTok,
+                                           nixLCurlyTok,
+                                           nixDoublePipeTok,
+                                           nixRCurlyTok
+                                         }
 
 proc tsNodeType*(node: TsNixNode): string
 

@@ -328,6 +328,328 @@ type
     cppSyntaxError                          ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: CppNodeKind): string =
+  case kind:
+    of cppAbstractDeclarator:                   "_abstract_declarator"
+    of cppDeclarator:                           "_declarator"
+    of cppExpression:                           "_expression"
+    of cppFieldDeclarator:                      "_field_declarator"
+    of cppStatement:                            "_statement"
+    of cppTypeDeclarator:                       "_type_declarator"
+    of cppTypeSpecifier:                        "_type_specifier"
+    of cppAbstractArrayDeclarator:              "abstract_array_declarator"
+    of cppAbstractFunctionDeclarator:           "abstract_function_declarator"
+    of cppAbstractParenthesizedDeclarator:      "abstract_parenthesized_declarator"
+    of cppAbstractPointerDeclarator:            "abstract_pointer_declarator"
+    of cppAbstractReferenceDeclarator:          "abstract_reference_declarator"
+    of cppAccessSpecifier:                      "access_specifier"
+    of cppAliasDeclaration:                     "alias_declaration"
+    of cppArgumentList:                         "argument_list"
+    of cppArrayDeclarator:                      "array_declarator"
+    of cppAssignmentExpression:                 "assignment_expression"
+    of cppAttribute:                            "attribute"
+    of cppAttributeDeclaration:                 "attribute_declaration"
+    of cppAttributeSpecifier:                   "attribute_specifier"
+    of cppAttributedDeclarator:                 "attributed_declarator"
+    of cppAttributedStatement:                  "attributed_statement"
+    of cppBaseClassClause:                      "base_class_clause"
+    of cppBinaryExpression:                     "binary_expression"
+    of cppBitfieldClause:                       "bitfield_clause"
+    of cppBreakStatement:                       "break_statement"
+    of cppCallExpression:                       "call_expression"
+    of cppCaseStatement:                        "case_statement"
+    of cppCastExpression:                       "cast_expression"
+    of cppCatchClause:                          "catch_clause"
+    of cppCharLiteral:                          "char_literal"
+    of cppClassSpecifier:                       "class_specifier"
+    of cppCoAwaitExpression:                    "co_await_expression"
+    of cppCoReturnStatement:                    "co_return_statement"
+    of cppCoYieldStatement:                     "co_yield_statement"
+    of cppCommaExpression:                      "comma_expression"
+    of cppCompoundLiteralExpression:            "compound_literal_expression"
+    of cppCompoundStatement:                    "compound_statement"
+    of cppConcatenatedString:                   "concatenated_string"
+    of cppConditionClause:                      "condition_clause"
+    of cppConditionalExpression:                "conditional_expression"
+    of cppContinueStatement:                    "continue_statement"
+    of cppDeclaration:                          "declaration"
+    of cppDeclarationList:                      "declaration_list"
+    of cppDecltype:                             "decltype"
+    of cppDefaultMethodClause:                  "default_method_clause"
+    of cppDeleteExpression:                     "delete_expression"
+    of cppDeleteMethodClause:                   "delete_method_clause"
+    of cppDependentName:                        "dependent_name"
+    of cppDependentType:                        "dependent_type"
+    of cppDestructorName:                       "destructor_name"
+    of cppDoStatement:                          "do_statement"
+    of cppEnumSpecifier:                        "enum_specifier"
+    of cppEnumerator:                           "enumerator"
+    of cppEnumeratorList:                       "enumerator_list"
+    of cppExplicitFunctionSpecifier:            "explicit_function_specifier"
+    of cppExpressionStatement:                  "expression_statement"
+    of cppFieldDeclaration:                     "field_declaration"
+    of cppFieldDeclarationList:                 "field_declaration_list"
+    of cppFieldDesignator:                      "field_designator"
+    of cppFieldExpression:                      "field_expression"
+    of cppFieldInitializer:                     "field_initializer"
+    of cppFieldInitializerList:                 "field_initializer_list"
+    of cppForRangeLoop:                         "for_range_loop"
+    of cppForStatement:                         "for_statement"
+    of cppFriendDeclaration:                    "friend_declaration"
+    of cppFunctionDeclarator:                   "function_declarator"
+    of cppFunctionDefinition:                   "function_definition"
+    of cppGotoStatement:                        "goto_statement"
+    of cppIfStatement:                          "if_statement"
+    of cppInitDeclarator:                       "init_declarator"
+    of cppInitializerList:                      "initializer_list"
+    of cppInitializerPair:                      "initializer_pair"
+    of cppLabeledStatement:                     "labeled_statement"
+    of cppLambdaCaptureSpecifier:               "lambda_capture_specifier"
+    of cppLambdaDefaultCapture:                 "lambda_default_capture"
+    of cppLambdaExpression:                     "lambda_expression"
+    of cppLinkageSpecification:                 "linkage_specification"
+    of cppMsBasedModifier:                      "ms_based_modifier"
+    of cppMsCallModifier:                       "ms_call_modifier"
+    of cppMsDeclspecModifier:                   "ms_declspec_modifier"
+    of cppMsPointerModifier:                    "ms_pointer_modifier"
+    of cppMsUnalignedPtrModifier:               "ms_unaligned_ptr_modifier"
+    of cppNamespaceAliasDefinition:             "namespace_alias_definition"
+    of cppNamespaceDefinition:                  "namespace_definition"
+    of cppNamespaceDefinitionName:              "namespace_definition_name"
+    of cppNewDeclarator:                        "new_declarator"
+    of cppNewExpression:                        "new_expression"
+    of cppNoexcept:                             "noexcept"
+    of cppOperatorCast:                         "operator_cast"
+    of cppOperatorName:                         "operator_name"
+    of cppOptionalParameterDeclaration:         "optional_parameter_declaration"
+    of cppOptionalTypeParameterDeclaration:     "optional_type_parameter_declaration"
+    of cppParameterDeclaration:                 "parameter_declaration"
+    of cppParameterList:                        "parameter_list"
+    of cppParameterPackExpansion:               "parameter_pack_expansion"
+    of cppParenthesizedDeclarator:              "parenthesized_declarator"
+    of cppParenthesizedExpression:              "parenthesized_expression"
+    of cppPointerDeclarator:                    "pointer_declarator"
+    of cppPointerExpression:                    "pointer_expression"
+    of cppPreprocCall:                          "preproc_call"
+    of cppPreprocDef:                           "preproc_def"
+    of cppPreprocDefined:                       "preproc_defined"
+    of cppPreprocElif:                          "preproc_elif"
+    of cppPreprocElse:                          "preproc_else"
+    of cppPreprocFunctionDef:                   "preproc_function_def"
+    of cppPreprocIf:                            "preproc_if"
+    of cppPreprocIfdef:                         "preproc_ifdef"
+    of cppPreprocInclude:                       "preproc_include"
+    of cppPreprocParams:                        "preproc_params"
+    of cppQpropertyDeclaration:                 "qproperty_declaration"
+    of cppQualifiedIdentifier:                  "qualified_identifier"
+    of cppRefQualifier:                         "ref_qualifier"
+    of cppReferenceDeclarator:                  "reference_declarator"
+    of cppReturnStatement:                      "return_statement"
+    of cppSizedTypeSpecifier:                   "sized_type_specifier"
+    of cppSizeofExpression:                     "sizeof_expression"
+    of cppStaticAssertDeclaration:              "static_assert_declaration"
+    of cppStorageClassSpecifier:                "storage_class_specifier"
+    of cppStringLiteral:                        "string_literal"
+    of cppStructSpecifier:                      "struct_specifier"
+    of cppStructuredBindingDeclarator:          "structured_binding_declarator"
+    of cppSubscriptDesignator:                  "subscript_designator"
+    of cppSubscriptExpression:                  "subscript_expression"
+    of cppSwitchStatement:                      "switch_statement"
+    of cppTemplateArgumentList:                 "template_argument_list"
+    of cppTemplateDeclaration:                  "template_declaration"
+    of cppTemplateFunction:                     "template_function"
+    of cppTemplateInstantiation:                "template_instantiation"
+    of cppTemplateMethod:                       "template_method"
+    of cppTemplateParameterList:                "template_parameter_list"
+    of cppTemplateTemplateParameterDeclaration: "template_template_parameter_declaration"
+    of cppTemplateType:                         "template_type"
+    of cppThrowSpecifier:                       "throw_specifier"
+    of cppThrowStatement:                       "throw_statement"
+    of cppTrailingReturnType:                   "trailing_return_type"
+    of cppTranslationUnit:                      "translation_unit"
+    of cppTryStatement:                         "try_statement"
+    of cppTypeDefinition:                       "type_definition"
+    of cppTypeDescriptor:                       "type_descriptor"
+    of cppTypeParameterDeclaration:             "type_parameter_declaration"
+    of cppTypeQualifier:                        "type_qualifier"
+    of cppUnaryExpression:                      "unary_expression"
+    of cppUnionSpecifier:                       "union_specifier"
+    of cppUpdateExpression:                     "update_expression"
+    of cppUserDefinedLiteral:                   "user_defined_literal"
+    of cppUsingDeclaration:                     "using_declaration"
+    of cppVariadicDeclarator:                   "variadic_declarator"
+    of cppVariadicParameterDeclaration:         "variadic_parameter_declaration"
+    of cppVariadicTypeParameterDeclaration:     "variadic_type_parameter_declaration"
+    of cppVirtualFunctionSpecifier:             "virtual_function_specifier"
+    of cppVirtualSpecifier:                     "virtual_specifier"
+    of cppWhileStatement:                       "while_statement"
+    of cppNewlineTok:                           "\x0A"
+    of cppExclamationTok:                       "!"
+    of cppExclamationEqualTok:                  "!="
+    of cppQuoteTok:                             "\""
+    of cppDoubleQuoteTok:                       "\"\""
+    of cppHashdefineTok:                        "#define"
+    of cppHashelifTok:                          "#elif"
+    of cppHashelseTok:                          "#else"
+    of cppHashendifTok:                         "#endif"
+    of cppHashifTok:                            "#if"
+    of cppHashifdefTok:                         "#ifdef"
+    of cppHashifndefTok:                        "#ifndef"
+    of cppHashincludeTok:                       "#include"
+    of cppPercentTok:                           "%"
+    of cppPercentEqualTok:                      "%="
+    of cppAmpersandTok:                         "&"
+    of cppDoubleAmpersandTok:                   "&&"
+    of cppAmpersandEqualTok:                    "&="
+    of cppApostropheTok:                        "\'"
+    of cppLParTok:                              "("
+    of cppLParRParTok:                          "()"
+    of cppRParTok:                              ")"
+    of cppAsteriskTok:                          "*"
+    of cppAsteriskEqualTok:                     "*="
+    of cppPlusTok:                              "+"
+    of cppDoublePlusTok:                        "++"
+    of cppPlusEqualTok:                         "+="
+    of cppCommaTok:                             ","
+    of cppMinusTok:                             "-"
+    of cppDoubleMinusTok:                       "--"
+    of cppMinusEqualTok:                        "-="
+    of cppMinusGreaterThanTok:                  "->"
+    of cppMinusGreaterThanAsteriskTok:          "->*"
+    of cppDotTok:                               "."
+    of cppTripleDotTok:                         "..."
+    of cppSlashTok:                             "/"
+    of cppSlashEqualTok:                        "/="
+    of cppColonTok:                             ":"
+    of cppDoubleColonTok:                       "::"
+    of cppSemicolonTok:                         ";"
+    of cppLessThanTok:                          "<"
+    of cppDoubleLessThanTok:                    "<<"
+    of cppDoubleLessThanEqualTok:               "<<="
+    of cppLessThanEqualTok:                     "<="
+    of cppEqualTok:                             "="
+    of cppDoubleEqualTok:                       "=="
+    of cppGreaterThanTok:                       ">"
+    of cppGreaterThanEqualTok:                  ">="
+    of cppDoubleGreaterThanTok:                 ">>"
+    of cppDoubleGreaterThanEqualTok:            ">>="
+    of cppQuestionTok:                          "?"
+    of cppLQuoteTok:                            "L\""
+    of cppLApostropheTok:                       "L\'"
+    of cppQPROPERTYTok:                         "Q_PROPERTY"
+    of cppUQuoteTok:                            "U\""
+    of cppUApostropheTok:                       "U\'"
+    of cppLBrackTok:                            "["
+    of cppDoubleLBrackTok:                      "[["
+    of cppLBrackRBrackTok:                      "[]"
+    of cppRBrackTok:                            "]"
+    of cppDoubleRBrackTok:                      "]]"
+    of cppAccentTok:                            "^"
+    of cppAccentEqualTok:                       "^="
+    of cppAtomicTok:                            "_Atomic"
+    of cppAttributeTok:                         "__attribute__"
+    of cppBasedTok:                             "__based"
+    of cppCdeclTok:                             "__cdecl"
+    of cppClrcallTok:                           "__clrcall"
+    of cppDeclspecTok:                          "__declspec"
+    of cppFastcallTok:                          "__fastcall"
+    of cppStdcallTok:                           "__stdcall"
+    of cppThiscallTok:                          "__thiscall"
+    of cppUnalignedTok:                         "__unaligned"
+    of cppVectorcallTok:                        "__vectorcall"
+    of cppAuto:                                 "auto"
+    of cppBreakTok:                             "break"
+    of cppCaseTok:                              "case"
+    of cppCatchTok:                             "catch"
+    of cppClassTok:                             "class"
+    of cppCoAwaitTok:                           "co_await"
+    of cppCoReturnTok:                          "co_return"
+    of cppCoYieldTok:                           "co_yield"
+    of cppComment:                              "comment"
+    of cppConstTok:                             "const"
+    of cppConstexprTok:                         "constexpr"
+    of cppContinueTok:                          "continue"
+    of cppDecltypeTok:                          "decltype"
+    of cppDefaultTok:                           "default"
+    of cppDefinedTok:                           "defined"
+    of cppDeleteTok:                            "delete"
+    of cppDoTok:                                "do"
+    of cppElseTok:                              "else"
+    of cppEnumTok:                              "enum"
+    of cppEscapeSequence:                       "escape_sequence"
+    of cppExplicitTok:                          "explicit"
+    of cppExternTok:                            "extern"
+    of cppFalse:                                "false"
+    of cppFieldIdentifier:                      "field_identifier"
+    of cppFinalTok:                             "final"
+    of cppForTok:                               "for"
+    of cppFriendTok:                            "friend"
+    of cppGotoTok:                              "goto"
+    of cppIdentifier:                           "identifier"
+    of cppIfTok:                                "if"
+    of cppInlineTok:                            "inline"
+    of cppLiteralSuffix:                        "literal_suffix"
+    of cppLongTok:                              "long"
+    of cppMsRestrictModifier:                   "ms_restrict_modifier"
+    of cppMsSignedPtrModifier:                  "ms_signed_ptr_modifier"
+    of cppMsUnsignedPtrModifier:                "ms_unsigned_ptr_modifier"
+    of cppMutableTok:                           "mutable"
+    of cppNamespaceTok:                         "namespace"
+    of cppNamespaceIdentifier:                  "namespace_identifier"
+    of cppNewTok:                               "new"
+    of cppNoexceptTok:                          "noexcept"
+    of cppNull:                                 "null"
+    of cppNullptr:                              "nullptr"
+    of cppNumberLiteral:                        "number_literal"
+    of cppOperatorTok:                          "operator"
+    of cppOverrideTok:                          "override"
+    of cppPreprocArg:                           "preproc_arg"
+    of cppPreprocDirective:                     "preproc_directive"
+    of cppPrimitiveType:                        "primitive_type"
+    of cppPrivateTok:                           "private"
+    of cppProtectedTok:                         "protected"
+    of cppPublicTok:                            "public"
+    of cppRawStringLiteral:                     "raw_string_literal"
+    of cppRegisterTok:                          "register"
+    of cppRestrictTok:                          "restrict"
+    of cppReturnTok:                            "return"
+    of cppShortTok:                             "short"
+    of cppSignalsTok:                           "signals"
+    of cppSignedTok:                            "signed"
+    of cppSizeofTok:                            "sizeof"
+    of cppSlotsTok:                             "slots"
+    of cppStatementIdentifier:                  "statement_identifier"
+    of cppStaticTok:                            "static"
+    of cppStaticAssertTok:                      "static_assert"
+    of cppStructTok:                            "struct"
+    of cppSwitchTok:                            "switch"
+    of cppSystemLibString:                      "system_lib_string"
+    of cppTemplateTok:                          "template"
+    of cppThis:                                 "this"
+    of cppThreadLocalTok:                       "thread_local"
+    of cppThrowTok:                             "throw"
+    of cppTrue:                                 "true"
+    of cppTryTok:                               "try"
+    of cppTypeIdentifier:                       "type_identifier"
+    of cppTypedefTok:                           "typedef"
+    of cppTypenameTok:                          "typename"
+    of cppU8QuoteTok:                           "u8\""
+    of cppU8ApostropheTok:                      "u8\'"
+    of cppUnionTok:                             "union"
+    of cppUnsignedTok:                          "unsigned"
+    of cppUsingTok:                             "using"
+    of cppVirtualTok:                           "virtual"
+    of cppVolatileTok:                          "volatile"
+    of cppWhileTok:                             "while"
+    of cppLCurlyTok:                            "{"
+    of cppPipeTok:                              "|"
+    of cppPipeEqualTok:                         "|="
+    of cppDoublePipeTok:                        "||"
+    of cppRCurlyTok:                            "}"
+    of cppTildeTok:                             "~"
+    of cppSyntaxError:                          "ERROR"
+
+
 type
   CppExternalTok* = enum
     cppExternRaw_string_literal ## raw_string_literal
@@ -340,6 +662,492 @@ type
 type
   CppParser* = distinct PtsParser
 
+
+const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
+                                                                    var tmp: array[CppNodeKind, set[CppNodeKind]]
+                                                                    tmp[cppAbstractArrayDeclarator] = {cppTypeQualifier}
+                                                                    tmp[cppAbstractFunctionDeclarator] = {cppNoexcept, cppRefQualifier, cppThrowSpecifier, cppTrailingReturnType, cppTypeQualifier}
+                                                                    tmp[cppAbstractParenthesizedDeclarator] = {cppAbstractDeclarator}
+                                                                    tmp[cppAbstractPointerDeclarator] = {cppTypeQualifier}
+                                                                    tmp[cppAbstractReferenceDeclarator] = {cppAbstractDeclarator}
+                                                                    tmp[cppArgumentList] = {cppExpression, cppInitializerList, cppPreprocDefined}
+                                                                    tmp[cppArrayDeclarator] = {cppTypeQualifier}
+                                                                    tmp[cppAttribute] = {cppArgumentList}
+                                                                    tmp[cppAttributeDeclaration] = {cppAttribute}
+                                                                    tmp[cppAttributeSpecifier] = {cppArgumentList}
+                                                                    tmp[cppAttributedDeclarator] = {cppDeclarator, cppFieldDeclarator, cppTypeDeclarator, cppAttributeDeclaration}
+                                                                    tmp[cppAttributedStatement] = {cppStatement, cppAttributeDeclaration}
+                                                                    tmp[cppBaseClassClause] = {cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
+                                                                    tmp[cppBitfieldClause] = {cppExpression}
+                                                                    tmp[cppCaseStatement] = {
+                                                                                              cppAttributedStatement,
+                                                                                              cppBreakStatement,
+                                                                                              cppCoReturnStatement,
+                                                                                              cppCoYieldStatement,
+                                                                                              cppCompoundStatement,
+                                                                                              cppContinueStatement,
+                                                                                              cppDeclaration,
+                                                                                              cppDoStatement,
+                                                                                              cppExpressionStatement,
+                                                                                              cppForRangeLoop,
+                                                                                              cppForStatement,
+                                                                                              cppGotoStatement,
+                                                                                              cppIfStatement,
+                                                                                              cppLabeledStatement,
+                                                                                              cppReturnStatement,
+                                                                                              cppSwitchStatement,
+                                                                                              cppThrowStatement,
+                                                                                              cppTryStatement,
+                                                                                              cppTypeDefinition,
+                                                                                              cppWhileStatement
+                                                                                            }
+                                                                    tmp[cppCharLiteral] = {cppEscapeSequence}
+                                                                    tmp[cppClassSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
+                                                                    tmp[cppCoReturnStatement] = {cppExpression}
+                                                                    tmp[cppCoYieldStatement] = {cppExpression}
+                                                                    tmp[cppCompoundStatement] = {
+                                                                                                  cppStatement,
+                                                                                                  cppTypeSpecifier,
+                                                                                                  cppAliasDeclaration,
+                                                                                                  cppAttributedStatement,
+                                                                                                  cppDeclaration,
+                                                                                                  cppFunctionDefinition,
+                                                                                                  cppLinkageSpecification,
+                                                                                                  cppNamespaceAliasDefinition,
+                                                                                                  cppNamespaceDefinition,
+                                                                                                  cppPreprocCall,
+                                                                                                  cppPreprocDef,
+                                                                                                  cppPreprocFunctionDef,
+                                                                                                  cppPreprocIf,
+                                                                                                  cppPreprocIfdef,
+                                                                                                  cppPreprocInclude,
+                                                                                                  cppStaticAssertDeclaration,
+                                                                                                  cppTemplateDeclaration,
+                                                                                                  cppTemplateInstantiation,
+                                                                                                  cppTypeDefinition,
+                                                                                                  cppUsingDeclaration
+                                                                                                }
+                                                                    tmp[cppConcatenatedString] = {cppRawStringLiteral, cppStringLiteral}
+                                                                    tmp[cppDeclaration] = {
+                                                                                            cppAttributeDeclaration,
+                                                                                            cppAttributeSpecifier,
+                                                                                            cppExplicitFunctionSpecifier,
+                                                                                            cppMsDeclspecModifier,
+                                                                                            cppStorageClassSpecifier,
+                                                                                            cppTypeQualifier,
+                                                                                            cppVirtualFunctionSpecifier
+                                                                                          }
+                                                                    tmp[cppDeclarationList] = {
+                                                                                                cppStatement,
+                                                                                                cppTypeSpecifier,
+                                                                                                cppAliasDeclaration,
+                                                                                                cppAttributedStatement,
+                                                                                                cppDeclaration,
+                                                                                                cppFunctionDefinition,
+                                                                                                cppLinkageSpecification,
+                                                                                                cppNamespaceAliasDefinition,
+                                                                                                cppNamespaceDefinition,
+                                                                                                cppPreprocCall,
+                                                                                                cppPreprocDef,
+                                                                                                cppPreprocFunctionDef,
+                                                                                                cppPreprocIf,
+                                                                                                cppPreprocIfdef,
+                                                                                                cppPreprocInclude,
+                                                                                                cppStaticAssertDeclaration,
+                                                                                                cppTemplateDeclaration,
+                                                                                                cppTemplateInstantiation,
+                                                                                                cppTypeDefinition,
+                                                                                                cppUsingDeclaration
+                                                                                              }
+                                                                    tmp[cppDecltype] = {cppExpression}
+                                                                    tmp[cppDeleteExpression] = {cppExpression}
+                                                                    tmp[cppDependentName] = {cppTemplateFunction, cppTemplateMethod, cppTemplateType}
+                                                                    tmp[cppDependentType] = {cppTypeSpecifier}
+                                                                    tmp[cppDestructorName] = {cppIdentifier}
+                                                                    tmp[cppEnumeratorList] = {cppEnumerator}
+                                                                    tmp[cppExplicitFunctionSpecifier] = {cppExpression}
+                                                                    tmp[cppExpressionStatement] = {cppExpression, cppCommaExpression}
+                                                                    tmp[cppFieldDeclaration] = {
+                                                                                                 cppAttributeDeclaration,
+                                                                                                 cppAttributeSpecifier,
+                                                                                                 cppBitfieldClause,
+                                                                                                 cppMsDeclspecModifier,
+                                                                                                 cppStorageClassSpecifier,
+                                                                                                 cppTypeQualifier,
+                                                                                                 cppVirtualFunctionSpecifier
+                                                                                               }
+                                                                    tmp[cppFieldDeclarationList] = {
+                                                                                                     cppAccessSpecifier,
+                                                                                                     cppAliasDeclaration,
+                                                                                                     cppDeclaration,
+                                                                                                     cppFieldDeclaration,
+                                                                                                     cppFriendDeclaration,
+                                                                                                     cppFunctionDefinition,
+                                                                                                     cppPreprocCall,
+                                                                                                     cppPreprocDef,
+                                                                                                     cppPreprocFunctionDef,
+                                                                                                     cppPreprocIf,
+                                                                                                     cppPreprocIfdef,
+                                                                                                     cppQpropertyDeclaration,
+                                                                                                     cppStaticAssertDeclaration,
+                                                                                                     cppTemplateDeclaration,
+                                                                                                     cppTypeDefinition,
+                                                                                                     cppUsingDeclaration
+                                                                                                   }
+                                                                    tmp[cppFieldDesignator] = {cppFieldIdentifier}
+                                                                    tmp[cppFieldInitializer] = {cppArgumentList, cppFieldIdentifier, cppInitializerList, cppQualifiedIdentifier, cppTemplateMethod}
+                                                                    tmp[cppFieldInitializerList] = {cppFieldInitializer}
+                                                                    tmp[cppForRangeLoop] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppForStatement] = {cppStatement}
+                                                                    tmp[cppFriendDeclaration] = {cppDeclaration, cppFunctionDefinition, cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
+                                                                    tmp[cppFunctionDeclarator] = {
+                                                                                                   cppAttributeSpecifier,
+                                                                                                   cppNoexcept,
+                                                                                                   cppRefQualifier,
+                                                                                                   cppThrowSpecifier,
+                                                                                                   cppTrailingReturnType,
+                                                                                                   cppTypeQualifier,
+                                                                                                   cppVirtualSpecifier
+                                                                                                 }
+                                                                    tmp[cppFunctionDefinition] = {
+                                                                                                   cppAttributeDeclaration,
+                                                                                                   cppAttributeSpecifier,
+                                                                                                   cppDefaultMethodClause,
+                                                                                                   cppDeleteMethodClause,
+                                                                                                   cppExplicitFunctionSpecifier,
+                                                                                                   cppFieldInitializerList,
+                                                                                                   cppMsCallModifier,
+                                                                                                   cppMsDeclspecModifier,
+                                                                                                   cppStorageClassSpecifier,
+                                                                                                   cppTypeQualifier,
+                                                                                                   cppVirtualFunctionSpecifier
+                                                                                                 }
+                                                                    tmp[cppInitializerList] = {cppExpression, cppInitializerList, cppInitializerPair}
+                                                                    tmp[cppLabeledStatement] = {cppStatement}
+                                                                    tmp[cppLambdaCaptureSpecifier] = {cppExpression, cppLambdaDefaultCapture}
+                                                                    tmp[cppMsBasedModifier] = {cppArgumentList}
+                                                                    tmp[cppMsDeclspecModifier] = {cppIdentifier}
+                                                                    tmp[cppMsPointerModifier] = {cppMsRestrictModifier, cppMsSignedPtrModifier, cppMsUnalignedPtrModifier, cppMsUnsignedPtrModifier}
+                                                                    tmp[cppNamespaceAliasDefinition] = {cppIdentifier, cppQualifiedIdentifier}
+                                                                    tmp[cppNamespaceDefinitionName] = {cppIdentifier, cppNamespaceDefinitionName}
+                                                                    tmp[cppNewDeclarator] = {cppNewDeclarator}
+                                                                    tmp[cppNoexcept] = {cppExpression}
+                                                                    tmp[cppOperatorCast] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppOperatorName] = {cppIdentifier}
+                                                                    tmp[cppOptionalParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppParameterList] = {cppOptionalParameterDeclaration, cppParameterDeclaration, cppVariadicParameterDeclaration}
+                                                                    tmp[cppParenthesizedDeclarator] = {cppDeclarator, cppFieldDeclarator, cppTypeDeclarator}
+                                                                    tmp[cppParenthesizedExpression] = {cppExpression, cppCommaExpression, cppPreprocDefined}
+                                                                    tmp[cppPointerDeclarator] = {cppMsBasedModifier, cppMsPointerModifier, cppTypeQualifier}
+                                                                    tmp[cppPreprocDefined] = {cppIdentifier}
+                                                                    tmp[cppPreprocElif] = {
+                                                                                            cppStatement,
+                                                                                            cppTypeSpecifier,
+                                                                                            cppAccessSpecifier,
+                                                                                            cppAliasDeclaration,
+                                                                                            cppAttributedStatement,
+                                                                                            cppDeclaration,
+                                                                                            cppFieldDeclaration,
+                                                                                            cppFriendDeclaration,
+                                                                                            cppFunctionDefinition,
+                                                                                            cppLinkageSpecification,
+                                                                                            cppNamespaceAliasDefinition,
+                                                                                            cppNamespaceDefinition,
+                                                                                            cppPreprocCall,
+                                                                                            cppPreprocDef,
+                                                                                            cppPreprocFunctionDef,
+                                                                                            cppPreprocIf,
+                                                                                            cppPreprocIfdef,
+                                                                                            cppPreprocInclude,
+                                                                                            cppQpropertyDeclaration,
+                                                                                            cppStaticAssertDeclaration,
+                                                                                            cppTemplateDeclaration,
+                                                                                            cppTemplateInstantiation,
+                                                                                            cppTypeDefinition,
+                                                                                            cppUsingDeclaration
+                                                                                          }
+                                                                    tmp[cppPreprocElse] = {
+                                                                                            cppStatement,
+                                                                                            cppTypeSpecifier,
+                                                                                            cppAccessSpecifier,
+                                                                                            cppAliasDeclaration,
+                                                                                            cppAttributedStatement,
+                                                                                            cppDeclaration,
+                                                                                            cppFieldDeclaration,
+                                                                                            cppFriendDeclaration,
+                                                                                            cppFunctionDefinition,
+                                                                                            cppLinkageSpecification,
+                                                                                            cppNamespaceAliasDefinition,
+                                                                                            cppNamespaceDefinition,
+                                                                                            cppPreprocCall,
+                                                                                            cppPreprocDef,
+                                                                                            cppPreprocFunctionDef,
+                                                                                            cppPreprocIf,
+                                                                                            cppPreprocIfdef,
+                                                                                            cppPreprocInclude,
+                                                                                            cppQpropertyDeclaration,
+                                                                                            cppStaticAssertDeclaration,
+                                                                                            cppTemplateDeclaration,
+                                                                                            cppTemplateInstantiation,
+                                                                                            cppTypeDefinition,
+                                                                                            cppUsingDeclaration
+                                                                                          }
+                                                                    tmp[cppPreprocIf] = {
+                                                                                          cppStatement,
+                                                                                          cppTypeSpecifier,
+                                                                                          cppAccessSpecifier,
+                                                                                          cppAliasDeclaration,
+                                                                                          cppAttributedStatement,
+                                                                                          cppDeclaration,
+                                                                                          cppFieldDeclaration,
+                                                                                          cppFriendDeclaration,
+                                                                                          cppFunctionDefinition,
+                                                                                          cppLinkageSpecification,
+                                                                                          cppNamespaceAliasDefinition,
+                                                                                          cppNamespaceDefinition,
+                                                                                          cppPreprocCall,
+                                                                                          cppPreprocDef,
+                                                                                          cppPreprocFunctionDef,
+                                                                                          cppPreprocIf,
+                                                                                          cppPreprocIfdef,
+                                                                                          cppPreprocInclude,
+                                                                                          cppQpropertyDeclaration,
+                                                                                          cppStaticAssertDeclaration,
+                                                                                          cppTemplateDeclaration,
+                                                                                          cppTemplateInstantiation,
+                                                                                          cppTypeDefinition,
+                                                                                          cppUsingDeclaration
+                                                                                        }
+                                                                    tmp[cppPreprocIfdef] = {
+                                                                                             cppStatement,
+                                                                                             cppTypeSpecifier,
+                                                                                             cppAccessSpecifier,
+                                                                                             cppAliasDeclaration,
+                                                                                             cppAttributedStatement,
+                                                                                             cppDeclaration,
+                                                                                             cppFieldDeclaration,
+                                                                                             cppFriendDeclaration,
+                                                                                             cppFunctionDefinition,
+                                                                                             cppLinkageSpecification,
+                                                                                             cppNamespaceAliasDefinition,
+                                                                                             cppNamespaceDefinition,
+                                                                                             cppPreprocCall,
+                                                                                             cppPreprocDef,
+                                                                                             cppPreprocFunctionDef,
+                                                                                             cppPreprocIf,
+                                                                                             cppPreprocIfdef,
+                                                                                             cppPreprocInclude,
+                                                                                             cppQpropertyDeclaration,
+                                                                                             cppStaticAssertDeclaration,
+                                                                                             cppTemplateDeclaration,
+                                                                                             cppTemplateInstantiation,
+                                                                                             cppTypeDefinition,
+                                                                                             cppUsingDeclaration
+                                                                                           }
+                                                                    tmp[cppPreprocParams] = {cppIdentifier}
+                                                                    tmp[cppQpropertyDeclaration] = {cppTypeIdentifier}
+                                                                    tmp[cppReferenceDeclarator] = {cppDeclarator, cppFieldDeclarator, cppVariadicDeclarator}
+                                                                    tmp[cppReturnStatement] = {cppExpression, cppCommaExpression, cppInitializerList}
+                                                                    tmp[cppStringLiteral] = {cppEscapeSequence}
+                                                                    tmp[cppStructSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
+                                                                    tmp[cppStructuredBindingDeclarator] = {cppIdentifier}
+                                                                    tmp[cppSubscriptDesignator] = {cppExpression}
+                                                                    tmp[cppTemplateArgumentList] = {cppExpression, cppTypeDescriptor}
+                                                                    tmp[cppTemplateDeclaration] = {cppTypeSpecifier, cppAliasDeclaration, cppDeclaration, cppFunctionDefinition, cppTemplateDeclaration}
+                                                                    tmp[cppTemplateInstantiation] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppTemplateParameterList] = {
+                                                                                                      cppOptionalParameterDeclaration,
+                                                                                                      cppOptionalTypeParameterDeclaration,
+                                                                                                      cppParameterDeclaration,
+                                                                                                      cppTemplateTemplateParameterDeclaration,
+                                                                                                      cppTypeParameterDeclaration,
+                                                                                                      cppVariadicParameterDeclaration,
+                                                                                                      cppVariadicTypeParameterDeclaration
+                                                                                                    }
+                                                                    tmp[cppTemplateTemplateParameterDeclaration] = {cppOptionalTypeParameterDeclaration, cppTypeParameterDeclaration, cppVariadicTypeParameterDeclaration}
+                                                                    tmp[cppThrowSpecifier] = {cppTypeDescriptor}
+                                                                    tmp[cppThrowStatement] = {cppExpression}
+                                                                    tmp[cppTrailingReturnType] = {cppAbstractDeclarator, cppTypeSpecifier, cppTypeQualifier}
+                                                                    tmp[cppTranslationUnit] = {
+                                                                                                cppStatement,
+                                                                                                cppTypeSpecifier,
+                                                                                                cppAliasDeclaration,
+                                                                                                cppAttributedStatement,
+                                                                                                cppDeclaration,
+                                                                                                cppFunctionDefinition,
+                                                                                                cppLinkageSpecification,
+                                                                                                cppNamespaceAliasDefinition,
+                                                                                                cppNamespaceDefinition,
+                                                                                                cppPreprocCall,
+                                                                                                cppPreprocDef,
+                                                                                                cppPreprocFunctionDef,
+                                                                                                cppPreprocIf,
+                                                                                                cppPreprocIfdef,
+                                                                                                cppPreprocInclude,
+                                                                                                cppStaticAssertDeclaration,
+                                                                                                cppTemplateDeclaration,
+                                                                                                cppTemplateInstantiation,
+                                                                                                cppTypeDefinition,
+                                                                                                cppUsingDeclaration
+                                                                                              }
+                                                                    tmp[cppTryStatement] = {cppCatchClause}
+                                                                    tmp[cppTypeDefinition] = {cppTypeQualifier}
+                                                                    tmp[cppTypeDescriptor] = {cppTypeQualifier}
+                                                                    tmp[cppTypeParameterDeclaration] = {cppTypeIdentifier}
+                                                                    tmp[cppUnionSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
+                                                                    tmp[cppUserDefinedLiteral] = {cppCharLiteral, cppConcatenatedString, cppLiteralSuffix, cppNumberLiteral, cppRawStringLiteral, cppStringLiteral}
+                                                                    tmp[cppUsingDeclaration] = {cppIdentifier, cppQualifiedIdentifier}
+                                                                    tmp[cppVariadicDeclarator] = {cppIdentifier}
+                                                                    tmp[cppVariadicParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
+                                                                    tmp[cppVariadicTypeParameterDeclaration] = {cppTypeIdentifier}
+                                                                    tmp
+const cppTokenKinds*: set[CppNodeKind] = {
+                                           cppNewlineTok,
+                                           cppExclamationTok,
+                                           cppExclamationEqualTok,
+                                           cppQuoteTok,
+                                           cppDoubleQuoteTok,
+                                           cppHashdefineTok,
+                                           cppHashelifTok,
+                                           cppHashelseTok,
+                                           cppHashendifTok,
+                                           cppHashifTok,
+                                           cppHashifdefTok,
+                                           cppHashifndefTok,
+                                           cppHashincludeTok,
+                                           cppPercentTok,
+                                           cppPercentEqualTok,
+                                           cppAmpersandTok,
+                                           cppDoubleAmpersandTok,
+                                           cppAmpersandEqualTok,
+                                           cppApostropheTok,
+                                           cppLParTok,
+                                           cppLParRParTok,
+                                           cppRParTok,
+                                           cppAsteriskTok,
+                                           cppAsteriskEqualTok,
+                                           cppPlusTok,
+                                           cppDoublePlusTok,
+                                           cppPlusEqualTok,
+                                           cppCommaTok,
+                                           cppMinusTok,
+                                           cppDoubleMinusTok,
+                                           cppMinusEqualTok,
+                                           cppMinusGreaterThanTok,
+                                           cppMinusGreaterThanAsteriskTok,
+                                           cppDotTok,
+                                           cppTripleDotTok,
+                                           cppSlashTok,
+                                           cppSlashEqualTok,
+                                           cppColonTok,
+                                           cppDoubleColonTok,
+                                           cppSemicolonTok,
+                                           cppLessThanTok,
+                                           cppDoubleLessThanTok,
+                                           cppDoubleLessThanEqualTok,
+                                           cppLessThanEqualTok,
+                                           cppEqualTok,
+                                           cppDoubleEqualTok,
+                                           cppGreaterThanTok,
+                                           cppGreaterThanEqualTok,
+                                           cppDoubleGreaterThanTok,
+                                           cppDoubleGreaterThanEqualTok,
+                                           cppQuestionTok,
+                                           cppLQuoteTok,
+                                           cppLApostropheTok,
+                                           cppQPROPERTYTok,
+                                           cppUQuoteTok,
+                                           cppUApostropheTok,
+                                           cppLBrackTok,
+                                           cppDoubleLBrackTok,
+                                           cppLBrackRBrackTok,
+                                           cppRBrackTok,
+                                           cppDoubleRBrackTok,
+                                           cppAccentTok,
+                                           cppAccentEqualTok,
+                                           cppAtomicTok,
+                                           cppAttributeTok,
+                                           cppBasedTok,
+                                           cppCdeclTok,
+                                           cppClrcallTok,
+                                           cppDeclspecTok,
+                                           cppFastcallTok,
+                                           cppStdcallTok,
+                                           cppThiscallTok,
+                                           cppUnalignedTok,
+                                           cppVectorcallTok,
+                                           cppUnalignedTok,
+                                           cppBreakTok,
+                                           cppCaseTok,
+                                           cppCatchTok,
+                                           cppClassTok,
+                                           cppCoAwaitTok,
+                                           cppCoReturnTok,
+                                           cppCoYieldTok,
+                                           cppConstTok,
+                                           cppConstexprTok,
+                                           cppContinueTok,
+                                           cppDecltypeTok,
+                                           cppDefaultTok,
+                                           cppDefinedTok,
+                                           cppDeleteTok,
+                                           cppDoTok,
+                                           cppElseTok,
+                                           cppEnumTok,
+                                           cppExplicitTok,
+                                           cppExternTok,
+                                           cppFinalTok,
+                                           cppForTok,
+                                           cppFriendTok,
+                                           cppGotoTok,
+                                           cppIfTok,
+                                           cppInlineTok,
+                                           cppLongTok,
+                                           cppMutableTok,
+                                           cppNamespaceTok,
+                                           cppNewTok,
+                                           cppNoexceptTok,
+                                           cppOperatorTok,
+                                           cppOverrideTok,
+                                           cppPrivateTok,
+                                           cppProtectedTok,
+                                           cppPublicTok,
+                                           cppRegisterTok,
+                                           cppRestrictTok,
+                                           cppReturnTok,
+                                           cppShortTok,
+                                           cppSignalsTok,
+                                           cppSignedTok,
+                                           cppSizeofTok,
+                                           cppSlotsTok,
+                                           cppStaticTok,
+                                           cppStaticAssertTok,
+                                           cppStructTok,
+                                           cppSwitchTok,
+                                           cppTemplateTok,
+                                           cppThreadLocalTok,
+                                           cppThrowTok,
+                                           cppTryTok,
+                                           cppTypedefTok,
+                                           cppTypenameTok,
+                                           cppUQuoteTok,
+                                           cppUApostropheTok,
+                                           cppU8QuoteTok,
+                                           cppU8ApostropheTok,
+                                           cppUnionTok,
+                                           cppUnsignedTok,
+                                           cppUsingTok,
+                                           cppVirtualTok,
+                                           cppVolatileTok,
+                                           cppWhileTok,
+                                           cppLCurlyTok,
+                                           cppPipeTok,
+                                           cppPipeEqualTok,
+                                           cppDoublePipeTok,
+                                           cppRCurlyTok,
+                                           cppTildeTok
+                                         }
 
 proc tsNodeType*(node: TsCppNode): string
 
@@ -721,6 +1529,7 @@ func `[]`*(
 
 type
   CppNode* = HtsNode[TsCppNode, CppNodeKind]
+
 
 proc treeReprTsCpp*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsCppNode, CppNodeKind](parseTsCppString(str), str, 3, unnamed = unnamed)

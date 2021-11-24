@@ -181,6 +181,184 @@ type
     goSyntaxError                  ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: GoNodeKind): string =
+  case kind:
+    of goExpression:                   "_expression"
+    of goSimpleStatement:              "_simple_statement"
+    of goSimpleType:                   "_simple_type"
+    of goStatement:                    "_statement"
+    of goType:                         "_type"
+    of goArgumentList:                 "argument_list"
+    of goArrayType:                    "array_type"
+    of goAssignmentStatement:          "assignment_statement"
+    of goBinaryExpression:             "binary_expression"
+    of goBlock:                        "block"
+    of goBreakStatement:               "break_statement"
+    of goCallExpression:               "call_expression"
+    of goChannelType:                  "channel_type"
+    of goCommunicationCase:            "communication_case"
+    of goCompositeLiteral:             "composite_literal"
+    of goConstDeclaration:             "const_declaration"
+    of goConstSpec:                    "const_spec"
+    of goContinueStatement:            "continue_statement"
+    of goDecStatement:                 "dec_statement"
+    of goDefaultCase:                  "default_case"
+    of goDeferStatement:               "defer_statement"
+    of goDot:                          "dot"
+    of goElement:                      "element"
+    of goEmptyStatement:               "empty_statement"
+    of goExpressionCase:               "expression_case"
+    of goExpressionList:               "expression_list"
+    of goExpressionSwitchStatement:    "expression_switch_statement"
+    of goFallthroughStatement:         "fallthrough_statement"
+    of goFieldDeclaration:             "field_declaration"
+    of goFieldDeclarationList:         "field_declaration_list"
+    of goForClause:                    "for_clause"
+    of goForStatement:                 "for_statement"
+    of goFuncLiteral:                  "func_literal"
+    of goFunctionDeclaration:          "function_declaration"
+    of goFunctionType:                 "function_type"
+    of goGoStatement:                  "go_statement"
+    of goGotoStatement:                "goto_statement"
+    of goIfStatement:                  "if_statement"
+    of goImplicitLengthArrayType:      "implicit_length_array_type"
+    of goImportDeclaration:            "import_declaration"
+    of goImportSpec:                   "import_spec"
+    of goImportSpecList:               "import_spec_list"
+    of goIncStatement:                 "inc_statement"
+    of goIndexExpression:              "index_expression"
+    of goInterfaceType:                "interface_type"
+    of goInterpretedStringLiteral:     "interpreted_string_literal"
+    of goKeyedElement:                 "keyed_element"
+    of goLabeledStatement:             "labeled_statement"
+    of goLiteralValue:                 "literal_value"
+    of goMapType:                      "map_type"
+    of goMethodDeclaration:            "method_declaration"
+    of goMethodSpec:                   "method_spec"
+    of goMethodSpecList:               "method_spec_list"
+    of goPackageClause:                "package_clause"
+    of goParameterDeclaration:         "parameter_declaration"
+    of goParameterList:                "parameter_list"
+    of goParenthesizedExpression:      "parenthesized_expression"
+    of goParenthesizedType:            "parenthesized_type"
+    of goPointerType:                  "pointer_type"
+    of goQualifiedType:                "qualified_type"
+    of goRangeClause:                  "range_clause"
+    of goReceiveStatement:             "receive_statement"
+    of goReturnStatement:              "return_statement"
+    of goSelectStatement:              "select_statement"
+    of goSelectorExpression:           "selector_expression"
+    of goSendStatement:                "send_statement"
+    of goShortVarDeclaration:          "short_var_declaration"
+    of goSliceExpression:              "slice_expression"
+    of goSliceType:                    "slice_type"
+    of goSourceFile:                   "source_file"
+    of goStructType:                   "struct_type"
+    of goTypeAlias:                    "type_alias"
+    of goTypeAssertionExpression:      "type_assertion_expression"
+    of goTypeCase:                     "type_case"
+    of goTypeConversionExpression:     "type_conversion_expression"
+    of goTypeDeclaration:              "type_declaration"
+    of goTypeSpec:                     "type_spec"
+    of goTypeSwitchStatement:          "type_switch_statement"
+    of goUnaryExpression:              "unary_expression"
+    of goVarDeclaration:               "var_declaration"
+    of goVarSpec:                      "var_spec"
+    of goVariadicArgument:             "variadic_argument"
+    of goVariadicParameterDeclaration: "variadic_parameter_declaration"
+    of goNewlineTok:                   "\x0A"
+    of goExclamationTok:               "!"
+    of goExclamationEqualTok:          "!="
+    of goQuoteTok:                     "\""
+    of goPercentTok:                   "%"
+    of goPercentEqualTok:              "%="
+    of goAmpersandTok:                 "&"
+    of goDoubleAmpersandTok:           "&&"
+    of goAmpersandEqualTok:            "&="
+    of goAmpersandAccentTok:           "&^"
+    of goAmpersandAccentEqualTok:      "&^="
+    of goLParTok:                      "("
+    of goRParTok:                      ")"
+    of goAsteriskTok:                  "*"
+    of goAsteriskEqualTok:             "*="
+    of goPlusTok:                      "+"
+    of goDoublePlusTok:                "++"
+    of goPlusEqualTok:                 "+="
+    of goCommaTok:                     ","
+    of goMinusTok:                     "-"
+    of goDoubleMinusTok:               "--"
+    of goMinusEqualTok:                "-="
+    of goDotTok:                       "."
+    of goTripleDotTok:                 "..."
+    of goSlashTok:                     "/"
+    of goSlashEqualTok:                "/="
+    of goColonTok:                     ":"
+    of goColonEqualTok:                ":="
+    of goSemicolonTok:                 ";"
+    of goLessThanTok:                  "<"
+    of goLessThanMinusTok:             "<-"
+    of goDoubleLessThanTok:            "<<"
+    of goDoubleLessThanEqualTok:       "<<="
+    of goLessThanEqualTok:             "<="
+    of goEqualTok:                     "="
+    of goDoubleEqualTok:               "=="
+    of goGreaterThanTok:               ">"
+    of goGreaterThanEqualTok:          ">="
+    of goDoubleGreaterThanTok:         ">>"
+    of goDoubleGreaterThanEqualTok:    ">>="
+    of goLBrackTok:                    "["
+    of goRBrackTok:                    "]"
+    of goAccentTok:                    "^"
+    of goAccentEqualTok:               "^="
+    of goBlankIdentifier:              "blank_identifier"
+    of goBreakTok:                     "break"
+    of goCaseTok:                      "case"
+    of goChanTok:                      "chan"
+    of goComment:                      "comment"
+    of goConstTok:                     "const"
+    of goContinueTok:                  "continue"
+    of goDefaultTok:                   "default"
+    of goDeferTok:                     "defer"
+    of goElseTok:                      "else"
+    of goEscapeSequence:               "escape_sequence"
+    of goFallthroughTok:               "fallthrough"
+    of goFalse:                        "false"
+    of goFieldIdentifier:              "field_identifier"
+    of goFloatLiteral:                 "float_literal"
+    of goForTok:                       "for"
+    of goFuncTok:                      "func"
+    of goGoTok:                        "go"
+    of goGotoTok:                      "goto"
+    of goIdentifier:                   "identifier"
+    of goIfTok:                        "if"
+    of goImaginaryLiteral:             "imaginary_literal"
+    of goImportTok:                    "import"
+    of goIntLiteral:                   "int_literal"
+    of goInterfaceTok:                 "interface"
+    of goLabelName:                    "label_name"
+    of goMapTok:                       "map"
+    of goNil:                          "nil"
+    of goPackageTok:                   "package"
+    of goPackageIdentifier:            "package_identifier"
+    of goRangeTok:                     "range"
+    of goRawStringLiteral:             "raw_string_literal"
+    of goReturnTok:                    "return"
+    of goRuneLiteral:                  "rune_literal"
+    of goSelectTok:                    "select"
+    of goStructTok:                    "struct"
+    of goSwitchTok:                    "switch"
+    of goTrue:                         "true"
+    of goTypeTok:                      "type"
+    of goTypeIdentifier:               "type_identifier"
+    of goVarTok:                       "var"
+    of goLCurlyTok:                    "{"
+    of goPipeTok:                      "|"
+    of goPipeEqualTok:                 "|="
+    of goDoublePipeTok:                "||"
+    of goRCurlyTok:                    "}"
+    of goSyntaxError:                  "ERROR"
+
+
 type
   TsGoNode* = distinct TSNode
 
@@ -188,6 +366,126 @@ type
 type
   GoParser* = distinct PtsParser
 
+
+const goAllowedSubnodes*: array[GoNodeKind, set[GoNodeKind]] = block:
+                                                                 var tmp: array[GoNodeKind, set[GoNodeKind]]
+                                                                 tmp[goArgumentList] = {goExpression, goType, goVariadicArgument}
+                                                                 tmp[goBlock] = {goStatement}
+                                                                 tmp[goBreakStatement] = {goLabelName}
+                                                                 tmp[goCommunicationCase] = {goStatement}
+                                                                 tmp[goConstDeclaration] = {goConstSpec}
+                                                                 tmp[goContinueStatement] = {goLabelName}
+                                                                 tmp[goDecStatement] = {goExpression}
+                                                                 tmp[goDefaultCase] = {goStatement}
+                                                                 tmp[goDeferStatement] = {goExpression}
+                                                                 tmp[goElement] = {goExpression, goLiteralValue}
+                                                                 tmp[goExpressionCase] = {goStatement}
+                                                                 tmp[goExpressionList] = {goExpression}
+                                                                 tmp[goExpressionSwitchStatement] = {goDefaultCase, goExpressionCase}
+                                                                 tmp[goFieldDeclarationList] = {goFieldDeclaration}
+                                                                 tmp[goForStatement] = {goExpression, goForClause, goRangeClause}
+                                                                 tmp[goGoStatement] = {goExpression}
+                                                                 tmp[goGotoStatement] = {goLabelName}
+                                                                 tmp[goImportDeclaration] = {goImportSpec, goImportSpecList}
+                                                                 tmp[goImportSpecList] = {goImportSpec}
+                                                                 tmp[goIncStatement] = {goExpression}
+                                                                 tmp[goInterfaceType] = {goMethodSpecList}
+                                                                 tmp[goInterpretedStringLiteral] = {goEscapeSequence}
+                                                                 tmp[goKeyedElement] = {goExpression, goFieldIdentifier, goLiteralValue}
+                                                                 tmp[goLabeledStatement] = {goStatement}
+                                                                 tmp[goLiteralValue] = {goElement, goKeyedElement}
+                                                                 tmp[goMethodSpecList] = {goMethodSpec, goQualifiedType, goTypeIdentifier}
+                                                                 tmp[goPackageClause] = {goPackageIdentifier}
+                                                                 tmp[goParameterList] = {goParameterDeclaration, goVariadicParameterDeclaration}
+                                                                 tmp[goParenthesizedExpression] = {goExpression}
+                                                                 tmp[goParenthesizedType] = {goType}
+                                                                 tmp[goPointerType] = {goType}
+                                                                 tmp[goReturnStatement] = {goExpressionList}
+                                                                 tmp[goSelectStatement] = {goCommunicationCase, goDefaultCase}
+                                                                 tmp[goSourceFile] = {goStatement, goFunctionDeclaration, goImportDeclaration, goMethodDeclaration, goPackageClause}
+                                                                 tmp[goStructType] = {goFieldDeclarationList}
+                                                                 tmp[goTypeCase] = {goStatement}
+                                                                 tmp[goTypeDeclaration] = {goTypeAlias, goTypeSpec}
+                                                                 tmp[goTypeSwitchStatement] = {goDefaultCase, goTypeCase}
+                                                                 tmp[goVarDeclaration] = {goVarSpec}
+                                                                 tmp[goVariadicArgument] = {goExpression}
+                                                                 tmp
+const goTokenKinds*: set[GoNodeKind] = {
+                                         goNewlineTok,
+                                         goExclamationTok,
+                                         goExclamationEqualTok,
+                                         goQuoteTok,
+                                         goPercentTok,
+                                         goPercentEqualTok,
+                                         goAmpersandTok,
+                                         goDoubleAmpersandTok,
+                                         goAmpersandEqualTok,
+                                         goAmpersandAccentTok,
+                                         goAmpersandAccentEqualTok,
+                                         goLParTok,
+                                         goRParTok,
+                                         goAsteriskTok,
+                                         goAsteriskEqualTok,
+                                         goPlusTok,
+                                         goDoublePlusTok,
+                                         goPlusEqualTok,
+                                         goCommaTok,
+                                         goMinusTok,
+                                         goDoubleMinusTok,
+                                         goMinusEqualTok,
+                                         goDotTok,
+                                         goTripleDotTok,
+                                         goSlashTok,
+                                         goSlashEqualTok,
+                                         goColonTok,
+                                         goColonEqualTok,
+                                         goSemicolonTok,
+                                         goLessThanTok,
+                                         goLessThanMinusTok,
+                                         goDoubleLessThanTok,
+                                         goDoubleLessThanEqualTok,
+                                         goLessThanEqualTok,
+                                         goEqualTok,
+                                         goDoubleEqualTok,
+                                         goGreaterThanTok,
+                                         goGreaterThanEqualTok,
+                                         goDoubleGreaterThanTok,
+                                         goDoubleGreaterThanEqualTok,
+                                         goLBrackTok,
+                                         goRBrackTok,
+                                         goAccentTok,
+                                         goAccentEqualTok,
+                                         goBreakTok,
+                                         goCaseTok,
+                                         goChanTok,
+                                         goConstTok,
+                                         goContinueTok,
+                                         goDefaultTok,
+                                         goDeferTok,
+                                         goElseTok,
+                                         goFallthroughTok,
+                                         goForTok,
+                                         goFuncTok,
+                                         goGoTok,
+                                         goGotoTok,
+                                         goIfTok,
+                                         goImportTok,
+                                         goInterfaceTok,
+                                         goMapTok,
+                                         goPackageTok,
+                                         goRangeTok,
+                                         goReturnTok,
+                                         goSelectTok,
+                                         goStructTok,
+                                         goSwitchTok,
+                                         goTypeTok,
+                                         goVarTok,
+                                         goLCurlyTok,
+                                         goPipeTok,
+                                         goPipeEqualTok,
+                                         goDoublePipeTok,
+                                         goRCurlyTok
+                                       }
 
 proc tsNodeType*(node: TsGoNode): string
 

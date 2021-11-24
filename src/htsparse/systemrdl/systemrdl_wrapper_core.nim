@@ -212,6 +212,216 @@ type
     systemrdlSyntaxError                     ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: SystemrdlNodeKind): string =
+  case kind:
+    of systemrdlAccesstypeLiteral:               "accesstype_literal"
+    of systemrdlAddressingtypeLiteral:           "addressingtype_literal"
+    of systemrdlArray:                           "array"
+    of systemrdlArrayLiteral:                    "array_literal"
+    of systemrdlArrayType:                       "array_type"
+    of systemrdlBasicDataType:                   "basic_data_type"
+    of systemrdlBinaryOperator:                  "binary_operator"
+    of systemrdlBooleanLiteral:                  "boolean_literal"
+    of systemrdlCastingType:                     "casting_type"
+    of systemrdlComponentAnonDef:                "component_anon_def"
+    of systemrdlComponentBody:                   "component_body"
+    of systemrdlComponentBodyElem:               "component_body_elem"
+    of systemrdlComponentDef:                    "component_def"
+    of systemrdlComponentInst:                   "component_inst"
+    of systemrdlComponentInstAlias:              "component_inst_alias"
+    of systemrdlComponentInstArrayOrRange:       "component_inst_array_or_range"
+    of systemrdlComponentInstType:               "component_inst_type"
+    of systemrdlComponentInsts:                  "component_insts"
+    of systemrdlComponentNamedDef:               "component_named_def"
+    of systemrdlComponentPrimaryType:            "component_primary_type"
+    of systemrdlComponentType:                   "component_type"
+    of systemrdlConstantCast:                    "constant_cast"
+    of systemrdlConstantConcatenation:           "constant_concatenation"
+    of systemrdlConstantExpression:              "constant_expression"
+    of systemrdlConstantMultipleConcatenation:   "constant_multiple_concatenation"
+    of systemrdlConstantPrimary:                 "constant_primary"
+    of systemrdlConstraintBody:                  "constraint_body"
+    of systemrdlConstraintDef:                   "constraint_def"
+    of systemrdlConstraintDefAnon:               "constraint_def_anon"
+    of systemrdlConstraintDefExp:                "constraint_def_exp"
+    of systemrdlConstraintElem:                  "constraint_elem"
+    of systemrdlConstraintInsts:                 "constraint_insts"
+    of systemrdlConstraintLhs:                   "constraint_lhs"
+    of systemrdlConstraintPropAssignment:        "constraint_prop_assignment"
+    of systemrdlConstraintValue:                 "constraint_value"
+    of systemrdlConstraintValues:                "constraint_values"
+    of systemrdlDataType:                        "data_type"
+    of systemrdlDescription:                     "description"
+    of systemrdlEnumBody:                        "enum_body"
+    of systemrdlEnumDef:                         "enum_def"
+    of systemrdlEnumEntry:                       "enum_entry"
+    of systemrdlEnumPropertyAssignment:          "enum_property_assignment"
+    of systemrdlEnumeratorLiteral:               "enumerator_literal"
+    of systemrdlExplicitComponentInst:           "explicit_component_inst"
+    of systemrdlExplicitEncodeAssignment:        "explicit_encode_assignment"
+    of systemrdlExplicitOrDefaultPropAssignment: "explicit_or_default_prop_assignment"
+    of systemrdlExplicitPropAssignment:          "explicit_prop_assignment"
+    of systemrdlExplicitPropModifier:            "explicit_prop_modifier"
+    of systemrdlInstanceOrPropRef:               "instance_or_prop_ref"
+    of systemrdlInstanceRef:                     "instance_ref"
+    of systemrdlInstanceRefElement:              "instance_ref_element"
+    of systemrdlIntegerType:                     "integer_type"
+    of systemrdlNumber:                          "number"
+    of systemrdlOnreadtypeLiteral:               "onreadtype_literal"
+    of systemrdlOnwritetypeLiteral:              "onwritetype_literal"
+    of systemrdlParamDef:                        "param_def"
+    of systemrdlParamDefElem:                    "param_def_elem"
+    of systemrdlParamElem:                       "param_elem"
+    of systemrdlParamInst:                       "param_inst"
+    of systemrdlParamValue:                      "param_value"
+    of systemrdlPostEncodeAssignment:            "post_encode_assignment"
+    of systemrdlPostPropAssignment:              "post_prop_assignment"
+    of systemrdlPrecedencetypeLiteral:           "precedencetype_literal"
+    of systemrdlPrimaryLiteral:                  "primary_literal"
+    of systemrdlPropAssignmentLhs:               "prop_assignment_lhs"
+    of systemrdlPropAssignmentRhs:               "prop_assignment_rhs"
+    of systemrdlPropKeyword:                     "prop_keyword"
+    of systemrdlPropMod:                         "prop_mod"
+    of systemrdlPropRef:                         "prop_ref"
+    of systemrdlPropertyAssignment:              "property_assignment"
+    of systemrdlPropertyAttribute:               "property_attribute"
+    of systemrdlPropertyBody:                    "property_body"
+    of systemrdlPropertyCompType:                "property_comp_type"
+    of systemrdlPropertyCompTypes:               "property_comp_types"
+    of systemrdlPropertyConstraint:              "property_constraint"
+    of systemrdlPropertyDataType:                "property_data_type"
+    of systemrdlPropertyDefault:                 "property_default"
+    of systemrdlPropertyDefinition:              "property_definition"
+    of systemrdlPropertyType:                    "property_type"
+    of systemrdlPropertyUsage:                   "property_usage"
+    of systemrdlRange:                           "range"
+    of systemrdlSimpleType:                      "simple_type"
+    of systemrdlSourceFile:                      "source_file"
+    of systemrdlStringLiteral:                   "string_literal"
+    of systemrdlStructBody:                      "struct_body"
+    of systemrdlStructDef:                       "struct_def"
+    of systemrdlStructElem:                      "struct_elem"
+    of systemrdlStructLiteral:                   "struct_literal"
+    of systemrdlStructLiteralElem:               "struct_literal_elem"
+    of systemrdlStructType:                      "struct_type"
+    of systemrdlUnaryOperator:                   "unary_operator"
+    of systemrdlExclamationTok:                  "!"
+    of systemrdlExclamationEqualTok:             "!="
+    of systemrdlQuoteTok:                        "\""
+    of systemrdlHashTok:                         "#"
+    of systemrdlPercentTok:                      "%"
+    of systemrdlPercentEqualTok:                 "%="
+    of systemrdlAmpersandTok:                    "&"
+    of systemrdlDoubleAmpersandTok:              "&&"
+    of systemrdlApostropheTok:                   "\'"
+    of systemrdlApostropheLCurlyTok:             "\'{"
+    of systemrdlLParTok:                         "("
+    of systemrdlRParTok:                         ")"
+    of systemrdlAsteriskTok:                     "*"
+    of systemrdlDoubleAsteriskTok:               "**"
+    of systemrdlPlusTok:                         "+"
+    of systemrdlPlusEqualTok:                    "+="
+    of systemrdlCommaTok:                        ","
+    of systemrdlMinusTok:                        "-"
+    of systemrdlMinusGreaterThanTok:             "->"
+    of systemrdlDotTok:                          "."
+    of systemrdlSlashTok:                        "/"
+    of systemrdlColonTok:                        ":"
+    of systemrdlDoubleColonTok:                  "::"
+    of systemrdlSemicolonTok:                    ";"
+    of systemrdlLessThanTok:                     "<"
+    of systemrdlDoubleLessThanTok:               "<<"
+    of systemrdlLessThanEqualTok:                "<="
+    of systemrdlEqualTok:                        "="
+    of systemrdlDoubleEqualTok:                  "=="
+    of systemrdlGreaterThanTok:                  ">"
+    of systemrdlGreaterThanEqualTok:             ">="
+    of systemrdlDoubleGreaterThanTok:            ">>"
+    of systemrdlQuestionTok:                     "?"
+    of systemrdlAtTok:                           "@"
+    of systemrdlLBrackTok:                       "["
+    of systemrdlRBrackTok:                       "]"
+    of systemrdlAccentTok:                       "^"
+    of systemrdlAccentTildeTok:                  "^~"
+    of systemrdlAbstractTok:                     "abstract"
+    of systemrdlAccesstypeTok:                   "accesstype"
+    of systemrdlAddressingtypeTok:               "addressingtype"
+    of systemrdlAddrmapTok:                      "addrmap"
+    of systemrdlAliasTok:                        "alias"
+    of systemrdlAllTok:                          "all"
+    of systemrdlBooleanTok:                      "boolean"
+    of systemrdlBothedgeTok:                     "bothedge"
+    of systemrdlClrTok:                          "clr"
+    of systemrdlComment:                         "comment"
+    of systemrdlCompactTok:                      "compact"
+    of systemrdlComponentTok:                    "component"
+    of systemrdlConstraintTok:                   "constraint"
+    of systemrdlDefaultTok:                      "default"
+    of systemrdlEncodeTok:                       "encode"
+    of systemrdlEnumTok:                         "enum"
+    of systemrdlExternalTok:                     "external"
+    of systemrdlFalseTok:                        "false"
+    of systemrdlFieldTok:                        "field"
+    of systemrdlFullalignTok:                    "fullalign"
+    of systemrdlHwTok:                           "hw"
+    of systemrdlId:                              "id"
+    of systemrdlInsideTok:                       "inside"
+    of systemrdlIntegerAtomType:                 "integer_atom_type"
+    of systemrdlIntegerVectorType:               "integer_vector_type"
+    of systemrdlInternalTok:                     "internal"
+    of systemrdlLevelTok:                        "level"
+    of systemrdlMemTok:                          "mem"
+    of systemrdlNaTok:                           "na"
+    of systemrdlNegedgeTok:                      "negedge"
+    of systemrdlNonstickyTok:                    "nonsticky"
+    of systemrdlNumberTok:                       "number"
+    of systemrdlOnreadtypeTok:                   "onreadtype"
+    of systemrdlOnwritetypeTok:                  "onwritetype"
+    of systemrdlPosedgeTok:                      "posedge"
+    of systemrdlPropertyTok:                     "property"
+    of systemrdlPropertyConstraintType:          "property_constraint_type"
+    of systemrdlRTok:                            "r"
+    of systemrdlRclrTok:                         "rclr"
+    of systemrdlRefTok:                          "ref"
+    of systemrdlRegTok:                          "reg"
+    of systemrdlRegalignTok:                     "regalign"
+    of systemrdlRegfileTok:                      "regfile"
+    of systemrdlRsetTok:                         "rset"
+    of systemrdlRuserTok:                        "ruser"
+    of systemrdlRwTok:                           "rw"
+    of systemrdlRw1Tok:                          "rw1"
+    of systemrdlSignalTok:                       "signal"
+    of systemrdlSigning:                         "signing"
+    of systemrdlStringTok:                       "string"
+    of systemrdlStructTok:                       "struct"
+    of systemrdlSwTok:                           "sw"
+    of systemrdlTemplate:                        "template"
+    of systemrdlThisTok:                         "this"
+    of systemrdlTrueTok:                         "true"
+    of systemrdlTypeTok:                         "type"
+    of systemrdlWTok:                            "w"
+    of systemrdlW1Tok:                           "w1"
+    of systemrdlWclrTok:                         "wclr"
+    of systemrdlWoclrTok:                        "woclr"
+    of systemrdlWosetTok:                        "woset"
+    of systemrdlWotTok:                          "wot"
+    of systemrdlWrTok:                           "wr"
+    of systemrdlWsetTok:                         "wset"
+    of systemrdlWuserTok:                        "wuser"
+    of systemrdlWzcTok:                          "wzc"
+    of systemrdlWzsTok:                          "wzs"
+    of systemrdlWztTok:                          "wzt"
+    of systemrdlLCurlyTok:                       "{"
+    of systemrdlPipeTok:                         "|"
+    of systemrdlDoublePipeTok:                   "||"
+    of systemrdlRCurlyTok:                       "}"
+    of systemrdlTildeTok:                        "~"
+    of systemrdlTildeAmpersandTok:               "~&"
+    of systemrdlTildeAccentTok:                  "~^"
+    of systemrdlTildePipeTok:                    "~|"
+    of systemrdlSyntaxError:                     "ERROR"
+
+
 type
   TsSystemrdlNode* = distinct TSNode
 
@@ -219,6 +429,221 @@ type
 type
   SystemrdlParser* = distinct PtsParser
 
+
+const systemrdlAllowedSubnodes*: array[SystemrdlNodeKind, set[SystemrdlNodeKind]] = block:
+                                                                                      var tmp: array[SystemrdlNodeKind, set[SystemrdlNodeKind]]
+                                                                                      tmp[systemrdlArray] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlArrayLiteral] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlBasicDataType] = {systemrdlId, systemrdlSigning, systemrdlSimpleType}
+                                                                                      tmp[systemrdlCastingType] = {systemrdlConstantPrimary, systemrdlSimpleType}
+                                                                                      tmp[systemrdlComponentAnonDef] = {systemrdlComponentBody, systemrdlComponentType}
+                                                                                      tmp[systemrdlComponentBody] = {systemrdlComponentBodyElem}
+                                                                                      tmp[systemrdlComponentBodyElem] = {systemrdlComponentDef, systemrdlConstraintDef, systemrdlEnumDef, systemrdlExplicitComponentInst, systemrdlPropertyAssignment, systemrdlStructDef}
+                                                                                      tmp[systemrdlComponentDef] = {systemrdlComponentAnonDef, systemrdlComponentInstType, systemrdlComponentInsts, systemrdlComponentNamedDef}
+                                                                                      tmp[systemrdlComponentInst] = {systemrdlComponentInstArrayOrRange, systemrdlConstantExpression, systemrdlId}
+                                                                                      tmp[systemrdlComponentInstAlias] = {systemrdlId}
+                                                                                      tmp[systemrdlComponentInstArrayOrRange] = {systemrdlArray, systemrdlRange}
+                                                                                      tmp[systemrdlComponentInsts] = {systemrdlComponentInst, systemrdlParamInst}
+                                                                                      tmp[systemrdlComponentNamedDef] = {systemrdlComponentBody, systemrdlComponentType, systemrdlId, systemrdlParamDef}
+                                                                                      tmp[systemrdlComponentType] = {systemrdlComponentPrimaryType}
+                                                                                      tmp[systemrdlConstantCast] = {systemrdlCastingType, systemrdlConstantExpression}
+                                                                                      tmp[systemrdlConstantConcatenation] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlConstantExpression] = {systemrdlBinaryOperator, systemrdlConstantExpression, systemrdlConstantPrimary, systemrdlUnaryOperator}
+                                                                                      tmp[systemrdlConstantMultipleConcatenation] = {systemrdlConstantConcatenation, systemrdlConstantExpression}
+                                                                                      tmp[systemrdlConstantPrimary] = {
+                                                                                                                        systemrdlArrayLiteral,
+                                                                                                                        systemrdlConstantCast,
+                                                                                                                        systemrdlConstantConcatenation,
+                                                                                                                        systemrdlConstantExpression,
+                                                                                                                        systemrdlConstantMultipleConcatenation,
+                                                                                                                        systemrdlInstanceOrPropRef,
+                                                                                                                        systemrdlPrimaryLiteral,
+                                                                                                                        systemrdlStructLiteral
+                                                                                                                      }
+                                                                                      tmp[systemrdlConstraintBody] = {systemrdlConstraintElem}
+                                                                                      tmp[systemrdlConstraintDef] = {systemrdlConstraintDefAnon, systemrdlConstraintDefExp}
+                                                                                      tmp[systemrdlConstraintDefAnon] = {systemrdlConstraintBody, systemrdlConstraintInsts}
+                                                                                      tmp[systemrdlConstraintDefExp] = {systemrdlConstraintBody, systemrdlConstraintInsts, systemrdlId}
+                                                                                      tmp[systemrdlConstraintElem] = {systemrdlConstantExpression, systemrdlConstraintLhs, systemrdlConstraintPropAssignment, systemrdlConstraintValues, systemrdlId}
+                                                                                      tmp[systemrdlConstraintInsts] = {systemrdlId}
+                                                                                      tmp[systemrdlConstraintLhs] = {systemrdlInstanceRef}
+                                                                                      tmp[systemrdlConstraintPropAssignment] = {systemrdlConstantExpression, systemrdlId}
+                                                                                      tmp[systemrdlConstraintValue] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlConstraintValues] = {systemrdlConstraintValue}
+                                                                                      tmp[systemrdlDataType] = {systemrdlBasicDataType}
+                                                                                      tmp[systemrdlDescription] = {
+                                                                                                                    systemrdlComponentDef,
+                                                                                                                    systemrdlConstraintDef,
+                                                                                                                    systemrdlEnumDef,
+                                                                                                                    systemrdlExplicitComponentInst,
+                                                                                                                    systemrdlPropertyAssignment,
+                                                                                                                    systemrdlPropertyDefinition,
+                                                                                                                    systemrdlStructDef
+                                                                                                                  }
+                                                                                      tmp[systemrdlEnumBody] = {systemrdlEnumEntry}
+                                                                                      tmp[systemrdlEnumDef] = {systemrdlEnumBody, systemrdlId}
+                                                                                      tmp[systemrdlEnumEntry] = {systemrdlConstantExpression, systemrdlEnumPropertyAssignment, systemrdlId}
+                                                                                      tmp[systemrdlEnumPropertyAssignment] = {systemrdlExplicitPropAssignment}
+                                                                                      tmp[systemrdlEnumeratorLiteral] = {systemrdlId}
+                                                                                      tmp[systemrdlExplicitComponentInst] = {systemrdlComponentInstAlias, systemrdlComponentInstType, systemrdlComponentInsts, systemrdlId}
+                                                                                      tmp[systemrdlExplicitEncodeAssignment] = {systemrdlId}
+                                                                                      tmp[systemrdlExplicitOrDefaultPropAssignment] = {systemrdlExplicitPropAssignment, systemrdlExplicitPropModifier}
+                                                                                      tmp[systemrdlExplicitPropAssignment] = {systemrdlExplicitEncodeAssignment, systemrdlPropAssignmentLhs, systemrdlPropAssignmentRhs}
+                                                                                      tmp[systemrdlExplicitPropModifier] = {systemrdlId, systemrdlPropMod}
+                                                                                      tmp[systemrdlInstanceOrPropRef] = {systemrdlId, systemrdlInstanceRef, systemrdlPropKeyword}
+                                                                                      tmp[systemrdlInstanceRef] = {systemrdlInstanceRefElement}
+                                                                                      tmp[systemrdlInstanceRefElement] = {systemrdlArray, systemrdlId}
+                                                                                      tmp[systemrdlIntegerType] = {systemrdlIntegerAtomType, systemrdlIntegerVectorType}
+                                                                                      tmp[systemrdlParamDef] = {systemrdlParamDefElem}
+                                                                                      tmp[systemrdlParamDefElem] = {systemrdlArrayType, systemrdlConstantExpression, systemrdlDataType, systemrdlId}
+                                                                                      tmp[systemrdlParamElem] = {systemrdlId, systemrdlParamValue}
+                                                                                      tmp[systemrdlParamInst] = {systemrdlParamElem}
+                                                                                      tmp[systemrdlParamValue] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlPostEncodeAssignment] = {systemrdlId, systemrdlInstanceRef}
+                                                                                      tmp[systemrdlPostPropAssignment] = {systemrdlPostEncodeAssignment, systemrdlPropAssignmentRhs, systemrdlPropRef}
+                                                                                      tmp[systemrdlPrimaryLiteral] = {
+                                                                                                                       systemrdlAccesstypeLiteral,
+                                                                                                                       systemrdlAddressingtypeLiteral,
+                                                                                                                       systemrdlBooleanLiteral,
+                                                                                                                       systemrdlEnumeratorLiteral,
+                                                                                                                       systemrdlNumber,
+                                                                                                                       systemrdlOnreadtypeLiteral,
+                                                                                                                       systemrdlOnwritetypeLiteral,
+                                                                                                                       systemrdlStringLiteral
+                                                                                                                     }
+                                                                                      tmp[systemrdlPropAssignmentLhs] = {systemrdlId, systemrdlPropKeyword}
+                                                                                      tmp[systemrdlPropAssignmentRhs] = {systemrdlConstantExpression, systemrdlPrecedencetypeLiteral}
+                                                                                      tmp[systemrdlPropRef] = {systemrdlId, systemrdlInstanceRef, systemrdlPropKeyword}
+                                                                                      tmp[systemrdlPropertyAssignment] = {systemrdlExplicitOrDefaultPropAssignment, systemrdlPostPropAssignment}
+                                                                                      tmp[systemrdlPropertyAttribute] = {systemrdlPropertyConstraint, systemrdlPropertyDefault, systemrdlPropertyType, systemrdlPropertyUsage}
+                                                                                      tmp[systemrdlPropertyBody] = {systemrdlPropertyAttribute}
+                                                                                      tmp[systemrdlPropertyCompType] = {systemrdlComponentType}
+                                                                                      tmp[systemrdlPropertyCompTypes] = {systemrdlPropertyCompType}
+                                                                                      tmp[systemrdlPropertyConstraint] = {systemrdlPropertyConstraintType}
+                                                                                      tmp[systemrdlPropertyDataType] = {systemrdlBasicDataType, systemrdlComponentPrimaryType}
+                                                                                      tmp[systemrdlPropertyDefault] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlPropertyDefinition] = {systemrdlId, systemrdlPropertyBody}
+                                                                                      tmp[systemrdlPropertyType] = {systemrdlArrayType, systemrdlPropertyDataType}
+                                                                                      tmp[systemrdlPropertyUsage] = {systemrdlPropertyCompTypes}
+                                                                                      tmp[systemrdlRange] = {systemrdlConstantExpression}
+                                                                                      tmp[systemrdlSimpleType] = {systemrdlIntegerType}
+                                                                                      tmp[systemrdlSourceFile] = {systemrdlDescription}
+                                                                                      tmp[systemrdlStructBody] = {systemrdlStructElem}
+                                                                                      tmp[systemrdlStructDef] = {systemrdlId, systemrdlStructBody}
+                                                                                      tmp[systemrdlStructElem] = {systemrdlArrayType, systemrdlId, systemrdlStructType}
+                                                                                      tmp[systemrdlStructLiteral] = {systemrdlId, systemrdlStructLiteralElem}
+                                                                                      tmp[systemrdlStructLiteralElem] = {systemrdlConstantExpression, systemrdlId}
+                                                                                      tmp[systemrdlStructType] = {systemrdlComponentType, systemrdlDataType}
+                                                                                      tmp
+const systemrdlTokenKinds*: set[SystemrdlNodeKind] = {
+                                                       systemrdlExclamationTok,
+                                                       systemrdlExclamationEqualTok,
+                                                       systemrdlQuoteTok,
+                                                       systemrdlHashTok,
+                                                       systemrdlPercentTok,
+                                                       systemrdlPercentEqualTok,
+                                                       systemrdlAmpersandTok,
+                                                       systemrdlDoubleAmpersandTok,
+                                                       systemrdlApostropheTok,
+                                                       systemrdlApostropheLCurlyTok,
+                                                       systemrdlLParTok,
+                                                       systemrdlRParTok,
+                                                       systemrdlAsteriskTok,
+                                                       systemrdlDoubleAsteriskTok,
+                                                       systemrdlPlusTok,
+                                                       systemrdlPlusEqualTok,
+                                                       systemrdlCommaTok,
+                                                       systemrdlMinusTok,
+                                                       systemrdlMinusGreaterThanTok,
+                                                       systemrdlDotTok,
+                                                       systemrdlSlashTok,
+                                                       systemrdlColonTok,
+                                                       systemrdlDoubleColonTok,
+                                                       systemrdlSemicolonTok,
+                                                       systemrdlLessThanTok,
+                                                       systemrdlDoubleLessThanTok,
+                                                       systemrdlLessThanEqualTok,
+                                                       systemrdlEqualTok,
+                                                       systemrdlDoubleEqualTok,
+                                                       systemrdlGreaterThanTok,
+                                                       systemrdlGreaterThanEqualTok,
+                                                       systemrdlDoubleGreaterThanTok,
+                                                       systemrdlQuestionTok,
+                                                       systemrdlAtTok,
+                                                       systemrdlLBrackTok,
+                                                       systemrdlRBrackTok,
+                                                       systemrdlAccentTok,
+                                                       systemrdlAccentTildeTok,
+                                                       systemrdlAbstractTok,
+                                                       systemrdlAccesstypeTok,
+                                                       systemrdlAddressingtypeTok,
+                                                       systemrdlAddrmapTok,
+                                                       systemrdlAliasTok,
+                                                       systemrdlAllTok,
+                                                       systemrdlBooleanTok,
+                                                       systemrdlBothedgeTok,
+                                                       systemrdlClrTok,
+                                                       systemrdlCompactTok,
+                                                       systemrdlComponentTok,
+                                                       systemrdlConstraintTok,
+                                                       systemrdlDefaultTok,
+                                                       systemrdlEncodeTok,
+                                                       systemrdlEnumTok,
+                                                       systemrdlExternalTok,
+                                                       systemrdlFalseTok,
+                                                       systemrdlFieldTok,
+                                                       systemrdlFullalignTok,
+                                                       systemrdlHwTok,
+                                                       systemrdlInsideTok,
+                                                       systemrdlInternalTok,
+                                                       systemrdlLevelTok,
+                                                       systemrdlMemTok,
+                                                       systemrdlNaTok,
+                                                       systemrdlNegedgeTok,
+                                                       systemrdlNonstickyTok,
+                                                       systemrdlNumberTok,
+                                                       systemrdlOnreadtypeTok,
+                                                       systemrdlOnwritetypeTok,
+                                                       systemrdlPosedgeTok,
+                                                       systemrdlPropertyTok,
+                                                       systemrdlRTok,
+                                                       systemrdlRclrTok,
+                                                       systemrdlRefTok,
+                                                       systemrdlRegTok,
+                                                       systemrdlRegalignTok,
+                                                       systemrdlRegfileTok,
+                                                       systemrdlRsetTok,
+                                                       systemrdlRuserTok,
+                                                       systemrdlRwTok,
+                                                       systemrdlRw1Tok,
+                                                       systemrdlSignalTok,
+                                                       systemrdlStringTok,
+                                                       systemrdlStructTok,
+                                                       systemrdlSwTok,
+                                                       systemrdlThisTok,
+                                                       systemrdlTrueTok,
+                                                       systemrdlTypeTok,
+                                                       systemrdlWTok,
+                                                       systemrdlW1Tok,
+                                                       systemrdlWclrTok,
+                                                       systemrdlWoclrTok,
+                                                       systemrdlWosetTok,
+                                                       systemrdlWotTok,
+                                                       systemrdlWrTok,
+                                                       systemrdlWsetTok,
+                                                       systemrdlWuserTok,
+                                                       systemrdlWzcTok,
+                                                       systemrdlWzsTok,
+                                                       systemrdlWztTok,
+                                                       systemrdlLCurlyTok,
+                                                       systemrdlPipeTok,
+                                                       systemrdlDoublePipeTok,
+                                                       systemrdlRCurlyTok,
+                                                       systemrdlTildeTok,
+                                                       systemrdlTildeAmpersandTok,
+                                                       systemrdlTildeAccentTok,
+                                                       systemrdlTildePipeTok
+                                                     }
 
 proc tsNodeType*(node: TsSystemrdlNode): string
 

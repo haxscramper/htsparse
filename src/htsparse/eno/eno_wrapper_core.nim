@@ -32,6 +32,36 @@ type
     enoSyntaxError                ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: EnoNodeKind): string =
+  case kind:
+    of enoComment:                    "comment"
+    of enoContinuation:               "continuation"
+    of enoDocument:                   "document"
+    of enoElement:                    "element"
+    of enoEmpty:                      "empty"
+    of enoEntry:                      "entry"
+    of enoField:                      "field"
+    of enoFieldset:                   "fieldset"
+    of enoItem:                       "item"
+    of enoList:                       "list"
+    of enoSection:                    "section"
+    of enoValue:                      "value"
+    of enoCommentOperator:            "commentOperator"
+    of enoCopyOperator:               "copyOperator"
+    of enoDeepCopyOperator:           "deepCopyOperator"
+    of enoDirectContinuationOperator: "directContinuationOperator"
+    of enoElementOperator:            "elementOperator"
+    of enoEntryOperator:              "entryOperator"
+    of enoEscapeOperator:             "escapeOperator"
+    of enoItemOperator:               "itemOperator"
+    of enoKey:                        "key"
+    of enoMultilineFieldOperator:     "multilineFieldOperator"
+    of enoSectionOperator:            "sectionOperator"
+    of enoSpacedContinuationOperator: "spacedContinuationOperator"
+    of enoTemplate:                   "template"
+    of enoSyntaxError:                "ERROR"
+
+
 type
   EnoExternalTok* = enum
     enoExtern_endOfLine             ## _endOfLine
@@ -52,6 +82,68 @@ type
 type
   EnoParser* = distinct PtsParser
 
+
+const enoAllowedSubnodes*: array[EnoNodeKind, set[EnoNodeKind]] = block:
+                                                                    var tmp: array[EnoNodeKind, set[EnoNodeKind]]
+                                                                    tmp[enoComment] = {enoComment, enoCommentOperator}
+                                                                    tmp[enoContinuation] = {enoDirectContinuationOperator, enoSpacedContinuationOperator, enoValue}
+                                                                    tmp[enoDocument] = {
+                                                                                         enoComment,
+                                                                                         enoElement,
+                                                                                         enoEmpty,
+                                                                                         enoField,
+                                                                                         enoFieldset,
+                                                                                         enoList,
+                                                                                         enoSection
+                                                                                       }
+                                                                    tmp[enoElement] = {enoCopyOperator, enoElementOperator, enoEscapeOperator, enoKey, enoTemplate}
+                                                                    tmp[enoEmpty] = {enoEscapeOperator, enoKey}
+                                                                    tmp[enoEntry] = {enoComment, enoContinuation, enoEntryOperator, enoEscapeOperator, enoKey, enoValue}
+                                                                    tmp[enoField] = {
+                                                                                      enoComment,
+                                                                                      enoContinuation,
+                                                                                      enoElementOperator,
+                                                                                      enoEscapeOperator,
+                                                                                      enoKey,
+                                                                                      enoMultilineFieldOperator,
+                                                                                      enoValue
+                                                                                    }
+                                                                    tmp[enoFieldset] = {
+                                                                                         enoComment,
+                                                                                         enoCopyOperator,
+                                                                                         enoElementOperator,
+                                                                                         enoEntry,
+                                                                                         enoEscapeOperator,
+                                                                                         enoKey,
+                                                                                         enoTemplate
+                                                                                       }
+                                                                    tmp[enoItem] = {enoComment, enoContinuation, enoItemOperator, enoValue}
+                                                                    tmp[enoList] = {
+                                                                                     enoComment,
+                                                                                     enoCopyOperator,
+                                                                                     enoElementOperator,
+                                                                                     enoEscapeOperator,
+                                                                                     enoItem,
+                                                                                     enoKey,
+                                                                                     enoTemplate
+                                                                                   }
+                                                                    tmp[enoSection] = {
+                                                                                        enoComment,
+                                                                                        enoCopyOperator,
+                                                                                        enoDeepCopyOperator,
+                                                                                        enoElement,
+                                                                                        enoEmpty,
+                                                                                        enoEscapeOperator,
+                                                                                        enoField,
+                                                                                        enoFieldset,
+                                                                                        enoKey,
+                                                                                        enoList,
+                                                                                        enoSection,
+                                                                                        enoSectionOperator,
+                                                                                        enoTemplate
+                                                                                      }
+                                                                    tmp
+const enoTokenKinds*: set[EnoNodeKind] = {}
 
 proc tsNodeType*(node: TsEnoNode): string
 

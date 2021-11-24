@@ -172,6 +172,173 @@ type
     scalaSyntaxError                  ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: ScalaNodeKind): string =
+  case kind:
+    of scalaDefinition:                   "_definition"
+    of scalaPattern:                      "_pattern"
+    of scalaExpression:                   "expression"
+    of scalaAccessModifier:               "access_modifier"
+    of scalaAccessQualifier:              "access_qualifier"
+    of scalaAlternativePattern:           "alternative_pattern"
+    of scalaAnnotation:                   "annotation"
+    of scalaArguments:                    "arguments"
+    of scalaAscriptionExpression:         "ascription_expression"
+    of scalaAssignmentExpression:         "assignment_expression"
+    of scalaBinding:                      "binding"
+    of scalaBindings:                     "bindings"
+    of scalaBlock:                        "block"
+    of scalaBooleanLiteral:               "boolean_literal"
+    of scalaCallExpression:               "call_expression"
+    of scalaCapturePattern:               "capture_pattern"
+    of scalaCaseBlock:                    "case_block"
+    of scalaCaseClassPattern:             "case_class_pattern"
+    of scalaCaseClause:                   "case_clause"
+    of scalaCatchClause:                  "catch_clause"
+    of scalaClassDefinition:              "class_definition"
+    of scalaClassParameter:               "class_parameter"
+    of scalaClassParameters:              "class_parameters"
+    of scalaCompilationUnit:              "compilation_unit"
+    of scalaCompoundType:                 "compound_type"
+    of scalaContextBound:                 "context_bound"
+    of scalaContravariantTypeParameter:   "contravariant_type_parameter"
+    of scalaCovariantTypeParameter:       "covariant_type_parameter"
+    of scalaDoWhileExpression:            "do_while_expression"
+    of scalaEnumerator:                   "enumerator"
+    of scalaEnumerators:                  "enumerators"
+    of scalaExtendsClause:                "extends_clause"
+    of scalaFieldExpression:              "field_expression"
+    of scalaFinallyClause:                "finally_clause"
+    of scalaForExpression:                "for_expression"
+    of scalaFunctionDeclaration:          "function_declaration"
+    of scalaFunctionDefinition:           "function_definition"
+    of scalaFunctionType:                 "function_type"
+    of scalaGenericFunction:              "generic_function"
+    of scalaGenericType:                  "generic_type"
+    of scalaGuard:                        "guard"
+    of scalaIfExpression:                 "if_expression"
+    of scalaImportDeclaration:            "import_declaration"
+    of scalaImportSelectors:              "import_selectors"
+    of scalaInfixExpression:              "infix_expression"
+    of scalaInfixPattern:                 "infix_pattern"
+    of scalaInfixType:                    "infix_type"
+    of scalaInstanceExpression:           "instance_expression"
+    of scalaInterpolatedString:           "interpolated_string"
+    of scalaInterpolatedStringExpression: "interpolated_string_expression"
+    of scalaInterpolation:                "interpolation"
+    of scalaLambdaExpression:             "lambda_expression"
+    of scalaLazyParameterType:            "lazy_parameter_type"
+    of scalaLowerBound:                   "lower_bound"
+    of scalaMatchExpression:              "match_expression"
+    of scalaModifiers:                    "modifiers"
+    of scalaObjectDefinition:             "object_definition"
+    of scalaPackageClause:                "package_clause"
+    of scalaPackageIdentifier:            "package_identifier"
+    of scalaPackageObject:                "package_object"
+    of scalaParameter:                    "parameter"
+    of scalaParameterTypes:               "parameter_types"
+    of scalaParameters:                   "parameters"
+    of scalaParenthesizedExpression:      "parenthesized_expression"
+    of scalaPostfixExpression:            "postfix_expression"
+    of scalaPrefixExpression:             "prefix_expression"
+    of scalaProjectedType:                "projected_type"
+    of scalaRenamedIdentifier:            "renamed_identifier"
+    of scalaRepeatedParameterType:        "repeated_parameter_type"
+    of scalaReturnExpression:             "return_expression"
+    of scalaStableIdentifier:             "stable_identifier"
+    of scalaStableTypeIdentifier:         "stable_type_identifier"
+    of scalaString:                       "string"
+    of scalaTemplateBody:                 "template_body"
+    of scalaThrowExpression:              "throw_expression"
+    of scalaTraitDefinition:              "trait_definition"
+    of scalaTryExpression:                "try_expression"
+    of scalaTupleExpression:              "tuple_expression"
+    of scalaTuplePattern:                 "tuple_pattern"
+    of scalaTupleType:                    "tuple_type"
+    of scalaTypeArguments:                "type_arguments"
+    of scalaTypeDefinition:               "type_definition"
+    of scalaTypeParameters:               "type_parameters"
+    of scalaTypedPattern:                 "typed_pattern"
+    of scalaUnit:                         "unit"
+    of scalaUpperBound:                   "upper_bound"
+    of scalaValDeclaration:               "val_declaration"
+    of scalaValDefinition:                "val_definition"
+    of scalaVarDeclaration:               "var_declaration"
+    of scalaVarDefinition:                "var_definition"
+    of scalaViewBound:                    "view_bound"
+    of scalaWhileExpression:              "while_expression"
+    of scalaExclamationTok:               "!"
+    of scalaHashTok:                      "#"
+    of scalaDollarTok:                    "$"
+    of scalaLParTok:                      "("
+    of scalaRParTok:                      ")"
+    of scalaAsteriskTok:                  "*"
+    of scalaPlusTok:                      "+"
+    of scalaCommaTok:                     ","
+    of scalaMinusTok:                     "-"
+    of scalaDotTok:                       "."
+    of scalaColonTok:                     ":"
+    of scalaSemicolonTok:                 ";"
+    of scalaLessThanPercentTok:           "<%"
+    of scalaLessThanMinusTok:             "<-"
+    of scalaLessThanColonTok:             "<:"
+    of scalaEqualTok:                     "="
+    of scalaEqualGreaterThanTok:          "=>"
+    of scalaGreaterThanColonTok:          ">:"
+    of scalaAtTok:                        "@"
+    of scalaLBrackTok:                    "["
+    of scalaRBrackTok:                    "]"
+    of scalaAbstractTok:                  "abstract"
+    of scalaCaseTok:                      "case"
+    of scalaCatchTok:                     "catch"
+    of scalaCharacterLiteral:             "character_literal"
+    of scalaClassTok:                     "class"
+    of scalaComment:                      "comment"
+    of scalaDefTok:                       "def"
+    of scalaDoTok:                        "do"
+    of scalaElseTok:                      "else"
+    of scalaExtendsTok:                   "extends"
+    of scalaFalseTok:                     "false"
+    of scalaFinalTok:                     "final"
+    of scalaFinallyTok:                   "finally"
+    of scalaFloatingPointLiteral:         "floating_point_literal"
+    of scalaForTok:                       "for"
+    of scalaIdentifier:                   "identifier"
+    of scalaIfTok:                        "if"
+    of scalaImplicitTok:                  "implicit"
+    of scalaImportTok:                    "import"
+    of scalaIntegerLiteral:               "integer_literal"
+    of scalaLazyTok:                      "lazy"
+    of scalaMatchTok:                     "match"
+    of scalaNewTok:                       "new"
+    of scalaNullLiteral:                  "null_literal"
+    of scalaObjectTok:                    "object"
+    of scalaOperatorIdentifier:           "operator_identifier"
+    of scalaOverrideTok:                  "override"
+    of scalaPackageTok:                   "package"
+    of scalaPrivateTok:                   "private"
+    of scalaProtectedTok:                 "protected"
+    of scalaReturnTok:                    "return"
+    of scalaSealedTok:                    "sealed"
+    of scalaSymbolLiteral:                "symbol_literal"
+    of scalaThrowTok:                     "throw"
+    of scalaTraitTok:                     "trait"
+    of scalaTrueTok:                      "true"
+    of scalaTryTok:                       "try"
+    of scalaTypeTok:                      "type"
+    of scalaTypeIdentifier:               "type_identifier"
+    of scalaValTok:                       "val"
+    of scalaVarTok:                       "var"
+    of scalaWhileTok:                     "while"
+    of scalaWildcard:                     "wildcard"
+    of scalaWithTok:                      "with"
+    of scalaYieldTok:                     "yield"
+    of scalaLCurlyTok:                    "{"
+    of scalaPipeTok:                      "|"
+    of scalaRCurlyTok:                    "}"
+    of scalaTildeTok:                     "~"
+    of scalaSyntaxError:                  "ERROR"
+
+
 type
   ScalaExternalTok* = enum
     scalaExtern_automatic_semicolon                  ## _automatic_semicolon
@@ -190,6 +357,170 @@ type
 type
   ScalaParser* = distinct PtsParser
 
+
+const scalaAllowedSubnodes*: array[ScalaNodeKind, set[ScalaNodeKind]] = block:
+                                                                          var tmp: array[ScalaNodeKind, set[ScalaNodeKind]]
+                                                                          tmp[scalaAccessModifier] = {scalaAccessQualifier}
+                                                                          tmp[scalaAccessQualifier] = {scalaIdentifier}
+                                                                          tmp[scalaAlternativePattern] = {scalaPattern}
+                                                                          tmp[scalaArguments] = {scalaExpression}
+                                                                          tmp[scalaAscriptionExpression] = {
+                                                                                                             scalaAnnotation,
+                                                                                                             scalaCompoundType,
+                                                                                                             scalaExpression,
+                                                                                                             scalaFunctionType,
+                                                                                                             scalaGenericType,
+                                                                                                             scalaInfixType,
+                                                                                                             scalaLazyParameterType,
+                                                                                                             scalaProjectedType,
+                                                                                                             scalaRepeatedParameterType,
+                                                                                                             scalaStableTypeIdentifier,
+                                                                                                             scalaTupleType,
+                                                                                                             scalaTypeIdentifier
+                                                                                                           }
+                                                                          tmp[scalaBindings] = {scalaBinding}
+                                                                          tmp[scalaBlock] = {scalaDefinition, scalaExpression}
+                                                                          tmp[scalaCaseBlock] = {scalaCaseClause}
+                                                                          tmp[scalaCaseClause] = {scalaGuard}
+                                                                          tmp[scalaCatchClause] = {scalaCaseBlock}
+                                                                          tmp[scalaClassDefinition] = {scalaAccessModifier, scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaClassParameter] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaClassParameters] = {scalaClassParameter}
+                                                                          tmp[scalaCompilationUnit] = {scalaDefinition}
+                                                                          tmp[scalaEnumerator] = {scalaPattern, scalaExpression, scalaGuard}
+                                                                          tmp[scalaEnumerators] = {scalaEnumerator}
+                                                                          tmp[scalaExtendsClause] = {scalaArguments}
+                                                                          tmp[scalaFinallyClause] = {scalaExpression}
+                                                                          tmp[scalaFunctionDeclaration] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaFunctionDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaImportDeclaration] = {scalaImportSelectors, scalaWildcard}
+                                                                          tmp[scalaImportSelectors] = {scalaIdentifier, scalaRenamedIdentifier}
+                                                                          tmp[scalaInstanceExpression] = {scalaExpression}
+                                                                          tmp[scalaInterpolatedString] = {scalaInterpolation}
+                                                                          tmp[scalaInterpolatedStringExpression] = {scalaIdentifier, scalaInterpolatedString}
+                                                                          tmp[scalaInterpolation] = {scalaBlock, scalaIdentifier}
+                                                                          tmp[scalaLambdaExpression] = {scalaBindings, scalaExpression}
+                                                                          tmp[scalaModifiers] = {scalaAccessModifier}
+                                                                          tmp[scalaObjectDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaPackageIdentifier] = {scalaIdentifier}
+                                                                          tmp[scalaParameter] = {scalaAnnotation}
+                                                                          tmp[scalaParameterTypes] = {
+                                                                                                       scalaAnnotation,
+                                                                                                       scalaCompoundType,
+                                                                                                       scalaFunctionType,
+                                                                                                       scalaGenericType,
+                                                                                                       scalaInfixType,
+                                                                                                       scalaLazyParameterType,
+                                                                                                       scalaProjectedType,
+                                                                                                       scalaRepeatedParameterType,
+                                                                                                       scalaStableTypeIdentifier,
+                                                                                                       scalaTupleType,
+                                                                                                       scalaTypeIdentifier
+                                                                                                     }
+                                                                          tmp[scalaParameters] = {scalaParameter}
+                                                                          tmp[scalaParenthesizedExpression] = {scalaExpression}
+                                                                          tmp[scalaPostfixExpression] = {scalaExpression, scalaOperatorIdentifier}
+                                                                          tmp[scalaPrefixExpression] = {scalaExpression}
+                                                                          tmp[scalaReturnExpression] = {scalaExpression}
+                                                                          tmp[scalaStableIdentifier] = {scalaIdentifier, scalaStableIdentifier}
+                                                                          tmp[scalaStableTypeIdentifier] = {scalaIdentifier, scalaStableIdentifier, scalaTypeIdentifier}
+                                                                          tmp[scalaTemplateBody] = {scalaDefinition, scalaExpression}
+                                                                          tmp[scalaThrowExpression] = {scalaExpression}
+                                                                          tmp[scalaTraitDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaTryExpression] = {scalaCatchClause, scalaFinallyClause}
+                                                                          tmp[scalaTupleExpression] = {scalaExpression}
+                                                                          tmp[scalaTuplePattern] = {scalaPattern}
+                                                                          tmp[scalaTupleType] = {
+                                                                                                  scalaAnnotation,
+                                                                                                  scalaCompoundType,
+                                                                                                  scalaFunctionType,
+                                                                                                  scalaGenericType,
+                                                                                                  scalaInfixType,
+                                                                                                  scalaProjectedType,
+                                                                                                  scalaStableTypeIdentifier,
+                                                                                                  scalaTupleType,
+                                                                                                  scalaTypeIdentifier
+                                                                                                }
+                                                                          tmp[scalaTypeArguments] = {
+                                                                                                      scalaAnnotation,
+                                                                                                      scalaCompoundType,
+                                                                                                      scalaFunctionType,
+                                                                                                      scalaGenericType,
+                                                                                                      scalaInfixType,
+                                                                                                      scalaProjectedType,
+                                                                                                      scalaStableTypeIdentifier,
+                                                                                                      scalaTupleType,
+                                                                                                      scalaTypeIdentifier
+                                                                                                    }
+                                                                          tmp[scalaTypeDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaTypeParameters] = {scalaAnnotation, scalaContravariantTypeParameter, scalaCovariantTypeParameter}
+                                                                          tmp[scalaValDeclaration] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaValDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaVarDeclaration] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp[scalaVarDefinition] = {scalaAnnotation, scalaModifiers}
+                                                                          tmp
+const scalaTokenKinds*: set[ScalaNodeKind] = {
+                                               scalaExclamationTok,
+                                               scalaHashTok,
+                                               scalaDollarTok,
+                                               scalaLParTok,
+                                               scalaRParTok,
+                                               scalaAsteriskTok,
+                                               scalaPlusTok,
+                                               scalaCommaTok,
+                                               scalaMinusTok,
+                                               scalaDotTok,
+                                               scalaColonTok,
+                                               scalaSemicolonTok,
+                                               scalaLessThanPercentTok,
+                                               scalaLessThanMinusTok,
+                                               scalaLessThanColonTok,
+                                               scalaEqualTok,
+                                               scalaEqualGreaterThanTok,
+                                               scalaGreaterThanColonTok,
+                                               scalaAtTok,
+                                               scalaLBrackTok,
+                                               scalaRBrackTok,
+                                               scalaAbstractTok,
+                                               scalaCaseTok,
+                                               scalaCatchTok,
+                                               scalaClassTok,
+                                               scalaDefTok,
+                                               scalaDoTok,
+                                               scalaElseTok,
+                                               scalaExtendsTok,
+                                               scalaFalseTok,
+                                               scalaFinalTok,
+                                               scalaFinallyTok,
+                                               scalaForTok,
+                                               scalaIfTok,
+                                               scalaImplicitTok,
+                                               scalaImportTok,
+                                               scalaLazyTok,
+                                               scalaMatchTok,
+                                               scalaNewTok,
+                                               scalaObjectTok,
+                                               scalaOverrideTok,
+                                               scalaPackageTok,
+                                               scalaPrivateTok,
+                                               scalaProtectedTok,
+                                               scalaReturnTok,
+                                               scalaSealedTok,
+                                               scalaThrowTok,
+                                               scalaTraitTok,
+                                               scalaTrueTok,
+                                               scalaTryTok,
+                                               scalaTypeTok,
+                                               scalaValTok,
+                                               scalaVarTok,
+                                               scalaWhileTok,
+                                               scalaWithTok,
+                                               scalaYieldTok,
+                                               scalaLCurlyTok,
+                                               scalaPipeTok,
+                                               scalaRCurlyTok,
+                                               scalaTildeTok
+                                             }
 
 proc tsNodeType*(node: TsScalaNode): string
 
@@ -415,6 +746,7 @@ func `[]`*(
 
 type
   ScalaNode* = HtsNode[TsScalaNode, ScalaNodeKind]
+
 
 proc treeReprTsScala*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsScalaNode, ScalaNodeKind](parseTsScalaString(str), str, 5, unnamed = unnamed)

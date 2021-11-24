@@ -5,14 +5,24 @@ export treesitter_core
 type
   RubyNodeKind* = enum
     rubyArg                         ## _arg
+    rubyExpression                  ## _expression
     rubyLhs                         ## _lhs
     rubyMethodName                  ## _method_name
+    rubyPatternConstant             ## _pattern_constant
+    rubyPatternExpr                 ## _pattern_expr
+    rubyPatternExprBasic            ## _pattern_expr_basic
+    rubyPatternPrimitive            ## _pattern_primitive
+    rubyPatternTopExprBody          ## _pattern_top_expr_body
     rubyPrimary                     ## _primary
+    rubySimpleNumeric               ## _simple_numeric
     rubyStatement                   ## _statement
     rubyVariable                    ## _variable
     rubyAlias                       ## alias
+    rubyAlternativePattern          ## alternative_pattern
     rubyArgumentList                ## argument_list
     rubyArray                       ## array
+    rubyArrayPattern                ## array_pattern
+    rubyAsPattern                   ## as_pattern
     rubyAssignment                  ## assignment
     rubyBareString                  ## bare_string
     rubyBareSymbol                  ## bare_symbol
@@ -26,6 +36,7 @@ type
     rubyBreak                       ## break
     rubyCall                        ## call
     rubyCase                        ## case
+    rubyCaseMatch                   ## case_match
     rubyChainedString               ## chained_string
     rubyClass                       ## class
     rubyConditional                 ## conditional
@@ -42,18 +53,24 @@ type
     rubyEnsure                      ## ensure
     rubyExceptionVariable           ## exception_variable
     rubyExceptions                  ## exceptions
+    rubyFindPattern                 ## find_pattern
     rubyFor                         ## for
     rubyForwardArgument             ## forward_argument
     rubyForwardParameter            ## forward_parameter
     rubyHash                        ## hash
+    rubyHashPattern                 ## hash_pattern
     rubyHashSplatArgument           ## hash_splat_argument
+    rubyHashSplatNil                ## hash_splat_nil
     rubyHashSplatParameter          ## hash_splat_parameter
     rubyHeredocBody                 ## heredoc_body
     rubyIf                          ## if
+    rubyIfGuard                     ## if_guard
     rubyIfModifier                  ## if_modifier
     rubyIn                          ## in
+    rubyInClause                    ## in_clause
     rubyInterpolation               ## interpolation
     rubyKeywordParameter            ## keyword_parameter
+    rubyKeywordPattern              ## keyword_pattern
     rubyLambda                      ## lambda
     rubyLambdaParameters            ## lambda_parameters
     rubyLeftAssignmentList          ## left_assignment_list
@@ -93,9 +110,11 @@ type
     rubyUnary                       ## unary
     rubyUndef                       ## undef
     rubyUnless                      ## unless
+    rubyUnlessGuard                 ## unless_guard
     rubyUnlessModifier              ## unless_modifier
     rubyUntil                       ## until
     rubyUntilModifier               ## until_modifier
+    rubyVariableReferencePattern    ## variable_reference_pattern
     rubyWhen                        ## when
     rubyWhile                       ## while
     rubyWhileModifier               ## while_modifier
@@ -177,10 +196,12 @@ type
     rubyDoTok                       ## do
     rubyElseTok                     ## else
     rubyElsifTok                    ## elsif
+    rubyEncoding                    ## encoding
     rubyEndTok1                     ## end
     rubyEnsureTok                   ## ensure
     rubyEscapeSequence              ## escape_sequence
     rubyFalse                       ## false
+    rubyFile                        ## file
     rubyFloat                       ## float
     rubyForTok                      ## for
     rubyGlobalVariable              ## global_variable
@@ -193,9 +214,11 @@ type
     rubyInTok                       ## in
     rubyInstanceVariable            ## instance_variable
     rubyInteger                     ## integer
+    rubyLine                        ## line
     rubyModuleTok                   ## module
     rubyNextTok                     ## next
     rubyNil                         ## nil
+    rubyNilTok                      ## nil
     rubyNotTok                      ## not
     rubyOrTok                       ## or
     rubyRTok                        ## r
@@ -224,6 +247,253 @@ type
     rubyRCurlyTok                   ## }
     rubyTildeTok                    ## ~
     rubySyntaxError                 ## Tree-sitter parser syntax error
+
+
+proc strRepr*(kind: RubyNodeKind): string =
+  case kind:
+    of rubyArg:                         "_arg"
+    of rubyExpression:                  "_expression"
+    of rubyLhs:                         "_lhs"
+    of rubyMethodName:                  "_method_name"
+    of rubyPatternConstant:             "_pattern_constant"
+    of rubyPatternExpr:                 "_pattern_expr"
+    of rubyPatternExprBasic:            "_pattern_expr_basic"
+    of rubyPatternPrimitive:            "_pattern_primitive"
+    of rubyPatternTopExprBody:          "_pattern_top_expr_body"
+    of rubyPrimary:                     "_primary"
+    of rubySimpleNumeric:               "_simple_numeric"
+    of rubyStatement:                   "_statement"
+    of rubyVariable:                    "_variable"
+    of rubyAlias:                       "alias"
+    of rubyAlternativePattern:          "alternative_pattern"
+    of rubyArgumentList:                "argument_list"
+    of rubyArray:                       "array"
+    of rubyArrayPattern:                "array_pattern"
+    of rubyAsPattern:                   "as_pattern"
+    of rubyAssignment:                  "assignment"
+    of rubyBareString:                  "bare_string"
+    of rubyBareSymbol:                  "bare_symbol"
+    of rubyBegin:                       "begin"
+    of rubyBeginBlock:                  "begin_block"
+    of rubyBinary:                      "binary"
+    of rubyBlock:                       "block"
+    of rubyBlockArgument:               "block_argument"
+    of rubyBlockParameter:              "block_parameter"
+    of rubyBlockParameters:             "block_parameters"
+    of rubyBreak:                       "break"
+    of rubyCall:                        "call"
+    of rubyCase:                        "case"
+    of rubyCaseMatch:                   "case_match"
+    of rubyChainedString:               "chained_string"
+    of rubyClass:                       "class"
+    of rubyConditional:                 "conditional"
+    of rubyDelimitedSymbol:             "delimited_symbol"
+    of rubyDestructuredLeftAssignment:  "destructured_left_assignment"
+    of rubyDestructuredParameter:       "destructured_parameter"
+    of rubyDo:                          "do"
+    of rubyDoBlock:                     "do_block"
+    of rubyElementReference:            "element_reference"
+    of rubyElse:                        "else"
+    of rubyElsif:                       "elsif"
+    of rubyEmptyStatement:              "empty_statement"
+    of rubyEndBlock:                    "end_block"
+    of rubyEnsure:                      "ensure"
+    of rubyExceptionVariable:           "exception_variable"
+    of rubyExceptions:                  "exceptions"
+    of rubyFindPattern:                 "find_pattern"
+    of rubyFor:                         "for"
+    of rubyForwardArgument:             "forward_argument"
+    of rubyForwardParameter:            "forward_parameter"
+    of rubyHash:                        "hash"
+    of rubyHashPattern:                 "hash_pattern"
+    of rubyHashSplatArgument:           "hash_splat_argument"
+    of rubyHashSplatNil:                "hash_splat_nil"
+    of rubyHashSplatParameter:          "hash_splat_parameter"
+    of rubyHeredocBody:                 "heredoc_body"
+    of rubyIf:                          "if"
+    of rubyIfGuard:                     "if_guard"
+    of rubyIfModifier:                  "if_modifier"
+    of rubyIn:                          "in"
+    of rubyInClause:                    "in_clause"
+    of rubyInterpolation:               "interpolation"
+    of rubyKeywordParameter:            "keyword_parameter"
+    of rubyKeywordPattern:              "keyword_pattern"
+    of rubyLambda:                      "lambda"
+    of rubyLambdaParameters:            "lambda_parameters"
+    of rubyLeftAssignmentList:          "left_assignment_list"
+    of rubyMethod:                      "method"
+    of rubyMethodParameters:            "method_parameters"
+    of rubyModule:                      "module"
+    of rubyNext:                        "next"
+    of rubyOperator:                    "operator"
+    of rubyOperatorAssignment:          "operator_assignment"
+    of rubyOptionalParameter:           "optional_parameter"
+    of rubyPair:                        "pair"
+    of rubyParenthesizedStatements:     "parenthesized_statements"
+    of rubyPattern:                     "pattern"
+    of rubyProgram:                     "program"
+    of rubyRange:                       "range"
+    of rubyRational:                    "rational"
+    of rubyRedo:                        "redo"
+    of rubyRegex:                       "regex"
+    of rubyRescue:                      "rescue"
+    of rubyRescueModifier:              "rescue_modifier"
+    of rubyRestAssignment:              "rest_assignment"
+    of rubyRetry:                       "retry"
+    of rubyReturn:                      "return"
+    of rubyRightAssignmentList:         "right_assignment_list"
+    of rubyScopeResolution:             "scope_resolution"
+    of rubySetter:                      "setter"
+    of rubySingletonClass:              "singleton_class"
+    of rubySingletonMethod:             "singleton_method"
+    of rubySplatArgument:               "splat_argument"
+    of rubySplatParameter:              "splat_parameter"
+    of rubyString:                      "string"
+    of rubyStringArray:                 "string_array"
+    of rubySubshell:                    "subshell"
+    of rubySuperclass:                  "superclass"
+    of rubySymbolArray:                 "symbol_array"
+    of rubyThen:                        "then"
+    of rubyUnary:                       "unary"
+    of rubyUndef:                       "undef"
+    of rubyUnless:                      "unless"
+    of rubyUnlessGuard:                 "unless_guard"
+    of rubyUnlessModifier:              "unless_modifier"
+    of rubyUntil:                       "until"
+    of rubyUntilModifier:               "until_modifier"
+    of rubyVariableReferencePattern:    "variable_reference_pattern"
+    of rubyWhen:                        "when"
+    of rubyWhile:                       "while"
+    of rubyWhileModifier:               "while_modifier"
+    of rubyYield:                       "yield"
+    of rubyExclamationTok:              "!"
+    of rubyExclamationEqualTok:         "!="
+    of rubyExclamationTildeTok:         "!~"
+    of rubyQuoteTok:                    "\""
+    of rubyHashLCurlyTok:               "#{"
+    of rubyPercentTok:                  "%"
+    of rubyPercentEqualTok:             "%="
+    of rubyPercentiLParTok:             "%i("
+    of rubyPercentwLParTok:             "%w("
+    of rubyAmpersandTok:                "&"
+    of rubyDoubleAmpersandTok:          "&&"
+    of rubyDoubleAmpersandEqualTok:     "&&="
+    of rubyAmpersandDotTok:             "&."
+    of rubyAmpersandEqualTok:           "&="
+    of rubyLParTok:                     "("
+    of rubyRParTok:                     ")"
+    of rubyAsteriskTok:                 "*"
+    of rubyDoubleAsteriskTok:           "**"
+    of rubyDoubleAsteriskEqualTok:      "**="
+    of rubyAsteriskEqualTok:            "*="
+    of rubyPlusTok:                     "+"
+    of rubyPlusEqualTok:                "+="
+    of rubyPlusAtTok:                   "+@"
+    of rubyCommaTok:                    ","
+    of rubyMinusTok:                    "-"
+    of rubyMinusEqualTok:               "-="
+    of rubyMinusGreaterThanTok:         "->"
+    of rubyMinusAtTok:                  "-@"
+    of rubyDotTok:                      "."
+    of rubyDoubleDotTok:                ".."
+    of rubyTripleDotTok:                "..."
+    of rubySlashTok:                    "/"
+    of rubySlashEqualTok:               "/="
+    of rubyColonTok:                    ":"
+    of rubyColonQuoteTok:               ":\""
+    of rubyDoubleColonTok:              "::"
+    of rubySemicolonTok:                ";"
+    of rubyLessThanTok:                 "<"
+    of rubyDoubleLessThanTok:           "<<"
+    of rubyDoubleLessThanEqualTok:      "<<="
+    of rubyLessThanEqualTok:            "<="
+    of rubyLessThanEqualGreaterThanTok: "<=>"
+    of rubyEqualTok:                    "="
+    of rubyDoubleEqualTok:              "=="
+    of rubyTripleEqualTok:              "==="
+    of rubyEqualGreaterThanTok:         "=>"
+    of rubyEqualTildeTok:               "=~"
+    of rubyGreaterThanTok:              ">"
+    of rubyGreaterThanEqualTok:         ">="
+    of rubyDoubleGreaterThanTok:        ">>"
+    of rubyDoubleGreaterThanEqualTok:   ">>="
+    of rubyQuestionTok:                 "?"
+    of rubyBEGINTok:                    "BEGIN"
+    of rubyENDTok:                      "END"
+    of rubyLBrackTok:                   "["
+    of rubyLBrackRBrackTok:             "[]"
+    of rubyLBrackRBrackEqualTok:        "[]="
+    of rubyRBrackTok:                   "]"
+    of rubyAccentTok:                   "^"
+    of rubyAccentEqualTok:              "^="
+    of rubyBacktickTok:                 "`"
+    of rubyAliasTok:                    "alias"
+    of rubyAndTok:                      "and"
+    of rubyBeginTok1:                   "begin"
+    of rubyBreakTok:                    "break"
+    of rubyCaseTok:                     "case"
+    of rubyCharacter:                   "character"
+    of rubyClassTok:                    "class"
+    of rubyClassVariable:               "class_variable"
+    of rubyComment:                     "comment"
+    of rubyComplex:                     "complex"
+    of rubyConstant:                    "constant"
+    of rubyDefTok:                      "def"
+    of rubyDefinedQuestionTok:          "defined?"
+    of rubyDoTok:                       "do"
+    of rubyElseTok:                     "else"
+    of rubyElsifTok:                    "elsif"
+    of rubyEncoding:                    "encoding"
+    of rubyEndTok1:                     "end"
+    of rubyEnsureTok:                   "ensure"
+    of rubyEscapeSequence:              "escape_sequence"
+    of rubyFalse:                       "false"
+    of rubyFile:                        "file"
+    of rubyFloat:                       "float"
+    of rubyForTok:                      "for"
+    of rubyGlobalVariable:              "global_variable"
+    of rubyHashKeySymbol:               "hash_key_symbol"
+    of rubyHeredocBeginning:            "heredoc_beginning"
+    of rubyHeredocContent:              "heredoc_content"
+    of rubyHeredocEnd:                  "heredoc_end"
+    of rubyIdentifier:                  "identifier"
+    of rubyIfTok:                       "if"
+    of rubyInTok:                       "in"
+    of rubyInstanceVariable:            "instance_variable"
+    of rubyInteger:                     "integer"
+    of rubyLine:                        "line"
+    of rubyModuleTok:                   "module"
+    of rubyNextTok:                     "next"
+    of rubyNil:                         "nil"
+    of rubyNilTok:                      "nil"
+    of rubyNotTok:                      "not"
+    of rubyOrTok:                       "or"
+    of rubyRTok:                        "r"
+    of rubyRedoTok:                     "redo"
+    of rubyRescueTok:                   "rescue"
+    of rubyRetryTok:                    "retry"
+    of rubyReturnTok:                   "return"
+    of rubySelf:                        "self"
+    of rubySimpleSymbol:                "simple_symbol"
+    of rubyStringContent:               "string_content"
+    of rubySuper:                       "super"
+    of rubyThenTok:                     "then"
+    of rubyTrue:                        "true"
+    of rubyUndefTok:                    "undef"
+    of rubyUninterpreted:               "uninterpreted"
+    of rubyUnlessTok:                   "unless"
+    of rubyUntilTok:                    "until"
+    of rubyWhenTok:                     "when"
+    of rubyWhileTok:                    "while"
+    of rubyYieldTok:                    "yield"
+    of rubyLCurlyTok:                   "{"
+    of rubyPipeTok:                     "|"
+    of rubyPipeEqualTok:                "|="
+    of rubyDoublePipeTok:               "||"
+    of rubyDoublePipeEqualTok:          "||="
+    of rubyRCurlyTok:                   "}"
+    of rubyTildeTok:                    "~"
+    of rubySyntaxError:                 "ERROR"
 
 
 type
@@ -262,6 +532,213 @@ type
   RubyParser* = distinct PtsParser
 
 
+const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
+                                                                       var tmp: array[RubyNodeKind, set[RubyNodeKind]]
+                                                                       tmp[rubyArgumentList] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyArray] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyArrayPattern] = {rubyPatternExpr, rubySplatParameter}
+                                                                       tmp[rubyBareString] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubyBareSymbol] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubyBegin] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyBeginBlock] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyBlock] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyBlockArgument] = {rubyArg}
+                                                                       tmp[rubyBlockParameters] = {
+                                                                                                    rubyBlockParameter,
+                                                                                                    rubyDestructuredParameter,
+                                                                                                    rubyForwardParameter,
+                                                                                                    rubyHashSplatNil,
+                                                                                                    rubyHashSplatParameter,
+                                                                                                    rubyIdentifier,
+                                                                                                    rubyKeywordParameter,
+                                                                                                    rubyOptionalParameter,
+                                                                                                    rubySplatParameter
+                                                                                                  }
+                                                                       tmp[rubyBreak] = {rubyArgumentList}
+                                                                       tmp[rubyCase] = {rubyElse, rubyWhen}
+                                                                       tmp[rubyChainedString] = {rubyString}
+                                                                       tmp[rubyClass] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyDelimitedSymbol] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubyDestructuredLeftAssignment] = {rubyLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
+                                                                       tmp[rubyDestructuredParameter] = {
+                                                                                                          rubyBlockParameter,
+                                                                                                          rubyDestructuredParameter,
+                                                                                                          rubyForwardParameter,
+                                                                                                          rubyHashSplatNil,
+                                                                                                          rubyHashSplatParameter,
+                                                                                                          rubyIdentifier,
+                                                                                                          rubyKeywordParameter,
+                                                                                                          rubyOptionalParameter,
+                                                                                                          rubySplatParameter
+                                                                                                        }
+                                                                       tmp[rubyDo] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyDoBlock] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyElementReference] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyElse] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyEndBlock] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyEnsure] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyExceptionVariable] = {rubyLhs}
+                                                                       tmp[rubyExceptions] = {rubyArg, rubySplatArgument}
+                                                                       tmp[rubyFindPattern] = {rubyPatternExpr, rubySplatParameter}
+                                                                       tmp[rubyHash] = {rubyHashSplatArgument, rubyPair}
+                                                                       tmp[rubyHashPattern] = {rubyHashSplatNil, rubyHashSplatParameter, rubyKeywordPattern}
+                                                                       tmp[rubyHashSplatArgument] = {rubyArg}
+                                                                       tmp[rubyHeredocBody] = {rubyEscapeSequence, rubyHeredocContent, rubyHeredocEnd, rubyInterpolation}
+                                                                       tmp[rubyIn] = {rubyArg}
+                                                                       tmp[rubyInterpolation] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyLambdaParameters] = {
+                                                                                                     rubyBlockParameter,
+                                                                                                     rubyDestructuredParameter,
+                                                                                                     rubyForwardParameter,
+                                                                                                     rubyHashSplatNil,
+                                                                                                     rubyHashSplatParameter,
+                                                                                                     rubyIdentifier,
+                                                                                                     rubyKeywordParameter,
+                                                                                                     rubyOptionalParameter,
+                                                                                                     rubySplatParameter
+                                                                                                   }
+                                                                       tmp[rubyLeftAssignmentList] = {rubyLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
+                                                                       tmp[rubyMethod] = {rubyArg, rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyMethodParameters] = {
+                                                                                                     rubyBlockParameter,
+                                                                                                     rubyDestructuredParameter,
+                                                                                                     rubyForwardParameter,
+                                                                                                     rubyHashSplatNil,
+                                                                                                     rubyHashSplatParameter,
+                                                                                                     rubyIdentifier,
+                                                                                                     rubyKeywordParameter,
+                                                                                                     rubyOptionalParameter,
+                                                                                                     rubySplatParameter
+                                                                                                   }
+                                                                       tmp[rubyModule] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyNext] = {rubyArgumentList}
+                                                                       tmp[rubyParenthesizedStatements] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyPattern] = {rubyArg, rubySplatArgument}
+                                                                       tmp[rubyProgram] = {rubyStatement, rubyEmptyStatement, rubyUninterpreted}
+                                                                       tmp[rubyRational] = {rubyFloat, rubyInteger}
+                                                                       tmp[rubyRedo] = {rubyArgumentList}
+                                                                       tmp[rubyRegex] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubyRestAssignment] = {rubyLhs}
+                                                                       tmp[rubyRetry] = {rubyArgumentList}
+                                                                       tmp[rubyReturn] = {rubyArgumentList}
+                                                                       tmp[rubyRightAssignmentList] = {rubyArg, rubySplatArgument}
+                                                                       tmp[rubySingletonClass] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubySingletonMethod] = {rubyArg, rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubySplatArgument] = {rubyArg}
+                                                                       tmp[rubyString] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubyStringArray] = {rubyBareString}
+                                                                       tmp[rubySubshell] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
+                                                                       tmp[rubySuperclass] = {rubyExpression}
+                                                                       tmp[rubySymbolArray] = {rubyBareSymbol}
+                                                                       tmp[rubyThen] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyUndef] = {rubyMethodName}
+                                                                       tmp[rubyYield] = {rubyArgumentList}
+                                                                       tmp
+const rubyTokenKinds*: set[RubyNodeKind] = {
+                                             rubyExclamationTok,
+                                             rubyExclamationEqualTok,
+                                             rubyExclamationTildeTok,
+                                             rubyQuoteTok,
+                                             rubyHashLCurlyTok,
+                                             rubyPercentTok,
+                                             rubyPercentEqualTok,
+                                             rubyPercentiLParTok,
+                                             rubyPercentwLParTok,
+                                             rubyAmpersandTok,
+                                             rubyDoubleAmpersandTok,
+                                             rubyDoubleAmpersandEqualTok,
+                                             rubyAmpersandDotTok,
+                                             rubyAmpersandEqualTok,
+                                             rubyLParTok,
+                                             rubyRParTok,
+                                             rubyAsteriskTok,
+                                             rubyDoubleAsteriskTok,
+                                             rubyDoubleAsteriskEqualTok,
+                                             rubyAsteriskEqualTok,
+                                             rubyPlusTok,
+                                             rubyPlusEqualTok,
+                                             rubyPlusAtTok,
+                                             rubyCommaTok,
+                                             rubyMinusTok,
+                                             rubyMinusEqualTok,
+                                             rubyMinusGreaterThanTok,
+                                             rubyMinusAtTok,
+                                             rubyDotTok,
+                                             rubyDoubleDotTok,
+                                             rubyTripleDotTok,
+                                             rubySlashTok,
+                                             rubySlashEqualTok,
+                                             rubyColonTok,
+                                             rubyColonQuoteTok,
+                                             rubyDoubleColonTok,
+                                             rubySemicolonTok,
+                                             rubyLessThanTok,
+                                             rubyDoubleLessThanTok,
+                                             rubyDoubleLessThanEqualTok,
+                                             rubyLessThanEqualTok,
+                                             rubyLessThanEqualGreaterThanTok,
+                                             rubyEqualTok,
+                                             rubyDoubleEqualTok,
+                                             rubyTripleEqualTok,
+                                             rubyEqualGreaterThanTok,
+                                             rubyEqualTildeTok,
+                                             rubyGreaterThanTok,
+                                             rubyGreaterThanEqualTok,
+                                             rubyDoubleGreaterThanTok,
+                                             rubyDoubleGreaterThanEqualTok,
+                                             rubyQuestionTok,
+                                             rubyBEGINTok,
+                                             rubyENDTok,
+                                             rubyLBrackTok,
+                                             rubyLBrackRBrackTok,
+                                             rubyLBrackRBrackEqualTok,
+                                             rubyRBrackTok,
+                                             rubyAccentTok,
+                                             rubyAccentEqualTok,
+                                             rubyENDTok,
+                                             rubyBacktickTok,
+                                             rubyAliasTok,
+                                             rubyAndTok,
+                                             rubyBeginTok1,
+                                             rubyBreakTok,
+                                             rubyCaseTok,
+                                             rubyClassTok,
+                                             rubyDefTok,
+                                             rubyDefinedQuestionTok,
+                                             rubyDoTok,
+                                             rubyElseTok,
+                                             rubyElsifTok,
+                                             rubyEndTok1,
+                                             rubyEnsureTok,
+                                             rubyForTok,
+                                             rubyIfTok,
+                                             rubyInTok,
+                                             rubyModuleTok,
+                                             rubyNextTok,
+                                             rubyNilTok,
+                                             rubyNotTok,
+                                             rubyOrTok,
+                                             rubyRTok,
+                                             rubyRedoTok,
+                                             rubyRescueTok,
+                                             rubyRetryTok,
+                                             rubyReturnTok,
+                                             rubyThenTok,
+                                             rubyUndefTok,
+                                             rubyUnlessTok,
+                                             rubyUntilTok,
+                                             rubyWhenTok,
+                                             rubyWhileTok,
+                                             rubyYieldTok,
+                                             rubyLCurlyTok,
+                                             rubyPipeTok,
+                                             rubyPipeEqualTok,
+                                             rubyDoublePipeTok,
+                                             rubyDoublePipeEqualTok,
+                                             rubyRCurlyTok,
+                                             rubyTildeTok
+                                           }
+
 proc tsNodeType*(node: TsRubyNode): string
 
 
@@ -270,14 +747,24 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
       of "_arg":                         rubyArg
+      of "_expression":                  rubyExpression
       of "_lhs":                         rubyLhs
       of "_method_name":                 rubyMethodName
+      of "_pattern_constant":            rubyPatternConstant
+      of "_pattern_expr":                rubyPatternExpr
+      of "_pattern_expr_basic":          rubyPatternExprBasic
+      of "_pattern_primitive":           rubyPatternPrimitive
+      of "_pattern_top_expr_body":       rubyPatternTopExprBody
       of "_primary":                     rubyPrimary
+      of "_simple_numeric":              rubySimpleNumeric
       of "_statement":                   rubyStatement
       of "_variable":                    rubyVariable
       of "alias":                        rubyAlias
+      of "alternative_pattern":          rubyAlternativePattern
       of "argument_list":                rubyArgumentList
       of "array":                        rubyArray
+      of "array_pattern":                rubyArrayPattern
+      of "as_pattern":                   rubyAsPattern
       of "assignment":                   rubyAssignment
       of "bare_string":                  rubyBareString
       of "bare_symbol":                  rubyBareSymbol
@@ -291,6 +778,7 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "break":                        rubyBreak
       of "call":                         rubyCall
       of "case":                         rubyCase
+      of "case_match":                   rubyCaseMatch
       of "chained_string":               rubyChainedString
       of "class":                        rubyClass
       of "conditional":                  rubyConditional
@@ -307,18 +795,24 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "ensure":                       rubyEnsure
       of "exception_variable":           rubyExceptionVariable
       of "exceptions":                   rubyExceptions
+      of "find_pattern":                 rubyFindPattern
       of "for":                          rubyFor
       of "forward_argument":             rubyForwardArgument
       of "forward_parameter":            rubyForwardParameter
       of "hash":                         rubyHash
+      of "hash_pattern":                 rubyHashPattern
       of "hash_splat_argument":          rubyHashSplatArgument
+      of "hash_splat_nil":               rubyHashSplatNil
       of "hash_splat_parameter":         rubyHashSplatParameter
       of "heredoc_body":                 rubyHeredocBody
       of "if":                           rubyIf
+      of "if_guard":                     rubyIfGuard
       of "if_modifier":                  rubyIfModifier
       of "in":                           rubyIn
+      of "in_clause":                    rubyInClause
       of "interpolation":                rubyInterpolation
       of "keyword_parameter":            rubyKeywordParameter
+      of "keyword_pattern":              rubyKeywordPattern
       of "lambda":                       rubyLambda
       of "lambda_parameters":            rubyLambdaParameters
       of "left_assignment_list":         rubyLeftAssignmentList
@@ -358,9 +852,11 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "unary":                        rubyUnary
       of "undef":                        rubyUndef
       of "unless":                       rubyUnless
+      of "unless_guard":                 rubyUnlessGuard
       of "unless_modifier":              rubyUnlessModifier
       of "until":                        rubyUntil
       of "until_modifier":               rubyUntilModifier
+      of "variable_reference_pattern":   rubyVariableReferencePattern
       of "when":                         rubyWhen
       of "while":                        rubyWhile
       of "while_modifier":               rubyWhileModifier
@@ -435,9 +931,11 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "constant":                     rubyConstant
       of "def":                          rubyDefTok
       of "defined?":                     rubyDefinedQuestionTok
+      of "encoding":                     rubyEncoding
       of "end":                          rubyEndTok1
       of "escape_sequence":              rubyEscapeSequence
       of "false":                        rubyFalse
+      of "file":                         rubyFile
       of "float":                        rubyFloat
       of "global_variable":              rubyGlobalVariable
       of "hash_key_symbol":              rubyHashKeySymbol
@@ -447,6 +945,7 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "identifier":                   rubyIdentifier
       of "instance_variable":            rubyInstanceVariable
       of "integer":                      rubyInteger
+      of "line":                         rubyLine
       of "nil":                          rubyNil
       of "not":                          rubyNotTok
       of "or":                           rubyOrTok

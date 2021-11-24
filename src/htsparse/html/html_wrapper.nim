@@ -37,6 +37,38 @@ type
     htmlSyntaxError            ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: HtmlNodeKind): string =
+  case kind:
+    of htmlAttribute:              "attribute"
+    of htmlDoctype:                "doctype"
+    of htmlElement:                "element"
+    of htmlEndTag:                 "end_tag"
+    of htmlErroneousEndTag:        "erroneous_end_tag"
+    of htmlFragment:               "fragment"
+    of htmlQuotedAttributeValue:   "quoted_attribute_value"
+    of htmlScriptElement:          "script_element"
+    of htmlSelfClosingTag:         "self_closing_tag"
+    of htmlStartTag:               "start_tag"
+    of htmlStyleElement:           "style_element"
+    of htmlQuoteTok:               "\""
+    of htmlApostropheTok:          "\'"
+    of htmlSlashGreaterThanTok:    "/>"
+    of htmlLessThanTok:            "<"
+    of htmlLessThanExclamationTok: "<!"
+    of htmlLessThanSlashTok:       "</"
+    of htmlEqualTok:               "="
+    of htmlGreaterThanTok:         ">"
+    of htmlAttributeName:          "attribute_name"
+    of htmlAttributeValue:         "attribute_value"
+    of htmlComment:                "comment"
+    of htmlDoctypeTok:             "doctype"
+    of htmlErroneousEndTagName:    "erroneous_end_tag_name"
+    of htmlRawText:                "raw_text"
+    of htmlTagName:                "tag_name"
+    of htmlText:                   "text"
+    of htmlSyntaxError:            "ERROR"
+
+
 type
   HtmlExternalTok* = enum
     htmlExtern_start_tag_name        ## _start_tag_name
@@ -56,6 +88,41 @@ type
 type
   HtmlParser* = distinct PtsParser
 
+
+const htmlAllowedSubnodes*: array[HtmlNodeKind, set[HtmlNodeKind]] = block:
+                                                                       var tmp: array[HtmlNodeKind, set[HtmlNodeKind]]
+                                                                       tmp[htmlAttribute] = {htmlAttributeName, htmlAttributeValue, htmlQuotedAttributeValue}
+                                                                       tmp[htmlElement] = {
+                                                                                            htmlDoctype,
+                                                                                            htmlElement,
+                                                                                            htmlEndTag,
+                                                                                            htmlErroneousEndTag,
+                                                                                            htmlScriptElement,
+                                                                                            htmlSelfClosingTag,
+                                                                                            htmlStartTag,
+                                                                                            htmlStyleElement,
+                                                                                            htmlText
+                                                                                          }
+                                                                       tmp[htmlEndTag] = {htmlTagName}
+                                                                       tmp[htmlErroneousEndTag] = {htmlErroneousEndTagName}
+                                                                       tmp[htmlFragment] = {htmlDoctype, htmlElement, htmlErroneousEndTag, htmlScriptElement, htmlStyleElement, htmlText}
+                                                                       tmp[htmlQuotedAttributeValue] = {htmlAttributeValue}
+                                                                       tmp[htmlScriptElement] = {htmlEndTag, htmlRawText, htmlStartTag}
+                                                                       tmp[htmlSelfClosingTag] = {htmlAttribute, htmlTagName}
+                                                                       tmp[htmlStartTag] = {htmlAttribute, htmlTagName}
+                                                                       tmp[htmlStyleElement] = {htmlEndTag, htmlRawText, htmlStartTag}
+                                                                       tmp
+const htmlTokenKinds*: set[HtmlNodeKind] = {
+                                             htmlQuoteTok,
+                                             htmlApostropheTok,
+                                             htmlSlashGreaterThanTok,
+                                             htmlLessThanTok,
+                                             htmlLessThanExclamationTok,
+                                             htmlLessThanSlashTok,
+                                             htmlEqualTok,
+                                             htmlGreaterThanTok,
+                                             htmlDoctypeTok
+                                           }
 
 proc tsNodeType*(node: TsHtmlNode): string
 
@@ -145,6 +212,7 @@ func `[]`*(
 
 type
   HtmlNode* = HtsNode[TsHtmlNode, HtmlNodeKind]
+
 
 proc treeReprTsHtml*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsHtmlNode, HtmlNodeKind](parseTsHtmlString(str), str, 4, unnamed = unnamed)

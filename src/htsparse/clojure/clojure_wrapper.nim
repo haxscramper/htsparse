@@ -61,6 +61,62 @@ type
     clojureSyntaxError         ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: ClojureNodeKind): string =
+  case kind:
+    of clojureAnonFnLit:           "anon_fn_lit"
+    of clojureDerefingLit:         "derefing_lit"
+    of clojureDisExpr:             "dis_expr"
+    of clojureEvalingLit:          "evaling_lit"
+    of clojureListLit:             "list_lit"
+    of clojureMapLit:              "map_lit"
+    of clojureMetaLit:             "meta_lit"
+    of clojureNsMapLit:            "ns_map_lit"
+    of clojureOldMetaLit:          "old_meta_lit"
+    of clojureQuotingLit:          "quoting_lit"
+    of clojureReadCondLit:         "read_cond_lit"
+    of clojureRegexLit:            "regex_lit"
+    of clojureSetLit:              "set_lit"
+    of clojureSource:              "source"
+    of clojureSplicingReadCondLit: "splicing_read_cond_lit"
+    of clojureStrLit:              "str_lit"
+    of clojureSymLit:              "sym_lit"
+    of clojureSymValLit:           "sym_val_lit"
+    of clojureSynQuotingLit:       "syn_quoting_lit"
+    of clojureTaggedOrCtorLit:     "tagged_or_ctor_lit"
+    of clojureUnquoteSplicingLit:  "unquote_splicing_lit"
+    of clojureUnquotingLit:        "unquoting_lit"
+    of clojureVarQuotingLit:       "var_quoting_lit"
+    of clojureVecLit:              "vec_lit"
+    of clojureHashTok:             "#"
+    of clojureDoubleHashTok:       "##"
+    of clojureHashApostropheTok:   "#\'"
+    of clojureHashEqualTok:        "#="
+    of clojureHashQuestionTok:     "#?"
+    of clojureHashQuestionAtTok:   "#?@"
+    of clojureHashAccentTok:       "#^"
+    of clojureHashUnderscoreTok:   "#_"
+    of clojureApostropheTok:       "\'"
+    of clojureLParTok:             "("
+    of clojureRParTok:             ")"
+    of clojureAtTok:               "@"
+    of clojureLBrackTok:           "["
+    of clojureRBrackTok:           "]"
+    of clojureAccentTok:           "^"
+    of clojureBacktickTok:         "`"
+    of clojureAutoResMark:         "auto_res_mark"
+    of clojureBoolLit:             "bool_lit"
+    of clojureCharLit:             "char_lit"
+    of clojureComment:             "comment"
+    of clojureKwdLit:              "kwd_lit"
+    of clojureNilLit:              "nil_lit"
+    of clojureNumLit:              "num_lit"
+    of clojureLCurlyTok:           "{"
+    of clojureRCurlyTok:           "}"
+    of clojureTildeTok:            "~"
+    of clojureTildeAtTok:          "~@"
+    of clojureSyntaxError:         "ERROR"
+
+
 type
   TsClojureNode* = distinct TSNode
 
@@ -68,6 +124,82 @@ type
 type
   ClojureParser* = distinct PtsParser
 
+
+const clojureAllowedSubnodes*: array[ClojureNodeKind, set[ClojureNodeKind]] = block:
+                                                                                var tmp: array[ClojureNodeKind, set[ClojureNodeKind]]
+                                                                                tmp[clojureAnonFnLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureDerefingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureDisExpr] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureEvalingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureListLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureMapLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureMetaLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureNsMapLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureOldMetaLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureQuotingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureReadCondLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureSetLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureSource] = {
+                                                                                                       clojureAnonFnLit,
+                                                                                                       clojureBoolLit,
+                                                                                                       clojureCharLit,
+                                                                                                       clojureComment,
+                                                                                                       clojureDerefingLit,
+                                                                                                       clojureDisExpr,
+                                                                                                       clojureEvalingLit,
+                                                                                                       clojureKwdLit,
+                                                                                                       clojureListLit,
+                                                                                                       clojureMapLit,
+                                                                                                       clojureNilLit,
+                                                                                                       clojureNsMapLit,
+                                                                                                       clojureNumLit,
+                                                                                                       clojureQuotingLit,
+                                                                                                       clojureReadCondLit,
+                                                                                                       clojureRegexLit,
+                                                                                                       clojureSetLit,
+                                                                                                       clojureSplicingReadCondLit,
+                                                                                                       clojureStrLit,
+                                                                                                       clojureSymLit,
+                                                                                                       clojureSymValLit,
+                                                                                                       clojureSynQuotingLit,
+                                                                                                       clojureTaggedOrCtorLit,
+                                                                                                       clojureUnquoteSplicingLit,
+                                                                                                       clojureUnquotingLit,
+                                                                                                       clojureVarQuotingLit,
+                                                                                                       clojureVecLit
+                                                                                                     }
+                                                                                tmp[clojureSplicingReadCondLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureSymLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureSymValLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureSynQuotingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureTaggedOrCtorLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureUnquoteSplicingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureUnquotingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureVarQuotingLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp[clojureVecLit] = {clojureComment, clojureDisExpr}
+                                                                                tmp
+const clojureTokenKinds*: set[ClojureNodeKind] = {
+                                                   clojureHashTok,
+                                                   clojureDoubleHashTok,
+                                                   clojureHashApostropheTok,
+                                                   clojureHashEqualTok,
+                                                   clojureHashQuestionTok,
+                                                   clojureHashQuestionAtTok,
+                                                   clojureHashAccentTok,
+                                                   clojureHashUnderscoreTok,
+                                                   clojureApostropheTok,
+                                                   clojureLParTok,
+                                                   clojureRParTok,
+                                                   clojureAtTok,
+                                                   clojureLBrackTok,
+                                                   clojureRBrackTok,
+                                                   clojureAccentTok,
+                                                   clojureBacktickTok,
+                                                   clojureLCurlyTok,
+                                                   clojureRCurlyTok,
+                                                   clojureTildeTok,
+                                                   clojureTildeAtTok
+                                                 }
 
 proc tsNodeType*(node: TsClojureNode): string
 
@@ -182,6 +314,7 @@ func `[]`*(
 
 type
   ClojureNode* = HtsNode[TsClojureNode, ClojureNodeKind]
+
 
 proc treeReprTsClojure*(str: string, unnamed: bool = false): ColoredText =
   treeRepr[TsClojureNode, ClojureNodeKind](parseTsClojureString(str), str, 7, unnamed = unnamed)

@@ -299,6 +299,302 @@ type
     dartSyntaxError                            ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: DartNodeKind): string =
+  case kind:
+    of dartDeclaration:                            "_declaration"
+    of dartLiteral:                                "_literal"
+    of dartStatement:                              "_statement"
+    of dartAdditiveExpression:                     "additive_expression"
+    of dartAdditiveOperator:                       "additive_operator"
+    of dartAnnotation:                             "annotation"
+    of dartArgument:                               "argument"
+    of dartArgumentPart:                           "argument_part"
+    of dartArguments:                              "arguments"
+    of dartAsOperator:                             "as_operator"
+    of dartAssertStatement:                        "assert_statement"
+    of dartAssertion:                              "assertion"
+    of dartAssignableExpression:                   "assignable_expression"
+    of dartAssignmentExpression:                   "assignment_expression"
+    of dartAssignmentExpressionWithoutCascade:     "assignment_expression_without_cascade"
+    of dartAwaitExpression:                        "await_expression"
+    of dartBinaryOperator:                         "binary_operator"
+    of dartBitwiseAndExpression:                   "bitwise_and_expression"
+    of dartBitwiseOperator:                        "bitwise_operator"
+    of dartBitwiseOrExpression:                    "bitwise_or_expression"
+    of dartBitwiseXorExpression:                   "bitwise_xor_expression"
+    of dartBlock:                                  "block"
+    of dartBreakStatement:                         "break_statement"
+    of dartCascadeSection:                         "cascade_section"
+    of dartCascadeSelector:                        "cascade_selector"
+    of dartCatchClause:                            "catch_clause"
+    of dartClassBody:                              "class_body"
+    of dartClassDefinition:                        "class_definition"
+    of dartCombinator:                             "combinator"
+    of dartConditionalAssignableSelector:          "conditional_assignable_selector"
+    of dartConditionalExpression:                  "conditional_expression"
+    of dartConfigurableUri:                        "configurable_uri"
+    of dartConfigurationUri:                       "configuration_uri"
+    of dartConstObjectExpression:                  "const_object_expression"
+    of dartConstantConstructorSignature:           "constant_constructor_signature"
+    of dartConstructorInvocation:                  "constructor_invocation"
+    of dartConstructorParam:                       "constructor_param"
+    of dartConstructorSignature:                   "constructor_signature"
+    of dartContinueStatement:                      "continue_statement"
+    of dartDimensions:                             "dimensions"
+    of dartDoStatement:                            "do_statement"
+    of dartDottedIdentifierList:                   "dotted_identifier_list"
+    of dartEnumBody:                               "enum_body"
+    of dartEnumConstant:                           "enum_constant"
+    of dartEnumDeclaration:                        "enum_declaration"
+    of dartEqualityExpression:                     "equality_expression"
+    of dartEscapeSequence:                         "escape_sequence"
+    of dartExplicitConstructorInvocation:          "explicit_constructor_invocation"
+    of dartExpressionStatement:                    "expression_statement"
+    of dartExtensionBody:                          "extension_body"
+    of dartExtensionDeclaration:                   "extension_declaration"
+    of dartFactoryConstructorSignature:            "factory_constructor_signature"
+    of dartFalse:                                  "false"
+    of dartFieldInitializer:                       "field_initializer"
+    of dartFinallyClause:                          "finally_clause"
+    of dartForElement:                             "for_element"
+    of dartForStatement:                           "for_statement"
+    of dartFormalParameter:                        "formal_parameter"
+    of dartFormalParameterList:                    "formal_parameter_list"
+    of dartFunctionBody:                           "function_body"
+    of dartFunctionExpression:                     "function_expression"
+    of dartFunctionExpressionBody:                 "function_expression_body"
+    of dartFunctionSignature:                      "function_signature"
+    of dartFunctionType:                           "function_type"
+    of dartGetterSignature:                        "getter_signature"
+    of dartIdentifier:                             "identifier"
+    of dartIfElement:                              "if_element"
+    of dartIfNullExpression:                       "if_null_expression"
+    of dartIfStatement:                            "if_statement"
+    of dartImportOrExport:                         "import_or_export"
+    of dartImportSpecification:                    "import_specification"
+    of dartInferredType:                           "inferred_type"
+    of dartInitializedIdentifier:                  "initialized_identifier"
+    of dartInitializedIdentifierList:              "initialized_identifier_list"
+    of dartInitializedVariableDefinition:          "initialized_variable_definition"
+    of dartInitializerListEntry:                   "initializer_list_entry"
+    of dartInitializers:                           "initializers"
+    of dartInterfaces:                             "interfaces"
+    of dartIsOperator:                             "is_operator"
+    of dartLabel:                                  "label"
+    of dartLabeledStatement:                       "labeled_statement"
+    of dartLambdaExpression:                       "lambda_expression"
+    of dartLibraryExport:                          "library_export"
+    of dartLibraryImport:                          "library_import"
+    of dartLibraryName:                            "library_name"
+    of dartListLiteral:                            "list_literal"
+    of dartLocalVariableDeclaration:               "local_variable_declaration"
+    of dartLogicalAndExpression:                   "logical_and_expression"
+    of dartLogicalOrExpression:                    "logical_or_expression"
+    of dartMarkerAnnotation:                       "marker_annotation"
+    of dartMethodSignature:                        "method_signature"
+    of dartMixinApplication:                       "mixin_application"
+    of dartMixinApplicationClass:                  "mixin_application_class"
+    of dartMixinDeclaration:                       "mixin_declaration"
+    of dartMixins:                                 "mixins"
+    of dartModuleName:                             "module_name"
+    of dartMultiplicativeExpression:               "multiplicative_expression"
+    of dartMultiplicativeOperator:                 "multiplicative_operator"
+    of dartNamedArgument:                          "named_argument"
+    of dartNamedParameterTypes:                    "named_parameter_types"
+    of dartNegationOperator:                       "negation_operator"
+    of dartNewExpression:                          "new_expression"
+    of dartNormalParameterType:                    "normal_parameter_type"
+    of dartNullLiteral:                            "null_literal"
+    of dartOperatorSignature:                      "operator_signature"
+    of dartOptionalFormalParameters:               "optional_formal_parameters"
+    of dartOptionalParameterTypes:                 "optional_parameter_types"
+    of dartOptionalPositionalParameterTypes:       "optional_positional_parameter_types"
+    of dartPair:                                   "pair"
+    of dartParameterTypeList:                      "parameter_type_list"
+    of dartParenthesizedExpression:                "parenthesized_expression"
+    of dartPartDirective:                          "part_directive"
+    of dartPartOfDirective:                        "part_of_directive"
+    of dartPostfixExpression:                      "postfix_expression"
+    of dartPostfixOperator:                        "postfix_operator"
+    of dartPrefixOperator:                         "prefix_operator"
+    of dartProgram:                                "program"
+    of dartQualified:                              "qualified"
+    of dartRedirectingFactoryConstructorSignature: "redirecting_factory_constructor_signature"
+    of dartRedirection:                            "redirection"
+    of dartRelationalExpression:                   "relational_expression"
+    of dartRelationalOperator:                     "relational_operator"
+    of dartReturnStatement:                        "return_statement"
+    of dartScopedIdentifier:                       "scoped_identifier"
+    of dartScriptTag:                              "script_tag"
+    of dartSelector:                               "selector"
+    of dartSetOrMapLiteral:                        "set_or_map_literal"
+    of dartSetterSignature:                        "setter_signature"
+    of dartShiftExpression:                        "shift_expression"
+    of dartShiftOperator:                          "shift_operator"
+    of dartSpreadElement:                          "spread_element"
+    of dartStaticFinalDeclaration:                 "static_final_declaration"
+    of dartStaticFinalDeclarationList:             "static_final_declaration_list"
+    of dartStringLiteral:                          "string_literal"
+    of dartSuper:                                  "super"
+    of dartSuperclass:                             "superclass"
+    of dartSwitchBlock:                            "switch_block"
+    of dartSwitchLabel:                            "switch_label"
+    of dartSwitchStatement:                        "switch_statement"
+    of dartSymbolLiteral:                          "symbol_literal"
+    of dartTemplateSubstitution:                   "template_substitution"
+    of dartThis:                                   "this"
+    of dartThrowExpression:                        "throw_expression"
+    of dartThrowExpressionWithoutCascade:          "throw_expression_without_cascade"
+    of dartThrows:                                 "throws"
+    of dartTildeOperator:                          "tilde_operator"
+    of dartTrue:                                   "true"
+    of dartTryStatement:                           "try_statement"
+    of dartTypeAlias:                              "type_alias"
+    of dartTypeArguments:                          "type_arguments"
+    of dartTypeBound:                              "type_bound"
+    of dartTypeCast:                               "type_cast"
+    of dartTypeCastExpression:                     "type_cast_expression"
+    of dartTypeParameter:                          "type_parameter"
+    of dartTypeParameters:                         "type_parameters"
+    of dartTypeTest:                               "type_test"
+    of dartTypeTestExpression:                     "type_test_expression"
+    of dartTypedIdentifier:                        "typed_identifier"
+    of dartUnaryExpression:                        "unary_expression"
+    of dartUnconditionalAssignableSelector:        "unconditional_assignable_selector"
+    of dartUri:                                    "uri"
+    of dartUriTest:                                "uri_test"
+    of dartWhileStatement:                         "while_statement"
+    of dartYieldEachStatement:                     "yield_each_statement"
+    of dartYieldStatement:                         "yield_statement"
+    of dartNewlineTok:                             "\x0A"
+    of dartQuoteTok:                               "\""
+    of dartTripleQuoteTok:                         "\"\"\""
+    of dartHashTok:                                "#"
+    of dartHashExclamationTok:                     "#!"
+    of dartDollarTok:                              "$"
+    of dartPercentTok:                             "%"
+    of dartAmpersandTok:                           "&"
+    of dartDoubleAmpersandTok:                     "&&"
+    of dartApostropheTok:                          "\'"
+    of dartTripleApostropheTok:                    "\'\'\'"
+    of dartLParTok:                                "("
+    of dartRParTok:                                ")"
+    of dartAsteriskTok:                            "*"
+    of dartCommaTok:                               ","
+    of dartDotTok:                                 "."
+    of dartDoubleDotTok:                           ".."
+    of dartTripleDotTok:                           "..."
+    of dartSlashTok:                               "/"
+    of dartColonTok:                               ":"
+    of dartSemicolonTok:                           ";"
+    of dartLessThanTok:                            "<"
+    of dartDoubleLessThanTok:                      "<<"
+    of dartLessThanEqualTok:                       "<="
+    of dartEqualTok:                               "="
+    of dartDoubleEqualTok:                         "=="
+    of dartEqualGreaterThanTok:                    "=>"
+    of dartGreaterThanTok:                         ">"
+    of dartGreaterThanEqualTok:                    ">="
+    of dartDoubleGreaterThanTok:                   ">>"
+    of dartTripleGreaterThanTok:                   ">>>"
+    of dartQuestionTok:                            "?"
+    of dartQuestionDotTok:                         "?."
+    of dartDoubleQuestionTok:                      "??"
+    of dartAtTok:                                  "@"
+    of dartFunctionTok:                            "Function"
+    of dartLBrackTok:                              "["
+    of dartLBrackRBrackTok:                        "[]"
+    of dartLBrackRBrackEqualTok:                   "[]="
+    of dartRBrackTok:                              "]"
+    of dartAccentTok:                              "^"
+    of dartAbstractTok:                            "abstract"
+    of dartAsTok:                                  "as"
+    of dartAsyncTok:                               "async"
+    of dartAsyncAsteriskTok:                       "async*"
+    of dartAwaitTok:                               "await"
+    of dartBoolTok:                                "bool"
+    of dartCaseBuiltin:                            "case_builtin"
+    of dartCatchTok:                               "catch"
+    of dartClassTok:                               "class"
+    of dartComment:                                "comment"
+    of dartConstBuiltin:                           "const_builtin"
+    of dartContinueTok:                            "continue"
+    of dartCovariantTok:                           "covariant"
+    of dartDecimalFloatingPointLiteral:            "decimal_floating_point_literal"
+    of dartDecimalIntegerLiteral:                  "decimal_integer_literal"
+    of dartDefaultTok:                             "default"
+    of dartDeferredTok:                            "deferred"
+    of dartDoTok:                                  "do"
+    of dartDocumentationComment:                   "documentation_comment"
+    of dartDynamicTok:                             "dynamic"
+    of dartElseTok:                                "else"
+    of dartEnumTok:                                "enum"
+    of dartEqualityOperator:                       "equality_operator"
+    of dartExportTok:                              "export"
+    of dartExtendsTok:                             "extends"
+    of dartExtensionTok:                           "extension"
+    of dartExternalTok:                            "external"
+    of dartFactoryTok:                             "factory"
+    of dartFalseTok:                               "false"
+    of dartFinalBuiltin:                           "final_builtin"
+    of dartFinallyTok:                             "finally"
+    of dartForTok:                                 "for"
+    of dartGetTok:                                 "get"
+    of dartHexIntegerLiteral:                      "hex_integer_literal"
+    of dartHideTok:                                "hide"
+    of dartIdentifierDollarEscaped:                "identifier_dollar_escaped"
+    of dartIfTok:                                  "if"
+    of dartImplementsTok:                          "implements"
+    of dartImportTok:                              "import"
+    of dartInTok:                                  "in"
+    of dartIncrementOperator:                      "increment_operator"
+    of dartInterfaceTok:                           "interface"
+    of dartIsTok:                                  "is"
+    of dartLateTok:                                "late"
+    of dartLibraryTok:                             "library"
+    of dartMinusOperator:                          "minus_operator"
+    of dartMixinTok:                               "mixin"
+    of dartNativeTok:                              "native"
+    of dartNewTok:                                 "new"
+    of dartNullTok:                                "null"
+    of dartOfTok:                                  "of"
+    of dartOnTok:                                  "on"
+    of dartOperatorTok:                            "operator"
+    of dartPartTok:                                "part"
+    of dartRQuoteTok:                              "r\""
+    of dartRTripleQuoteTok:                        "r\"\"\""
+    of dartRApostropheTok:                         "r\'"
+    of dartRTripleApostropheTok:                   "r\'\'\'"
+    of dartRequiredTok:                            "required"
+    of dartReturnTok:                              "return"
+    of dartSetTok:                                 "set"
+    of dartShowTok:                                "show"
+    of dartStaticTok:                              "static"
+    of dartSuperTok:                               "super"
+    of dartSwitchTok:                              "switch"
+    of dartSyncAsteriskTok:                        "sync*"
+    of dartThisTok:                                "this"
+    of dartThrowTok:                               "throw"
+    of dartThrowsTok:                              "throws"
+    of dartTransitiveTok:                          "transitive"
+    of dartTrueTok:                                "true"
+    of dartTryTok:                                 "try"
+    of dartTypeIdentifier:                         "type_identifier"
+    of dartTypedefTok:                             "typedef"
+    of dartVarTok:                                 "var"
+    of dartVoidType:                               "void_type"
+    of dartWhileTok:                               "while"
+    of dartWithTok:                                "with"
+    of dartYieldTok:                               "yield"
+    of dartLCurlyTok:                              "{"
+    of dartPipeTok:                                "|"
+    of dartDoublePipeTok:                          "||"
+    of dartRCurlyTok:                              "}"
+    of dartTildeTok:                               "~"
+    of dartTildeSlashTok:                          "~/"
+    of dartSyntaxError:                            "ERROR"
+
+
 type
   DartExternalTok* = enum
     dartExtern_automatic_semicolon          ## _automatic_semicolon
@@ -316,6 +612,1606 @@ type
 type
   DartParser* = distinct PtsParser
 
+
+const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
+                                                                       var tmp: array[DartNodeKind, set[DartNodeKind]]
+                                                                       tmp[dartAdditiveExpression] = {
+                                                                                                       dartLiteral,
+                                                                                                       dartAdditiveExpression,
+                                                                                                       dartAdditiveOperator,
+                                                                                                       dartAssignmentExpression,
+                                                                                                       dartBitwiseAndExpression,
+                                                                                                       dartBitwiseOrExpression,
+                                                                                                       dartBitwiseXorExpression,
+                                                                                                       dartCascadeSection,
+                                                                                                       dartConditionalExpression,
+                                                                                                       dartConstObjectExpression,
+                                                                                                       dartEqualityExpression,
+                                                                                                       dartFunctionExpression,
+                                                                                                       dartIdentifier,
+                                                                                                       dartIfNullExpression,
+                                                                                                       dartLogicalAndExpression,
+                                                                                                       dartLogicalOrExpression,
+                                                                                                       dartMultiplicativeExpression,
+                                                                                                       dartNewExpression,
+                                                                                                       dartPostfixExpression,
+                                                                                                       dartRelationalExpression,
+                                                                                                       dartSelector,
+                                                                                                       dartShiftExpression,
+                                                                                                       dartSuper,
+                                                                                                       dartThis,
+                                                                                                       dartThrowExpression,
+                                                                                                       dartTypeCastExpression,
+                                                                                                       dartTypeTestExpression,
+                                                                                                       dartUnaryExpression,
+                                                                                                       dartUnconditionalAssignableSelector
+                                                                                                     }
+                                                                       tmp[dartArgument] = {
+                                                                                             dartLiteral,
+                                                                                             dartAdditiveExpression,
+                                                                                             dartAssignmentExpression,
+                                                                                             dartBitwiseAndExpression,
+                                                                                             dartBitwiseOrExpression,
+                                                                                             dartBitwiseXorExpression,
+                                                                                             dartCascadeSection,
+                                                                                             dartConditionalExpression,
+                                                                                             dartConstObjectExpression,
+                                                                                             dartEqualityExpression,
+                                                                                             dartFunctionExpression,
+                                                                                             dartIdentifier,
+                                                                                             dartIfNullExpression,
+                                                                                             dartLogicalAndExpression,
+                                                                                             dartLogicalOrExpression,
+                                                                                             dartMultiplicativeExpression,
+                                                                                             dartNewExpression,
+                                                                                             dartPostfixExpression,
+                                                                                             dartRelationalExpression,
+                                                                                             dartSelector,
+                                                                                             dartShiftExpression,
+                                                                                             dartSuper,
+                                                                                             dartThis,
+                                                                                             dartThrowExpression,
+                                                                                             dartTypeCastExpression,
+                                                                                             dartTypeTestExpression,
+                                                                                             dartUnaryExpression,
+                                                                                             dartUnconditionalAssignableSelector
+                                                                                           }
+                                                                       tmp[dartArgumentPart] = {dartArguments, dartTypeArguments}
+                                                                       tmp[dartArguments] = {dartArgument, dartNamedArgument}
+                                                                       tmp[dartAssertStatement] = {dartAssertion}
+                                                                       tmp[dartAssertion] = {
+                                                                                              dartLiteral,
+                                                                                              dartAdditiveExpression,
+                                                                                              dartAssignmentExpression,
+                                                                                              dartBitwiseAndExpression,
+                                                                                              dartBitwiseOrExpression,
+                                                                                              dartBitwiseXorExpression,
+                                                                                              dartCascadeSection,
+                                                                                              dartConditionalExpression,
+                                                                                              dartConstObjectExpression,
+                                                                                              dartEqualityExpression,
+                                                                                              dartFunctionExpression,
+                                                                                              dartIdentifier,
+                                                                                              dartIfNullExpression,
+                                                                                              dartLogicalAndExpression,
+                                                                                              dartLogicalOrExpression,
+                                                                                              dartMultiplicativeExpression,
+                                                                                              dartNewExpression,
+                                                                                              dartPostfixExpression,
+                                                                                              dartRelationalExpression,
+                                                                                              dartSelector,
+                                                                                              dartShiftExpression,
+                                                                                              dartSuper,
+                                                                                              dartThis,
+                                                                                              dartThrowExpression,
+                                                                                              dartTypeCastExpression,
+                                                                                              dartTypeTestExpression,
+                                                                                              dartUnaryExpression,
+                                                                                              dartUnconditionalAssignableSelector
+                                                                                            }
+                                                                       tmp[dartAssignableExpression] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalAssignableSelector,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartConstructorInvocation,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartAwaitExpression] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartBinaryOperator] = {dartAdditiveOperator, dartBitwiseOperator, dartMultiplicativeOperator, dartRelationalOperator, dartShiftOperator}
+                                                                       tmp[dartBitwiseAndExpression] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartBitwiseOrExpression] = {
+                                                                                                        dartLiteral,
+                                                                                                        dartAdditiveExpression,
+                                                                                                        dartAssignmentExpression,
+                                                                                                        dartBitwiseAndExpression,
+                                                                                                        dartBitwiseOrExpression,
+                                                                                                        dartBitwiseXorExpression,
+                                                                                                        dartCascadeSection,
+                                                                                                        dartConditionalExpression,
+                                                                                                        dartConstObjectExpression,
+                                                                                                        dartEqualityExpression,
+                                                                                                        dartFunctionExpression,
+                                                                                                        dartIdentifier,
+                                                                                                        dartIfNullExpression,
+                                                                                                        dartLogicalAndExpression,
+                                                                                                        dartLogicalOrExpression,
+                                                                                                        dartMultiplicativeExpression,
+                                                                                                        dartNewExpression,
+                                                                                                        dartPostfixExpression,
+                                                                                                        dartRelationalExpression,
+                                                                                                        dartSelector,
+                                                                                                        dartShiftExpression,
+                                                                                                        dartSuper,
+                                                                                                        dartThis,
+                                                                                                        dartThrowExpression,
+                                                                                                        dartTypeCastExpression,
+                                                                                                        dartTypeTestExpression,
+                                                                                                        dartUnaryExpression,
+                                                                                                        dartUnconditionalAssignableSelector
+                                                                                                      }
+                                                                       tmp[dartBitwiseXorExpression] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartBlock] = {dartStatement}
+                                                                       tmp[dartBreakStatement] = {dartIdentifier}
+                                                                       tmp[dartCascadeSection] = {
+                                                                                                   dartLiteral,
+                                                                                                   dartAdditiveExpression,
+                                                                                                   dartArgumentPart,
+                                                                                                   dartAssignmentExpression,
+                                                                                                   dartAssignmentExpressionWithoutCascade,
+                                                                                                   dartBitwiseAndExpression,
+                                                                                                   dartBitwiseOrExpression,
+                                                                                                   dartBitwiseXorExpression,
+                                                                                                   dartCascadeSection,
+                                                                                                   dartCascadeSelector,
+                                                                                                   dartConditionalAssignableSelector,
+                                                                                                   dartConditionalExpression,
+                                                                                                   dartConstObjectExpression,
+                                                                                                   dartEqualityExpression,
+                                                                                                   dartFunctionExpression,
+                                                                                                   dartIdentifier,
+                                                                                                   dartIfNullExpression,
+                                                                                                   dartLogicalAndExpression,
+                                                                                                   dartLogicalOrExpression,
+                                                                                                   dartMultiplicativeExpression,
+                                                                                                   dartNewExpression,
+                                                                                                   dartPostfixExpression,
+                                                                                                   dartRelationalExpression,
+                                                                                                   dartSelector,
+                                                                                                   dartShiftExpression,
+                                                                                                   dartSuper,
+                                                                                                   dartThis,
+                                                                                                   dartThrowExpression,
+                                                                                                   dartThrowExpressionWithoutCascade,
+                                                                                                   dartTypeCastExpression,
+                                                                                                   dartTypeTestExpression,
+                                                                                                   dartUnaryExpression,
+                                                                                                   dartUnconditionalAssignableSelector
+                                                                                                 }
+                                                                       tmp[dartCascadeSelector] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartCatchClause] = {dartIdentifier}
+                                                                       tmp[dartClassBody] = {dartAnnotation, dartDeclaration, dartFunctionBody, dartMarkerAnnotation, dartMethodSignature}
+                                                                       tmp[dartClassDefinition] = {dartAnnotation, dartMarkerAnnotation, dartMixinApplicationClass}
+                                                                       tmp[dartCombinator] = {dartIdentifier}
+                                                                       tmp[dartConditionalAssignableSelector] = {dartIdentifier}
+                                                                       tmp[dartConditionalExpression] = {
+                                                                                                          dartLiteral,
+                                                                                                          dartAdditiveExpression,
+                                                                                                          dartAssignmentExpression,
+                                                                                                          dartBitwiseAndExpression,
+                                                                                                          dartBitwiseOrExpression,
+                                                                                                          dartBitwiseXorExpression,
+                                                                                                          dartCascadeSection,
+                                                                                                          dartConditionalExpression,
+                                                                                                          dartConstObjectExpression,
+                                                                                                          dartEqualityExpression,
+                                                                                                          dartFunctionExpression,
+                                                                                                          dartIdentifier,
+                                                                                                          dartIfNullExpression,
+                                                                                                          dartLogicalAndExpression,
+                                                                                                          dartLogicalOrExpression,
+                                                                                                          dartMultiplicativeExpression,
+                                                                                                          dartNewExpression,
+                                                                                                          dartPostfixExpression,
+                                                                                                          dartRelationalExpression,
+                                                                                                          dartSelector,
+                                                                                                          dartShiftExpression,
+                                                                                                          dartSuper,
+                                                                                                          dartThis,
+                                                                                                          dartThrowExpression,
+                                                                                                          dartTypeCastExpression,
+                                                                                                          dartTypeTestExpression,
+                                                                                                          dartUnaryExpression,
+                                                                                                          dartUnconditionalAssignableSelector
+                                                                                                        }
+                                                                       tmp[dartConfigurableUri] = {dartConfigurationUri, dartUri}
+                                                                       tmp[dartConfigurationUri] = {dartUri, dartUriTest}
+                                                                       tmp[dartConstObjectExpression] = {dartArguments, dartConstBuiltin, dartFunctionType, dartIdentifier, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartConstantConstructorSignature] = {dartConstBuiltin, dartFormalParameterList, dartQualified}
+                                                                       tmp[dartConstructorInvocation] = {dartArguments, dartIdentifier, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartConstructorParam] = {
+                                                                                                     dartConstBuiltin,
+                                                                                                     dartFinalBuiltin,
+                                                                                                     dartFormalParameterList,
+                                                                                                     dartFunctionType,
+                                                                                                     dartIdentifier,
+                                                                                                     dartInferredType,
+                                                                                                     dartThis,
+                                                                                                     dartTypeArguments,
+                                                                                                     dartTypeIdentifier,
+                                                                                                     dartTypeParameters,
+                                                                                                     dartVoidType
+                                                                                                   }
+                                                                       tmp[dartContinueStatement] = {dartIdentifier}
+                                                                       tmp[dartDeclaration] = {
+                                                                                                dartConstBuiltin,
+                                                                                                dartConstantConstructorSignature,
+                                                                                                dartConstructorSignature,
+                                                                                                dartFactoryConstructorSignature,
+                                                                                                dartFinalBuiltin,
+                                                                                                dartFunctionSignature,
+                                                                                                dartFunctionType,
+                                                                                                dartGetterSignature,
+                                                                                                dartInferredType,
+                                                                                                dartInitializedIdentifierList,
+                                                                                                dartInitializers,
+                                                                                                dartOperatorSignature,
+                                                                                                dartRedirectingFactoryConstructorSignature,
+                                                                                                dartRedirection,
+                                                                                                dartSetterSignature,
+                                                                                                dartStaticFinalDeclarationList,
+                                                                                                dartStringLiteral,
+                                                                                                dartTypeArguments,
+                                                                                                dartTypeIdentifier,
+                                                                                                dartVoidType
+                                                                                              }
+                                                                       tmp[dartDimensions] = {dartAnnotation, dartMarkerAnnotation}
+                                                                       tmp[dartDottedIdentifierList] = {dartIdentifier}
+                                                                       tmp[dartEnumBody] = {dartEnumConstant}
+                                                                       tmp[dartEnumConstant] = {dartAnnotation, dartMarkerAnnotation}
+                                                                       tmp[dartEqualityExpression] = {
+                                                                                                       dartLiteral,
+                                                                                                       dartAdditiveExpression,
+                                                                                                       dartAssignmentExpression,
+                                                                                                       dartBitwiseAndExpression,
+                                                                                                       dartBitwiseOrExpression,
+                                                                                                       dartBitwiseXorExpression,
+                                                                                                       dartCascadeSection,
+                                                                                                       dartConditionalExpression,
+                                                                                                       dartConstObjectExpression,
+                                                                                                       dartEqualityExpression,
+                                                                                                       dartEqualityOperator,
+                                                                                                       dartFunctionExpression,
+                                                                                                       dartIdentifier,
+                                                                                                       dartIfNullExpression,
+                                                                                                       dartLogicalAndExpression,
+                                                                                                       dartLogicalOrExpression,
+                                                                                                       dartMultiplicativeExpression,
+                                                                                                       dartNewExpression,
+                                                                                                       dartPostfixExpression,
+                                                                                                       dartRelationalExpression,
+                                                                                                       dartSelector,
+                                                                                                       dartShiftExpression,
+                                                                                                       dartSuper,
+                                                                                                       dartThis,
+                                                                                                       dartThrowExpression,
+                                                                                                       dartTypeCastExpression,
+                                                                                                       dartTypeTestExpression,
+                                                                                                       dartUnaryExpression,
+                                                                                                       dartUnconditionalAssignableSelector
+                                                                                                     }
+                                                                       tmp[dartExpressionStatement] = {
+                                                                                                        dartLiteral,
+                                                                                                        dartAdditiveExpression,
+                                                                                                        dartAssignmentExpression,
+                                                                                                        dartBitwiseAndExpression,
+                                                                                                        dartBitwiseOrExpression,
+                                                                                                        dartBitwiseXorExpression,
+                                                                                                        dartCascadeSection,
+                                                                                                        dartConditionalExpression,
+                                                                                                        dartConstObjectExpression,
+                                                                                                        dartEqualityExpression,
+                                                                                                        dartFunctionExpression,
+                                                                                                        dartIdentifier,
+                                                                                                        dartIfNullExpression,
+                                                                                                        dartLogicalAndExpression,
+                                                                                                        dartLogicalOrExpression,
+                                                                                                        dartMultiplicativeExpression,
+                                                                                                        dartNewExpression,
+                                                                                                        dartPostfixExpression,
+                                                                                                        dartRelationalExpression,
+                                                                                                        dartSelector,
+                                                                                                        dartShiftExpression,
+                                                                                                        dartSuper,
+                                                                                                        dartThis,
+                                                                                                        dartThrowExpression,
+                                                                                                        dartTypeCastExpression,
+                                                                                                        dartTypeTestExpression,
+                                                                                                        dartUnaryExpression,
+                                                                                                        dartUnconditionalAssignableSelector
+                                                                                                      }
+                                                                       tmp[dartExtensionBody] = {dartAnnotation, dartDeclaration, dartFunctionBody, dartMarkerAnnotation, dartMethodSignature}
+                                                                       tmp[dartFactoryConstructorSignature] = {dartFormalParameterList, dartIdentifier}
+                                                                       tmp[dartFieldInitializer] = {
+                                                                                                     dartLiteral,
+                                                                                                     dartAdditiveExpression,
+                                                                                                     dartAssignmentExpression,
+                                                                                                     dartBitwiseAndExpression,
+                                                                                                     dartBitwiseOrExpression,
+                                                                                                     dartBitwiseXorExpression,
+                                                                                                     dartCascadeSection,
+                                                                                                     dartConditionalExpression,
+                                                                                                     dartConstObjectExpression,
+                                                                                                     dartEqualityExpression,
+                                                                                                     dartFunctionExpression,
+                                                                                                     dartIdentifier,
+                                                                                                     dartIfNullExpression,
+                                                                                                     dartLogicalAndExpression,
+                                                                                                     dartLogicalOrExpression,
+                                                                                                     dartMultiplicativeExpression,
+                                                                                                     dartNewExpression,
+                                                                                                     dartPostfixExpression,
+                                                                                                     dartRelationalExpression,
+                                                                                                     dartSelector,
+                                                                                                     dartShiftExpression,
+                                                                                                     dartSuper,
+                                                                                                     dartThis,
+                                                                                                     dartThrowExpression,
+                                                                                                     dartTypeCastExpression,
+                                                                                                     dartTypeTestExpression,
+                                                                                                     dartUnaryExpression,
+                                                                                                     dartUnconditionalAssignableSelector
+                                                                                                   }
+                                                                       tmp[dartFinallyClause] = {dartBlock}
+                                                                       tmp[dartForElement] = {
+                                                                                               dartAnnotation,
+                                                                                               dartConstBuiltin,
+                                                                                               dartFinalBuiltin,
+                                                                                               dartFunctionType,
+                                                                                               dartIdentifier,
+                                                                                               dartInferredType,
+                                                                                               dartMarkerAnnotation,
+                                                                                               dartTypeArguments,
+                                                                                               dartTypeIdentifier,
+                                                                                               dartVoidType
+                                                                                             }
+                                                                       tmp[dartForStatement] = {
+                                                                                                 dartAnnotation,
+                                                                                                 dartConstBuiltin,
+                                                                                                 dartFinalBuiltin,
+                                                                                                 dartFunctionType,
+                                                                                                 dartIdentifier,
+                                                                                                 dartInferredType,
+                                                                                                 dartMarkerAnnotation,
+                                                                                                 dartTypeArguments,
+                                                                                                 dartTypeIdentifier,
+                                                                                                 dartVoidType
+                                                                                               }
+                                                                       tmp[dartFormalParameter] = {
+                                                                                                    dartAnnotation,
+                                                                                                    dartConstBuiltin,
+                                                                                                    dartConstructorParam,
+                                                                                                    dartFinalBuiltin,
+                                                                                                    dartFormalParameterList,
+                                                                                                    dartFunctionType,
+                                                                                                    dartIdentifier,
+                                                                                                    dartInferredType,
+                                                                                                    dartMarkerAnnotation,
+                                                                                                    dartTypeArguments,
+                                                                                                    dartTypeIdentifier,
+                                                                                                    dartTypeParameters,
+                                                                                                    dartVoidType
+                                                                                                  }
+                                                                       tmp[dartFormalParameterList] = {dartFormalParameter, dartOptionalFormalParameters}
+                                                                       tmp[dartFunctionBody] = {
+                                                                                                 dartLiteral,
+                                                                                                 dartAdditiveExpression,
+                                                                                                 dartAssignmentExpression,
+                                                                                                 dartBitwiseAndExpression,
+                                                                                                 dartBitwiseOrExpression,
+                                                                                                 dartBitwiseXorExpression,
+                                                                                                 dartBlock,
+                                                                                                 dartCascadeSection,
+                                                                                                 dartConditionalExpression,
+                                                                                                 dartConstObjectExpression,
+                                                                                                 dartEqualityExpression,
+                                                                                                 dartFunctionExpression,
+                                                                                                 dartIdentifier,
+                                                                                                 dartIfNullExpression,
+                                                                                                 dartLogicalAndExpression,
+                                                                                                 dartLogicalOrExpression,
+                                                                                                 dartMultiplicativeExpression,
+                                                                                                 dartNewExpression,
+                                                                                                 dartPostfixExpression,
+                                                                                                 dartRelationalExpression,
+                                                                                                 dartSelector,
+                                                                                                 dartShiftExpression,
+                                                                                                 dartSuper,
+                                                                                                 dartThis,
+                                                                                                 dartThrowExpression,
+                                                                                                 dartTypeCastExpression,
+                                                                                                 dartTypeTestExpression,
+                                                                                                 dartUnaryExpression,
+                                                                                                 dartUnconditionalAssignableSelector
+                                                                                               }
+                                                                       tmp[dartFunctionExpressionBody] = {
+                                                                                                           dartLiteral,
+                                                                                                           dartAdditiveExpression,
+                                                                                                           dartAssignmentExpression,
+                                                                                                           dartBitwiseAndExpression,
+                                                                                                           dartBitwiseOrExpression,
+                                                                                                           dartBitwiseXorExpression,
+                                                                                                           dartBlock,
+                                                                                                           dartCascadeSection,
+                                                                                                           dartConditionalExpression,
+                                                                                                           dartConstObjectExpression,
+                                                                                                           dartEqualityExpression,
+                                                                                                           dartFunctionExpression,
+                                                                                                           dartIdentifier,
+                                                                                                           dartIfNullExpression,
+                                                                                                           dartLogicalAndExpression,
+                                                                                                           dartLogicalOrExpression,
+                                                                                                           dartMultiplicativeExpression,
+                                                                                                           dartNewExpression,
+                                                                                                           dartPostfixExpression,
+                                                                                                           dartRelationalExpression,
+                                                                                                           dartSelector,
+                                                                                                           dartShiftExpression,
+                                                                                                           dartSuper,
+                                                                                                           dartThis,
+                                                                                                           dartThrowExpression,
+                                                                                                           dartTypeCastExpression,
+                                                                                                           dartTypeTestExpression,
+                                                                                                           dartUnaryExpression,
+                                                                                                           dartUnconditionalAssignableSelector
+                                                                                                         }
+                                                                       tmp[dartFunctionSignature] = {
+                                                                                                      dartFormalParameterList,
+                                                                                                      dartFunctionType,
+                                                                                                      dartStringLiteral,
+                                                                                                      dartTypeArguments,
+                                                                                                      dartTypeIdentifier,
+                                                                                                      dartTypeParameters,
+                                                                                                      dartVoidType
+                                                                                                    }
+                                                                       tmp[dartFunctionType] = {dartParameterTypeList, dartTypeArguments, dartTypeIdentifier, dartTypeParameters, dartVoidType}
+                                                                       tmp[dartGetterSignature] = {dartFunctionType, dartStringLiteral, dartTypeArguments, dartTypeIdentifier, dartVoidType}
+                                                                       tmp[dartImportOrExport] = {dartLibraryExport, dartLibraryImport}
+                                                                       tmp[dartImportSpecification] = {dartCombinator, dartConfigurableUri, dartIdentifier, dartUri}
+                                                                       tmp[dartInitializedIdentifier] = {
+                                                                                                          dartLiteral,
+                                                                                                          dartAdditiveExpression,
+                                                                                                          dartAssignmentExpression,
+                                                                                                          dartBitwiseAndExpression,
+                                                                                                          dartBitwiseOrExpression,
+                                                                                                          dartBitwiseXorExpression,
+                                                                                                          dartCascadeSection,
+                                                                                                          dartConditionalExpression,
+                                                                                                          dartConstObjectExpression,
+                                                                                                          dartEqualityExpression,
+                                                                                                          dartFunctionExpression,
+                                                                                                          dartIdentifier,
+                                                                                                          dartIfNullExpression,
+                                                                                                          dartLogicalAndExpression,
+                                                                                                          dartLogicalOrExpression,
+                                                                                                          dartMultiplicativeExpression,
+                                                                                                          dartNewExpression,
+                                                                                                          dartPostfixExpression,
+                                                                                                          dartRelationalExpression,
+                                                                                                          dartSelector,
+                                                                                                          dartShiftExpression,
+                                                                                                          dartSuper,
+                                                                                                          dartThis,
+                                                                                                          dartThrowExpression,
+                                                                                                          dartTypeCastExpression,
+                                                                                                          dartTypeTestExpression,
+                                                                                                          dartUnaryExpression,
+                                                                                                          dartUnconditionalAssignableSelector
+                                                                                                        }
+                                                                       tmp[dartInitializedIdentifierList] = {dartInitializedIdentifier}
+                                                                       tmp[dartInitializedVariableDefinition] = {
+                                                                                                                  dartAnnotation,
+                                                                                                                  dartConstBuiltin,
+                                                                                                                  dartFinalBuiltin,
+                                                                                                                  dartFunctionType,
+                                                                                                                  dartInferredType,
+                                                                                                                  dartInitializedIdentifier,
+                                                                                                                  dartMarkerAnnotation,
+                                                                                                                  dartTypeArguments,
+                                                                                                                  dartTypeIdentifier,
+                                                                                                                  dartVoidType
+                                                                                                                }
+                                                                       tmp[dartInitializerListEntry] = {dartArguments, dartAssertion, dartFieldInitializer, dartQualified}
+                                                                       tmp[dartInitializers] = {dartInitializerListEntry}
+                                                                       tmp[dartInterfaces] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartLabel] = {dartIdentifier}
+                                                                       tmp[dartLabeledStatement] = {dartStatement, dartIdentifier}
+                                                                       tmp[dartLibraryExport] = {dartAnnotation, dartCombinator, dartConfigurableUri, dartMarkerAnnotation}
+                                                                       tmp[dartLibraryImport] = {dartAnnotation, dartImportSpecification, dartMarkerAnnotation}
+                                                                       tmp[dartLibraryName] = {dartAnnotation, dartDottedIdentifierList, dartMarkerAnnotation}
+                                                                       tmp[dartListLiteral] = {
+                                                                                                dartLiteral,
+                                                                                                dartAdditiveExpression,
+                                                                                                dartAssignmentExpression,
+                                                                                                dartBitwiseAndExpression,
+                                                                                                dartBitwiseOrExpression,
+                                                                                                dartBitwiseXorExpression,
+                                                                                                dartCascadeSection,
+                                                                                                dartConditionalExpression,
+                                                                                                dartConstBuiltin,
+                                                                                                dartConstObjectExpression,
+                                                                                                dartEqualityExpression,
+                                                                                                dartForElement,
+                                                                                                dartFunctionExpression,
+                                                                                                dartIdentifier,
+                                                                                                dartIfElement,
+                                                                                                dartIfNullExpression,
+                                                                                                dartLogicalAndExpression,
+                                                                                                dartLogicalOrExpression,
+                                                                                                dartMultiplicativeExpression,
+                                                                                                dartNewExpression,
+                                                                                                dartPair,
+                                                                                                dartPostfixExpression,
+                                                                                                dartRelationalExpression,
+                                                                                                dartSelector,
+                                                                                                dartShiftExpression,
+                                                                                                dartSpreadElement,
+                                                                                                dartSuper,
+                                                                                                dartThis,
+                                                                                                dartThrowExpression,
+                                                                                                dartTypeArguments,
+                                                                                                dartTypeCastExpression,
+                                                                                                dartTypeTestExpression,
+                                                                                                dartUnaryExpression,
+                                                                                                dartUnconditionalAssignableSelector
+                                                                                              }
+                                                                       tmp[dartLocalVariableDeclaration] = {dartInitializedVariableDefinition}
+                                                                       tmp[dartLogicalAndExpression] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartLogicalOrExpression] = {
+                                                                                                        dartLiteral,
+                                                                                                        dartAdditiveExpression,
+                                                                                                        dartAssignmentExpression,
+                                                                                                        dartBitwiseAndExpression,
+                                                                                                        dartBitwiseOrExpression,
+                                                                                                        dartBitwiseXorExpression,
+                                                                                                        dartCascadeSection,
+                                                                                                        dartConditionalExpression,
+                                                                                                        dartConstObjectExpression,
+                                                                                                        dartEqualityExpression,
+                                                                                                        dartFunctionExpression,
+                                                                                                        dartIdentifier,
+                                                                                                        dartIfNullExpression,
+                                                                                                        dartLogicalAndExpression,
+                                                                                                        dartLogicalOrExpression,
+                                                                                                        dartMultiplicativeExpression,
+                                                                                                        dartNewExpression,
+                                                                                                        dartPostfixExpression,
+                                                                                                        dartRelationalExpression,
+                                                                                                        dartSelector,
+                                                                                                        dartShiftExpression,
+                                                                                                        dartSuper,
+                                                                                                        dartThis,
+                                                                                                        dartThrowExpression,
+                                                                                                        dartTypeCastExpression,
+                                                                                                        dartTypeTestExpression,
+                                                                                                        dartUnaryExpression,
+                                                                                                        dartUnconditionalAssignableSelector
+                                                                                                      }
+                                                                       tmp[dartMethodSignature] = {
+                                                                                                    dartConstructorSignature,
+                                                                                                    dartFactoryConstructorSignature,
+                                                                                                    dartFunctionSignature,
+                                                                                                    dartGetterSignature,
+                                                                                                    dartInitializers,
+                                                                                                    dartOperatorSignature,
+                                                                                                    dartSetterSignature
+                                                                                                  }
+                                                                       tmp[dartMixinApplication] = {dartFunctionType, dartInterfaces, dartMixins, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartMixinApplicationClass] = {dartIdentifier, dartMixinApplication, dartTypeParameters}
+                                                                       tmp[dartMixinDeclaration] = {
+                                                                                                     dartClassBody,
+                                                                                                     dartFunctionType,
+                                                                                                     dartIdentifier,
+                                                                                                     dartInterfaces,
+                                                                                                     dartTypeArguments,
+                                                                                                     dartTypeIdentifier,
+                                                                                                     dartTypeParameters
+                                                                                                   }
+                                                                       tmp[dartMixins] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartModuleName] = {dartIdentifier, dartModuleName}
+                                                                       tmp[dartMultiplicativeExpression] = {
+                                                                                                             dartLiteral,
+                                                                                                             dartAdditiveExpression,
+                                                                                                             dartAssignmentExpression,
+                                                                                                             dartBitwiseAndExpression,
+                                                                                                             dartBitwiseOrExpression,
+                                                                                                             dartBitwiseXorExpression,
+                                                                                                             dartCascadeSection,
+                                                                                                             dartConditionalExpression,
+                                                                                                             dartConstObjectExpression,
+                                                                                                             dartEqualityExpression,
+                                                                                                             dartFunctionExpression,
+                                                                                                             dartIdentifier,
+                                                                                                             dartIfNullExpression,
+                                                                                                             dartLogicalAndExpression,
+                                                                                                             dartLogicalOrExpression,
+                                                                                                             dartMultiplicativeExpression,
+                                                                                                             dartMultiplicativeOperator,
+                                                                                                             dartNewExpression,
+                                                                                                             dartPostfixExpression,
+                                                                                                             dartRelationalExpression,
+                                                                                                             dartSelector,
+                                                                                                             dartShiftExpression,
+                                                                                                             dartSuper,
+                                                                                                             dartThis,
+                                                                                                             dartThrowExpression,
+                                                                                                             dartTypeCastExpression,
+                                                                                                             dartTypeTestExpression,
+                                                                                                             dartUnaryExpression,
+                                                                                                             dartUnconditionalAssignableSelector
+                                                                                                           }
+                                                                       tmp[dartNamedArgument] = {
+                                                                                                  dartLiteral,
+                                                                                                  dartAdditiveExpression,
+                                                                                                  dartAssignmentExpression,
+                                                                                                  dartBitwiseAndExpression,
+                                                                                                  dartBitwiseOrExpression,
+                                                                                                  dartBitwiseXorExpression,
+                                                                                                  dartCascadeSection,
+                                                                                                  dartConditionalExpression,
+                                                                                                  dartConstObjectExpression,
+                                                                                                  dartEqualityExpression,
+                                                                                                  dartFunctionExpression,
+                                                                                                  dartIdentifier,
+                                                                                                  dartIfNullExpression,
+                                                                                                  dartLabel,
+                                                                                                  dartLogicalAndExpression,
+                                                                                                  dartLogicalOrExpression,
+                                                                                                  dartMultiplicativeExpression,
+                                                                                                  dartNewExpression,
+                                                                                                  dartPostfixExpression,
+                                                                                                  dartRelationalExpression,
+                                                                                                  dartSelector,
+                                                                                                  dartShiftExpression,
+                                                                                                  dartSuper,
+                                                                                                  dartThis,
+                                                                                                  dartThrowExpression,
+                                                                                                  dartTypeCastExpression,
+                                                                                                  dartTypeTestExpression,
+                                                                                                  dartUnaryExpression,
+                                                                                                  dartUnconditionalAssignableSelector
+                                                                                                }
+                                                                       tmp[dartNamedParameterTypes] = {dartTypedIdentifier}
+                                                                       tmp[dartNewExpression] = {dartArguments, dartFunctionType, dartIdentifier, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartNormalParameterType] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier, dartTypedIdentifier, dartVoidType}
+                                                                       tmp[dartOperatorSignature] = {
+                                                                                                      dartBinaryOperator,
+                                                                                                      dartFormalParameterList,
+                                                                                                      dartFunctionType,
+                                                                                                      dartStringLiteral,
+                                                                                                      dartTypeArguments,
+                                                                                                      dartTypeIdentifier,
+                                                                                                      dartVoidType
+                                                                                                    }
+                                                                       tmp[dartOptionalFormalParameters] = {
+                                                                                                             dartLiteral,
+                                                                                                             dartAdditiveExpression,
+                                                                                                             dartAssignmentExpression,
+                                                                                                             dartBitwiseAndExpression,
+                                                                                                             dartBitwiseOrExpression,
+                                                                                                             dartBitwiseXorExpression,
+                                                                                                             dartCascadeSection,
+                                                                                                             dartConditionalExpression,
+                                                                                                             dartConstObjectExpression,
+                                                                                                             dartEqualityExpression,
+                                                                                                             dartFormalParameter,
+                                                                                                             dartFunctionExpression,
+                                                                                                             dartIdentifier,
+                                                                                                             dartIfNullExpression,
+                                                                                                             dartLogicalAndExpression,
+                                                                                                             dartLogicalOrExpression,
+                                                                                                             dartMultiplicativeExpression,
+                                                                                                             dartNewExpression,
+                                                                                                             dartPostfixExpression,
+                                                                                                             dartRelationalExpression,
+                                                                                                             dartSelector,
+                                                                                                             dartShiftExpression,
+                                                                                                             dartSuper,
+                                                                                                             dartThis,
+                                                                                                             dartThrowExpression,
+                                                                                                             dartTypeCastExpression,
+                                                                                                             dartTypeTestExpression,
+                                                                                                             dartUnaryExpression,
+                                                                                                             dartUnconditionalAssignableSelector
+                                                                                                           }
+                                                                       tmp[dartOptionalParameterTypes] = {dartNamedParameterTypes, dartOptionalPositionalParameterTypes}
+                                                                       tmp[dartOptionalPositionalParameterTypes] = {dartNormalParameterType}
+                                                                       tmp[dartParameterTypeList] = {dartNormalParameterType, dartOptionalParameterTypes}
+                                                                       tmp[dartParenthesizedExpression] = {
+                                                                                                            dartLiteral,
+                                                                                                            dartAdditiveExpression,
+                                                                                                            dartAssignmentExpression,
+                                                                                                            dartBitwiseAndExpression,
+                                                                                                            dartBitwiseOrExpression,
+                                                                                                            dartBitwiseXorExpression,
+                                                                                                            dartCascadeSection,
+                                                                                                            dartConditionalExpression,
+                                                                                                            dartConstObjectExpression,
+                                                                                                            dartEqualityExpression,
+                                                                                                            dartFunctionExpression,
+                                                                                                            dartIdentifier,
+                                                                                                            dartIfNullExpression,
+                                                                                                            dartLogicalAndExpression,
+                                                                                                            dartLogicalOrExpression,
+                                                                                                            dartMultiplicativeExpression,
+                                                                                                            dartNewExpression,
+                                                                                                            dartPostfixExpression,
+                                                                                                            dartRelationalExpression,
+                                                                                                            dartSelector,
+                                                                                                            dartShiftExpression,
+                                                                                                            dartSuper,
+                                                                                                            dartThis,
+                                                                                                            dartThrowExpression,
+                                                                                                            dartTypeCastExpression,
+                                                                                                            dartTypeTestExpression,
+                                                                                                            dartUnaryExpression,
+                                                                                                            dartUnconditionalAssignableSelector
+                                                                                                          }
+                                                                       tmp[dartPartDirective] = {dartAnnotation, dartMarkerAnnotation, dartUri}
+                                                                       tmp[dartPartOfDirective] = {dartAnnotation, dartDottedIdentifierList, dartMarkerAnnotation, dartUri}
+                                                                       tmp[dartPostfixExpression] = {dartAssignableExpression, dartConstructorInvocation, dartPostfixOperator, dartSelector}
+                                                                       tmp[dartPostfixOperator] = {dartIncrementOperator}
+                                                                       tmp[dartPrefixOperator] = {dartMinusOperator, dartNegationOperator, dartTildeOperator}
+                                                                       tmp[dartProgram] = {
+                                                                                            dartStatement,
+                                                                                            dartAnnotation,
+                                                                                            dartClassDefinition,
+                                                                                            dartConstBuiltin,
+                                                                                            dartEnumDeclaration,
+                                                                                            dartExtensionDeclaration,
+                                                                                            dartFinalBuiltin,
+                                                                                            dartFunctionBody,
+                                                                                            dartFunctionSignature,
+                                                                                            dartFunctionType,
+                                                                                            dartGetterSignature,
+                                                                                            dartImportOrExport,
+                                                                                            dartInferredType,
+                                                                                            dartInitializedIdentifierList,
+                                                                                            dartLibraryName,
+                                                                                            dartMarkerAnnotation,
+                                                                                            dartMixinDeclaration,
+                                                                                            dartPartDirective,
+                                                                                            dartPartOfDirective,
+                                                                                            dartScriptTag,
+                                                                                            dartSetterSignature,
+                                                                                            dartStaticFinalDeclarationList,
+                                                                                            dartTypeAlias,
+                                                                                            dartTypeArguments,
+                                                                                            dartTypeIdentifier,
+                                                                                            dartVoidType
+                                                                                          }
+                                                                       tmp[dartQualified] = {dartIdentifier}
+                                                                       tmp[dartRedirectingFactoryConstructorSignature] = {dartConstBuiltin, dartFormalParameterList, dartFunctionType, dartIdentifier, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartRedirection] = {dartArguments, dartIdentifier, dartThis}
+                                                                       tmp[dartRelationalExpression] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartRelationalOperator,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartReturnStatement] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartSelector] = {dartArgumentPart, dartConditionalAssignableSelector, dartUnconditionalAssignableSelector}
+                                                                       tmp[dartSetOrMapLiteral] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstBuiltin,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartForElement,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfElement,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPair,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSpreadElement,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeArguments,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartSetterSignature] = {
+                                                                                                    dartFormalParameterList,
+                                                                                                    dartFunctionType,
+                                                                                                    dartStringLiteral,
+                                                                                                    dartTypeArguments,
+                                                                                                    dartTypeIdentifier,
+                                                                                                    dartTypeParameters,
+                                                                                                    dartVoidType
+                                                                                                  }
+                                                                       tmp[dartShiftExpression] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartShiftOperator,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartSpreadElement] = {
+                                                                                                  dartLiteral,
+                                                                                                  dartAdditiveExpression,
+                                                                                                  dartAssignmentExpression,
+                                                                                                  dartBitwiseAndExpression,
+                                                                                                  dartBitwiseOrExpression,
+                                                                                                  dartBitwiseXorExpression,
+                                                                                                  dartCascadeSection,
+                                                                                                  dartConditionalExpression,
+                                                                                                  dartConstObjectExpression,
+                                                                                                  dartEqualityExpression,
+                                                                                                  dartFunctionExpression,
+                                                                                                  dartIdentifier,
+                                                                                                  dartIfNullExpression,
+                                                                                                  dartLogicalAndExpression,
+                                                                                                  dartLogicalOrExpression,
+                                                                                                  dartMultiplicativeExpression,
+                                                                                                  dartNewExpression,
+                                                                                                  dartPostfixExpression,
+                                                                                                  dartRelationalExpression,
+                                                                                                  dartSelector,
+                                                                                                  dartShiftExpression,
+                                                                                                  dartSuper,
+                                                                                                  dartThis,
+                                                                                                  dartThrowExpression,
+                                                                                                  dartTypeCastExpression,
+                                                                                                  dartTypeTestExpression,
+                                                                                                  dartUnaryExpression,
+                                                                                                  dartUnconditionalAssignableSelector
+                                                                                                }
+                                                                       tmp[dartStaticFinalDeclaration] = {
+                                                                                                           dartLiteral,
+                                                                                                           dartAdditiveExpression,
+                                                                                                           dartAssignmentExpression,
+                                                                                                           dartBitwiseAndExpression,
+                                                                                                           dartBitwiseOrExpression,
+                                                                                                           dartBitwiseXorExpression,
+                                                                                                           dartCascadeSection,
+                                                                                                           dartConditionalExpression,
+                                                                                                           dartConstObjectExpression,
+                                                                                                           dartEqualityExpression,
+                                                                                                           dartFunctionExpression,
+                                                                                                           dartIdentifier,
+                                                                                                           dartIfNullExpression,
+                                                                                                           dartLogicalAndExpression,
+                                                                                                           dartLogicalOrExpression,
+                                                                                                           dartMultiplicativeExpression,
+                                                                                                           dartNewExpression,
+                                                                                                           dartPostfixExpression,
+                                                                                                           dartRelationalExpression,
+                                                                                                           dartSelector,
+                                                                                                           dartShiftExpression,
+                                                                                                           dartSuper,
+                                                                                                           dartThis,
+                                                                                                           dartThrowExpression,
+                                                                                                           dartTypeCastExpression,
+                                                                                                           dartTypeTestExpression,
+                                                                                                           dartUnaryExpression,
+                                                                                                           dartUnconditionalAssignableSelector
+                                                                                                         }
+                                                                       tmp[dartStaticFinalDeclarationList] = {dartStaticFinalDeclaration}
+                                                                       tmp[dartStringLiteral] = {dartEscapeSequence, dartTemplateSubstitution}
+                                                                       tmp[dartSuperclass] = {dartFunctionType, dartMixins, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartSwitchBlock] = {dartStatement, dartSwitchLabel}
+                                                                       tmp[dartSwitchLabel] = {
+                                                                                                dartLiteral,
+                                                                                                dartAdditiveExpression,
+                                                                                                dartAssignmentExpression,
+                                                                                                dartBitwiseAndExpression,
+                                                                                                dartBitwiseOrExpression,
+                                                                                                dartBitwiseXorExpression,
+                                                                                                dartCascadeSection,
+                                                                                                dartCaseBuiltin,
+                                                                                                dartConditionalExpression,
+                                                                                                dartConstObjectExpression,
+                                                                                                dartEqualityExpression,
+                                                                                                dartFunctionExpression,
+                                                                                                dartIdentifier,
+                                                                                                dartIfNullExpression,
+                                                                                                dartLogicalAndExpression,
+                                                                                                dartLogicalOrExpression,
+                                                                                                dartMultiplicativeExpression,
+                                                                                                dartNewExpression,
+                                                                                                dartPostfixExpression,
+                                                                                                dartRelationalExpression,
+                                                                                                dartSelector,
+                                                                                                dartShiftExpression,
+                                                                                                dartSuper,
+                                                                                                dartThis,
+                                                                                                dartThrowExpression,
+                                                                                                dartTypeCastExpression,
+                                                                                                dartTypeTestExpression,
+                                                                                                dartUnaryExpression,
+                                                                                                dartUnconditionalAssignableSelector
+                                                                                              }
+                                                                       tmp[dartSymbolLiteral] = {dartIdentifier}
+                                                                       tmp[dartTemplateSubstitution] = {
+                                                                                                         dartLiteral,
+                                                                                                         dartAdditiveExpression,
+                                                                                                         dartAssignmentExpression,
+                                                                                                         dartBitwiseAndExpression,
+                                                                                                         dartBitwiseOrExpression,
+                                                                                                         dartBitwiseXorExpression,
+                                                                                                         dartCascadeSection,
+                                                                                                         dartConditionalExpression,
+                                                                                                         dartConstObjectExpression,
+                                                                                                         dartEqualityExpression,
+                                                                                                         dartFunctionExpression,
+                                                                                                         dartIdentifier,
+                                                                                                         dartIdentifierDollarEscaped,
+                                                                                                         dartIfNullExpression,
+                                                                                                         dartLogicalAndExpression,
+                                                                                                         dartLogicalOrExpression,
+                                                                                                         dartMultiplicativeExpression,
+                                                                                                         dartNewExpression,
+                                                                                                         dartPostfixExpression,
+                                                                                                         dartRelationalExpression,
+                                                                                                         dartSelector,
+                                                                                                         dartShiftExpression,
+                                                                                                         dartSuper,
+                                                                                                         dartThis,
+                                                                                                         dartThrowExpression,
+                                                                                                         dartTypeCastExpression,
+                                                                                                         dartTypeTestExpression,
+                                                                                                         dartUnaryExpression,
+                                                                                                         dartUnconditionalAssignableSelector
+                                                                                                       }
+                                                                       tmp[dartThrowExpression] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartThrowExpressionWithoutCascade] = {
+                                                                                                                  dartLiteral,
+                                                                                                                  dartAdditiveExpression,
+                                                                                                                  dartAssignmentExpression,
+                                                                                                                  dartAssignmentExpressionWithoutCascade,
+                                                                                                                  dartBitwiseAndExpression,
+                                                                                                                  dartBitwiseOrExpression,
+                                                                                                                  dartBitwiseXorExpression,
+                                                                                                                  dartCascadeSection,
+                                                                                                                  dartConditionalExpression,
+                                                                                                                  dartConstObjectExpression,
+                                                                                                                  dartEqualityExpression,
+                                                                                                                  dartFunctionExpression,
+                                                                                                                  dartIdentifier,
+                                                                                                                  dartIfNullExpression,
+                                                                                                                  dartLogicalAndExpression,
+                                                                                                                  dartLogicalOrExpression,
+                                                                                                                  dartMultiplicativeExpression,
+                                                                                                                  dartNewExpression,
+                                                                                                                  dartPostfixExpression,
+                                                                                                                  dartRelationalExpression,
+                                                                                                                  dartSelector,
+                                                                                                                  dartShiftExpression,
+                                                                                                                  dartSuper,
+                                                                                                                  dartThis,
+                                                                                                                  dartThrowExpression,
+                                                                                                                  dartThrowExpressionWithoutCascade,
+                                                                                                                  dartTypeCastExpression,
+                                                                                                                  dartTypeTestExpression,
+                                                                                                                  dartUnaryExpression,
+                                                                                                                  dartUnconditionalAssignableSelector
+                                                                                                                }
+                                                                       tmp[dartThrows] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier, dartVoidType}
+                                                                       tmp[dartTryStatement] = {dartBlock, dartCatchClause, dartFinallyClause, dartFunctionType, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartTypeAlias] = {dartFormalParameterList, dartFunctionType, dartTypeArguments, dartTypeIdentifier, dartTypeParameters, dartVoidType}
+                                                                       tmp[dartTypeArguments] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier, dartVoidType}
+                                                                       tmp[dartTypeBound] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartTypeCast] = {dartAsOperator, dartFunctionType, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartTypeCastExpression] = {
+                                                                                                       dartLiteral,
+                                                                                                       dartAdditiveExpression,
+                                                                                                       dartAssignmentExpression,
+                                                                                                       dartBitwiseAndExpression,
+                                                                                                       dartBitwiseOrExpression,
+                                                                                                       dartBitwiseXorExpression,
+                                                                                                       dartCascadeSection,
+                                                                                                       dartConditionalExpression,
+                                                                                                       dartConstObjectExpression,
+                                                                                                       dartEqualityExpression,
+                                                                                                       dartFunctionExpression,
+                                                                                                       dartIdentifier,
+                                                                                                       dartIfNullExpression,
+                                                                                                       dartLogicalAndExpression,
+                                                                                                       dartLogicalOrExpression,
+                                                                                                       dartMultiplicativeExpression,
+                                                                                                       dartNewExpression,
+                                                                                                       dartPostfixExpression,
+                                                                                                       dartRelationalExpression,
+                                                                                                       dartSelector,
+                                                                                                       dartShiftExpression,
+                                                                                                       dartSuper,
+                                                                                                       dartThis,
+                                                                                                       dartThrowExpression,
+                                                                                                       dartTypeCast,
+                                                                                                       dartTypeCastExpression,
+                                                                                                       dartTypeTestExpression,
+                                                                                                       dartUnaryExpression,
+                                                                                                       dartUnconditionalAssignableSelector
+                                                                                                     }
+                                                                       tmp[dartTypeParameter] = {dartAnnotation, dartMarkerAnnotation, dartTypeBound, dartTypeIdentifier}
+                                                                       tmp[dartTypeParameters] = {dartTypeParameter}
+                                                                       tmp[dartTypeTest] = {dartFunctionType, dartIsOperator, dartTypeArguments, dartTypeIdentifier}
+                                                                       tmp[dartTypeTestExpression] = {
+                                                                                                       dartLiteral,
+                                                                                                       dartAdditiveExpression,
+                                                                                                       dartAssignmentExpression,
+                                                                                                       dartBitwiseAndExpression,
+                                                                                                       dartBitwiseOrExpression,
+                                                                                                       dartBitwiseXorExpression,
+                                                                                                       dartCascadeSection,
+                                                                                                       dartConditionalExpression,
+                                                                                                       dartConstObjectExpression,
+                                                                                                       dartEqualityExpression,
+                                                                                                       dartFunctionExpression,
+                                                                                                       dartIdentifier,
+                                                                                                       dartIfNullExpression,
+                                                                                                       dartLogicalAndExpression,
+                                                                                                       dartLogicalOrExpression,
+                                                                                                       dartMultiplicativeExpression,
+                                                                                                       dartNewExpression,
+                                                                                                       dartPostfixExpression,
+                                                                                                       dartRelationalExpression,
+                                                                                                       dartSelector,
+                                                                                                       dartShiftExpression,
+                                                                                                       dartSuper,
+                                                                                                       dartThis,
+                                                                                                       dartThrowExpression,
+                                                                                                       dartTypeCastExpression,
+                                                                                                       dartTypeTest,
+                                                                                                       dartTypeTestExpression,
+                                                                                                       dartUnaryExpression,
+                                                                                                       dartUnconditionalAssignableSelector
+                                                                                                     }
+                                                                       tmp[dartTypedIdentifier] = {
+                                                                                                    dartAnnotation,
+                                                                                                    dartFunctionType,
+                                                                                                    dartIdentifier,
+                                                                                                    dartMarkerAnnotation,
+                                                                                                    dartTypeArguments,
+                                                                                                    dartTypeIdentifier,
+                                                                                                    dartVoidType
+                                                                                                  }
+                                                                       tmp[dartUnaryExpression] = {
+                                                                                                    dartLiteral,
+                                                                                                    dartAdditiveExpression,
+                                                                                                    dartAssignableExpression,
+                                                                                                    dartAssignmentExpression,
+                                                                                                    dartAwaitExpression,
+                                                                                                    dartBitwiseAndExpression,
+                                                                                                    dartBitwiseOrExpression,
+                                                                                                    dartBitwiseXorExpression,
+                                                                                                    dartCascadeSection,
+                                                                                                    dartConditionalExpression,
+                                                                                                    dartConstObjectExpression,
+                                                                                                    dartEqualityExpression,
+                                                                                                    dartFunctionExpression,
+                                                                                                    dartIdentifier,
+                                                                                                    dartIfNullExpression,
+                                                                                                    dartIncrementOperator,
+                                                                                                    dartLogicalAndExpression,
+                                                                                                    dartLogicalOrExpression,
+                                                                                                    dartMinusOperator,
+                                                                                                    dartMultiplicativeExpression,
+                                                                                                    dartNewExpression,
+                                                                                                    dartPostfixExpression,
+                                                                                                    dartPrefixOperator,
+                                                                                                    dartRelationalExpression,
+                                                                                                    dartSelector,
+                                                                                                    dartShiftExpression,
+                                                                                                    dartSuper,
+                                                                                                    dartThis,
+                                                                                                    dartThrowExpression,
+                                                                                                    dartTildeOperator,
+                                                                                                    dartTypeCastExpression,
+                                                                                                    dartTypeTestExpression,
+                                                                                                    dartUnaryExpression,
+                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                  }
+                                                                       tmp[dartUnconditionalAssignableSelector] = {
+                                                                                                                    dartLiteral,
+                                                                                                                    dartAdditiveExpression,
+                                                                                                                    dartAssignmentExpression,
+                                                                                                                    dartBitwiseAndExpression,
+                                                                                                                    dartBitwiseOrExpression,
+                                                                                                                    dartBitwiseXorExpression,
+                                                                                                                    dartCascadeSection,
+                                                                                                                    dartConditionalExpression,
+                                                                                                                    dartConstObjectExpression,
+                                                                                                                    dartEqualityExpression,
+                                                                                                                    dartFunctionExpression,
+                                                                                                                    dartIdentifier,
+                                                                                                                    dartIfNullExpression,
+                                                                                                                    dartLogicalAndExpression,
+                                                                                                                    dartLogicalOrExpression,
+                                                                                                                    dartMultiplicativeExpression,
+                                                                                                                    dartNewExpression,
+                                                                                                                    dartPostfixExpression,
+                                                                                                                    dartRelationalExpression,
+                                                                                                                    dartSelector,
+                                                                                                                    dartShiftExpression,
+                                                                                                                    dartSuper,
+                                                                                                                    dartThis,
+                                                                                                                    dartThrowExpression,
+                                                                                                                    dartTypeCastExpression,
+                                                                                                                    dartTypeTestExpression,
+                                                                                                                    dartUnaryExpression,
+                                                                                                                    dartUnconditionalAssignableSelector
+                                                                                                                  }
+                                                                       tmp[dartUri] = {dartStringLiteral}
+                                                                       tmp[dartUriTest] = {dartDottedIdentifierList, dartStringLiteral}
+                                                                       tmp[dartYieldEachStatement] = {
+                                                                                                       dartLiteral,
+                                                                                                       dartAdditiveExpression,
+                                                                                                       dartAssignmentExpression,
+                                                                                                       dartBitwiseAndExpression,
+                                                                                                       dartBitwiseOrExpression,
+                                                                                                       dartBitwiseXorExpression,
+                                                                                                       dartCascadeSection,
+                                                                                                       dartConditionalExpression,
+                                                                                                       dartConstObjectExpression,
+                                                                                                       dartEqualityExpression,
+                                                                                                       dartFunctionExpression,
+                                                                                                       dartIdentifier,
+                                                                                                       dartIfNullExpression,
+                                                                                                       dartLogicalAndExpression,
+                                                                                                       dartLogicalOrExpression,
+                                                                                                       dartMultiplicativeExpression,
+                                                                                                       dartNewExpression,
+                                                                                                       dartPostfixExpression,
+                                                                                                       dartRelationalExpression,
+                                                                                                       dartSelector,
+                                                                                                       dartShiftExpression,
+                                                                                                       dartSuper,
+                                                                                                       dartThis,
+                                                                                                       dartThrowExpression,
+                                                                                                       dartTypeCastExpression,
+                                                                                                       dartTypeTestExpression,
+                                                                                                       dartUnaryExpression,
+                                                                                                       dartUnconditionalAssignableSelector
+                                                                                                     }
+                                                                       tmp[dartYieldStatement] = {
+                                                                                                   dartLiteral,
+                                                                                                   dartAdditiveExpression,
+                                                                                                   dartAssignmentExpression,
+                                                                                                   dartBitwiseAndExpression,
+                                                                                                   dartBitwiseOrExpression,
+                                                                                                   dartBitwiseXorExpression,
+                                                                                                   dartCascadeSection,
+                                                                                                   dartConditionalExpression,
+                                                                                                   dartConstObjectExpression,
+                                                                                                   dartEqualityExpression,
+                                                                                                   dartFunctionExpression,
+                                                                                                   dartIdentifier,
+                                                                                                   dartIfNullExpression,
+                                                                                                   dartLogicalAndExpression,
+                                                                                                   dartLogicalOrExpression,
+                                                                                                   dartMultiplicativeExpression,
+                                                                                                   dartNewExpression,
+                                                                                                   dartPostfixExpression,
+                                                                                                   dartRelationalExpression,
+                                                                                                   dartSelector,
+                                                                                                   dartShiftExpression,
+                                                                                                   dartSuper,
+                                                                                                   dartThis,
+                                                                                                   dartThrowExpression,
+                                                                                                   dartTypeCastExpression,
+                                                                                                   dartTypeTestExpression,
+                                                                                                   dartUnaryExpression,
+                                                                                                   dartUnconditionalAssignableSelector
+                                                                                                 }
+                                                                       tmp
+const dartTokenKinds*: set[DartNodeKind] = {
+                                             dartNewlineTok,
+                                             dartQuoteTok,
+                                             dartTripleQuoteTok,
+                                             dartHashTok,
+                                             dartHashExclamationTok,
+                                             dartDollarTok,
+                                             dartPercentTok,
+                                             dartAmpersandTok,
+                                             dartDoubleAmpersandTok,
+                                             dartApostropheTok,
+                                             dartTripleApostropheTok,
+                                             dartLParTok,
+                                             dartRParTok,
+                                             dartAsteriskTok,
+                                             dartCommaTok,
+                                             dartDotTok,
+                                             dartDoubleDotTok,
+                                             dartTripleDotTok,
+                                             dartSlashTok,
+                                             dartColonTok,
+                                             dartSemicolonTok,
+                                             dartLessThanTok,
+                                             dartDoubleLessThanTok,
+                                             dartLessThanEqualTok,
+                                             dartEqualTok,
+                                             dartDoubleEqualTok,
+                                             dartEqualGreaterThanTok,
+                                             dartGreaterThanTok,
+                                             dartGreaterThanEqualTok,
+                                             dartDoubleGreaterThanTok,
+                                             dartTripleGreaterThanTok,
+                                             dartQuestionTok,
+                                             dartQuestionDotTok,
+                                             dartDoubleQuestionTok,
+                                             dartAtTok,
+                                             dartFunctionTok,
+                                             dartLBrackTok,
+                                             dartLBrackRBrackTok,
+                                             dartLBrackRBrackEqualTok,
+                                             dartRBrackTok,
+                                             dartAccentTok,
+                                             dartAbstractTok,
+                                             dartAsTok,
+                                             dartAsyncTok,
+                                             dartAsyncAsteriskTok,
+                                             dartAwaitTok,
+                                             dartBoolTok,
+                                             dartCatchTok,
+                                             dartClassTok,
+                                             dartContinueTok,
+                                             dartCovariantTok,
+                                             dartDefaultTok,
+                                             dartDeferredTok,
+                                             dartDoTok,
+                                             dartDynamicTok,
+                                             dartElseTok,
+                                             dartEnumTok,
+                                             dartExportTok,
+                                             dartExtendsTok,
+                                             dartExtensionTok,
+                                             dartExternalTok,
+                                             dartFactoryTok,
+                                             dartFalseTok,
+                                             dartFinallyTok,
+                                             dartForTok,
+                                             dartGetTok,
+                                             dartHideTok,
+                                             dartIfTok,
+                                             dartImplementsTok,
+                                             dartImportTok,
+                                             dartInTok,
+                                             dartInterfaceTok,
+                                             dartIsTok,
+                                             dartLateTok,
+                                             dartLibraryTok,
+                                             dartMixinTok,
+                                             dartNativeTok,
+                                             dartNewTok,
+                                             dartNullTok,
+                                             dartOfTok,
+                                             dartOnTok,
+                                             dartOperatorTok,
+                                             dartPartTok,
+                                             dartRQuoteTok,
+                                             dartRTripleQuoteTok,
+                                             dartRApostropheTok,
+                                             dartRTripleApostropheTok,
+                                             dartRequiredTok,
+                                             dartReturnTok,
+                                             dartSetTok,
+                                             dartShowTok,
+                                             dartStaticTok,
+                                             dartSuperTok,
+                                             dartSwitchTok,
+                                             dartSyncAsteriskTok,
+                                             dartThisTok,
+                                             dartThrowTok,
+                                             dartThrowsTok,
+                                             dartTransitiveTok,
+                                             dartTrueTok,
+                                             dartTryTok,
+                                             dartTypedefTok,
+                                             dartVarTok,
+                                             dartWhileTok,
+                                             dartWithTok,
+                                             dartYieldTok,
+                                             dartLCurlyTok,
+                                             dartPipeTok,
+                                             dartDoublePipeTok,
+                                             dartRCurlyTok,
+                                             dartTildeTok,
+                                             dartTildeSlashTok
+                                           }
 
 proc tsNodeType*(node: TsDartNode): string
 

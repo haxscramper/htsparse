@@ -97,6 +97,101 @@ type
     cssSyntaxError             ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: CssNodeKind): string =
+  case kind:
+    of cssAdjacentSiblingSelector: "adjacent_sibling_selector"
+    of cssArguments:               "arguments"
+    of cssAtRule:                  "at_rule"
+    of cssAttributeSelector:       "attribute_selector"
+    of cssBinaryExpression:        "binary_expression"
+    of cssBinaryQuery:             "binary_query"
+    of cssBlock:                   "block"
+    of cssCallExpression:          "call_expression"
+    of cssCharsetStatement:        "charset_statement"
+    of cssChildSelector:           "child_selector"
+    of cssClassSelector:           "class_selector"
+    of cssColorValue:              "color_value"
+    of cssDeclaration:             "declaration"
+    of cssDescendantSelector:      "descendant_selector"
+    of cssFeatureQuery:            "feature_query"
+    of cssFloatValue:              "float_value"
+    of cssIdSelector:              "id_selector"
+    of cssImportStatement:         "import_statement"
+    of cssIntegerValue:            "integer_value"
+    of cssKeyframeBlock:           "keyframe_block"
+    of cssKeyframeBlockList:       "keyframe_block_list"
+    of cssKeyframesStatement:      "keyframes_statement"
+    of cssMediaStatement:          "media_statement"
+    of cssNamespaceStatement:      "namespace_statement"
+    of cssParenthesizedQuery:      "parenthesized_query"
+    of cssParenthesizedValue:      "parenthesized_value"
+    of cssPseudoClassSelector:     "pseudo_class_selector"
+    of cssPseudoElementSelector:   "pseudo_element_selector"
+    of cssRuleSet:                 "rule_set"
+    of cssSelectorQuery:           "selector_query"
+    of cssSelectors:               "selectors"
+    of cssSiblingSelector:         "sibling_selector"
+    of cssStylesheet:              "stylesheet"
+    of cssSupportsStatement:       "supports_statement"
+    of cssUnaryQuery:              "unary_query"
+    of cssUniversalSelector:       "universal_selector"
+    of cssHashTok:                 "#"
+    of cssDollarEqualTok:          "$="
+    of cssLParTok:                 "("
+    of cssRParTok:                 ")"
+    of cssAsteriskTok:             "*"
+    of cssAsteriskEqualTok:        "*="
+    of cssPlusTok:                 "+"
+    of cssCommaTok:                ","
+    of cssMinusTok:                "-"
+    of cssDotTok:                  "."
+    of cssSlashTok:                "/"
+    of cssColonTok:                ":"
+    of cssDoubleColonTok:          "::"
+    of cssSemicolonTok:            ";"
+    of cssEqualTok:                "="
+    of cssGreaterThanTok:          ">"
+    of cssAtcharsetTok:            "@charset"
+    of cssAtimportTok:             "@import"
+    of cssAtkeyframesTok:          "@keyframes"
+    of cssAtmediaTok:              "@media"
+    of cssAtnamespaceTok:          "@namespace"
+    of cssAtsuportsTok:            "@supports"
+    of cssLBrackTok:               "["
+    of cssRBrackTok:               "]"
+    of cssAccentEqualTok:          "^="
+    of cssAndTok:                  "and"
+    of cssAtKeyword:               "at_keyword"
+    of cssAttributeName:           "attribute_name"
+    of cssClassName:               "class_name"
+    of cssComment:                 "comment"
+    of cssFeatureName:             "feature_name"
+    of cssFrom:                    "from"
+    of cssFunctionName:            "function_name"
+    of cssIdName:                  "id_name"
+    of cssImportant:               "important"
+    of cssKeyframesName:           "keyframes_name"
+    of cssKeywordQuery:            "keyword_query"
+    of cssNamespaceName:           "namespace_name"
+    of cssNestingSelector:         "nesting_selector"
+    of cssNotTok:                  "not"
+    of cssOnlyTok:                 "only"
+    of cssOrTok:                   "or"
+    of cssPlainValue:              "plain_value"
+    of cssPropertyName:            "property_name"
+    of cssSelectorTok:             "selector"
+    of cssStringValue:             "string_value"
+    of cssTagName:                 "tag_name"
+    of cssTo:                      "to"
+    of cssUnit:                    "unit"
+    of cssLCurlyTok:               "{"
+    of cssPipeEqualTok:            "|="
+    of cssRCurlyTok:               "}"
+    of cssTildeTok:                "~"
+    of cssTildeEqualTok:           "~="
+    of cssSyntaxError:             "ERROR"
+
+
 type
   CssExternalTok* = enum
     cssExtern_descendant_operator ## _descendant_operator
@@ -109,6 +204,376 @@ type
 type
   CssParser* = distinct PtsParser
 
+
+const cssAllowedSubnodes*: array[CssNodeKind, set[CssNodeKind]] = block:
+                                                                    var tmp: array[CssNodeKind, set[CssNodeKind]]
+                                                                    tmp[cssAdjacentSiblingSelector] = {
+                                                                                                        cssAdjacentSiblingSelector,
+                                                                                                        cssAttributeSelector,
+                                                                                                        cssChildSelector,
+                                                                                                        cssClassSelector,
+                                                                                                        cssDescendantSelector,
+                                                                                                        cssIdSelector,
+                                                                                                        cssNestingSelector,
+                                                                                                        cssPseudoClassSelector,
+                                                                                                        cssPseudoElementSelector,
+                                                                                                        cssSiblingSelector,
+                                                                                                        cssStringValue,
+                                                                                                        cssTagName,
+                                                                                                        cssUniversalSelector
+                                                                                                      }
+                                                                    tmp[cssArguments] = {
+                                                                                          cssAdjacentSiblingSelector,
+                                                                                          cssAttributeSelector,
+                                                                                          cssBinaryExpression,
+                                                                                          cssCallExpression,
+                                                                                          cssChildSelector,
+                                                                                          cssClassSelector,
+                                                                                          cssColorValue,
+                                                                                          cssDescendantSelector,
+                                                                                          cssFloatValue,
+                                                                                          cssIdSelector,
+                                                                                          cssIntegerValue,
+                                                                                          cssNestingSelector,
+                                                                                          cssParenthesizedValue,
+                                                                                          cssPlainValue,
+                                                                                          cssPseudoClassSelector,
+                                                                                          cssPseudoElementSelector,
+                                                                                          cssSiblingSelector,
+                                                                                          cssStringValue,
+                                                                                          cssTagName,
+                                                                                          cssUniversalSelector
+                                                                                        }
+                                                                    tmp[cssAtRule] = {
+                                                                                       cssAtKeyword,
+                                                                                       cssBinaryQuery,
+                                                                                       cssBlock,
+                                                                                       cssFeatureQuery,
+                                                                                       cssKeywordQuery,
+                                                                                       cssParenthesizedQuery,
+                                                                                       cssSelectorQuery,
+                                                                                       cssUnaryQuery
+                                                                                     }
+                                                                    tmp[cssAttributeSelector] = {
+                                                                                                  cssAdjacentSiblingSelector,
+                                                                                                  cssAttributeName,
+                                                                                                  cssAttributeSelector,
+                                                                                                  cssBinaryExpression,
+                                                                                                  cssCallExpression,
+                                                                                                  cssChildSelector,
+                                                                                                  cssClassSelector,
+                                                                                                  cssColorValue,
+                                                                                                  cssDescendantSelector,
+                                                                                                  cssFloatValue,
+                                                                                                  cssIdSelector,
+                                                                                                  cssIntegerValue,
+                                                                                                  cssNestingSelector,
+                                                                                                  cssParenthesizedValue,
+                                                                                                  cssPlainValue,
+                                                                                                  cssPseudoClassSelector,
+                                                                                                  cssPseudoElementSelector,
+                                                                                                  cssSiblingSelector,
+                                                                                                  cssStringValue,
+                                                                                                  cssTagName,
+                                                                                                  cssUniversalSelector
+                                                                                                }
+                                                                    tmp[cssBinaryExpression] = {
+                                                                                                 cssBinaryExpression,
+                                                                                                 cssCallExpression,
+                                                                                                 cssColorValue,
+                                                                                                 cssFloatValue,
+                                                                                                 cssIntegerValue,
+                                                                                                 cssParenthesizedValue,
+                                                                                                 cssPlainValue,
+                                                                                                 cssStringValue
+                                                                                               }
+                                                                    tmp[cssBinaryQuery] = {cssBinaryQuery, cssFeatureQuery, cssKeywordQuery, cssParenthesizedQuery, cssSelectorQuery, cssUnaryQuery}
+                                                                    tmp[cssBlock] = {
+                                                                                      cssAtRule,
+                                                                                      cssCharsetStatement,
+                                                                                      cssDeclaration,
+                                                                                      cssImportStatement,
+                                                                                      cssKeyframesStatement,
+                                                                                      cssMediaStatement,
+                                                                                      cssNamespaceStatement,
+                                                                                      cssRuleSet,
+                                                                                      cssSupportsStatement
+                                                                                    }
+                                                                    tmp[cssCallExpression] = {cssArguments, cssFunctionName}
+                                                                    tmp[cssCharsetStatement] = {
+                                                                                                 cssBinaryExpression,
+                                                                                                 cssCallExpression,
+                                                                                                 cssColorValue,
+                                                                                                 cssFloatValue,
+                                                                                                 cssIntegerValue,
+                                                                                                 cssParenthesizedValue,
+                                                                                                 cssPlainValue,
+                                                                                                 cssStringValue
+                                                                                               }
+                                                                    tmp[cssChildSelector] = {
+                                                                                              cssAdjacentSiblingSelector,
+                                                                                              cssAttributeSelector,
+                                                                                              cssChildSelector,
+                                                                                              cssClassSelector,
+                                                                                              cssDescendantSelector,
+                                                                                              cssIdSelector,
+                                                                                              cssNestingSelector,
+                                                                                              cssPseudoClassSelector,
+                                                                                              cssPseudoElementSelector,
+                                                                                              cssSiblingSelector,
+                                                                                              cssStringValue,
+                                                                                              cssTagName,
+                                                                                              cssUniversalSelector
+                                                                                            }
+                                                                    tmp[cssClassSelector] = {
+                                                                                              cssAdjacentSiblingSelector,
+                                                                                              cssAttributeSelector,
+                                                                                              cssChildSelector,
+                                                                                              cssClassName,
+                                                                                              cssClassSelector,
+                                                                                              cssDescendantSelector,
+                                                                                              cssIdSelector,
+                                                                                              cssNestingSelector,
+                                                                                              cssPseudoClassSelector,
+                                                                                              cssPseudoElementSelector,
+                                                                                              cssSiblingSelector,
+                                                                                              cssStringValue,
+                                                                                              cssTagName,
+                                                                                              cssUniversalSelector
+                                                                                            }
+                                                                    tmp[cssDeclaration] = {
+                                                                                            cssBinaryExpression,
+                                                                                            cssCallExpression,
+                                                                                            cssColorValue,
+                                                                                            cssFloatValue,
+                                                                                            cssImportant,
+                                                                                            cssIntegerValue,
+                                                                                            cssParenthesizedValue,
+                                                                                            cssPlainValue,
+                                                                                            cssPropertyName,
+                                                                                            cssStringValue
+                                                                                          }
+                                                                    tmp[cssDescendantSelector] = {
+                                                                                                   cssAdjacentSiblingSelector,
+                                                                                                   cssAttributeSelector,
+                                                                                                   cssChildSelector,
+                                                                                                   cssClassSelector,
+                                                                                                   cssDescendantSelector,
+                                                                                                   cssIdSelector,
+                                                                                                   cssNestingSelector,
+                                                                                                   cssPseudoClassSelector,
+                                                                                                   cssPseudoElementSelector,
+                                                                                                   cssSiblingSelector,
+                                                                                                   cssStringValue,
+                                                                                                   cssTagName,
+                                                                                                   cssUniversalSelector
+                                                                                                 }
+                                                                    tmp[cssFeatureQuery] = {
+                                                                                             cssBinaryExpression,
+                                                                                             cssCallExpression,
+                                                                                             cssColorValue,
+                                                                                             cssFeatureName,
+                                                                                             cssFloatValue,
+                                                                                             cssIntegerValue,
+                                                                                             cssParenthesizedValue,
+                                                                                             cssPlainValue,
+                                                                                             cssStringValue
+                                                                                           }
+                                                                    tmp[cssFloatValue] = {cssUnit}
+                                                                    tmp[cssIdSelector] = {
+                                                                                           cssAdjacentSiblingSelector,
+                                                                                           cssAttributeSelector,
+                                                                                           cssChildSelector,
+                                                                                           cssClassSelector,
+                                                                                           cssDescendantSelector,
+                                                                                           cssIdName,
+                                                                                           cssIdSelector,
+                                                                                           cssNestingSelector,
+                                                                                           cssPseudoClassSelector,
+                                                                                           cssPseudoElementSelector,
+                                                                                           cssSiblingSelector,
+                                                                                           cssStringValue,
+                                                                                           cssTagName,
+                                                                                           cssUniversalSelector
+                                                                                         }
+                                                                    tmp[cssImportStatement] = {
+                                                                                                cssBinaryExpression,
+                                                                                                cssBinaryQuery,
+                                                                                                cssCallExpression,
+                                                                                                cssColorValue,
+                                                                                                cssFeatureQuery,
+                                                                                                cssFloatValue,
+                                                                                                cssIntegerValue,
+                                                                                                cssKeywordQuery,
+                                                                                                cssParenthesizedQuery,
+                                                                                                cssParenthesizedValue,
+                                                                                                cssPlainValue,
+                                                                                                cssSelectorQuery,
+                                                                                                cssStringValue,
+                                                                                                cssUnaryQuery
+                                                                                              }
+                                                                    tmp[cssIntegerValue] = {cssUnit}
+                                                                    tmp[cssKeyframeBlock] = {cssBlock, cssFrom, cssIntegerValue, cssTo}
+                                                                    tmp[cssKeyframeBlockList] = {cssKeyframeBlock}
+                                                                    tmp[cssKeyframesStatement] = {cssAtKeyword, cssKeyframeBlockList, cssKeyframesName}
+                                                                    tmp[cssMediaStatement] = {
+                                                                                               cssBinaryQuery,
+                                                                                               cssBlock,
+                                                                                               cssFeatureQuery,
+                                                                                               cssKeywordQuery,
+                                                                                               cssParenthesizedQuery,
+                                                                                               cssSelectorQuery,
+                                                                                               cssUnaryQuery
+                                                                                             }
+                                                                    tmp[cssNamespaceStatement] = {cssCallExpression, cssNamespaceName, cssStringValue}
+                                                                    tmp[cssParenthesizedQuery] = {cssBinaryQuery, cssFeatureQuery, cssKeywordQuery, cssParenthesizedQuery, cssSelectorQuery, cssUnaryQuery}
+                                                                    tmp[cssParenthesizedValue] = {
+                                                                                                   cssBinaryExpression,
+                                                                                                   cssCallExpression,
+                                                                                                   cssColorValue,
+                                                                                                   cssFloatValue,
+                                                                                                   cssIntegerValue,
+                                                                                                   cssParenthesizedValue,
+                                                                                                   cssPlainValue,
+                                                                                                   cssStringValue
+                                                                                                 }
+                                                                    tmp[cssPseudoClassSelector] = {
+                                                                                                    cssAdjacentSiblingSelector,
+                                                                                                    cssArguments,
+                                                                                                    cssAttributeSelector,
+                                                                                                    cssChildSelector,
+                                                                                                    cssClassName,
+                                                                                                    cssClassSelector,
+                                                                                                    cssDescendantSelector,
+                                                                                                    cssIdSelector,
+                                                                                                    cssNestingSelector,
+                                                                                                    cssPseudoClassSelector,
+                                                                                                    cssPseudoElementSelector,
+                                                                                                    cssSiblingSelector,
+                                                                                                    cssStringValue,
+                                                                                                    cssTagName,
+                                                                                                    cssUniversalSelector
+                                                                                                  }
+                                                                    tmp[cssPseudoElementSelector] = {
+                                                                                                      cssAdjacentSiblingSelector,
+                                                                                                      cssAttributeSelector,
+                                                                                                      cssChildSelector,
+                                                                                                      cssClassSelector,
+                                                                                                      cssDescendantSelector,
+                                                                                                      cssIdSelector,
+                                                                                                      cssNestingSelector,
+                                                                                                      cssPseudoClassSelector,
+                                                                                                      cssPseudoElementSelector,
+                                                                                                      cssSiblingSelector,
+                                                                                                      cssStringValue,
+                                                                                                      cssTagName,
+                                                                                                      cssUniversalSelector
+                                                                                                    }
+                                                                    tmp[cssRuleSet] = {cssBlock, cssSelectors}
+                                                                    tmp[cssSelectorQuery] = {
+                                                                                              cssAdjacentSiblingSelector,
+                                                                                              cssAttributeSelector,
+                                                                                              cssChildSelector,
+                                                                                              cssClassSelector,
+                                                                                              cssDescendantSelector,
+                                                                                              cssIdSelector,
+                                                                                              cssNestingSelector,
+                                                                                              cssPseudoClassSelector,
+                                                                                              cssPseudoElementSelector,
+                                                                                              cssSiblingSelector,
+                                                                                              cssStringValue,
+                                                                                              cssTagName,
+                                                                                              cssUniversalSelector
+                                                                                            }
+                                                                    tmp[cssSelectors] = {
+                                                                                          cssAdjacentSiblingSelector,
+                                                                                          cssAttributeSelector,
+                                                                                          cssChildSelector,
+                                                                                          cssClassSelector,
+                                                                                          cssDescendantSelector,
+                                                                                          cssIdSelector,
+                                                                                          cssNestingSelector,
+                                                                                          cssPseudoClassSelector,
+                                                                                          cssPseudoElementSelector,
+                                                                                          cssSiblingSelector,
+                                                                                          cssStringValue,
+                                                                                          cssTagName,
+                                                                                          cssUniversalSelector
+                                                                                        }
+                                                                    tmp[cssSiblingSelector] = {
+                                                                                                cssAdjacentSiblingSelector,
+                                                                                                cssAttributeSelector,
+                                                                                                cssChildSelector,
+                                                                                                cssClassSelector,
+                                                                                                cssDescendantSelector,
+                                                                                                cssIdSelector,
+                                                                                                cssNestingSelector,
+                                                                                                cssPseudoClassSelector,
+                                                                                                cssPseudoElementSelector,
+                                                                                                cssSiblingSelector,
+                                                                                                cssStringValue,
+                                                                                                cssTagName,
+                                                                                                cssUniversalSelector
+                                                                                              }
+                                                                    tmp[cssStylesheet] = {
+                                                                                           cssAtRule,
+                                                                                           cssCharsetStatement,
+                                                                                           cssDeclaration,
+                                                                                           cssImportStatement,
+                                                                                           cssKeyframesStatement,
+                                                                                           cssMediaStatement,
+                                                                                           cssNamespaceStatement,
+                                                                                           cssRuleSet,
+                                                                                           cssSupportsStatement
+                                                                                         }
+                                                                    tmp[cssSupportsStatement] = {
+                                                                                                  cssBinaryQuery,
+                                                                                                  cssBlock,
+                                                                                                  cssFeatureQuery,
+                                                                                                  cssKeywordQuery,
+                                                                                                  cssParenthesizedQuery,
+                                                                                                  cssSelectorQuery,
+                                                                                                  cssUnaryQuery
+                                                                                                }
+                                                                    tmp[cssUnaryQuery] = {cssBinaryQuery, cssFeatureQuery, cssKeywordQuery, cssParenthesizedQuery, cssSelectorQuery, cssUnaryQuery}
+                                                                    tmp
+const cssTokenKinds*: set[CssNodeKind] = {
+                                           cssHashTok,
+                                           cssDollarEqualTok,
+                                           cssLParTok,
+                                           cssRParTok,
+                                           cssAsteriskTok,
+                                           cssAsteriskEqualTok,
+                                           cssPlusTok,
+                                           cssCommaTok,
+                                           cssMinusTok,
+                                           cssDotTok,
+                                           cssSlashTok,
+                                           cssColonTok,
+                                           cssDoubleColonTok,
+                                           cssSemicolonTok,
+                                           cssEqualTok,
+                                           cssGreaterThanTok,
+                                           cssAtcharsetTok,
+                                           cssAtimportTok,
+                                           cssAtkeyframesTok,
+                                           cssAtmediaTok,
+                                           cssAtnamespaceTok,
+                                           cssAtsuportsTok,
+                                           cssLBrackTok,
+                                           cssRBrackTok,
+                                           cssAccentEqualTok,
+                                           cssAndTok,
+                                           cssNotTok,
+                                           cssOnlyTok,
+                                           cssOrTok,
+                                           cssSelectorTok,
+                                           cssLCurlyTok,
+                                           cssPipeEqualTok,
+                                           cssRCurlyTok,
+                                           cssTildeTok,
+                                           cssTildeEqualTok
+                                         }
 
 proc tsNodeType*(node: TsCssNode): string
 

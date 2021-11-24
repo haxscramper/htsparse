@@ -379,6 +379,383 @@ type
     c_sharpSyntaxError                                   ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: C_sharpNodeKind): string =
+  case kind:
+    of c_sharpDeclaration:                                   "_declaration"
+    of c_sharpExpression:                                    "_expression"
+    of c_sharpStatement:                                     "_statement"
+    of c_sharpType:                                          "_type"
+    of c_sharpAccessorDeclaration:                           "accessor_declaration"
+    of c_sharpAccessorList:                                  "accessor_list"
+    of c_sharpAliasQualifiedName:                            "alias_qualified_name"
+    of c_sharpAnonymousMethodExpression:                     "anonymous_method_expression"
+    of c_sharpAnonymousObjectCreationExpression:             "anonymous_object_creation_expression"
+    of c_sharpArgument:                                      "argument"
+    of c_sharpArgumentList:                                  "argument_list"
+    of c_sharpArrayCreationExpression:                       "array_creation_expression"
+    of c_sharpArrayRankSpecifier:                            "array_rank_specifier"
+    of c_sharpArrayType:                                     "array_type"
+    of c_sharpArrowExpressionClause:                         "arrow_expression_clause"
+    of c_sharpAsExpression:                                  "as_expression"
+    of c_sharpAssignmentExpression:                          "assignment_expression"
+    of c_sharpAssignmentOperator:                            "assignment_operator"
+    of c_sharpAttribute:                                     "attribute"
+    of c_sharpAttributeArgument:                             "attribute_argument"
+    of c_sharpAttributeArgumentList:                         "attribute_argument_list"
+    of c_sharpAttributeList:                                 "attribute_list"
+    of c_sharpAttributeTargetSpecifier:                      "attribute_target_specifier"
+    of c_sharpAwaitExpression:                               "await_expression"
+    of c_sharpBaseExpression:                                "base_expression"
+    of c_sharpBaseList:                                      "base_list"
+    of c_sharpBinaryExpression:                              "binary_expression"
+    of c_sharpBinaryPattern:                                 "binary_pattern"
+    of c_sharpBlock:                                         "block"
+    of c_sharpBooleanLiteral:                                "boolean_literal"
+    of c_sharpBracketedArgumentList:                         "bracketed_argument_list"
+    of c_sharpBracketedParameterList:                        "bracketed_parameter_list"
+    of c_sharpBreakStatement:                                "break_statement"
+    of c_sharpCasePatternSwitchLabel:                        "case_pattern_switch_label"
+    of c_sharpCaseSwitchLabel:                               "case_switch_label"
+    of c_sharpCastExpression:                                "cast_expression"
+    of c_sharpCatchClause:                                   "catch_clause"
+    of c_sharpCatchDeclaration:                              "catch_declaration"
+    of c_sharpCatchFilterClause:                             "catch_filter_clause"
+    of c_sharpCharacterLiteral:                              "character_literal"
+    of c_sharpCheckedExpression:                             "checked_expression"
+    of c_sharpCheckedStatement:                              "checked_statement"
+    of c_sharpClassDeclaration:                              "class_declaration"
+    of c_sharpCompilationUnit:                               "compilation_unit"
+    of c_sharpConditionalAccessExpression:                   "conditional_access_expression"
+    of c_sharpConditionalExpression:                         "conditional_expression"
+    of c_sharpConstantPattern:                               "constant_pattern"
+    of c_sharpConstructorConstraint:                         "constructor_constraint"
+    of c_sharpConstructorDeclaration:                        "constructor_declaration"
+    of c_sharpConstructorInitializer:                        "constructor_initializer"
+    of c_sharpContinueStatement:                             "continue_statement"
+    of c_sharpConversionOperatorDeclaration:                 "conversion_operator_declaration"
+    of c_sharpDeclarationExpression:                         "declaration_expression"
+    of c_sharpDeclarationList:                               "declaration_list"
+    of c_sharpDeclarationPattern:                            "declaration_pattern"
+    of c_sharpDefaultExpression:                             "default_expression"
+    of c_sharpDefaultSwitchLabel:                            "default_switch_label"
+    of c_sharpDelegateDeclaration:                           "delegate_declaration"
+    of c_sharpDestructorDeclaration:                         "destructor_declaration"
+    of c_sharpDoStatement:                                   "do_statement"
+    of c_sharpElementAccessExpression:                       "element_access_expression"
+    of c_sharpElementBindingExpression:                      "element_binding_expression"
+    of c_sharpEmptyStatement:                                "empty_statement"
+    of c_sharpEnumDeclaration:                               "enum_declaration"
+    of c_sharpEnumMemberDeclaration:                         "enum_member_declaration"
+    of c_sharpEnumMemberDeclarationList:                     "enum_member_declaration_list"
+    of c_sharpEqualsValueClause:                             "equals_value_clause"
+    of c_sharpEventDeclaration:                              "event_declaration"
+    of c_sharpEventFieldDeclaration:                         "event_field_declaration"
+    of c_sharpExplicitInterfaceSpecifier:                    "explicit_interface_specifier"
+    of c_sharpExpressionStatement:                           "expression_statement"
+    of c_sharpExternAliasDirective:                          "extern_alias_directive"
+    of c_sharpFieldDeclaration:                              "field_declaration"
+    of c_sharpFinallyClause:                                 "finally_clause"
+    of c_sharpFixedStatement:                                "fixed_statement"
+    of c_sharpForEachStatement:                              "for_each_statement"
+    of c_sharpForStatement:                                  "for_statement"
+    of c_sharpFromClause:                                    "from_clause"
+    of c_sharpFunctionPointerCallingConvention:              "function_pointer_calling_convention"
+    of c_sharpFunctionPointerParameter:                      "function_pointer_parameter"
+    of c_sharpFunctionPointerType:                           "function_pointer_type"
+    of c_sharpFunctionPointerUnmanagedCallingConvention:     "function_pointer_unmanaged_calling_convention"
+    of c_sharpFunctionPointerUnmanagedCallingConventionList: "function_pointer_unmanaged_calling_convention_list"
+    of c_sharpGenericName:                                   "generic_name"
+    of c_sharpGlobal:                                        "global"
+    of c_sharpGlobalAttributeList:                           "global_attribute_list"
+    of c_sharpGlobalStatement:                               "global_statement"
+    of c_sharpGotoStatement:                                 "goto_statement"
+    of c_sharpGroupClause:                                   "group_clause"
+    of c_sharpIdentifier:                                    "identifier"
+    of c_sharpIfStatement:                                   "if_statement"
+    of c_sharpImplicitArrayCreationExpression:               "implicit_array_creation_expression"
+    of c_sharpImplicitObjectCreationExpression:              "implicit_object_creation_expression"
+    of c_sharpImplicitStackAllocArrayCreationExpression:     "implicit_stack_alloc_array_creation_expression"
+    of c_sharpImplicitType:                                  "implicit_type"
+    of c_sharpIndexerDeclaration:                            "indexer_declaration"
+    of c_sharpInitializerExpression:                         "initializer_expression"
+    of c_sharpInterfaceDeclaration:                          "interface_declaration"
+    of c_sharpInterpolatedStringExpression:                  "interpolated_string_expression"
+    of c_sharpInterpolatedStringText:                        "interpolated_string_text"
+    of c_sharpInterpolatedVerbatimStringText:                "interpolated_verbatim_string_text"
+    of c_sharpInterpolation:                                 "interpolation"
+    of c_sharpInterpolationAlignmentClause:                  "interpolation_alignment_clause"
+    of c_sharpInterpolationFormatClause:                     "interpolation_format_clause"
+    of c_sharpInvocationExpression:                          "invocation_expression"
+    of c_sharpIsExpression:                                  "is_expression"
+    of c_sharpIsPatternExpression:                           "is_pattern_expression"
+    of c_sharpJoinClause:                                    "join_clause"
+    of c_sharpJoinIntoClause:                                "join_into_clause"
+    of c_sharpLabelName:                                     "label_name"
+    of c_sharpLabeledStatement:                              "labeled_statement"
+    of c_sharpLambdaExpression:                              "lambda_expression"
+    of c_sharpLetClause:                                     "let_clause"
+    of c_sharpLocalDeclarationStatement:                     "local_declaration_statement"
+    of c_sharpLocalFunctionStatement:                        "local_function_statement"
+    of c_sharpLockStatement:                                 "lock_statement"
+    of c_sharpMakeRefExpression:                             "make_ref_expression"
+    of c_sharpMemberAccessExpression:                        "member_access_expression"
+    of c_sharpMemberBindingExpression:                       "member_binding_expression"
+    of c_sharpMethodDeclaration:                             "method_declaration"
+    of c_sharpModifier:                                      "modifier"
+    of c_sharpNameColon:                                     "name_colon"
+    of c_sharpNameEquals:                                    "name_equals"
+    of c_sharpNamespaceDeclaration:                          "namespace_declaration"
+    of c_sharpNegatedPattern:                                "negated_pattern"
+    of c_sharpNullableType:                                  "nullable_type"
+    of c_sharpObjectCreationExpression:                      "object_creation_expression"
+    of c_sharpOperatorDeclaration:                           "operator_declaration"
+    of c_sharpOrderByClause:                                 "order_by_clause"
+    of c_sharpParameter:                                     "parameter"
+    of c_sharpParameterArray:                                "parameter_array"
+    of c_sharpParameterList:                                 "parameter_list"
+    of c_sharpParameterModifier:                             "parameter_modifier"
+    of c_sharpParenthesizedExpression:                       "parenthesized_expression"
+    of c_sharpParenthesizedPattern:                          "parenthesized_pattern"
+    of c_sharpParenthesizedVariableDesignation:              "parenthesized_variable_designation"
+    of c_sharpPointerType:                                   "pointer_type"
+    of c_sharpPositionalPatternClause:                       "positional_pattern_clause"
+    of c_sharpPostfixUnaryExpression:                        "postfix_unary_expression"
+    of c_sharpPrefixUnaryExpression:                         "prefix_unary_expression"
+    of c_sharpPreprocessorCall:                              "preprocessor_call"
+    of c_sharpPrimaryConstructorBaseType:                    "primary_constructor_base_type"
+    of c_sharpPropertyDeclaration:                           "property_declaration"
+    of c_sharpPropertyPatternClause:                         "property_pattern_clause"
+    of c_sharpQualifiedName:                                 "qualified_name"
+    of c_sharpQueryContinuation:                             "query_continuation"
+    of c_sharpQueryExpression:                               "query_expression"
+    of c_sharpRangeExpression:                               "range_expression"
+    of c_sharpRecordDeclaration:                             "record_declaration"
+    of c_sharpRecursivePattern:                              "recursive_pattern"
+    of c_sharpRefExpression:                                 "ref_expression"
+    of c_sharpRefTypeExpression:                             "ref_type_expression"
+    of c_sharpRefValueExpression:                            "ref_value_expression"
+    of c_sharpRelationalPattern:                             "relational_pattern"
+    of c_sharpReturnStatement:                               "return_statement"
+    of c_sharpSelectClause:                                  "select_clause"
+    of c_sharpSimpleAssignmentExpression:                    "simple_assignment_expression"
+    of c_sharpSizeOfExpression:                              "size_of_expression"
+    of c_sharpStackAllocArrayCreationExpression:             "stack_alloc_array_creation_expression"
+    of c_sharpStringLiteral:                                 "string_literal"
+    of c_sharpStructDeclaration:                             "struct_declaration"
+    of c_sharpSubpattern:                                    "subpattern"
+    of c_sharpSwitchBody:                                    "switch_body"
+    of c_sharpSwitchExpression:                              "switch_expression"
+    of c_sharpSwitchExpressionArm:                           "switch_expression_arm"
+    of c_sharpSwitchSection:                                 "switch_section"
+    of c_sharpSwitchStatement:                               "switch_statement"
+    of c_sharpThisExpression:                                "this_expression"
+    of c_sharpThrowExpression:                               "throw_expression"
+    of c_sharpThrowStatement:                                "throw_statement"
+    of c_sharpTryStatement:                                  "try_statement"
+    of c_sharpTupleElement:                                  "tuple_element"
+    of c_sharpTupleExpression:                               "tuple_expression"
+    of c_sharpTuplePattern:                                  "tuple_pattern"
+    of c_sharpTupleType:                                     "tuple_type"
+    of c_sharpTypeArgumentList:                              "type_argument_list"
+    of c_sharpTypeConstraint:                                "type_constraint"
+    of c_sharpTypeOfExpression:                              "type_of_expression"
+    of c_sharpTypeParameter:                                 "type_parameter"
+    of c_sharpTypeParameterConstraint:                       "type_parameter_constraint"
+    of c_sharpTypeParameterConstraintsClause:                "type_parameter_constraints_clause"
+    of c_sharpTypeParameterList:                             "type_parameter_list"
+    of c_sharpTypePattern:                                   "type_pattern"
+    of c_sharpUnsafeStatement:                               "unsafe_statement"
+    of c_sharpUsingDirective:                                "using_directive"
+    of c_sharpUsingStatement:                                "using_statement"
+    of c_sharpVarPattern:                                    "var_pattern"
+    of c_sharpVariableDeclaration:                           "variable_declaration"
+    of c_sharpVariableDeclarator:                            "variable_declarator"
+    of c_sharpWhenClause:                                    "when_clause"
+    of c_sharpWhereClause:                                   "where_clause"
+    of c_sharpWhileStatement:                                "while_statement"
+    of c_sharpWithExpression:                                "with_expression"
+    of c_sharpWithInitializerExpression:                     "with_initializer_expression"
+    of c_sharpYieldStatement:                                "yield_statement"
+    of c_sharpExclamationTok:                                "!"
+    of c_sharpExclamationEqualTok:                           "!="
+    of c_sharpQuoteTok:                                      "\""
+    of c_sharpDoubleQuoteTok:                                "\"\""
+    of c_sharpDollarQuoteTok:                                "$\""
+    of c_sharpDollarAtQuoteTok:                              "$@\""
+    of c_sharpPercentTok:                                    "%"
+    of c_sharpPercentEqualTok:                               "%="
+    of c_sharpAmpersandTok:                                  "&"
+    of c_sharpDoubleAmpersandTok:                            "&&"
+    of c_sharpAmpersandEqualTok:                             "&="
+    of c_sharpApostropheTok:                                 "\'"
+    of c_sharpLParTok:                                       "("
+    of c_sharpRParTok:                                       ")"
+    of c_sharpAsteriskTok:                                   "*"
+    of c_sharpAsteriskEqualTok:                              "*="
+    of c_sharpPlusTok:                                       "+"
+    of c_sharpDoublePlusTok:                                 "++"
+    of c_sharpPlusEqualTok:                                  "+="
+    of c_sharpCommaTok:                                      ","
+    of c_sharpMinusTok:                                      "-"
+    of c_sharpDoubleMinusTok:                                "--"
+    of c_sharpMinusEqualTok:                                 "-="
+    of c_sharpMinusGreaterThanTok:                           "->"
+    of c_sharpDotTok:                                        "."
+    of c_sharpDoubleDotTok:                                  ".."
+    of c_sharpSlashTok:                                      "/"
+    of c_sharpSlashEqualTok:                                 "/="
+    of c_sharpColonTok:                                      ":"
+    of c_sharpDoubleColonTok:                                "::"
+    of c_sharpSemicolonTok:                                  ";"
+    of c_sharpLessThanTok:                                   "<"
+    of c_sharpDoubleLessThanTok:                             "<<"
+    of c_sharpDoubleLessThanEqualTok:                        "<<="
+    of c_sharpLessThanEqualTok:                              "<="
+    of c_sharpEqualTok:                                      "="
+    of c_sharpDoubleEqualTok:                                "=="
+    of c_sharpEqualGreaterThanTok:                           "=>"
+    of c_sharpGreaterThanTok:                                ">"
+    of c_sharpGreaterThanEqualTok:                           ">="
+    of c_sharpDoubleGreaterThanTok:                          ">>"
+    of c_sharpDoubleGreaterThanEqualTok:                     ">>="
+    of c_sharpQuestionTok:                                   "?"
+    of c_sharpDoubleQuestionTok:                             "??"
+    of c_sharpDoubleQuestionEqualTok:                        "??="
+    of c_sharpAtDollarQuoteTok:                              "@$\""
+    of c_sharpCdeclTok:                                      "Cdecl"
+    of c_sharpFastcallTok:                                   "Fastcall"
+    of c_sharpStdcallTok:                                    "Stdcall"
+    of c_sharpThiscallTok:                                   "Thiscall"
+    of c_sharpLBrackTok:                                     "["
+    of c_sharpRBrackTok:                                     "]"
+    of c_sharpAccentTok:                                     "^"
+    of c_sharpAccentEqualTok:                                "^="
+    of c_sharpMakerefTok:                                    "__makeref"
+    of c_sharpReftypeTok:                                    "__reftype"
+    of c_sharpRefvalueTok:                                   "__refvalue"
+    of c_sharpAbstractTok:                                   "abstract"
+    of c_sharpAddTok:                                        "add"
+    of c_sharpAliasTok:                                      "alias"
+    of c_sharpAndTok:                                        "and"
+    of c_sharpAsTok:                                         "as"
+    of c_sharpAscendingTok:                                  "ascending"
+    of c_sharpAssemblyTok:                                   "assembly"
+    of c_sharpAsyncTok:                                      "async"
+    of c_sharpAwaitTok:                                      "await"
+    of c_sharpBaseTok:                                       "base"
+    of c_sharpBreakTok:                                      "break"
+    of c_sharpByTok:                                         "by"
+    of c_sharpCaseTok:                                       "case"
+    of c_sharpCatchTok:                                      "catch"
+    of c_sharpCheckedTok:                                    "checked"
+    of c_sharpClassTok:                                      "class"
+    of c_sharpComment:                                       "comment"
+    of c_sharpConstTok:                                      "const"
+    of c_sharpContinueTok:                                   "continue"
+    of c_sharpDefaultTok:                                    "default"
+    of c_sharpDelegateTok:                                   "delegate"
+    of c_sharpDescendingTok:                                 "descending"
+    of c_sharpDiscard:                                       "discard"
+    of c_sharpDoTok:                                         "do"
+    of c_sharpDynamicTok:                                    "dynamic"
+    of c_sharpElseTok:                                       "else"
+    of c_sharpEnumTok:                                       "enum"
+    of c_sharpEqualsTok:                                     "equals"
+    of c_sharpEscapeSequence:                                "escape_sequence"
+    of c_sharpEventTok:                                      "event"
+    of c_sharpExplicitTok:                                   "explicit"
+    of c_sharpExternTok:                                     "extern"
+    of c_sharpFalseTok:                                      "false"
+    of c_sharpFieldTok:                                      "field"
+    of c_sharpFinallyTok:                                    "finally"
+    of c_sharpFixedTok:                                      "fixed"
+    of c_sharpForTok:                                        "for"
+    of c_sharpForeachTok:                                    "foreach"
+    of c_sharpFromTok:                                       "from"
+    of c_sharpGetTok:                                        "get"
+    of c_sharpGlobalTok:                                     "global"
+    of c_sharpGotoTok:                                       "goto"
+    of c_sharpGroupTok:                                      "group"
+    of c_sharpIfTok:                                         "if"
+    of c_sharpImplicitTok:                                   "implicit"
+    of c_sharpInTok:                                         "in"
+    of c_sharpInitTok:                                       "init"
+    of c_sharpIntegerLiteral:                                "integer_literal"
+    of c_sharpInterfaceTok:                                  "interface"
+    of c_sharpInternalTok:                                   "internal"
+    of c_sharpIntoTok:                                       "into"
+    of c_sharpIsTok:                                         "is"
+    of c_sharpJoinTok:                                       "join"
+    of c_sharpLetTok:                                        "let"
+    of c_sharpLockTok:                                       "lock"
+    of c_sharpManagedTok:                                    "managed"
+    of c_sharpMethodTok:                                     "method"
+    of c_sharpModuleTok:                                     "module"
+    of c_sharpNameofTok:                                     "nameof"
+    of c_sharpNamespaceTok:                                  "namespace"
+    of c_sharpNewTok:                                        "new"
+    of c_sharpNotTok:                                        "not"
+    of c_sharpNotnullTok:                                    "notnull"
+    of c_sharpNullLiteral:                                   "null_literal"
+    of c_sharpOnTok:                                         "on"
+    of c_sharpOperatorTok:                                   "operator"
+    of c_sharpOrTok:                                         "or"
+    of c_sharpOrderbyTok:                                    "orderby"
+    of c_sharpOutTok:                                        "out"
+    of c_sharpOverrideTok:                                   "override"
+    of c_sharpParamTok:                                      "param"
+    of c_sharpParamsTok:                                     "params"
+    of c_sharpPartialTok:                                    "partial"
+    of c_sharpPredefinedType:                                "predefined_type"
+    of c_sharpPreprocessorDirective:                         "preprocessor_directive"
+    of c_sharpPrivateTok:                                    "private"
+    of c_sharpPropertyTok:                                   "property"
+    of c_sharpProtectedTok:                                  "protected"
+    of c_sharpPublicTok:                                     "public"
+    of c_sharpReadonlyTok:                                   "readonly"
+    of c_sharpRealLiteral:                                   "real_literal"
+    of c_sharpRecordTok:                                     "record"
+    of c_sharpRefTok:                                        "ref"
+    of c_sharpRemoveTok:                                     "remove"
+    of c_sharpReturnTok:                                     "return"
+    of c_sharpSealedTok:                                     "sealed"
+    of c_sharpSelectTok:                                     "select"
+    of c_sharpSetTok:                                        "set"
+    of c_sharpSizeofTok:                                     "sizeof"
+    of c_sharpStackallocTok:                                 "stackalloc"
+    of c_sharpStaticTok:                                     "static"
+    of c_sharpStructTok:                                     "struct"
+    of c_sharpSwitchTok:                                     "switch"
+    of c_sharpThisTok:                                       "this"
+    of c_sharpThrowTok:                                      "throw"
+    of c_sharpTrueTok:                                       "true"
+    of c_sharpTryTok:                                        "try"
+    of c_sharpTypeTok:                                       "type"
+    of c_sharpTypeofTok:                                     "typeof"
+    of c_sharpUncheckedTok:                                  "unchecked"
+    of c_sharpUnmanagedTok:                                  "unmanaged"
+    of c_sharpUnsafeTok:                                     "unsafe"
+    of c_sharpUsingTok:                                      "using"
+    of c_sharpVarTok:                                        "var"
+    of c_sharpVerbatimStringLiteral:                         "verbatim_string_literal"
+    of c_sharpVirtualTok:                                    "virtual"
+    of c_sharpVoidKeyword:                                   "void_keyword"
+    of c_sharpVolatileTok:                                   "volatile"
+    of c_sharpWhenTok:                                       "when"
+    of c_sharpWhereTok:                                      "where"
+    of c_sharpWhileTok:                                      "while"
+    of c_sharpWithTok:                                       "with"
+    of c_sharpYieldTok:                                      "yield"
+    of c_sharpLCurlyTok:                                     "{"
+    of c_sharpDoubleLCurlyTok:                               "{{"
+    of c_sharpPipeTok:                                       "|"
+    of c_sharpPipeEqualTok:                                  "|="
+    of c_sharpDoublePipeTok:                                 "||"
+    of c_sharpRCurlyTok:                                     "}"
+    of c_sharpTildeTok:                                      "~"
+    of c_sharpSyntaxError:                                   "ERROR"
+
+
 type
   C_sharpExternalTok* = enum
     c_sharpExtern_preproc_directive_end ## _preproc_directive_end
@@ -391,6 +768,427 @@ type
 type
   C_sharpParser* = distinct PtsParser
 
+
+const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = block:
+                                                                                var tmp: array[C_sharpNodeKind, set[C_sharpNodeKind]]
+                                                                                tmp[c_sharpAccessorDeclaration] = {c_sharpAttributeList, c_sharpIdentifier, c_sharpModifier}
+                                                                                tmp[c_sharpAccessorList] = {c_sharpAccessorDeclaration}
+                                                                                tmp[c_sharpAliasQualifiedName] = {c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier}
+                                                                                tmp[c_sharpAnonymousMethodExpression] = {c_sharpBlock, c_sharpParameterList}
+                                                                                tmp[c_sharpAnonymousObjectCreationExpression] = {c_sharpExpression, c_sharpNameEquals}
+                                                                                tmp[c_sharpArgument] = {c_sharpExpression, c_sharpDeclarationExpression, c_sharpNameColon}
+                                                                                tmp[c_sharpArgumentList] = {c_sharpArgument}
+                                                                                tmp[c_sharpArrayCreationExpression] = {c_sharpArrayType, c_sharpInitializerExpression}
+                                                                                tmp[c_sharpArrayRankSpecifier] = {c_sharpExpression}
+                                                                                tmp[c_sharpArrowExpressionClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpAssignmentExpression] = {c_sharpAssignmentOperator}
+                                                                                tmp[c_sharpAttribute] = {c_sharpAttributeArgumentList}
+                                                                                tmp[c_sharpAttributeArgument] = {c_sharpExpression, c_sharpNameColon, c_sharpNameEquals}
+                                                                                tmp[c_sharpAttributeArgumentList] = {c_sharpAttributeArgument}
+                                                                                tmp[c_sharpAttributeList] = {c_sharpAttribute, c_sharpAttributeTargetSpecifier}
+                                                                                tmp[c_sharpAwaitExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpBaseList] = {c_sharpType, c_sharpPrimaryConstructorBaseType}
+                                                                                tmp[c_sharpBlock] = {c_sharpStatement}
+                                                                                tmp[c_sharpBracketedArgumentList] = {c_sharpArgument}
+                                                                                tmp[c_sharpBracketedParameterList] = {c_sharpParameter}
+                                                                                tmp[c_sharpCasePatternSwitchLabel] = {
+                                                                                                                       c_sharpBinaryPattern,
+                                                                                                                       c_sharpConstantPattern,
+                                                                                                                       c_sharpDeclarationPattern,
+                                                                                                                       c_sharpDiscard,
+                                                                                                                       c_sharpNegatedPattern,
+                                                                                                                       c_sharpParenthesizedPattern,
+                                                                                                                       c_sharpRecursivePattern,
+                                                                                                                       c_sharpRelationalPattern,
+                                                                                                                       c_sharpTypePattern,
+                                                                                                                       c_sharpVarPattern,
+                                                                                                                       c_sharpWhenClause
+                                                                                                                     }
+                                                                                tmp[c_sharpCaseSwitchLabel] = {c_sharpExpression}
+                                                                                tmp[c_sharpCatchClause] = {c_sharpCatchDeclaration, c_sharpCatchFilterClause}
+                                                                                tmp[c_sharpCatchFilterClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpCharacterLiteral] = {c_sharpEscapeSequence}
+                                                                                tmp[c_sharpCheckedExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpCheckedStatement] = {c_sharpBlock}
+                                                                                tmp[c_sharpClassDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpCompilationUnit] = {
+                                                                                                                c_sharpClassDeclaration,
+                                                                                                                c_sharpDelegateDeclaration,
+                                                                                                                c_sharpEnumDeclaration,
+                                                                                                                c_sharpExternAliasDirective,
+                                                                                                                c_sharpGlobalAttributeList,
+                                                                                                                c_sharpGlobalStatement,
+                                                                                                                c_sharpInterfaceDeclaration,
+                                                                                                                c_sharpNamespaceDeclaration,
+                                                                                                                c_sharpRecordDeclaration,
+                                                                                                                c_sharpStructDeclaration,
+                                                                                                                c_sharpUsingDirective
+                                                                                                              }
+                                                                                tmp[c_sharpConditionalAccessExpression] = {c_sharpElementBindingExpression, c_sharpMemberBindingExpression}
+                                                                                tmp[c_sharpConstantPattern] = {c_sharpExpression}
+                                                                                tmp[c_sharpConstructorDeclaration] = {c_sharpAttributeList, c_sharpConstructorInitializer, c_sharpModifier}
+                                                                                tmp[c_sharpConstructorInitializer] = {c_sharpArgumentList}
+                                                                                tmp[c_sharpConversionOperatorDeclaration] = {c_sharpAttributeList, c_sharpModifier}
+                                                                                tmp[c_sharpDeclarationList] = {c_sharpDeclaration}
+                                                                                tmp[c_sharpDeclarationPattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
+                                                                                tmp[c_sharpDelegateDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpDestructorDeclaration] = {c_sharpAttributeList, c_sharpIdentifier, c_sharpParameterList}
+                                                                                tmp[c_sharpDoStatement] = {c_sharpExpression, c_sharpStatement}
+                                                                                tmp[c_sharpElementBindingExpression] = {c_sharpBracketedArgumentList}
+                                                                                tmp[c_sharpEnumDeclaration] = {c_sharpAttributeList, c_sharpModifier}
+                                                                                tmp[c_sharpEnumMemberDeclaration] = {c_sharpAttributeList}
+                                                                                tmp[c_sharpEnumMemberDeclarationList] = {c_sharpEnumMemberDeclaration}
+                                                                                tmp[c_sharpEqualsValueClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpEventDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier}
+                                                                                tmp[c_sharpEventFieldDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpExplicitInterfaceSpecifier] = {c_sharpAliasQualifiedName, c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier, c_sharpQualifiedName}
+                                                                                tmp[c_sharpExpressionStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpExternAliasDirective] = {c_sharpIdentifier}
+                                                                                tmp[c_sharpFieldDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpFinallyClause] = {c_sharpBlock}
+                                                                                tmp[c_sharpFixedStatement] = {c_sharpStatement, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpFromClause] = {c_sharpExpression, c_sharpType}
+                                                                                tmp[c_sharpFunctionPointerCallingConvention] = {c_sharpFunctionPointerUnmanagedCallingConventionList}
+                                                                                tmp[c_sharpFunctionPointerParameter] = {c_sharpType, c_sharpVoidKeyword}
+                                                                                tmp[c_sharpFunctionPointerType] = {c_sharpFunctionPointerCallingConvention, c_sharpFunctionPointerParameter}
+                                                                                tmp[c_sharpFunctionPointerUnmanagedCallingConvention] = {c_sharpIdentifier}
+                                                                                tmp[c_sharpFunctionPointerUnmanagedCallingConventionList] = {c_sharpFunctionPointerUnmanagedCallingConvention}
+                                                                                tmp[c_sharpGenericName] = {c_sharpIdentifier, c_sharpTypeArgumentList}
+                                                                                tmp[c_sharpGlobalAttributeList] = {c_sharpAttribute}
+                                                                                tmp[c_sharpGlobalStatement] = {c_sharpStatement}
+                                                                                tmp[c_sharpGotoStatement] = {c_sharpExpression, c_sharpLabelName}
+                                                                                tmp[c_sharpGroupClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpImplicitArrayCreationExpression] = {c_sharpInitializerExpression}
+                                                                                tmp[c_sharpImplicitObjectCreationExpression] = {c_sharpArgumentList, c_sharpInitializerExpression}
+                                                                                tmp[c_sharpImplicitStackAllocArrayCreationExpression] = {c_sharpInitializerExpression}
+                                                                                tmp[c_sharpIndexerDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier}
+                                                                                tmp[c_sharpInitializerExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpInterfaceDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpInterpolatedStringExpression] = {c_sharpInterpolatedStringText, c_sharpInterpolatedVerbatimStringText, c_sharpInterpolation}
+                                                                                tmp[c_sharpInterpolatedStringText] = {c_sharpEscapeSequence}
+                                                                                tmp[c_sharpInterpolation] = {c_sharpExpression, c_sharpInterpolationAlignmentClause, c_sharpInterpolationFormatClause}
+                                                                                tmp[c_sharpInterpolationAlignmentClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpJoinClause] = {c_sharpExpression, c_sharpType, c_sharpJoinIntoClause}
+                                                                                tmp[c_sharpJoinIntoClause] = {c_sharpIdentifier}
+                                                                                tmp[c_sharpLabeledStatement] = {c_sharpStatement, c_sharpLabelName}
+                                                                                tmp[c_sharpLambdaExpression] = {c_sharpIdentifier, c_sharpParameterList}
+                                                                                tmp[c_sharpLetClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpLocalDeclarationStatement] = {c_sharpModifier, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpLocalFunctionStatement] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpLockStatement] = {c_sharpExpression, c_sharpStatement}
+                                                                                tmp[c_sharpMakeRefExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpMethodDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpNameColon] = {c_sharpGlobal, c_sharpIdentifier}
+                                                                                tmp[c_sharpNameEquals] = {c_sharpGlobal, c_sharpIdentifier}
+                                                                                tmp[c_sharpNegatedPattern] = {
+                                                                                                               c_sharpBinaryPattern,
+                                                                                                               c_sharpConstantPattern,
+                                                                                                               c_sharpDeclarationPattern,
+                                                                                                               c_sharpDiscard,
+                                                                                                               c_sharpNegatedPattern,
+                                                                                                               c_sharpParenthesizedPattern,
+                                                                                                               c_sharpRecursivePattern,
+                                                                                                               c_sharpRelationalPattern,
+                                                                                                               c_sharpTypePattern,
+                                                                                                               c_sharpVarPattern
+                                                                                                             }
+                                                                                tmp[c_sharpNullableType] = {c_sharpType}
+                                                                                tmp[c_sharpOperatorDeclaration] = {c_sharpAttributeList, c_sharpModifier}
+                                                                                tmp[c_sharpOrderByClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpParameter] = {c_sharpAttributeList, c_sharpEqualsValueClause, c_sharpParameterModifier}
+                                                                                tmp[c_sharpParameterArray] = {c_sharpArrayType, c_sharpAttributeList, c_sharpIdentifier, c_sharpNullableType}
+                                                                                tmp[c_sharpParameterList] = {c_sharpParameter, c_sharpParameterArray}
+                                                                                tmp[c_sharpParenthesizedExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpParenthesizedPattern] = {
+                                                                                                                     c_sharpBinaryPattern,
+                                                                                                                     c_sharpConstantPattern,
+                                                                                                                     c_sharpDeclarationPattern,
+                                                                                                                     c_sharpDiscard,
+                                                                                                                     c_sharpNegatedPattern,
+                                                                                                                     c_sharpParenthesizedPattern,
+                                                                                                                     c_sharpRecursivePattern,
+                                                                                                                     c_sharpRelationalPattern,
+                                                                                                                     c_sharpTypePattern,
+                                                                                                                     c_sharpVarPattern
+                                                                                                                   }
+                                                                                tmp[c_sharpParenthesizedVariableDesignation] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
+                                                                                tmp[c_sharpPointerType] = {c_sharpType}
+                                                                                tmp[c_sharpPositionalPatternClause] = {c_sharpSubpattern}
+                                                                                tmp[c_sharpPostfixUnaryExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpPrefixUnaryExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpPreprocessorCall] = {
+                                                                                                                 c_sharpBooleanLiteral,
+                                                                                                                 c_sharpCharacterLiteral,
+                                                                                                                 c_sharpIdentifier,
+                                                                                                                 c_sharpIntegerLiteral,
+                                                                                                                 c_sharpNullLiteral,
+                                                                                                                 c_sharpPreprocessorDirective,
+                                                                                                                 c_sharpRealLiteral,
+                                                                                                                 c_sharpStringLiteral,
+                                                                                                                 c_sharpVerbatimStringLiteral
+                                                                                                               }
+                                                                                tmp[c_sharpPrimaryConstructorBaseType] = {c_sharpArgumentList, c_sharpIdentifier}
+                                                                                tmp[c_sharpPropertyDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier}
+                                                                                tmp[c_sharpPropertyPatternClause] = {c_sharpSubpattern}
+                                                                                tmp[c_sharpQualifiedName] = {c_sharpAliasQualifiedName, c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier, c_sharpQualifiedName}
+                                                                                tmp[c_sharpQueryContinuation] = {
+                                                                                                                  c_sharpFromClause,
+                                                                                                                  c_sharpGroupClause,
+                                                                                                                  c_sharpIdentifier,
+                                                                                                                  c_sharpJoinClause,
+                                                                                                                  c_sharpLetClause,
+                                                                                                                  c_sharpOrderByClause,
+                                                                                                                  c_sharpQueryContinuation,
+                                                                                                                  c_sharpSelectClause,
+                                                                                                                  c_sharpWhereClause
+                                                                                                                }
+                                                                                tmp[c_sharpQueryExpression] = {
+                                                                                                                c_sharpFromClause,
+                                                                                                                c_sharpGroupClause,
+                                                                                                                c_sharpJoinClause,
+                                                                                                                c_sharpLetClause,
+                                                                                                                c_sharpOrderByClause,
+                                                                                                                c_sharpQueryContinuation,
+                                                                                                                c_sharpSelectClause,
+                                                                                                                c_sharpWhereClause
+                                                                                                              }
+                                                                                tmp[c_sharpRangeExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpRecordDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpRecursivePattern] = {c_sharpType, c_sharpDiscard, c_sharpParenthesizedVariableDesignation, c_sharpPositionalPatternClause, c_sharpPropertyPatternClause}
+                                                                                tmp[c_sharpRefExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpRefTypeExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpRelationalPattern] = {c_sharpExpression}
+                                                                                tmp[c_sharpReturnStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpSelectClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpSimpleAssignmentExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpSizeOfExpression] = {c_sharpType}
+                                                                                tmp[c_sharpStackAllocArrayCreationExpression] = {c_sharpArrayType, c_sharpInitializerExpression}
+                                                                                tmp[c_sharpStringLiteral] = {c_sharpEscapeSequence}
+                                                                                tmp[c_sharpStructDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
+                                                                                tmp[c_sharpSubpattern] = {
+                                                                                                           c_sharpBinaryPattern,
+                                                                                                           c_sharpConstantPattern,
+                                                                                                           c_sharpDeclarationPattern,
+                                                                                                           c_sharpDiscard,
+                                                                                                           c_sharpNameColon,
+                                                                                                           c_sharpNegatedPattern,
+                                                                                                           c_sharpParenthesizedPattern,
+                                                                                                           c_sharpRecursivePattern,
+                                                                                                           c_sharpRelationalPattern,
+                                                                                                           c_sharpTypePattern,
+                                                                                                           c_sharpVarPattern
+                                                                                                         }
+                                                                                tmp[c_sharpSwitchBody] = {c_sharpSwitchSection}
+                                                                                tmp[c_sharpSwitchExpression] = {c_sharpExpression, c_sharpSwitchExpressionArm}
+                                                                                tmp[c_sharpSwitchExpressionArm] = {
+                                                                                                                    c_sharpExpression,
+                                                                                                                    c_sharpBinaryPattern,
+                                                                                                                    c_sharpConstantPattern,
+                                                                                                                    c_sharpDeclarationPattern,
+                                                                                                                    c_sharpDiscard,
+                                                                                                                    c_sharpNegatedPattern,
+                                                                                                                    c_sharpParenthesizedPattern,
+                                                                                                                    c_sharpRecursivePattern,
+                                                                                                                    c_sharpRelationalPattern,
+                                                                                                                    c_sharpTypePattern,
+                                                                                                                    c_sharpVarPattern,
+                                                                                                                    c_sharpWhenClause
+                                                                                                                  }
+                                                                                tmp[c_sharpSwitchSection] = {c_sharpStatement, c_sharpCasePatternSwitchLabel, c_sharpCaseSwitchLabel, c_sharpDefaultSwitchLabel}
+                                                                                tmp[c_sharpThrowExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpThrowStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpTryStatement] = {c_sharpCatchClause, c_sharpFinallyClause}
+                                                                                tmp[c_sharpTupleExpression] = {c_sharpArgument}
+                                                                                tmp[c_sharpTuplePattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpTuplePattern}
+                                                                                tmp[c_sharpTupleType] = {c_sharpTupleElement}
+                                                                                tmp[c_sharpTypeArgumentList] = {c_sharpType}
+                                                                                tmp[c_sharpTypeOfExpression] = {c_sharpType}
+                                                                                tmp[c_sharpTypeParameter] = {c_sharpAttributeList, c_sharpIdentifier}
+                                                                                tmp[c_sharpTypeParameterConstraint] = {c_sharpConstructorConstraint, c_sharpTypeConstraint}
+                                                                                tmp[c_sharpTypeParameterList] = {c_sharpTypeParameter}
+                                                                                tmp[c_sharpTypePattern] = {c_sharpType}
+                                                                                tmp[c_sharpUnsafeStatement] = {c_sharpBlock}
+                                                                                tmp[c_sharpUsingDirective] = {c_sharpAliasQualifiedName, c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier, c_sharpNameEquals, c_sharpQualifiedName}
+                                                                                tmp[c_sharpUsingStatement] = {c_sharpExpression, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpVarPattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
+                                                                                tmp[c_sharpVariableDeclaration] = {c_sharpVariableDeclarator}
+                                                                                tmp[c_sharpVariableDeclarator] = {c_sharpBracketedArgumentList, c_sharpEqualsValueClause, c_sharpIdentifier, c_sharpTuplePattern}
+                                                                                tmp[c_sharpWhenClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpWhereClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpWhileStatement] = {c_sharpExpression, c_sharpStatement}
+                                                                                tmp[c_sharpWithExpression] = {c_sharpExpression, c_sharpWithInitializerExpression}
+                                                                                tmp[c_sharpWithInitializerExpression] = {c_sharpSimpleAssignmentExpression}
+                                                                                tmp[c_sharpYieldStatement] = {c_sharpExpression}
+                                                                                tmp
+const c_sharpTokenKinds*: set[C_sharpNodeKind] = {
+                                                   c_sharpExclamationTok,
+                                                   c_sharpExclamationEqualTok,
+                                                   c_sharpQuoteTok,
+                                                   c_sharpDoubleQuoteTok,
+                                                   c_sharpDollarQuoteTok,
+                                                   c_sharpDollarAtQuoteTok,
+                                                   c_sharpPercentTok,
+                                                   c_sharpPercentEqualTok,
+                                                   c_sharpAmpersandTok,
+                                                   c_sharpDoubleAmpersandTok,
+                                                   c_sharpAmpersandEqualTok,
+                                                   c_sharpApostropheTok,
+                                                   c_sharpLParTok,
+                                                   c_sharpRParTok,
+                                                   c_sharpAsteriskTok,
+                                                   c_sharpAsteriskEqualTok,
+                                                   c_sharpPlusTok,
+                                                   c_sharpDoublePlusTok,
+                                                   c_sharpPlusEqualTok,
+                                                   c_sharpCommaTok,
+                                                   c_sharpMinusTok,
+                                                   c_sharpDoubleMinusTok,
+                                                   c_sharpMinusEqualTok,
+                                                   c_sharpMinusGreaterThanTok,
+                                                   c_sharpDotTok,
+                                                   c_sharpDoubleDotTok,
+                                                   c_sharpSlashTok,
+                                                   c_sharpSlashEqualTok,
+                                                   c_sharpColonTok,
+                                                   c_sharpDoubleColonTok,
+                                                   c_sharpSemicolonTok,
+                                                   c_sharpLessThanTok,
+                                                   c_sharpDoubleLessThanTok,
+                                                   c_sharpDoubleLessThanEqualTok,
+                                                   c_sharpLessThanEqualTok,
+                                                   c_sharpEqualTok,
+                                                   c_sharpDoubleEqualTok,
+                                                   c_sharpEqualGreaterThanTok,
+                                                   c_sharpGreaterThanTok,
+                                                   c_sharpGreaterThanEqualTok,
+                                                   c_sharpDoubleGreaterThanTok,
+                                                   c_sharpDoubleGreaterThanEqualTok,
+                                                   c_sharpQuestionTok,
+                                                   c_sharpDoubleQuestionTok,
+                                                   c_sharpDoubleQuestionEqualTok,
+                                                   c_sharpAtDollarQuoteTok,
+                                                   c_sharpCdeclTok,
+                                                   c_sharpFastcallTok,
+                                                   c_sharpStdcallTok,
+                                                   c_sharpThiscallTok,
+                                                   c_sharpLBrackTok,
+                                                   c_sharpRBrackTok,
+                                                   c_sharpAccentTok,
+                                                   c_sharpAccentEqualTok,
+                                                   c_sharpMakerefTok,
+                                                   c_sharpReftypeTok,
+                                                   c_sharpRefvalueTok,
+                                                   c_sharpAbstractTok,
+                                                   c_sharpAddTok,
+                                                   c_sharpAliasTok,
+                                                   c_sharpAndTok,
+                                                   c_sharpAsTok,
+                                                   c_sharpAscendingTok,
+                                                   c_sharpAssemblyTok,
+                                                   c_sharpAsyncTok,
+                                                   c_sharpAwaitTok,
+                                                   c_sharpBaseTok,
+                                                   c_sharpBreakTok,
+                                                   c_sharpByTok,
+                                                   c_sharpCaseTok,
+                                                   c_sharpCatchTok,
+                                                   c_sharpCheckedTok,
+                                                   c_sharpClassTok,
+                                                   c_sharpConstTok,
+                                                   c_sharpContinueTok,
+                                                   c_sharpDefaultTok,
+                                                   c_sharpDelegateTok,
+                                                   c_sharpDescendingTok,
+                                                   c_sharpDoTok,
+                                                   c_sharpDynamicTok,
+                                                   c_sharpElseTok,
+                                                   c_sharpEnumTok,
+                                                   c_sharpEqualsTok,
+                                                   c_sharpEventTok,
+                                                   c_sharpExplicitTok,
+                                                   c_sharpExternTok,
+                                                   c_sharpFalseTok,
+                                                   c_sharpFieldTok,
+                                                   c_sharpFinallyTok,
+                                                   c_sharpFixedTok,
+                                                   c_sharpForTok,
+                                                   c_sharpForeachTok,
+                                                   c_sharpFromTok,
+                                                   c_sharpGetTok,
+                                                   c_sharpGlobalTok,
+                                                   c_sharpGotoTok,
+                                                   c_sharpGroupTok,
+                                                   c_sharpIfTok,
+                                                   c_sharpImplicitTok,
+                                                   c_sharpInTok,
+                                                   c_sharpInitTok,
+                                                   c_sharpInterfaceTok,
+                                                   c_sharpInternalTok,
+                                                   c_sharpIntoTok,
+                                                   c_sharpIsTok,
+                                                   c_sharpJoinTok,
+                                                   c_sharpLetTok,
+                                                   c_sharpLockTok,
+                                                   c_sharpManagedTok,
+                                                   c_sharpMethodTok,
+                                                   c_sharpModuleTok,
+                                                   c_sharpNameofTok,
+                                                   c_sharpNamespaceTok,
+                                                   c_sharpNewTok,
+                                                   c_sharpNotTok,
+                                                   c_sharpNotnullTok,
+                                                   c_sharpOnTok,
+                                                   c_sharpOperatorTok,
+                                                   c_sharpOrTok,
+                                                   c_sharpOrderbyTok,
+                                                   c_sharpOutTok,
+                                                   c_sharpOverrideTok,
+                                                   c_sharpParamTok,
+                                                   c_sharpParamsTok,
+                                                   c_sharpPartialTok,
+                                                   c_sharpPrivateTok,
+                                                   c_sharpPropertyTok,
+                                                   c_sharpProtectedTok,
+                                                   c_sharpPublicTok,
+                                                   c_sharpReadonlyTok,
+                                                   c_sharpRecordTok,
+                                                   c_sharpRefTok,
+                                                   c_sharpRemoveTok,
+                                                   c_sharpReturnTok,
+                                                   c_sharpSealedTok,
+                                                   c_sharpSelectTok,
+                                                   c_sharpSetTok,
+                                                   c_sharpSizeofTok,
+                                                   c_sharpStackallocTok,
+                                                   c_sharpStaticTok,
+                                                   c_sharpStructTok,
+                                                   c_sharpSwitchTok,
+                                                   c_sharpThisTok,
+                                                   c_sharpThrowTok,
+                                                   c_sharpTrueTok,
+                                                   c_sharpTryTok,
+                                                   c_sharpTypeTok,
+                                                   c_sharpTypeofTok,
+                                                   c_sharpUncheckedTok,
+                                                   c_sharpUnmanagedTok,
+                                                   c_sharpUnsafeTok,
+                                                   c_sharpUsingTok,
+                                                   c_sharpVarTok,
+                                                   c_sharpVirtualTok,
+                                                   c_sharpVolatileTok,
+                                                   c_sharpWhenTok,
+                                                   c_sharpWhereTok,
+                                                   c_sharpWhileTok,
+                                                   c_sharpWithTok,
+                                                   c_sharpYieldTok,
+                                                   c_sharpLCurlyTok,
+                                                   c_sharpDoubleLCurlyTok,
+                                                   c_sharpPipeTok,
+                                                   c_sharpPipeEqualTok,
+                                                   c_sharpDoublePipeTok,
+                                                   c_sharpRCurlyTok,
+                                                   c_sharpTildeTok
+                                                 }
 
 proc tsNodeType*(node: TsC_sharpNode): string
 

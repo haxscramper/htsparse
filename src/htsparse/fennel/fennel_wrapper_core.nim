@@ -87,6 +87,91 @@ type
     fennelSyntaxError               ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: FennelNodeKind): string =
+  case kind:
+    of fennelAssignment:                "assignment"
+    of fennelBinding:                   "binding"
+    of fennelBoolean:                   "boolean"
+    of fennelEach:                      "each"
+    of fennelEachClause:                "each_clause"
+    of fennelFn:                        "fn"
+    of fennelFor:                       "for"
+    of fennelForClause:                 "for_clause"
+    of fennelGlobal:                    "global"
+    of fennelGuardPattern:              "guard_pattern"
+    of fennelHashfn:                    "hashfn"
+    of fennelLambda:                    "lambda"
+    of fennelLet:                       "let"
+    of fennelLetClause:                 "let_clause"
+    of fennelList:                      "list"
+    of fennelLocal:                     "local"
+    of fennelMatch:                     "match"
+    of fennelMultiSymbol:               "multi_symbol"
+    of fennelMultiSymbolMethod:         "multi_symbol_method"
+    of fennelMultiValueAssignment:      "multi_value_assignment"
+    of fennelMultiValueBinding:         "multi_value_binding"
+    of fennelMultiValuePattern:         "multi_value_pattern"
+    of fennelParameters:                "parameters"
+    of fennelProgram:                   "program"
+    of fennelQuote:                     "quote"
+    of fennelQuotedList:                "quoted_list"
+    of fennelQuotedSequentialTable:     "quoted_sequential_table"
+    of fennelQuotedTable:               "quoted_table"
+    of fennelSequentialTable:           "sequential_table"
+    of fennelSequentialTableAssignment: "sequential_table_assignment"
+    of fennelSequentialTableBinding:    "sequential_table_binding"
+    of fennelSequentialTablePattern:    "sequential_table_pattern"
+    of fennelSet:                       "set"
+    of fennelString:                    "string"
+    of fennelTable:                     "table"
+    of fennelTableAssignment:           "table_assignment"
+    of fennelTableBinding:              "table_binding"
+    of fennelTablePattern:              "table_pattern"
+    of fennelUnquote:                   "unquote"
+    of fennelVar:                       "var"
+    of fennelWherePattern:              "where_pattern"
+    of fennelQuoteTok:                  "\""
+    of fennelHashTok:                   "#"
+    of fennelAmpersandTok:              "&"
+    of fennelAmpersandasTok:            "&as"
+    of fennelApostropheTok:             "\'"
+    of fennelLParTok:                   "("
+    of fennelRParTok:                   ")"
+    of fennelCommaTok:                  ","
+    of fennelDotTok:                    "."
+    of fennelColonTok:                  ":"
+    of fennelColonuntilTok:             ":until"
+    of fennelQuestionTok:               "?"
+    of fennelLBrackTok:                 "["
+    of fennelRBrackTok:                 "]"
+    of fennelBacktickTok:               "`"
+    of fennelComment:                   "comment"
+    of fennelEachTok:                   "each"
+    of fennelEscapeSequence:            "escape_sequence"
+    of fennelFalseTok:                  "false"
+    of fennelFnTok:                     "fn"
+    of fennelForTok:                    "for"
+    of fennelGlobalTok:                 "global"
+    of fennelHashfnTok:                 "hashfn"
+    of fennelLambdaTok:                 "lambda"
+    of fennelLetTok:                    "let"
+    of fennelLocalTok:                  "local"
+    of fennelMatchTok:                  "match"
+    of fennelNil:                       "nil"
+    of fennelNumber:                    "number"
+    of fennelOrTok:                     "or"
+    of fennelSetTok:                    "set"
+    of fennelSymbol:                    "symbol"
+    of fennelTrueTok:                   "true"
+    of fennelVarTok:                    "var"
+    of fennelVararg:                    "vararg"
+    of fennelWhereTok:                  "where"
+    of fennelLCurlyTok:                 "{"
+    of fennelRCurlyTok:                 "}"
+    of fennelλTok:                      "\xCE\xBB"
+    of fennelSyntaxError:               "ERROR"
+
+
 type
   TsFennelNode* = distinct TSNode
 
@@ -94,6 +179,703 @@ type
 type
   FennelParser* = distinct PtsParser
 
+
+const fennelAllowedSubnodes*: array[FennelNodeKind, set[FennelNodeKind]] = block:
+                                                                             var tmp: array[FennelNodeKind, set[FennelNodeKind]]
+                                                                             tmp[fennelAssignment] = {fennelMultiSymbol, fennelSymbol}
+                                                                             tmp[fennelBinding] = {fennelSymbol}
+                                                                             tmp[fennelEach] = {
+                                                                                                 fennelBoolean,
+                                                                                                 fennelEach,
+                                                                                                 fennelEachClause,
+                                                                                                 fennelFn,
+                                                                                                 fennelFor,
+                                                                                                 fennelGlobal,
+                                                                                                 fennelHashfn,
+                                                                                                 fennelLambda,
+                                                                                                 fennelLet,
+                                                                                                 fennelList,
+                                                                                                 fennelLocal,
+                                                                                                 fennelMatch,
+                                                                                                 fennelMultiSymbol,
+                                                                                                 fennelNil,
+                                                                                                 fennelNumber,
+                                                                                                 fennelQuote,
+                                                                                                 fennelSequentialTable,
+                                                                                                 fennelSet,
+                                                                                                 fennelString,
+                                                                                                 fennelSymbol,
+                                                                                                 fennelTable,
+                                                                                                 fennelVar,
+                                                                                                 fennelVararg
+                                                                                               }
+                                                                             tmp[fennelEachClause] = {fennelBinding, fennelMultiValueBinding, fennelSequentialTableBinding, fennelTableBinding}
+                                                                             tmp[fennelFn] = {
+                                                                                               fennelBoolean,
+                                                                                               fennelEach,
+                                                                                               fennelFn,
+                                                                                               fennelFor,
+                                                                                               fennelGlobal,
+                                                                                               fennelHashfn,
+                                                                                               fennelLambda,
+                                                                                               fennelLet,
+                                                                                               fennelList,
+                                                                                               fennelLocal,
+                                                                                               fennelMatch,
+                                                                                               fennelMultiSymbol,
+                                                                                               fennelNil,
+                                                                                               fennelNumber,
+                                                                                               fennelParameters,
+                                                                                               fennelQuote,
+                                                                                               fennelSequentialTable,
+                                                                                               fennelSet,
+                                                                                               fennelString,
+                                                                                               fennelSymbol,
+                                                                                               fennelTable,
+                                                                                               fennelVar,
+                                                                                               fennelVararg
+                                                                                             }
+                                                                             tmp[fennelFor] = {
+                                                                                                fennelBoolean,
+                                                                                                fennelEach,
+                                                                                                fennelFn,
+                                                                                                fennelFor,
+                                                                                                fennelForClause,
+                                                                                                fennelGlobal,
+                                                                                                fennelHashfn,
+                                                                                                fennelLambda,
+                                                                                                fennelLet,
+                                                                                                fennelList,
+                                                                                                fennelLocal,
+                                                                                                fennelMatch,
+                                                                                                fennelMultiSymbol,
+                                                                                                fennelNil,
+                                                                                                fennelNumber,
+                                                                                                fennelQuote,
+                                                                                                fennelSequentialTable,
+                                                                                                fennelSet,
+                                                                                                fennelString,
+                                                                                                fennelSymbol,
+                                                                                                fennelTable,
+                                                                                                fennelVar,
+                                                                                                fennelVararg
+                                                                                              }
+                                                                             tmp[fennelForClause] = {
+                                                                                                      fennelBoolean,
+                                                                                                      fennelEach,
+                                                                                                      fennelFn,
+                                                                                                      fennelFor,
+                                                                                                      fennelGlobal,
+                                                                                                      fennelHashfn,
+                                                                                                      fennelLambda,
+                                                                                                      fennelLet,
+                                                                                                      fennelList,
+                                                                                                      fennelLocal,
+                                                                                                      fennelMatch,
+                                                                                                      fennelMultiSymbol,
+                                                                                                      fennelNil,
+                                                                                                      fennelNumber,
+                                                                                                      fennelQuote,
+                                                                                                      fennelSequentialTable,
+                                                                                                      fennelSet,
+                                                                                                      fennelString,
+                                                                                                      fennelSymbol,
+                                                                                                      fennelTable,
+                                                                                                      fennelVar,
+                                                                                                      fennelVararg
+                                                                                                    }
+                                                                             tmp[fennelGlobal] = {
+                                                                                                   fennelBinding,
+                                                                                                   fennelBoolean,
+                                                                                                   fennelEach,
+                                                                                                   fennelFn,
+                                                                                                   fennelFor,
+                                                                                                   fennelGlobal,
+                                                                                                   fennelHashfn,
+                                                                                                   fennelLambda,
+                                                                                                   fennelLet,
+                                                                                                   fennelList,
+                                                                                                   fennelLocal,
+                                                                                                   fennelMatch,
+                                                                                                   fennelMultiSymbol,
+                                                                                                   fennelMultiValueBinding,
+                                                                                                   fennelNil,
+                                                                                                   fennelNumber,
+                                                                                                   fennelQuote,
+                                                                                                   fennelSequentialTable,
+                                                                                                   fennelSequentialTableBinding,
+                                                                                                   fennelSet,
+                                                                                                   fennelString,
+                                                                                                   fennelSymbol,
+                                                                                                   fennelTable,
+                                                                                                   fennelTableBinding,
+                                                                                                   fennelVar,
+                                                                                                   fennelVararg
+                                                                                                 }
+                                                                             tmp[fennelGuardPattern] = {
+                                                                                                         fennelBoolean,
+                                                                                                         fennelMultiSymbol,
+                                                                                                         fennelMultiValuePattern,
+                                                                                                         fennelNil,
+                                                                                                         fennelNumber,
+                                                                                                         fennelSequentialTablePattern,
+                                                                                                         fennelString,
+                                                                                                         fennelSymbol,
+                                                                                                         fennelTablePattern,
+                                                                                                         fennelVararg
+                                                                                                       }
+                                                                             tmp[fennelHashfn] = {
+                                                                                                   fennelBoolean,
+                                                                                                   fennelEach,
+                                                                                                   fennelFn,
+                                                                                                   fennelFor,
+                                                                                                   fennelGlobal,
+                                                                                                   fennelHashfn,
+                                                                                                   fennelLambda,
+                                                                                                   fennelLet,
+                                                                                                   fennelList,
+                                                                                                   fennelLocal,
+                                                                                                   fennelMatch,
+                                                                                                   fennelMultiSymbol,
+                                                                                                   fennelNil,
+                                                                                                   fennelNumber,
+                                                                                                   fennelQuote,
+                                                                                                   fennelSequentialTable,
+                                                                                                   fennelSet,
+                                                                                                   fennelString,
+                                                                                                   fennelSymbol,
+                                                                                                   fennelTable,
+                                                                                                   fennelVar,
+                                                                                                   fennelVararg
+                                                                                                 }
+                                                                             tmp[fennelLambda] = {
+                                                                                                   fennelBoolean,
+                                                                                                   fennelEach,
+                                                                                                   fennelFn,
+                                                                                                   fennelFor,
+                                                                                                   fennelGlobal,
+                                                                                                   fennelHashfn,
+                                                                                                   fennelLambda,
+                                                                                                   fennelLet,
+                                                                                                   fennelList,
+                                                                                                   fennelLocal,
+                                                                                                   fennelMatch,
+                                                                                                   fennelMultiSymbol,
+                                                                                                   fennelNil,
+                                                                                                   fennelNumber,
+                                                                                                   fennelParameters,
+                                                                                                   fennelQuote,
+                                                                                                   fennelSequentialTable,
+                                                                                                   fennelSet,
+                                                                                                   fennelString,
+                                                                                                   fennelSymbol,
+                                                                                                   fennelTable,
+                                                                                                   fennelVar,
+                                                                                                   fennelVararg
+                                                                                                 }
+                                                                             tmp[fennelLet] = {
+                                                                                                fennelBoolean,
+                                                                                                fennelEach,
+                                                                                                fennelFn,
+                                                                                                fennelFor,
+                                                                                                fennelGlobal,
+                                                                                                fennelHashfn,
+                                                                                                fennelLambda,
+                                                                                                fennelLet,
+                                                                                                fennelLetClause,
+                                                                                                fennelList,
+                                                                                                fennelLocal,
+                                                                                                fennelMatch,
+                                                                                                fennelMultiSymbol,
+                                                                                                fennelNil,
+                                                                                                fennelNumber,
+                                                                                                fennelQuote,
+                                                                                                fennelSequentialTable,
+                                                                                                fennelSet,
+                                                                                                fennelString,
+                                                                                                fennelSymbol,
+                                                                                                fennelTable,
+                                                                                                fennelVar,
+                                                                                                fennelVararg
+                                                                                              }
+                                                                             tmp[fennelLetClause] = {
+                                                                                                      fennelBinding,
+                                                                                                      fennelBoolean,
+                                                                                                      fennelEach,
+                                                                                                      fennelFn,
+                                                                                                      fennelFor,
+                                                                                                      fennelGlobal,
+                                                                                                      fennelHashfn,
+                                                                                                      fennelLambda,
+                                                                                                      fennelLet,
+                                                                                                      fennelList,
+                                                                                                      fennelLocal,
+                                                                                                      fennelMatch,
+                                                                                                      fennelMultiSymbol,
+                                                                                                      fennelMultiValueBinding,
+                                                                                                      fennelNil,
+                                                                                                      fennelNumber,
+                                                                                                      fennelQuote,
+                                                                                                      fennelSequentialTable,
+                                                                                                      fennelSequentialTableBinding,
+                                                                                                      fennelSet,
+                                                                                                      fennelString,
+                                                                                                      fennelSymbol,
+                                                                                                      fennelTable,
+                                                                                                      fennelTableBinding,
+                                                                                                      fennelVar,
+                                                                                                      fennelVararg
+                                                                                                    }
+                                                                             tmp[fennelList] = {
+                                                                                                 fennelBoolean,
+                                                                                                 fennelEach,
+                                                                                                 fennelFn,
+                                                                                                 fennelFor,
+                                                                                                 fennelGlobal,
+                                                                                                 fennelHashfn,
+                                                                                                 fennelLambda,
+                                                                                                 fennelLet,
+                                                                                                 fennelList,
+                                                                                                 fennelLocal,
+                                                                                                 fennelMatch,
+                                                                                                 fennelMultiSymbol,
+                                                                                                 fennelMultiSymbolMethod,
+                                                                                                 fennelNil,
+                                                                                                 fennelNumber,
+                                                                                                 fennelQuote,
+                                                                                                 fennelSequentialTable,
+                                                                                                 fennelSet,
+                                                                                                 fennelString,
+                                                                                                 fennelSymbol,
+                                                                                                 fennelTable,
+                                                                                                 fennelVar,
+                                                                                                 fennelVararg
+                                                                                               }
+                                                                             tmp[fennelLocal] = {
+                                                                                                  fennelBinding,
+                                                                                                  fennelBoolean,
+                                                                                                  fennelEach,
+                                                                                                  fennelFn,
+                                                                                                  fennelFor,
+                                                                                                  fennelGlobal,
+                                                                                                  fennelHashfn,
+                                                                                                  fennelLambda,
+                                                                                                  fennelLet,
+                                                                                                  fennelList,
+                                                                                                  fennelLocal,
+                                                                                                  fennelMatch,
+                                                                                                  fennelMultiSymbol,
+                                                                                                  fennelMultiValueBinding,
+                                                                                                  fennelNil,
+                                                                                                  fennelNumber,
+                                                                                                  fennelQuote,
+                                                                                                  fennelSequentialTable,
+                                                                                                  fennelSequentialTableBinding,
+                                                                                                  fennelSet,
+                                                                                                  fennelString,
+                                                                                                  fennelSymbol,
+                                                                                                  fennelTable,
+                                                                                                  fennelTableBinding,
+                                                                                                  fennelVar,
+                                                                                                  fennelVararg
+                                                                                                }
+                                                                             tmp[fennelMatch] = {
+                                                                                                  fennelBoolean,
+                                                                                                  fennelEach,
+                                                                                                  fennelFn,
+                                                                                                  fennelFor,
+                                                                                                  fennelGlobal,
+                                                                                                  fennelGuardPattern,
+                                                                                                  fennelHashfn,
+                                                                                                  fennelLambda,
+                                                                                                  fennelLet,
+                                                                                                  fennelList,
+                                                                                                  fennelLocal,
+                                                                                                  fennelMatch,
+                                                                                                  fennelMultiSymbol,
+                                                                                                  fennelMultiValuePattern,
+                                                                                                  fennelNil,
+                                                                                                  fennelNumber,
+                                                                                                  fennelQuote,
+                                                                                                  fennelSequentialTable,
+                                                                                                  fennelSequentialTablePattern,
+                                                                                                  fennelSet,
+                                                                                                  fennelString,
+                                                                                                  fennelSymbol,
+                                                                                                  fennelTable,
+                                                                                                  fennelTablePattern,
+                                                                                                  fennelVar,
+                                                                                                  fennelVararg,
+                                                                                                  fennelWherePattern
+                                                                                                }
+                                                                             tmp[fennelMultiSymbol] = {fennelSymbol}
+                                                                             tmp[fennelMultiSymbolMethod] = {fennelMultiSymbol, fennelSymbol}
+                                                                             tmp[fennelMultiValueAssignment] = {fennelAssignment, fennelSequentialTableAssignment, fennelTableAssignment}
+                                                                             tmp[fennelMultiValueBinding] = {fennelBinding, fennelSequentialTableBinding, fennelTableBinding}
+                                                                             tmp[fennelMultiValuePattern] = {
+                                                                                                              fennelBoolean,
+                                                                                                              fennelMultiSymbol,
+                                                                                                              fennelNil,
+                                                                                                              fennelNumber,
+                                                                                                              fennelSequentialTablePattern,
+                                                                                                              fennelString,
+                                                                                                              fennelSymbol,
+                                                                                                              fennelTablePattern,
+                                                                                                              fennelVararg
+                                                                                                            }
+                                                                             tmp[fennelParameters] = {fennelBinding, fennelMultiValueBinding, fennelSequentialTableBinding, fennelTableBinding, fennelVararg}
+                                                                             tmp[fennelProgram] = {
+                                                                                                    fennelBoolean,
+                                                                                                    fennelEach,
+                                                                                                    fennelFn,
+                                                                                                    fennelFor,
+                                                                                                    fennelGlobal,
+                                                                                                    fennelHashfn,
+                                                                                                    fennelLambda,
+                                                                                                    fennelLet,
+                                                                                                    fennelList,
+                                                                                                    fennelLocal,
+                                                                                                    fennelMatch,
+                                                                                                    fennelMultiSymbol,
+                                                                                                    fennelNil,
+                                                                                                    fennelNumber,
+                                                                                                    fennelQuote,
+                                                                                                    fennelSequentialTable,
+                                                                                                    fennelSet,
+                                                                                                    fennelString,
+                                                                                                    fennelSymbol,
+                                                                                                    fennelTable,
+                                                                                                    fennelVar,
+                                                                                                    fennelVararg
+                                                                                                  }
+                                                                             tmp[fennelQuote] = {
+                                                                                                  fennelBoolean,
+                                                                                                  fennelMultiSymbol,
+                                                                                                  fennelMultiSymbolMethod,
+                                                                                                  fennelNil,
+                                                                                                  fennelNumber,
+                                                                                                  fennelQuotedList,
+                                                                                                  fennelQuotedSequentialTable,
+                                                                                                  fennelQuotedTable,
+                                                                                                  fennelString,
+                                                                                                  fennelSymbol,
+                                                                                                  fennelUnquote,
+                                                                                                  fennelVararg
+                                                                                                }
+                                                                             tmp[fennelQuotedList] = {
+                                                                                                       fennelBoolean,
+                                                                                                       fennelMultiSymbol,
+                                                                                                       fennelMultiSymbolMethod,
+                                                                                                       fennelNil,
+                                                                                                       fennelNumber,
+                                                                                                       fennelQuotedList,
+                                                                                                       fennelQuotedSequentialTable,
+                                                                                                       fennelQuotedTable,
+                                                                                                       fennelString,
+                                                                                                       fennelSymbol,
+                                                                                                       fennelUnquote,
+                                                                                                       fennelVararg
+                                                                                                     }
+                                                                             tmp[fennelQuotedSequentialTable] = {
+                                                                                                                  fennelBoolean,
+                                                                                                                  fennelMultiSymbol,
+                                                                                                                  fennelMultiSymbolMethod,
+                                                                                                                  fennelNil,
+                                                                                                                  fennelNumber,
+                                                                                                                  fennelQuotedList,
+                                                                                                                  fennelQuotedSequentialTable,
+                                                                                                                  fennelQuotedTable,
+                                                                                                                  fennelString,
+                                                                                                                  fennelSymbol,
+                                                                                                                  fennelUnquote,
+                                                                                                                  fennelVararg
+                                                                                                                }
+                                                                             tmp[fennelQuotedTable] = {
+                                                                                                        fennelBoolean,
+                                                                                                        fennelMultiSymbol,
+                                                                                                        fennelMultiSymbolMethod,
+                                                                                                        fennelNil,
+                                                                                                        fennelNumber,
+                                                                                                        fennelQuotedList,
+                                                                                                        fennelQuotedSequentialTable,
+                                                                                                        fennelQuotedTable,
+                                                                                                        fennelString,
+                                                                                                        fennelSymbol,
+                                                                                                        fennelUnquote,
+                                                                                                        fennelVararg
+                                                                                                      }
+                                                                             tmp[fennelSequentialTable] = {
+                                                                                                            fennelBoolean,
+                                                                                                            fennelEach,
+                                                                                                            fennelFn,
+                                                                                                            fennelFor,
+                                                                                                            fennelGlobal,
+                                                                                                            fennelHashfn,
+                                                                                                            fennelLambda,
+                                                                                                            fennelLet,
+                                                                                                            fennelList,
+                                                                                                            fennelLocal,
+                                                                                                            fennelMatch,
+                                                                                                            fennelMultiSymbol,
+                                                                                                            fennelNil,
+                                                                                                            fennelNumber,
+                                                                                                            fennelQuote,
+                                                                                                            fennelSequentialTable,
+                                                                                                            fennelSet,
+                                                                                                            fennelString,
+                                                                                                            fennelSymbol,
+                                                                                                            fennelTable,
+                                                                                                            fennelVar,
+                                                                                                            fennelVararg
+                                                                                                          }
+                                                                             tmp[fennelSequentialTableAssignment] = {fennelAssignment, fennelSequentialTableAssignment, fennelTableAssignment}
+                                                                             tmp[fennelSequentialTableBinding] = {fennelBinding, fennelSequentialTableBinding, fennelTableBinding}
+                                                                             tmp[fennelSequentialTablePattern] = {
+                                                                                                                   fennelBoolean,
+                                                                                                                   fennelMultiSymbol,
+                                                                                                                   fennelNil,
+                                                                                                                   fennelNumber,
+                                                                                                                   fennelSequentialTablePattern,
+                                                                                                                   fennelString,
+                                                                                                                   fennelSymbol,
+                                                                                                                   fennelTablePattern,
+                                                                                                                   fennelVararg
+                                                                                                                 }
+                                                                             tmp[fennelSet] = {
+                                                                                                fennelAssignment,
+                                                                                                fennelBoolean,
+                                                                                                fennelEach,
+                                                                                                fennelFn,
+                                                                                                fennelFor,
+                                                                                                fennelGlobal,
+                                                                                                fennelHashfn,
+                                                                                                fennelLambda,
+                                                                                                fennelLet,
+                                                                                                fennelList,
+                                                                                                fennelLocal,
+                                                                                                fennelMatch,
+                                                                                                fennelMultiSymbol,
+                                                                                                fennelMultiValueAssignment,
+                                                                                                fennelNil,
+                                                                                                fennelNumber,
+                                                                                                fennelQuote,
+                                                                                                fennelSequentialTable,
+                                                                                                fennelSequentialTableAssignment,
+                                                                                                fennelSet,
+                                                                                                fennelString,
+                                                                                                fennelSymbol,
+                                                                                                fennelTable,
+                                                                                                fennelTableAssignment,
+                                                                                                fennelVar,
+                                                                                                fennelVararg
+                                                                                              }
+                                                                             tmp[fennelString] = {fennelEscapeSequence}
+                                                                             tmp[fennelTable] = {
+                                                                                                  fennelBoolean,
+                                                                                                  fennelEach,
+                                                                                                  fennelFn,
+                                                                                                  fennelFor,
+                                                                                                  fennelGlobal,
+                                                                                                  fennelHashfn,
+                                                                                                  fennelLambda,
+                                                                                                  fennelLet,
+                                                                                                  fennelList,
+                                                                                                  fennelLocal,
+                                                                                                  fennelMatch,
+                                                                                                  fennelMultiSymbol,
+                                                                                                  fennelNil,
+                                                                                                  fennelNumber,
+                                                                                                  fennelQuote,
+                                                                                                  fennelSequentialTable,
+                                                                                                  fennelSet,
+                                                                                                  fennelString,
+                                                                                                  fennelSymbol,
+                                                                                                  fennelTable,
+                                                                                                  fennelVar,
+                                                                                                  fennelVararg
+                                                                                                }
+                                                                             tmp[fennelTableAssignment] = {
+                                                                                                            fennelAssignment,
+                                                                                                            fennelBoolean,
+                                                                                                            fennelEach,
+                                                                                                            fennelFn,
+                                                                                                            fennelFor,
+                                                                                                            fennelGlobal,
+                                                                                                            fennelHashfn,
+                                                                                                            fennelLambda,
+                                                                                                            fennelLet,
+                                                                                                            fennelList,
+                                                                                                            fennelLocal,
+                                                                                                            fennelMatch,
+                                                                                                            fennelMultiSymbol,
+                                                                                                            fennelNil,
+                                                                                                            fennelNumber,
+                                                                                                            fennelQuote,
+                                                                                                            fennelSequentialTable,
+                                                                                                            fennelSequentialTableAssignment,
+                                                                                                            fennelSet,
+                                                                                                            fennelString,
+                                                                                                            fennelSymbol,
+                                                                                                            fennelTable,
+                                                                                                            fennelTableAssignment,
+                                                                                                            fennelVar,
+                                                                                                            fennelVararg
+                                                                                                          }
+                                                                             tmp[fennelTableBinding] = {
+                                                                                                         fennelBinding,
+                                                                                                         fennelBoolean,
+                                                                                                         fennelEach,
+                                                                                                         fennelFn,
+                                                                                                         fennelFor,
+                                                                                                         fennelGlobal,
+                                                                                                         fennelHashfn,
+                                                                                                         fennelLambda,
+                                                                                                         fennelLet,
+                                                                                                         fennelList,
+                                                                                                         fennelLocal,
+                                                                                                         fennelMatch,
+                                                                                                         fennelMultiSymbol,
+                                                                                                         fennelNil,
+                                                                                                         fennelNumber,
+                                                                                                         fennelQuote,
+                                                                                                         fennelSequentialTable,
+                                                                                                         fennelSequentialTableBinding,
+                                                                                                         fennelSet,
+                                                                                                         fennelString,
+                                                                                                         fennelSymbol,
+                                                                                                         fennelTable,
+                                                                                                         fennelTableBinding,
+                                                                                                         fennelVar,
+                                                                                                         fennelVararg
+                                                                                                       }
+                                                                             tmp[fennelTablePattern] = {
+                                                                                                         fennelBoolean,
+                                                                                                         fennelEach,
+                                                                                                         fennelFn,
+                                                                                                         fennelFor,
+                                                                                                         fennelGlobal,
+                                                                                                         fennelHashfn,
+                                                                                                         fennelLambda,
+                                                                                                         fennelLet,
+                                                                                                         fennelList,
+                                                                                                         fennelLocal,
+                                                                                                         fennelMatch,
+                                                                                                         fennelMultiSymbol,
+                                                                                                         fennelMultiValuePattern,
+                                                                                                         fennelNil,
+                                                                                                         fennelNumber,
+                                                                                                         fennelQuote,
+                                                                                                         fennelSequentialTable,
+                                                                                                         fennelSequentialTablePattern,
+                                                                                                         fennelSet,
+                                                                                                         fennelString,
+                                                                                                         fennelSymbol,
+                                                                                                         fennelTable,
+                                                                                                         fennelTablePattern,
+                                                                                                         fennelVar,
+                                                                                                         fennelVararg
+                                                                                                       }
+                                                                             tmp[fennelUnquote] = {
+                                                                                                    fennelBoolean,
+                                                                                                    fennelEach,
+                                                                                                    fennelFn,
+                                                                                                    fennelFor,
+                                                                                                    fennelGlobal,
+                                                                                                    fennelHashfn,
+                                                                                                    fennelLambda,
+                                                                                                    fennelLet,
+                                                                                                    fennelList,
+                                                                                                    fennelLocal,
+                                                                                                    fennelMatch,
+                                                                                                    fennelMultiSymbol,
+                                                                                                    fennelNil,
+                                                                                                    fennelNumber,
+                                                                                                    fennelQuote,
+                                                                                                    fennelSequentialTable,
+                                                                                                    fennelSet,
+                                                                                                    fennelString,
+                                                                                                    fennelSymbol,
+                                                                                                    fennelTable,
+                                                                                                    fennelVar,
+                                                                                                    fennelVararg
+                                                                                                  }
+                                                                             tmp[fennelVar] = {
+                                                                                                fennelBinding,
+                                                                                                fennelBoolean,
+                                                                                                fennelEach,
+                                                                                                fennelFn,
+                                                                                                fennelFor,
+                                                                                                fennelGlobal,
+                                                                                                fennelHashfn,
+                                                                                                fennelLambda,
+                                                                                                fennelLet,
+                                                                                                fennelList,
+                                                                                                fennelLocal,
+                                                                                                fennelMatch,
+                                                                                                fennelMultiSymbol,
+                                                                                                fennelMultiValueBinding,
+                                                                                                fennelNil,
+                                                                                                fennelNumber,
+                                                                                                fennelQuote,
+                                                                                                fennelSequentialTable,
+                                                                                                fennelSequentialTableBinding,
+                                                                                                fennelSet,
+                                                                                                fennelString,
+                                                                                                fennelSymbol,
+                                                                                                fennelTable,
+                                                                                                fennelTableBinding,
+                                                                                                fennelVar,
+                                                                                                fennelVararg
+                                                                                              }
+                                                                             tmp[fennelWherePattern] = {
+                                                                                                         fennelBoolean,
+                                                                                                         fennelMultiSymbol,
+                                                                                                         fennelMultiValuePattern,
+                                                                                                         fennelNil,
+                                                                                                         fennelNumber,
+                                                                                                         fennelSequentialTablePattern,
+                                                                                                         fennelString,
+                                                                                                         fennelSymbol,
+                                                                                                         fennelTablePattern,
+                                                                                                         fennelVararg
+                                                                                                       }
+                                                                             tmp
+const fennelTokenKinds*: set[FennelNodeKind] = {
+                                                 fennelQuoteTok,
+                                                 fennelHashTok,
+                                                 fennelAmpersandTok,
+                                                 fennelAmpersandasTok,
+                                                 fennelApostropheTok,
+                                                 fennelLParTok,
+                                                 fennelRParTok,
+                                                 fennelCommaTok,
+                                                 fennelDotTok,
+                                                 fennelColonTok,
+                                                 fennelColonuntilTok,
+                                                 fennelQuestionTok,
+                                                 fennelLBrackTok,
+                                                 fennelRBrackTok,
+                                                 fennelBacktickTok,
+                                                 fennelEachTok,
+                                                 fennelFalseTok,
+                                                 fennelFnTok,
+                                                 fennelForTok,
+                                                 fennelGlobalTok,
+                                                 fennelHashfnTok,
+                                                 fennelLambdaTok,
+                                                 fennelLetTok,
+                                                 fennelLocalTok,
+                                                 fennelMatchTok,
+                                                 fennelOrTok,
+                                                 fennelQuoteTok,
+                                                 fennelSetTok,
+                                                 fennelTrueTok,
+                                                 fennelVarTok,
+                                                 fennelWhereTok,
+                                                 fennelLCurlyTok,
+                                                 fennelRCurlyTok,
+                                                 fennelλTok
+                                               }
 
 proc tsNodeType*(node: TsFennelNode): string
 

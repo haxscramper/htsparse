@@ -1018,6 +1018,1021 @@ type
     verilogSyntaxError                                    ## Tree-sitter parser syntax error
 
 
+proc strRepr*(kind: VerilogNodeKind): string =
+  case kind:
+    of verilogDollarfulskewUnderscoretimingUnderscorecheck:   "$fullskew_timing_check"
+    of verilogDollarholdUnderscoretimingUnderscorecheck:      "$hold_timing_check"
+    of verilogDollarnochangeUnderscoretimingUnderscorecheck:  "$nochange_timing_check"
+    of verilogDollarperiodUnderscoretimingUnderscorecheck:    "$period_timing_check"
+    of verilogDollarrecoveryUnderscoretimingUnderscorecheck:  "$recovery_timing_check"
+    of verilogDollarrecremUnderscoretimingUnderscorecheck:    "$recrem_timing_check"
+    of verilogDollarremovalUnderscoretimingUnderscorecheck:   "$removal_timing_check"
+    of verilogDollarsetupUnderscoretimingUnderscorecheck:     "$setup_timing_check"
+    of verilogDollarsetupholdUnderscoretimingUnderscorecheck: "$setuphold_timing_check"
+    of verilogDollarskewUnderscoretimingUnderscorecheck:      "$skew_timing_check"
+    of verilogDollartimeskewUnderscoretimingUnderscorecheck:  "$timeskew_timing_check"
+    of verilogDollarwidthUnderscoretimingUnderscorecheck:     "$width_timing_check"
+    of verilogOrderedParameterAssignment:                     "_ordered_parameter_assignment"
+    of verilogActionBlock:                                    "action_block"
+    of verilogAlwaysConstruct:                                "always_construct"
+    of verilogAlwaysKeyword:                                  "always_keyword"
+    of verilogAnonymousProgram:                               "anonymous_program"
+    of verilogAnonymousProgramItem:                           "anonymous_program_item"
+    of verilogAnsiPortDeclaration:                            "ansi_port_declaration"
+    of verilogArrayManipulationCall:                          "array_manipulation_call"
+    of verilogArrayMethodName:                                "array_method_name"
+    of verilogArrayRangeExpression:                           "array_range_expression"
+    of verilogAssertPropertyStatement:                        "assert_property_statement"
+    of verilogAssertionVariableDeclaration:                   "assertion_variable_declaration"
+    of verilogAssignmentOperator:                             "assignment_operator"
+    of verilogAssignmentPattern:                              "assignment_pattern"
+    of verilogAssignmentPatternExpression:                    "assignment_pattern_expression"
+    of verilogAssignmentPatternKey:                           "assignment_pattern_key"
+    of verilogAssignmentPatternNetLvalue:                     "assignment_pattern_net_lvalue"
+    of verilogAssignmentPatternVariableLvalue:                "assignment_pattern_variable_lvalue"
+    of verilogAssociativeDimension:                           "associative_dimension"
+    of verilogAssumePropertyStatement:                        "assume_property_statement"
+    of verilogAttrSpec:                                       "attr_spec"
+    of verilogAttributeInstance:                              "attribute_instance"
+    of verilogBeginKeywords:                                  "begin_keywords"
+    of verilogBindDirective:                                  "bind_directive"
+    of verilogBindTargetInstance:                             "bind_target_instance"
+    of verilogBindTargetInstanceList:                         "bind_target_instance_list"
+    of verilogBindTargetScope:                                "bind_target_scope"
+    of verilogBinsExpression:                                 "bins_expression"
+    of verilogBinsKeyword:                                    "bins_keyword"
+    of verilogBinsOrEmpty:                                    "bins_or_empty"
+    of verilogBinsOrOptions:                                  "bins_or_options"
+    of verilogBinsSelection:                                  "bins_selection"
+    of verilogBinsSelectionOrOption:                          "bins_selection_or_option"
+    of verilogBitSelect1:                                     "bit_select1"
+    of verilogBlockEventExpression:                           "block_event_expression"
+    of verilogBlockItemDeclaration:                           "block_item_declaration"
+    of verilogBlockingAssignment:                             "blocking_assignment"
+    of verilogCaseExpression:                                 "case_expression"
+    of verilogCaseGenerateConstruct:                          "case_generate_construct"
+    of verilogCaseGenerateItem:                               "case_generate_item"
+    of verilogCaseInsideItem:                                 "case_inside_item"
+    of verilogCaseItem:                                       "case_item"
+    of verilogCaseItemExpression:                             "case_item_expression"
+    of verilogCaseKeyword:                                    "case_keyword"
+    of verilogCasePatternItem:                                "case_pattern_item"
+    of verilogCaseStatement:                                  "case_statement"
+    of verilogCast:                                           "cast"
+    of verilogCastingType:                                    "casting_type"
+    of verilogCellClause:                                     "cell_clause"
+    of verilogCellIdentifier:                                 "cell_identifier"
+    of verilogChargeStrength:                                 "charge_strength"
+    of verilogCheckerDeclaration:                             "checker_declaration"
+    of verilogCheckerIdentifier:                              "checker_identifier"
+    of verilogCheckerInstantiation:                           "checker_instantiation"
+    of verilogCheckerOrGenerateItemDeclaration:               "checker_or_generate_item_declaration"
+    of verilogCheckerPortDirection:                           "checker_port_direction"
+    of verilogCheckerPortItem:                                "checker_port_item"
+    of verilogCheckerPortList:                                "checker_port_list"
+    of verilogClassConstructorDeclaration:                    "class_constructor_declaration"
+    of verilogClassConstructorPrototype:                      "class_constructor_prototype"
+    of verilogClassDeclaration:                               "class_declaration"
+    of verilogClassIdentifier:                                "class_identifier"
+    of verilogClassItem:                                      "class_item"
+    of verilogClassItemQualifier:                             "class_item_qualifier"
+    of verilogClassMethod:                                    "class_method"
+    of verilogClassNew:                                       "class_new"
+    of verilogClassProperty:                                  "class_property"
+    of verilogClassQualifier:                                 "class_qualifier"
+    of verilogClassScope:                                     "class_scope"
+    of verilogClassType:                                      "class_type"
+    of verilogClockingDeclAssign:                             "clocking_decl_assign"
+    of verilogClockingDeclaration:                            "clocking_declaration"
+    of verilogClockingDirection:                              "clocking_direction"
+    of verilogClockingDrive:                                  "clocking_drive"
+    of verilogClockingEvent:                                  "clocking_event"
+    of verilogClockingIdentifier:                             "clocking_identifier"
+    of verilogClockingItem:                                   "clocking_item"
+    of verilogClockingSkew:                                   "clocking_skew"
+    of verilogClockvar:                                       "clockvar"
+    of verilogClockvarExpression:                             "clockvar_expression"
+    of verilogCmosSwitchInstance:                             "cmos_switch_instance"
+    of verilogCmosSwitchtype:                                 "cmos_switchtype"
+    of verilogCombinationalBody:                              "combinational_body"
+    of verilogCombinationalEntry:                             "combinational_entry"
+    of verilogConcatenation:                                  "concatenation"
+    of verilogConcurrentAssertionItem:                        "concurrent_assertion_item"
+    of verilogCondPattern:                                    "cond_pattern"
+    of verilogCondPredicate:                                  "cond_predicate"
+    of verilogConditionalExpression:                          "conditional_expression"
+    of verilogConditionalStatement:                           "conditional_statement"
+    of verilogConfigIdentifier:                               "config_identifier"
+    of verilogConfigRuleStatement:                            "config_rule_statement"
+    of verilogConsecutiveRepetition:                          "consecutive_repetition"
+    of verilogConstIdentifier:                                "const_identifier"
+    of verilogConstantBitSelect1:                             "constant_bit_select1"
+    of verilogConstantConcatenation:                          "constant_concatenation"
+    of verilogConstantExpression:                             "constant_expression"
+    of verilogConstantIndexedRange:                           "constant_indexed_range"
+    of verilogConstantMintypmaxExpression:                    "constant_mintypmax_expression"
+    of verilogConstantMultipleConcatenation:                  "constant_multiple_concatenation"
+    of verilogConstantParamExpression:                        "constant_param_expression"
+    of verilogConstantPrimary:                                "constant_primary"
+    of verilogConstantRange:                                  "constant_range"
+    of verilogConstantSelect1:                                "constant_select1"
+    of verilogConstraintBlock:                                "constraint_block"
+    of verilogConstraintBlockItem:                            "constraint_block_item"
+    of verilogConstraintDeclaration:                          "constraint_declaration"
+    of verilogConstraintExpression:                           "constraint_expression"
+    of verilogConstraintIdentifier:                           "constraint_identifier"
+    of verilogConstraintPrimary:                              "constraint_primary"
+    of verilogConstraintPrototype:                            "constraint_prototype"
+    of verilogConstraintPrototypeQualifier:                   "constraint_prototype_qualifier"
+    of verilogConstraintSet:                                  "constraint_set"
+    of verilogContinuousAssign:                               "continuous_assign"
+    of verilogControlledReferenceEvent:                       "controlled_reference_event"
+    of verilogCoverCross:                                     "cover_cross"
+    of verilogCoverPoint:                                     "cover_point"
+    of verilogCoverPointIdentifier:                           "cover_point_identifier"
+    of verilogCoverPropertyStatement:                         "cover_property_statement"
+    of verilogCoverSequenceStatement:                         "cover_sequence_statement"
+    of verilogCoverageEvent:                                  "coverage_event"
+    of verilogCoverageOption:                                 "coverage_option"
+    of verilogCoverageSpecOrOption:                           "coverage_spec_or_option"
+    of verilogCovergroupDeclaration:                          "covergroup_declaration"
+    of verilogCovergroupIdentifier:                           "covergroup_identifier"
+    of verilogCovergroupRangeList:                            "covergroup_range_list"
+    of verilogCovergroupValueRange:                           "covergroup_value_range"
+    of verilogCrossBody:                                      "cross_body"
+    of verilogCrossBodyItem:                                  "cross_body_item"
+    of verilogCrossIdentifier:                                "cross_identifier"
+    of verilogCycleDelay:                                     "cycle_delay"
+    of verilogCycleDelayConstRangeExpression:                 "cycle_delay_const_range_expression"
+    of verilogCycleDelayRange:                                "cycle_delay_range"
+    of verilogDataDeclaration:                                "data_declaration"
+    of verilogDataEvent:                                      "data_event"
+    of verilogDataSourceExpression:                           "data_source_expression"
+    of verilogDataType:                                       "data_type"
+    of verilogDataTypeOrImplicit1:                            "data_type_or_implicit1"
+    of verilogDataTypeOrVoid:                                 "data_type_or_void"
+    of verilogDecimalNumber:                                  "decimal_number"
+    of verilogDefaultClause:                                  "default_clause"
+    of verilogDefaultNettypeCompilerDirective:                "default_nettype_compiler_directive"
+    of verilogDefaultNettypeValue:                            "default_nettype_value"
+    of verilogDefaultSkew:                                    "default_skew"
+    of verilogDeferredImmediateAssertStatement:               "deferred_immediate_assert_statement"
+    of verilogDeferredImmediateAssertionItem:                 "deferred_immediate_assertion_item"
+    of verilogDeferredImmediateAssumeStatement:               "deferred_immediate_assume_statement"
+    of verilogDeferredImmediateCoverStatement:                "deferred_immediate_cover_statement"
+    of verilogDefparamAssignment:                             "defparam_assignment"
+    of verilogDelay2:                                         "delay2"
+    of verilogDelay3:                                         "delay3"
+    of verilogDelayControl:                                   "delay_control"
+    of verilogDelayOrEventControl:                            "delay_or_event_control"
+    of verilogDelayValue:                                     "delay_value"
+    of verilogDelayedData:                                    "delayed_data"
+    of verilogDelayedReference:                               "delayed_reference"
+    of verilogDesignStatement:                                "design_statement"
+    of verilogDisableStatement:                               "disable_statement"
+    of verilogDistItem:                                       "dist_item"
+    of verilogDistList:                                       "dist_list"
+    of verilogDistWeight:                                     "dist_weight"
+    of verilogDoubleQuotedString:                             "double_quoted_string"
+    of verilogDpiFunctionImportProperty:                      "dpi_function_import_property"
+    of verilogDpiFunctionProto:                               "dpi_function_proto"
+    of verilogDpiImportExport:                                "dpi_import_export"
+    of verilogDpiSpecString:                                  "dpi_spec_string"
+    of verilogDpiTaskImportProperty:                          "dpi_task_import_property"
+    of verilogDpiTaskProto:                                   "dpi_task_proto"
+    of verilogDriveStrength:                                  "drive_strength"
+    of verilogDynamicArrayNew:                                "dynamic_array_new"
+    of verilogEdgeControlSpecifier:                           "edge_control_specifier"
+    of verilogEdgeDescriptor:                                 "edge_descriptor"
+    of verilogEdgeIdentifier:                                 "edge_identifier"
+    of verilogEdgeIndicator:                                  "edge_indicator"
+    of verilogEdgeInputList:                                  "edge_input_list"
+    of verilogEdgeSensitivePathDeclaration:                   "edge_sensitive_path_declaration"
+    of verilogElaborationSystemTask:                          "elaboration_system_task"
+    of verilogEmptyUnpackedArrayConcatenation:                "empty_unpacked_array_concatenation"
+    of verilogEnableGateInstance:                             "enable_gate_instance"
+    of verilogEnableGatetype:                                 "enable_gatetype"
+    of verilogEnableTerminal:                                 "enable_terminal"
+    of verilogEndEdgeOffset:                                  "end_edge_offset"
+    of verilogEnumBaseType:                                   "enum_base_type"
+    of verilogEnumIdentifier:                                 "enum_identifier"
+    of verilogEnumNameDeclaration:                            "enum_name_declaration"
+    of verilogErrorLimitValue:                                "error_limit_value"
+    of verilogEscapedIdentifier:                              "escaped_identifier"
+    of verilogEventBasedFlag:                                 "event_based_flag"
+    of verilogEventControl:                                   "event_control"
+    of verilogEventExpression:                                "event_expression"
+    of verilogEventTrigger:                                   "event_trigger"
+    of verilogExpectPropertyStatement:                        "expect_property_statement"
+    of verilogExpression:                                     "expression"
+    of verilogExpressionOrDist:                               "expression_or_dist"
+    of verilogExternConstraintDeclaration:                    "extern_constraint_declaration"
+    of verilogExternTfDeclaration:                            "extern_tf_declaration"
+    of verilogFinalConstruct:                                 "final_construct"
+    of verilogFinishNumber:                                   "finish_number"
+    of verilogForInitialization:                              "for_initialization"
+    of verilogForStep:                                        "for_step"
+    of verilogForVariableDeclaration:                         "for_variable_declaration"
+    of verilogFormalArgument:                                 "formal_argument"
+    of verilogFormalIdentifier:                               "formal_identifier"
+    of verilogFormalPortIdentifier:                           "formal_port_identifier"
+    of verilogFullEdgeSensitivePathDescription:               "full_edge_sensitive_path_description"
+    of verilogFullPathDescription:                            "full_path_description"
+    of verilogFunctionBodyDeclaration:                        "function_body_declaration"
+    of verilogFunctionDataTypeOrImplicit1:                    "function_data_type_or_implicit1"
+    of verilogFunctionDeclaration:                            "function_declaration"
+    of verilogFunctionIdentifier:                             "function_identifier"
+    of verilogFunctionPrototype:                              "function_prototype"
+    of verilogFunctionStatement:                              "function_statement"
+    of verilogFunctionStatementOrNull:                        "function_statement_or_null"
+    of verilogFunctionSubroutineCall:                         "function_subroutine_call"
+    of verilogGateInstantiation:                              "gate_instantiation"
+    of verilogGenerateBlock:                                  "generate_block"
+    of verilogGenerateBlockIdentifier:                        "generate_block_identifier"
+    of verilogGenerateRegion:                                 "generate_region"
+    of verilogGenvarDeclaration:                              "genvar_declaration"
+    of verilogGenvarIdentifier:                               "genvar_identifier"
+    of verilogGenvarInitialization:                           "genvar_initialization"
+    of verilogGenvarIteration:                                "genvar_iteration"
+    of verilogGotoRepetition:                                 "goto_repetition"
+    of verilogHierarchicalBtfIdentifier:                      "hierarchical_btf_identifier"
+    of verilogHierarchicalInstance:                           "hierarchical_instance"
+    of verilogIdDirective:                                    "id_directive"
+    of verilogIdentifierList:                                 "identifier_list"
+    of verilogIfGenerateConstruct:                            "if_generate_construct"
+    of verilogImplicitClassHandle:                            "implicit_class_handle"
+    of verilogImplicitDataType1:                              "implicit_data_type1"
+    of verilogImportExport:                                   "import_export"
+    of verilogIncOrDecExpression:                             "inc_or_dec_expression"
+    of verilogIncOrDecOperator:                               "inc_or_dec_operator"
+    of verilogIncludeCompilerDirective:                       "include_compiler_directive"
+    of verilogIncludeCompilerDirectiveStandard:               "include_compiler_directive_standard"
+    of verilogIndexVariableIdentifier:                        "index_variable_identifier"
+    of verilogIndexedRange:                                   "indexed_range"
+    of verilogInitVal:                                        "init_val"
+    of verilogInitialConstruct:                               "initial_construct"
+    of verilogInoutDeclaration:                               "inout_declaration"
+    of verilogInoutPortIdentifier:                            "inout_port_identifier"
+    of verilogInoutTerminal:                                  "inout_terminal"
+    of verilogInputDeclaration:                               "input_declaration"
+    of verilogInputIdentifier:                                "input_identifier"
+    of verilogInputPortIdentifier:                            "input_port_identifier"
+    of verilogInputTerminal:                                  "input_terminal"
+    of verilogInsideExpression:                               "inside_expression"
+    of verilogInstClause:                                     "inst_clause"
+    of verilogInstName:                                       "inst_name"
+    of verilogInstanceIdentifier:                             "instance_identifier"
+    of verilogIntegerAtomType:                                "integer_atom_type"
+    of verilogIntegerVectorType:                              "integer_vector_type"
+    of verilogIntegralNumber:                                 "integral_number"
+    of verilogInterfaceAnsiHeader:                            "interface_ansi_header"
+    of verilogInterfaceClassDeclaration:                      "interface_class_declaration"
+    of verilogInterfaceClassItem:                             "interface_class_item"
+    of verilogInterfaceClassMethod:                           "interface_class_method"
+    of verilogInterfaceClassType:                             "interface_class_type"
+    of verilogInterfaceDeclaration:                           "interface_declaration"
+    of verilogInterfaceIdentifier:                            "interface_identifier"
+    of verilogInterfaceInstanceIdentifier:                    "interface_instance_identifier"
+    of verilogInterfaceInstantiation:                         "interface_instantiation"
+    of verilogInterfaceItem:                                  "interface_item"
+    of verilogInterfaceNonansiHeader:                         "interface_nonansi_header"
+    of verilogInterfaceOrGenerateItem:                        "interface_or_generate_item"
+    of verilogInterfacePortDeclaration:                       "interface_port_declaration"
+    of verilogInterfacePortHeader:                            "interface_port_header"
+    of verilogJoinKeyword:                                    "join_keyword"
+    of verilogJumpStatement:                                  "jump_statement"
+    of verilogLetActualArg:                                   "let_actual_arg"
+    of verilogLetDeclaration:                                 "let_declaration"
+    of verilogLetExpression:                                  "let_expression"
+    of verilogLetFormalType1:                                 "let_formal_type1"
+    of verilogLetListOfArguments:                             "let_list_of_arguments"
+    of verilogLetPortItem:                                    "let_port_item"
+    of verilogLetPortList:                                    "let_port_list"
+    of verilogLevelInputList:                                 "level_input_list"
+    of verilogLiblistClause:                                  "liblist_clause"
+    of verilogLibraryIdentifier:                              "library_identifier"
+    of verilogLifetime:                                       "lifetime"
+    of verilogLimitValue:                                     "limit_value"
+    of verilogLineCompilerDirective:                          "line_compiler_directive"
+    of verilogListOfActualArguments:                          "list_of_actual_arguments"
+    of verilogListOfArguments:                                "list_of_arguments"
+    of verilogListOfArgumentsParent:                          "list_of_arguments_parent"
+    of verilogListOfClockingDeclAssign:                       "list_of_clocking_decl_assign"
+    of verilogListOfCrossItems:                               "list_of_cross_items"
+    of verilogListOfDefparamAssignments:                      "list_of_defparam_assignments"
+    of verilogListOfFormalArguments:                          "list_of_formal_arguments"
+    of verilogListOfGenvarIdentifiers:                        "list_of_genvar_identifiers"
+    of verilogListOfInterfaceIdentifiers:                     "list_of_interface_identifiers"
+    of verilogListOfNetAssignments:                           "list_of_net_assignments"
+    of verilogListOfNetDeclAssignments:                       "list_of_net_decl_assignments"
+    of verilogListOfParamAssignments:                         "list_of_param_assignments"
+    of verilogListOfParameterAssignments:                     "list_of_parameter_assignments"
+    of verilogListOfPathDelayExpressions:                     "list_of_path_delay_expressions"
+    of verilogListOfPathInputs:                               "list_of_path_inputs"
+    of verilogListOfPathOutputs:                              "list_of_path_outputs"
+    of verilogListOfPortConnections:                          "list_of_port_connections"
+    of verilogListOfPortDeclarations:                         "list_of_port_declarations"
+    of verilogListOfPortIdentifiers:                          "list_of_port_identifiers"
+    of verilogListOfPorts:                                    "list_of_ports"
+    of verilogListOfSpecparamAssignments:                     "list_of_specparam_assignments"
+    of verilogListOfTfVariableIdentifiers:                    "list_of_tf_variable_identifiers"
+    of verilogListOfTypeAssignments:                          "list_of_type_assignments"
+    of verilogListOfUdpPortIdentifiers:                       "list_of_udp_port_identifiers"
+    of verilogListOfVariableAssignments:                      "list_of_variable_assignments"
+    of verilogListOfVariableDeclAssignments:                  "list_of_variable_decl_assignments"
+    of verilogListOfVariableIdentifiers:                      "list_of_variable_identifiers"
+    of verilogListOfVariablePortIdentifiers:                  "list_of_variable_port_identifiers"
+    of verilogLocalParameterDeclaration:                      "local_parameter_declaration"
+    of verilogLoopGenerateConstruct:                          "loop_generate_construct"
+    of verilogLoopStatement:                                  "loop_statement"
+    of verilogLoopVariables1:                                 "loop_variables1"
+    of verilogMemberIdentifier:                               "member_identifier"
+    of verilogMethodCall:                                     "method_call"
+    of verilogMethodCallBody:                                 "method_call_body"
+    of verilogMethodIdentifier:                               "method_identifier"
+    of verilogMethodQualifier:                                "method_qualifier"
+    of verilogMintypmaxExpression:                            "mintypmax_expression"
+    of verilogModportClockingDeclaration:                     "modport_clocking_declaration"
+    of verilogModportDeclaration:                             "modport_declaration"
+    of verilogModportIdentifier:                              "modport_identifier"
+    of verilogModportItem:                                    "modport_item"
+    of verilogModportPortsDeclaration:                        "modport_ports_declaration"
+    of verilogModportSimplePort:                              "modport_simple_port"
+    of verilogModportSimplePortsDeclaration:                  "modport_simple_ports_declaration"
+    of verilogModportTfPortsDeclaration:                      "modport_tf_ports_declaration"
+    of verilogModuleAnsiHeader:                               "module_ansi_header"
+    of verilogModuleDeclaration:                              "module_declaration"
+    of verilogModuleHeader:                                   "module_header"
+    of verilogModuleInstantiation:                            "module_instantiation"
+    of verilogModuleKeyword:                                  "module_keyword"
+    of verilogModuleNonansiHeader:                            "module_nonansi_header"
+    of verilogModuleOrGenerateItem:                           "module_or_generate_item"
+    of verilogModulePathConcatenation:                        "module_path_concatenation"
+    of verilogModulePathExpression:                           "module_path_expression"
+    of verilogModulePathMintypmaxExpression:                  "module_path_mintypmax_expression"
+    of verilogModulePathMultipleConcatenation:                "module_path_multiple_concatenation"
+    of verilogModulePathPrimary:                              "module_path_primary"
+    of verilogMosSwitchInstance:                              "mos_switch_instance"
+    of verilogMosSwitchtype:                                  "mos_switchtype"
+    of verilogMultipleConcatenation:                          "multiple_concatenation"
+    of verilogNInputGateInstance:                             "n_input_gate_instance"
+    of verilogNInputGatetype:                                 "n_input_gatetype"
+    of verilogNOutputGateInstance:                            "n_output_gate_instance"
+    of verilogNOutputGatetype:                                "n_output_gatetype"
+    of verilogNameOfInstance:                                 "name_of_instance"
+    of verilogNamedParameterAssignment:                       "named_parameter_assignment"
+    of verilogNamedPortConnection:                            "named_port_connection"
+    of verilogNcontrolTerminal:                               "ncontrol_terminal"
+    of verilogNetAlias:                                       "net_alias"
+    of verilogNetAssignment:                                  "net_assignment"
+    of verilogNetDeclAssignment:                              "net_decl_assignment"
+    of verilogNetDeclaration:                                 "net_declaration"
+    of verilogNetLvalue:                                      "net_lvalue"
+    of verilogNetPortHeader1:                                 "net_port_header1"
+    of verilogNetPortType1:                                   "net_port_type1"
+    of verilogNetType:                                        "net_type"
+    of verilogNetTypeDeclaration:                             "net_type_declaration"
+    of verilogNextState:                                      "next_state"
+    of verilogNonConsecutiveRepetition:                       "non_consecutive_repetition"
+    of verilogNonIntegerType:                                 "non_integer_type"
+    of verilogNonPortProgramItem:                             "non_port_program_item"
+    of verilogNonblockingAssignment:                          "nonblocking_assignment"
+    of verilogNonrangeSelect1:                                "nonrange_select1"
+    of verilogNonrangeVariableLvalue:                         "nonrange_variable_lvalue"
+    of verilogNotifier:                                       "notifier"
+    of verilogOpenRangeList:                                  "open_range_list"
+    of verilogOpenValueRange:                                 "open_value_range"
+    of verilogOperatorAssignment:                             "operator_assignment"
+    of verilogOrderedPortConnection:                          "ordered_port_connection"
+    of verilogOutputDeclaration:                              "output_declaration"
+    of verilogOutputIdentifier:                               "output_identifier"
+    of verilogOutputPortIdentifier:                           "output_port_identifier"
+    of verilogOutputTerminal:                                 "output_terminal"
+    of verilogOverloadDeclaration:                            "overload_declaration"
+    of verilogOverloadOperator:                               "overload_operator"
+    of verilogOverloadProtoFormals:                           "overload_proto_formals"
+    of verilogPackageDeclaration:                             "package_declaration"
+    of verilogPackageExportDeclaration:                       "package_export_declaration"
+    of verilogPackageIdentifier:                              "package_identifier"
+    of verilogPackageImportDeclaration:                       "package_import_declaration"
+    of verilogPackageImportItem:                              "package_import_item"
+    of verilogPackageOrGenerateItemDeclaration:               "package_or_generate_item_declaration"
+    of verilogPackageScope:                                   "package_scope"
+    of verilogPackedDimension:                                "packed_dimension"
+    of verilogParBlock:                                       "par_block"
+    of verilogParallelEdgeSensitivePathDescription:           "parallel_edge_sensitive_path_description"
+    of verilogParallelPathDescription:                        "parallel_path_description"
+    of verilogParamAssignment:                                "param_assignment"
+    of verilogParamExpression:                                "param_expression"
+    of verilogParameterDeclaration:                           "parameter_declaration"
+    of verilogParameterIdentifier:                            "parameter_identifier"
+    of verilogParameterOverride:                              "parameter_override"
+    of verilogParameterPortDeclaration:                       "parameter_port_declaration"
+    of verilogParameterPortList:                              "parameter_port_list"
+    of verilogParameterValueAssignment:                       "parameter_value_assignment"
+    of verilogPassEnSwitchtype:                               "pass_en_switchtype"
+    of verilogPassEnableSwitchInstance:                       "pass_enable_switch_instance"
+    of verilogPassSwitchInstance:                             "pass_switch_instance"
+    of verilogPassSwitchtype:                                 "pass_switchtype"
+    of verilogPathDeclaration:                                "path_declaration"
+    of verilogPathDelayExpression:                            "path_delay_expression"
+    of verilogPathDelayValue:                                 "path_delay_value"
+    of verilogPattern:                                        "pattern"
+    of verilogPcontrolTerminal:                               "pcontrol_terminal"
+    of verilogPolarityOperator:                               "polarity_operator"
+    of verilogPort:                                           "port"
+    of verilogPortDeclaration:                                "port_declaration"
+    of verilogPortDirection:                                  "port_direction"
+    of verilogPortIdentifier:                                 "port_identifier"
+    of verilogPortReference:                                  "port_reference"
+    of verilogPrimary:                                        "primary"
+    of verilogPrimaryLiteral:                                 "primary_literal"
+    of verilogProceduralContinuousAssignment:                 "procedural_continuous_assignment"
+    of verilogProceduralTimingControlStatement:               "procedural_timing_control_statement"
+    of verilogProductionIdentifier:                           "production_identifier"
+    of verilogProgramAnsiHeader:                              "program_ansi_header"
+    of verilogProgramDeclaration:                             "program_declaration"
+    of verilogProgramIdentifier:                              "program_identifier"
+    of verilogProgramInstantiation:                           "program_instantiation"
+    of verilogProgramItem:                                    "program_item"
+    of verilogProgramNonansiHeader:                           "program_nonansi_header"
+    of verilogPropertyCaseItem:                               "property_case_item"
+    of verilogPropertyDeclaration:                            "property_declaration"
+    of verilogPropertyExpr:                                   "property_expr"
+    of verilogPropertyFormalType1:                            "property_formal_type1"
+    of verilogPropertyIdentifier:                             "property_identifier"
+    of verilogPropertyListOfArguments:                        "property_list_of_arguments"
+    of verilogPropertyLvarPortDirection:                      "property_lvar_port_direction"
+    of verilogPropertyPortItem:                               "property_port_item"
+    of verilogPropertyPortList:                               "property_port_list"
+    of verilogPropertySpec:                                   "property_spec"
+    of verilogPsIdentifier:                                   "ps_identifier"
+    of verilogPsOrHierarchicalArrayIdentifier:                "ps_or_hierarchical_array_identifier"
+    of verilogPullGateInstance:                               "pull_gate_instance"
+    of verilogPulldownStrength:                               "pulldown_strength"
+    of verilogPullupStrength:                                 "pullup_strength"
+    of verilogPulseControlSpecparam:                          "pulse_control_specparam"
+    of verilogPulsestyleDeclaration:                          "pulsestyle_declaration"
+    of verilogQueueDimension:                                 "queue_dimension"
+    of verilogRandcaseItem:                                   "randcase_item"
+    of verilogRandcaseStatement:                              "randcase_statement"
+    of verilogRandomQualifier:                                "random_qualifier"
+    of verilogRandomizeCall:                                  "randomize_call"
+    of verilogRangeExpression:                                "range_expression"
+    of verilogRealNumber:                                     "real_number"
+    of verilogRefDeclaration:                                 "ref_declaration"
+    of verilogReferenceEvent:                                 "reference_event"
+    of verilogRejectLimitValue:                               "reject_limit_value"
+    of verilogRemainActiveFlag:                               "remain_active_flag"
+    of verilogRepeatRange:                                    "repeat_range"
+    of verilogRestrictPropertyStatement:                      "restrict_property_statement"
+    of verilogScalarConstant:                                 "scalar_constant"
+    of verilogScalarTimingCheckCondition:                     "scalar_timing_check_condition"
+    of verilogSelect1:                                        "select1"
+    of verilogSelectCondition:                                "select_condition"
+    of verilogSelectExpression:                               "select_expression"
+    of verilogSeqBlock:                                       "seq_block"
+    of verilogSequenceAbbrev:                                 "sequence_abbrev"
+    of verilogSequenceDeclaration:                            "sequence_declaration"
+    of verilogSequenceExpr:                                   "sequence_expr"
+    of verilogSequenceFormalType1:                            "sequence_formal_type1"
+    of verilogSequenceInstance:                               "sequence_instance"
+    of verilogSequenceListOfArguments:                        "sequence_list_of_arguments"
+    of verilogSequenceLvarPortDirection:                      "sequence_lvar_port_direction"
+    of verilogSequenceMethodCall:                             "sequence_method_call"
+    of verilogSequencePortItem:                               "sequence_port_item"
+    of verilogSequencePortList:                               "sequence_port_list"
+    of verilogSequentialBody:                                 "sequential_body"
+    of verilogSequentialEntry:                                "sequential_entry"
+    of verilogShowcancelledDeclaration:                       "showcancelled_declaration"
+    of verilogSimpleImmediateAssertStatement:                 "simple_immediate_assert_statement"
+    of verilogSimpleImmediateAssumeStatement:                 "simple_immediate_assume_statement"
+    of verilogSimpleImmediateCoverStatement:                  "simple_immediate_cover_statement"
+    of verilogSimplePathDeclaration:                          "simple_path_declaration"
+    of verilogSimpleTextMacroUsage:                           "simple_text_macro_usage"
+    of verilogSliceSize:                                      "slice_size"
+    of verilogSolveBeforeList:                                "solve_before_list"
+    of verilogSourceFile:                                     "source_file"
+    of verilogSpecifyBlock:                                   "specify_block"
+    of verilogSpecifyInputTerminalDescriptor:                 "specify_input_terminal_descriptor"
+    of verilogSpecifyOutputTerminalDescriptor:                "specify_output_terminal_descriptor"
+    of verilogSpecparamAssignment:                            "specparam_assignment"
+    of verilogSpecparamDeclaration:                           "specparam_declaration"
+    of verilogSpecparamIdentifier:                            "specparam_identifier"
+    of verilogStartEdgeOffset:                                "start_edge_offset"
+    of verilogStateDependentPathDeclaration:                  "state_dependent_path_declaration"
+    of verilogStatement:                                      "statement"
+    of verilogStatementItem:                                  "statement_item"
+    of verilogStatementOrNull:                                "statement_or_null"
+    of verilogStreamConcatenation:                            "stream_concatenation"
+    of verilogStreamExpression:                               "stream_expression"
+    of verilogStreamOperator:                                 "stream_operator"
+    of verilogStreamingConcatenation:                         "streaming_concatenation"
+    of verilogStrength0:                                      "strength0"
+    of verilogStrength1:                                      "strength1"
+    of verilogStringLiteral:                                  "string_literal"
+    of verilogStructUnion:                                    "struct_union"
+    of verilogStructUnionMember:                              "struct_union_member"
+    of verilogSubroutineCall:                                 "subroutine_call"
+    of verilogSystemTfCall:                                   "system_tf_call"
+    of verilogTaggedUnionExpression:                          "tagged_union_expression"
+    of verilogTaskBodyDeclaration:                            "task_body_declaration"
+    of verilogTaskDeclaration:                                "task_declaration"
+    of verilogTaskIdentifier:                                 "task_identifier"
+    of verilogTaskPrototype:                                  "task_prototype"
+    of verilogTerminalIdentifier:                             "terminal_identifier"
+    of verilogTextMacroDefinition:                            "text_macro_definition"
+    of verilogTextMacroIdentifier:                            "text_macro_identifier"
+    of verilogTextMacroName:                                  "text_macro_name"
+    of verilogTextMacroUsage:                                 "text_macro_usage"
+    of verilogTfCall:                                         "tf_call"
+    of verilogTfIdentifier:                                   "tf_identifier"
+    of verilogTfItemDeclaration:                              "tf_item_declaration"
+    of verilogTfPortDeclaration:                              "tf_port_declaration"
+    of verilogTfPortDirection:                                "tf_port_direction"
+    of verilogTfPortItem1:                                    "tf_port_item1"
+    of verilogTfPortList:                                     "tf_port_list"
+    of verilogThreshold:                                      "threshold"
+    of verilogTimeLiteral:                                    "time_literal"
+    of verilogTimeUnit:                                       "time_unit"
+    of verilogTimecheckCondition:                             "timecheck_condition"
+    of verilogTimescaleCompilerDirective:                     "timescale_compiler_directive"
+    of verilogTimestampCondition:                             "timestamp_condition"
+    of verilogTimeunitsDeclaration:                           "timeunits_declaration"
+    of verilogTimingCheckCondition:                           "timing_check_condition"
+    of verilogTimingCheckEvent:                               "timing_check_event"
+    of verilogTimingCheckEventControl:                        "timing_check_event_control"
+    of verilogTimingCheckLimit:                               "timing_check_limit"
+    of verilogTopmoduleIdentifier:                            "topmodule_identifier"
+    of verilogTransItem:                                      "trans_item"
+    of verilogTransList:                                      "trans_list"
+    of verilogTransRangeList:                                 "trans_range_list"
+    of verilogTransSet:                                       "trans_set"
+    of verilogTypeAssignment:                                 "type_assignment"
+    of verilogTypeDeclaration:                                "type_declaration"
+    of verilogTypeReference:                                  "type_reference"
+    of verilogUdpAnsiDeclaration:                             "udp_ansi_declaration"
+    of verilogUdpDeclaration:                                 "udp_declaration"
+    of verilogUdpDeclarationPortList:                         "udp_declaration_port_list"
+    of verilogUdpInitialStatement:                            "udp_initial_statement"
+    of verilogUdpInputDeclaration:                            "udp_input_declaration"
+    of verilogUdpInstance:                                    "udp_instance"
+    of verilogUdpInstantiation:                               "udp_instantiation"
+    of verilogUdpNonansiDeclaration:                          "udp_nonansi_declaration"
+    of verilogUdpOutputDeclaration:                           "udp_output_declaration"
+    of verilogUdpPortDeclaration:                             "udp_port_declaration"
+    of verilogUdpPortList:                                    "udp_port_list"
+    of verilogUdpRegDeclaration:                              "udp_reg_declaration"
+    of verilogUnaryOperator:                                  "unary_operator"
+    of verilogUnbasedUnsizedLiteral:                          "unbased_unsized_literal"
+    of verilogUnconnectedDrive:                               "unconnected_drive"
+    of verilogUniquePriority:                                 "unique_priority"
+    of verilogUniquenessConstraint:                           "uniqueness_constraint"
+    of verilogUnpackedDimension:                              "unpacked_dimension"
+    of verilogUnsizedDimension:                               "unsized_dimension"
+    of verilogUseClause:                                      "use_clause"
+    of verilogValueRange:                                     "value_range"
+    of verilogVariableAssignment:                             "variable_assignment"
+    of verilogVariableDeclAssignment:                         "variable_decl_assignment"
+    of verilogVariableIdentifierList:                         "variable_identifier_list"
+    of verilogVariableLvalue:                                 "variable_lvalue"
+    of verilogVariablePortHeader:                             "variable_port_header"
+    of verilogWaitStatement:                                  "wait_statement"
+    of verilogZeroDirective:                                  "zero_directive"
+    of verilogNewlineTok:                                     "\x0A"
+    of verilogExclamationTok:                                 "!"
+    of verilogExclamationEqualTok:                            "!="
+    of verilogExclamationDoubleEqualTok:                      "!=="
+    of verilogExclamationEqualQuestionTok:                    "!=?"
+    of verilogQuoteTok:                                       "\""
+    of verilogQuoteDPIQuoteTok:                               "\"DPI\""
+    of verilogQuoteDPIMinusCQuoteTok:                         "\"DPI-C\""
+    of verilogHashTok:                                        "#"
+    of verilogDoubleHashTok:                                  "##"
+    of verilogDoubleHashLBrackAsteriskRBrackTok:              "##[*]"
+    of verilogDoubleHashLBrackPlusRBrackTok:                  "##[+]"
+    of verilogHashMinusHashTok:                               "#-#"
+    of verilogHash0Tok:                                       "#0"
+    of verilogHashEqualHashTok:                               "#=#"
+    of verilogDollarTok:                                      "$"
+    of verilogDollarerorTok:                                  "$error"
+    of verilogDollarfatalTok:                                 "$fatal"
+    of verilogDollarfulskewTok:                               "$fullskew"
+    of verilogDollarholdTok:                                  "$hold"
+    of verilogDollarinfoTok:                                  "$info"
+    of verilogDollarnochangeTok:                              "$nochange"
+    of verilogDollarperiodTok:                                "$period"
+    of verilogDollarrecoveryTok:                              "$recovery"
+    of verilogDollarrecremTok:                                "$recrem"
+    of verilogDollarremovalTok:                               "$removal"
+    of verilogDollarrotTok:                                   "$root"
+    of verilogDollarsetupTok:                                 "$setup"
+    of verilogDollarsetupholdTok:                             "$setuphold"
+    of verilogDollarskewTok:                                  "$skew"
+    of verilogDollartimeskewTok:                              "$timeskew"
+    of verilogDollarunitTok:                                  "$unit"
+    of verilogDollarwarningTok:                               "$warning"
+    of verilogDollarwidthTok:                                 "$width"
+    of verilogPercentTok:                                     "%"
+    of verilogPercentEqualTok:                                "%="
+    of verilogAmpersandTok:                                   "&"
+    of verilogDoubleAmpersandTok:                             "&&"
+    of verilogTripleAmpersandTok:                             "&&&"
+    of verilogAmpersandEqualTok:                              "&="
+    of verilogApostropheTok:                                  "\'"
+    of verilogApostrophe0Tok:                                 "\'0"
+    of verilogApostrophe1Tok:                                 "\'1"
+    of verilogApostropheB0Tok:                                "\'B0"
+    of verilogApostropheB1Tok:                                "\'B1"
+    of verilogApostropheb0Tok1:                               "\'b0"
+    of verilogApostropheb1Tok1:                               "\'b1"
+    of verilogApostropheLCurlyTok:                            "\'{"
+    of verilogLParTok:                                        "("
+    of verilogLParAsteriskTok:                                "(*"
+    of verilogRParTok:                                        ")"
+    of verilogAsteriskTok:                                    "*"
+    of verilogAsteriskRParTok:                                "*)"
+    of verilogDoubleAsteriskTok:                              "**"
+    of verilogAsteriskDoubleColonAsteriskTok:                 "*::*"
+    of verilogAsteriskEqualTok:                               "*="
+    of verilogAsteriskGreaterThanTok:                         "*>"
+    of verilogPlusTok:                                        "+"
+    of verilogDoublePlusTok:                                  "++"
+    of verilogPlusColonTok:                                   "+:"
+    of verilogPlusEqualTok:                                   "+="
+    of verilogCommaTok:                                       ","
+    of verilogMinusTok:                                       "-"
+    of verilogDoubleMinusTok:                                 "--"
+    of verilogMinusColonTok:                                  "-:"
+    of verilogMinusEqualTok:                                  "-="
+    of verilogMinusGreaterThanTok:                            "->"
+    of verilogMinusDoubleGreaterThanTok:                      "->>"
+    of verilogDotTok:                                         "."
+    of verilogDotAsteriskTok:                                 ".*"
+    of verilogSlashTok:                                       "/"
+    of verilogSlashEqualTok:                                  "/="
+    of verilog0Tok:                                           "0"
+    of verilog01Tok:                                          "01"
+    of verilog1Tok:                                           "1"
+    of verilog1ApostropheB0Tok:                               "1\'B0"
+    of verilog1ApostropheB1Tok:                               "1\'B1"
+    of verilog1ApostropheBXTok:                               "1\'BX"
+    of verilog1ApostropheBxTok1:                              "1\'Bx"
+    of verilog1Apostropheb0Tok1:                              "1\'b0"
+    of verilog1Apostropheb1Tok1:                              "1\'b1"
+    of verilog1ApostrophebXTok2:                              "1\'bX"
+    of verilog1ApostrophebxTok3:                              "1\'bx"
+    of verilog10Tok:                                          "10"
+    of verilog1stepTok:                                       "1step"
+    of verilog2Tok:                                           "2"
+    of verilogColonTok:                                       ":"
+    of verilogColonSlashTok:                                  ":/"
+    of verilogDoubleColonTok:                                 "::"
+    of verilogColonEqualTok:                                  ":="
+    of verilogSemicolonTok:                                   ";"
+    of verilogLessThanTok:                                    "<"
+    of verilogLessThanMinusGreaterThanTok:                    "<->"
+    of verilogDoubleLessThanTok:                              "<<"
+    of verilogTripleLessThanTok:                              "<<<"
+    of verilogTripleLessThanEqualTok:                         "<<<="
+    of verilogDoubleLessThanEqualTok:                         "<<="
+    of verilogLessThanEqualTok:                               "<="
+    of verilogEqualTok:                                       "="
+    of verilogDoubleEqualTok:                                 "=="
+    of verilogTripleEqualTok:                                 "==="
+    of verilogDoubleEqualQuestionTok:                         "==?"
+    of verilogEqualGreaterThanTok:                            "=>"
+    of verilogGreaterThanTok:                                 ">"
+    of verilogGreaterThanEqualTok:                            ">="
+    of verilogDoubleGreaterThanTok:                           ">>"
+    of verilogDoubleGreaterThanEqualTok:                      ">>="
+    of verilogTripleGreaterThanTok:                           ">>>"
+    of verilogTripleGreaterThanEqualTok:                      ">>>="
+    of verilogQuestionTok:                                    "?"
+    of verilogAtTok:                                          "@"
+    of verilogAtAsteriskTok:                                  "@*"
+    of verilogDoubleAtTok:                                    "@@"
+    of verilogPATHPULSEDollarEqualTok:                        "PATHPULSE$="
+    of verilogLBrackTok:                                      "["
+    of verilogLBrackAsteriskTok:                              "[*"
+    of verilogLBrackAsteriskRBrackTok:                        "[*]"
+    of verilogLBrackPlusRBrackTok:                            "[+]"
+    of verilogLBrackMinusGreaterThanTok:                      "[->"
+    of verilogLBrackEqualTok:                                 "[="
+    of verilogLBrack–GreaterThanTok:                          "[\xE2\x80\x93>"
+    of verilogBackslashTok:                                   "\\"
+    of verilogRBrackTok:                                      "]"
+    of verilogAccentTok:                                      "^"
+    of verilogAccentEqualTok:                                 "^="
+    of verilogAccentTildeTok:                                 "^~"
+    of verilogBacktickTok:                                    "`"
+    of verilogAcceptOnTok:                                    "accept_on"
+    of verilogAliasTok:                                       "alias"
+    of verilogAlwaysTok:                                      "always"
+    of verilogAlwaysCombTok:                                  "always_comb"
+    of verilogAlwaysFfTok:                                    "always_ff"
+    of verilogAlwaysLatchTok:                                 "always_latch"
+    of verilogAndTok:                                         "and"
+    of verilogAssertTok:                                      "assert"
+    of verilogAssignTok:                                      "assign"
+    of verilogAssumeTok:                                      "assume"
+    of verilogAutomaticTok:                                   "automatic"
+    of verilogBeforeTok:                                      "before"
+    of verilogBeginTok:                                       "begin"
+    of verilogBinaryNumber:                                   "binary_number"
+    of verilogBindTok:                                        "bind"
+    of verilogBinsTok:                                        "bins"
+    of verilogBinsofTok:                                      "binsof"
+    of verilogBitTok:                                         "bit"
+    of verilogBreakTok:                                       "break"
+    of verilogBufTok:                                         "buf"
+    of verilogBufif0Tok:                                      "bufif0"
+    of verilogBufif1Tok:                                      "bufif1"
+    of verilogByteTok:                                        "byte"
+    of verilogCIdentifier:                                    "c_identifier"
+    of verilogCaseTok:                                        "case"
+    of verilogCasexTok:                                       "casex"
+    of verilogCasezTok:                                       "casez"
+    of verilogCellTok:                                        "cell"
+    of verilogChandleTok:                                     "chandle"
+    of verilogCheckerTok:                                     "checker"
+    of verilogClassTok:                                       "class"
+    of verilogClockingTok:                                    "clocking"
+    of verilogCmosTok:                                        "cmos"
+    of verilogComment:                                        "comment"
+    of verilogConfigTok:                                      "config"
+    of verilogConstTok:                                       "const"
+    of verilogConstraintTok:                                  "constraint"
+    of verilogContextTok:                                     "context"
+    of verilogContinueTok:                                    "continue"
+    of verilogCoverTok:                                       "cover"
+    of verilogCovergroupTok:                                  "covergroup"
+    of verilogCoverpointTok:                                  "coverpoint"
+    of verilogCrossTok:                                       "cross"
+    of verilogDeassignTok:                                    "deassign"
+    of verilogDefaultTok:                                     "default"
+    of verilogDefaultText:                                    "default_text"
+    of verilogDefparamTok:                                    "defparam"
+    of verilogDesignTok:                                      "design"
+    of verilogDirectiveBeginKeywordsTok:                      "directive_begin_keywords"
+    of verilogDirectiveCelldefineTok:                         "directive_celldefine"
+    of verilogDirectiveDefaultNettypeTok:                     "directive_default_nettype"
+    of verilogDirectiveDefineTok:                             "directive_define"
+    of verilogDirectiveElseTok:                               "directive_else"
+    of verilogDirectiveElsifTok:                              "directive_elsif"
+    of verilogDirectiveEndKeywordsTok:                        "directive_end_keywords"
+    of verilogDirectiveEndcelldefineTok:                      "directive_endcelldefine"
+    of verilogDirectiveEndifTok:                              "directive_endif"
+    of verilogDirectiveIfdefTok:                              "directive_ifdef"
+    of verilogDirectiveIfndefTok:                             "directive_ifndef"
+    of verilogDirectiveIncludeTok:                            "directive_include"
+    of verilogDirectiveLineTok:                               "directive_line"
+    of verilogDirectiveNounconnectedDriveTok:                 "directive_nounconnected_drive"
+    of verilogDirectiveResetallTok:                           "directive_resetall"
+    of verilogDirectiveTimescaleTok:                          "directive_timescale"
+    of verilogDirectiveUnconnectedDriveTok:                   "directive_unconnected_drive"
+    of verilogDirectiveUndefTok:                              "directive_undef"
+    of verilogDirectiveUndefineallTok:                        "directive_undefineall"
+    of verilogDisableTok:                                     "disable"
+    of verilogDistTok:                                        "dist"
+    of verilogDoTok:                                          "do"
+    of verilogEdgeTok:                                        "edge"
+    of verilogEdgeSymbol:                                     "edge_symbol"
+    of verilogElseTok:                                        "else"
+    of verilogEndTok:                                         "end"
+    of verilogEndcaseTok:                                     "endcase"
+    of verilogEndcheckerTok:                                  "endchecker"
+    of verilogEndclassTok:                                    "endclass"
+    of verilogEndclockingTok:                                 "endclocking"
+    of verilogEndconfigTok:                                   "endconfig"
+    of verilogEndfunctionTok:                                 "endfunction"
+    of verilogEndgenerateTok:                                 "endgenerate"
+    of verilogEndgroupTok:                                    "endgroup"
+    of verilogEndinterfaceTok:                                "endinterface"
+    of verilogEndmoduleTok:                                   "endmodule"
+    of verilogEndpackageTok:                                  "endpackage"
+    of verilogEndprimitiveTok:                                "endprimitive"
+    of verilogEndprogramTok:                                  "endprogram"
+    of verilogEndpropertyTok:                                 "endproperty"
+    of verilogEndsequenceTok:                                 "endsequence"
+    of verilogEndspecifyTok:                                  "endspecify"
+    of verilogEndtableTok:                                    "endtable"
+    of verilogEndtaskTok:                                     "endtask"
+    of verilogEnumTok:                                        "enum"
+    of verilogEventTok:                                       "event"
+    of verilogEventuallyTok:                                  "eventually"
+    of verilogExpectTok:                                      "expect"
+    of verilogExportTok:                                      "export"
+    of verilogExtendsTok:                                     "extends"
+    of verilogExternTok:                                      "extern"
+    of verilogFinalTok:                                       "final"
+    of verilogFirstMatchTok:                                  "first_match"
+    of verilogFixedPointNumber:                               "fixed_point_number"
+    of verilogForTok:                                         "for"
+    of verilogForceTok:                                       "force"
+    of verilogForeachTok:                                     "foreach"
+    of verilogForeverTok:                                     "forever"
+    of verilogForkTok:                                        "fork"
+    of verilogForkjoinTok:                                    "forkjoin"
+    of verilogFsTok:                                          "fs"
+    of verilogFunctionTok:                                    "function"
+    of verilogGenerateTok:                                    "generate"
+    of verilogGenvarTok:                                      "genvar"
+    of verilogGlobalTok:                                      "global"
+    of verilogHexNumber:                                      "hex_number"
+    of verilogHighz0Tok:                                      "highz0"
+    of verilogHighz1Tok:                                      "highz1"
+    of verilogIfTok:                                          "if"
+    of verilogIffTok:                                         "iff"
+    of verilogIfnoneTok:                                      "ifnone"
+    of verilogIgnoreBinsTok:                                  "ignore_bins"
+    of verilogIllegalBinsTok:                                 "illegal_bins"
+    of verilogImplementsTok:                                  "implements"
+    of verilogImpliesTok:                                     "implies"
+    of verilogImportTok:                                      "import"
+    of verilogInitialTok:                                     "initial"
+    of verilogInoutTok:                                       "inout"
+    of verilogInputTok:                                       "input"
+    of verilogInsideTok:                                      "inside"
+    of verilogInstanceTok:                                    "instance"
+    of verilogIntTok:                                         "int"
+    of verilogIntegerTok:                                     "integer"
+    of verilogInterconnectTok:                                "interconnect"
+    of verilogInterfaceTok:                                   "interface"
+    of verilogIntersectTok:                                   "intersect"
+    of verilogJoinTok:                                        "join"
+    of verilogJoinAnyTok:                                     "join_any"
+    of verilogJoinNoneTok:                                    "join_none"
+    of verilogLargeTok:                                       "large"
+    of verilogLetTok:                                         "let"
+    of verilogLevelSymbol:                                    "level_symbol"
+    of verilogLiblistTok:                                     "liblist"
+    of verilogLocalTok:                                       "local"
+    of verilogLocalparamTok:                                  "localparam"
+    of verilogLogicTok:                                       "logic"
+    of verilogLongintTok:                                     "longint"
+    of verilogMacroText:                                      "macro_text"
+    of verilogMacromoduleTok:                                 "macromodule"
+    of verilogMatchesTok:                                     "matches"
+    of verilogMediumTok:                                      "medium"
+    of verilogModportTok:                                     "modport"
+    of verilogModuleTok:                                      "module"
+    of verilogMsTok:                                          "ms"
+    of verilogNandTok:                                        "nand"
+    of verilogNegedgeTok:                                     "negedge"
+    of verilogNettypeTok:                                     "nettype"
+    of verilogNewTok:                                         "new"
+    of verilogNexttimeTok:                                    "nexttime"
+    of verilogNmosTok:                                        "nmos"
+    of verilogNoneTok:                                        "none"
+    of verilogNorTok:                                         "nor"
+    of verilogNoshowcancelledTok:                             "noshowcancelled"
+    of verilogNotTok:                                         "not"
+    of verilogNotif0Tok:                                      "notif0"
+    of verilogNotif1Tok:                                      "notif1"
+    of verilogNsTok:                                          "ns"
+    of verilogNullTok:                                        "null"
+    of verilogOctalNumber:                                    "octal_number"
+    of verilogOptionTok:                                      "option"
+    of verilogOrTok:                                          "or"
+    of verilogOutputTok:                                      "output"
+    of verilogOutputSymbol:                                   "output_symbol"
+    of verilogPackageTok:                                     "package"
+    of verilogPackedTok:                                      "packed"
+    of verilogParameterTok:                                   "parameter"
+    of verilogPmosTok:                                        "pmos"
+    of verilogPosedgeTok:                                     "posedge"
+    of verilogPrimitiveTok:                                   "primitive"
+    of verilogPriorityTok:                                    "priority"
+    of verilogProgramTok:                                     "program"
+    of verilogPropertyTok:                                    "property"
+    of verilogProtectedTok:                                   "protected"
+    of verilogPsTok:                                          "ps"
+    of verilogPull0Tok:                                       "pull0"
+    of verilogPull1Tok:                                       "pull1"
+    of verilogPulldownTok:                                    "pulldown"
+    of verilogPullupTok:                                      "pullup"
+    of verilogPulsestyleOndetectTok:                          "pulsestyle_ondetect"
+    of verilogPulsestyleOneventTok:                           "pulsestyle_onevent"
+    of verilogPureTok:                                        "pure"
+    of verilogRandTok:                                        "rand"
+    of verilogRandcTok:                                       "randc"
+    of verilogRandcaseTok:                                    "randcase"
+    of verilogRandomizeTok:                                   "randomize"
+    of verilogRcmosTok:                                       "rcmos"
+    of verilogRealTok:                                        "real"
+    of verilogRealtimeTok:                                    "realtime"
+    of verilogRefTok:                                         "ref"
+    of verilogRegTok:                                         "reg"
+    of verilogRejectOnTok:                                    "reject_on"
+    of verilogReleaseTok:                                     "release"
+    of verilogRepeatTok:                                      "repeat"
+    of verilogRestrictTok:                                    "restrict"
+    of verilogReturnTok:                                      "return"
+    of verilogRnmosTok:                                       "rnmos"
+    of verilogRpmosTok:                                       "rpmos"
+    of verilogRtranTok:                                       "rtran"
+    of verilogRtranif0Tok:                                    "rtranif0"
+    of verilogRtranif1Tok:                                    "rtranif1"
+    of verilogSTok:                                           "s"
+    of verilogSAlwaysTok:                                     "s_always"
+    of verilogSEventuallyTok:                                 "s_eventually"
+    of verilogSNexttimeTok:                                   "s_nexttime"
+    of verilogSUntilTok:                                      "s_until"
+    of verilogSUntilWithTok:                                  "s_until_with"
+    of verilogSampleTok:                                      "sample"
+    of verilogScalaredTok:                                    "scalared"
+    of verilogSequenceTok:                                    "sequence"
+    of verilogShortintTok:                                    "shortint"
+    of verilogShortrealTok:                                   "shortreal"
+    of verilogShowcancelledTok:                               "showcancelled"
+    of verilogSignedTok:                                      "signed"
+    of verilogSimpleIdentifier:                               "simple_identifier"
+    of verilogSmallTok:                                       "small"
+    of verilogSoftTok:                                        "soft"
+    of verilogSolveTok:                                       "solve"
+    of verilogSpecifyTok:                                     "specify"
+    of verilogSpecparamTok:                                   "specparam"
+    of verilogStaticTok:                                      "static"
+    of verilogStdTok:                                         "std"
+    of verilogStringTok:                                      "string"
+    of verilogStrongTok:                                      "strong"
+    of verilogStrong0Tok:                                     "strong0"
+    of verilogStrong1Tok:                                     "strong1"
+    of verilogStructTok:                                      "struct"
+    of verilogSuperTok:                                       "super"
+    of verilogSupply0Tok:                                     "supply0"
+    of verilogSupply1Tok:                                     "supply1"
+    of verilogSyncAcceptOnTok:                                "sync_accept_on"
+    of verilogSyncRejectOnTok:                                "sync_reject_on"
+    of verilogSystemTfIdentifier:                             "system_tf_identifier"
+    of verilogTableTok:                                       "table"
+    of verilogTaggedTok:                                      "tagged"
+    of verilogTaskTok:                                        "task"
+    of verilogThisTok:                                        "this"
+    of verilogThroughoutTok:                                  "throughout"
+    of verilogTimeTok:                                        "time"
+    of verilogTimeprecisionTok:                               "timeprecision"
+    of verilogTimeunitTok:                                    "timeunit"
+    of verilogTranTok:                                        "tran"
+    of verilogTranif0Tok:                                     "tranif0"
+    of verilogTranif1Tok:                                     "tranif1"
+    of verilogTriTok:                                         "tri"
+    of verilogTri0Tok:                                        "tri0"
+    of verilogTri1Tok:                                        "tri1"
+    of verilogTriandTok:                                      "triand"
+    of verilogTriorTok:                                       "trior"
+    of verilogTriregTok:                                      "trireg"
+    of verilogTypeTok:                                        "type"
+    of verilogTypeOptionTok:                                  "type_option"
+    of verilogTypedefTok:                                     "typedef"
+    of verilogUnionTok:                                       "union"
+    of verilogUniqueTok:                                      "unique"
+    of verilogUnique0Tok:                                     "unique0"
+    of verilogUnsignedTok:                                    "unsigned"
+    of verilogUnsignedNumber:                                 "unsigned_number"
+    of verilogUntilTok:                                       "until"
+    of verilogUntilWithTok:                                   "until_with"
+    of verilogUntypedTok:                                     "untyped"
+    of verilogUsTok:                                          "us"
+    of verilogUseTok:                                         "use"
+    of verilogUwireTok:                                       "uwire"
+    of verilogVarTok:                                         "var"
+    of verilogVectoredTok:                                    "vectored"
+    of verilogVirtualTok:                                     "virtual"
+    of verilogVoidTok:                                        "void"
+    of verilogVoidApostropheTok:                              "void\'"
+    of verilogWaitTok:                                        "wait"
+    of verilogWaitOrderTok:                                   "wait_order"
+    of verilogWandTok:                                        "wand"
+    of verilogWeakTok:                                        "weak"
+    of verilogWeak0Tok:                                       "weak0"
+    of verilogWeak1Tok:                                       "weak1"
+    of verilogWhileTok:                                       "while"
+    of verilogWildcardTok:                                    "wildcard"
+    of verilogWireTok:                                        "wire"
+    of verilogWithTok:                                        "with"
+    of verilogWithinTok:                                      "within"
+    of verilogWorTok:                                         "wor"
+    of verilogXnorTok:                                        "xnor"
+    of verilogXorTok:                                         "xor"
+    of verilogLCurlyTok:                                      "{"
+    of verilogPipeTok:                                        "|"
+    of verilogPipeMinusGreaterThanTok:                        "|->"
+    of verilogPipeEqualTok:                                   "|="
+    of verilogPipeEqualGreaterThanTok:                        "|=>"
+    of verilogDoublePipeTok:                                  "||"
+    of verilogRCurlyTok:                                      "}"
+    of verilogTildeTok:                                       "~"
+    of verilogTildeAmpersandTok:                              "~&"
+    of verilogTildeAccentTok:                                 "~^"
+    of verilogTildePipeTok:                                   "~|"
+    of verilog–Tok:                                           "\xE2\x80\x93"
+    of verilog–GreaterThanTok:                                "\xE2\x80\x93>"
+    of verilog––Tok:                                          "\xE2\x80\x93\xE2\x80\x93"
+    of verilogSyntaxError:                                    "ERROR"
+
+
 type
   TsVerilogNode* = distinct TSNode
 
@@ -1025,6 +2040,1654 @@ type
 type
   VerilogParser* = distinct PtsParser
 
+
+const verilogAllowedSubnodes*: array[VerilogNodeKind, set[VerilogNodeKind]] = block:
+                                                                                var tmp: array[VerilogNodeKind, set[VerilogNodeKind]]
+                                                                                tmp[verilogDollarfulskewUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogEventBasedFlag, verilogNotifier, verilogReferenceEvent, verilogRemainActiveFlag, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarholdUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarnochangeUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogEndEdgeOffset, verilogNotifier, verilogReferenceEvent, verilogStartEdgeOffset}
+                                                                                tmp[verilogDollarperiodUnderscoretimingUnderscorecheck] = {verilogControlledReferenceEvent, verilogNotifier, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarrecoveryUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarrecremUnderscoretimingUnderscorecheck] = {
+                                                                                                                                            verilogDataEvent,
+                                                                                                                                            verilogDelayedData,
+                                                                                                                                            verilogDelayedReference,
+                                                                                                                                            verilogNotifier,
+                                                                                                                                            verilogReferenceEvent,
+                                                                                                                                            verilogTimecheckCondition,
+                                                                                                                                            verilogTimestampCondition,
+                                                                                                                                            verilogTimingCheckLimit
+                                                                                                                                          }
+                                                                                tmp[verilogDollarremovalUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarsetupUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarsetupholdUnderscoretimingUnderscorecheck] = {
+                                                                                                                                               verilogDataEvent,
+                                                                                                                                               verilogDelayedData,
+                                                                                                                                               verilogDelayedReference,
+                                                                                                                                               verilogNotifier,
+                                                                                                                                               verilogReferenceEvent,
+                                                                                                                                               verilogTimecheckCondition,
+                                                                                                                                               verilogTimestampCondition,
+                                                                                                                                               verilogTimingCheckLimit
+                                                                                                                                             }
+                                                                                tmp[verilogDollarskewUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollartimeskewUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogEventBasedFlag, verilogNotifier, verilogReferenceEvent, verilogRemainActiveFlag, verilogTimingCheckLimit}
+                                                                                tmp[verilogDollarwidthUnderscoretimingUnderscorecheck] = {verilogControlledReferenceEvent, verilogNotifier, verilogThreshold, verilogTimingCheckLimit}
+                                                                                tmp[verilogOrderedParameterAssignment] = {verilogDataType, verilogMintypmaxExpression}
+                                                                                tmp[verilogActionBlock] = {verilogStatement, verilogStatementOrNull}
+                                                                                tmp[verilogAlwaysConstruct] = {verilogAlwaysKeyword, verilogStatement}
+                                                                                tmp[verilogAnonymousProgram] = {verilogAnonymousProgramItem}
+                                                                                tmp[verilogAnonymousProgramItem] = {verilogClassConstructorDeclaration, verilogClassDeclaration, verilogCovergroupDeclaration, verilogFunctionDeclaration, verilogTaskDeclaration}
+                                                                                tmp[verilogAnsiPortDeclaration] = {
+                                                                                                                    verilogAssociativeDimension,
+                                                                                                                    verilogConstantExpression,
+                                                                                                                    verilogExpression,
+                                                                                                                    verilogInterfacePortHeader,
+                                                                                                                    verilogNetPortHeader1,
+                                                                                                                    verilogPortDirection,
+                                                                                                                    verilogPortIdentifier,
+                                                                                                                    verilogQueueDimension,
+                                                                                                                    verilogUnpackedDimension,
+                                                                                                                    verilogUnsizedDimension,
+                                                                                                                    verilogVariablePortHeader
+                                                                                                                  }
+                                                                                tmp[verilogArrayManipulationCall] = {verilogArrayMethodName, verilogAttributeInstance, verilogExpression, verilogListOfArgumentsParent}
+                                                                                tmp[verilogArrayMethodName] = {verilogMethodIdentifier}
+                                                                                tmp[verilogArrayRangeExpression] = {verilogExpression}
+                                                                                tmp[verilogAssertPropertyStatement] = {verilogActionBlock, verilogPropertySpec}
+                                                                                tmp[verilogAssertionVariableDeclaration] = {verilogDataType, verilogDataTypeOrImplicit1, verilogListOfVariableDeclAssignments}
+                                                                                tmp[verilogAssignmentPattern] = {verilogAssignmentPatternKey, verilogConstantExpression, verilogExpression}
+                                                                                tmp[verilogAssignmentPatternExpression] = {
+                                                                                                                            verilogAssignmentPattern,
+                                                                                                                            verilogClassScope,
+                                                                                                                            verilogEscapedIdentifier,
+                                                                                                                            verilogIntegerAtomType,
+                                                                                                                            verilogPackageScope,
+                                                                                                                            verilogSimpleIdentifier,
+                                                                                                                            verilogTypeReference
+                                                                                                                          }
+                                                                                tmp[verilogAssignmentPatternKey] = {
+                                                                                                                     verilogClassScope,
+                                                                                                                     verilogConstantExpression,
+                                                                                                                     verilogEscapedIdentifier,
+                                                                                                                     verilogGenerateBlockIdentifier,
+                                                                                                                     verilogIntegerAtomType,
+                                                                                                                     verilogIntegerVectorType,
+                                                                                                                     verilogNonIntegerType,
+                                                                                                                     verilogPackageScope,
+                                                                                                                     verilogParameterIdentifier,
+                                                                                                                     verilogSimpleIdentifier
+                                                                                                                   }
+                                                                                tmp[verilogAssignmentPatternNetLvalue] = {verilogNetLvalue}
+                                                                                tmp[verilogAssignmentPatternVariableLvalue] = {verilogVariableLvalue}
+                                                                                tmp[verilogAssociativeDimension] = {verilogDataType}
+                                                                                tmp[verilogAssumePropertyStatement] = {verilogActionBlock, verilogPropertySpec}
+                                                                                tmp[verilogAttrSpec] = {verilogConstantExpression, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogAttributeInstance] = {verilogAttrSpec}
+                                                                                tmp[verilogBeginKeywords] = {verilogDoubleQuotedString}
+                                                                                tmp[verilogBindDirective] = {
+                                                                                                              verilogBindTargetInstance,
+                                                                                                              verilogBindTargetInstanceList,
+                                                                                                              verilogBindTargetScope,
+                                                                                                              verilogCheckerInstantiation,
+                                                                                                              verilogInterfaceInstantiation,
+                                                                                                              verilogModuleInstantiation,
+                                                                                                              verilogProgramInstantiation
+                                                                                                            }
+                                                                                tmp[verilogBindTargetInstance] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogBindTargetInstanceList] = {verilogBindTargetInstance}
+                                                                                tmp[verilogBindTargetScope] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogBinsExpression] = {verilogCoverPointIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogBinsOrEmpty] = {verilogAttributeInstance, verilogBinsOrOptions}
+                                                                                tmp[verilogBinsOrOptions] = {
+                                                                                                              verilogBinsKeyword,
+                                                                                                              verilogCoverPointIdentifier,
+                                                                                                              verilogCoverageOption,
+                                                                                                              verilogCovergroupRangeList,
+                                                                                                              verilogEscapedIdentifier,
+                                                                                                              verilogExpression,
+                                                                                                              verilogSimpleIdentifier,
+                                                                                                              verilogTransList
+                                                                                                            }
+                                                                                tmp[verilogBinsSelection] = {verilogBinsKeyword, verilogEscapedIdentifier, verilogExpression, verilogSelectExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogBinsSelectionOrOption] = {verilogAttributeInstance, verilogBinsSelection, verilogCoverageOption}
+                                                                                tmp[verilogBitSelect1] = {verilogExpression}
+                                                                                tmp[verilogBlockEventExpression] = {verilogBlockEventExpression, verilogHierarchicalBtfIdentifier}
+                                                                                tmp[verilogBlockItemDeclaration] = {verilogAttributeInstance, verilogDataDeclaration, verilogLetDeclaration, verilogLocalParameterDeclaration, verilogOverloadDeclaration, verilogParameterDeclaration}
+                                                                                tmp[verilogBlockingAssignment] = {verilogDelayOrEventControl, verilogDynamicArrayNew, verilogExpression, verilogNonrangeVariableLvalue, verilogOperatorAssignment, verilogVariableLvalue}
+                                                                                tmp[verilogCaseExpression] = {verilogExpression}
+                                                                                tmp[verilogCaseGenerateConstruct] = {verilogCaseGenerateItem, verilogConstantExpression}
+                                                                                tmp[verilogCaseGenerateItem] = {verilogConstantExpression, verilogGenerateBlock}
+                                                                                tmp[verilogCaseInsideItem] = {verilogOpenRangeList, verilogStatementOrNull}
+                                                                                tmp[verilogCaseItem] = {verilogCaseItemExpression, verilogStatementOrNull}
+                                                                                tmp[verilogCaseItemExpression] = {verilogExpression}
+                                                                                tmp[verilogCasePatternItem] = {verilogExpression, verilogPattern, verilogStatementOrNull}
+                                                                                tmp[verilogCaseStatement] = {verilogCaseExpression, verilogCaseInsideItem, verilogCaseItem, verilogCaseKeyword, verilogCasePatternItem, verilogUniquePriority}
+                                                                                tmp[verilogCast] = {verilogCastingType, verilogExpression}
+                                                                                tmp[verilogCastingType] = {
+                                                                                                            verilogClassScope,
+                                                                                                            verilogConstantExpression,
+                                                                                                            verilogConstantPrimary,
+                                                                                                            verilogEscapedIdentifier,
+                                                                                                            verilogGenerateBlockIdentifier,
+                                                                                                            verilogIntegerAtomType,
+                                                                                                            verilogIntegerVectorType,
+                                                                                                            verilogNonIntegerType,
+                                                                                                            verilogPackageScope,
+                                                                                                            verilogParameterIdentifier,
+                                                                                                            verilogSimpleIdentifier
+                                                                                                          }
+                                                                                tmp[verilogCellClause] = {verilogCellIdentifier, verilogLibraryIdentifier}
+                                                                                tmp[verilogCellIdentifier] = {verilogCellIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogCheckerDeclaration] = {
+                                                                                                                   verilogAlwaysConstruct,
+                                                                                                                   verilogAttributeInstance,
+                                                                                                                   verilogCaseGenerateConstruct,
+                                                                                                                   verilogCheckerIdentifier,
+                                                                                                                   verilogCheckerOrGenerateItemDeclaration,
+                                                                                                                   verilogCheckerPortList,
+                                                                                                                   verilogConcurrentAssertionItem,
+                                                                                                                   verilogContinuousAssign,
+                                                                                                                   verilogDeferredImmediateAssertionItem,
+                                                                                                                   verilogElaborationSystemTask,
+                                                                                                                   verilogFinalConstruct,
+                                                                                                                   verilogGenerateRegion,
+                                                                                                                   verilogIfGenerateConstruct,
+                                                                                                                   verilogInitialConstruct,
+                                                                                                                   verilogLoopGenerateConstruct
+                                                                                                                 }
+                                                                                tmp[verilogCheckerIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogCheckerInstantiation] = {
+                                                                                                                     verilogAttributeInstance,
+                                                                                                                     verilogCheckerIdentifier,
+                                                                                                                     verilogEventExpression,
+                                                                                                                     verilogFormalPortIdentifier,
+                                                                                                                     verilogNameOfInstance,
+                                                                                                                     verilogPackageScope,
+                                                                                                                     verilogPropertyExpr,
+                                                                                                                     verilogSequenceExpr
+                                                                                                                   }
+                                                                                tmp[verilogCheckerOrGenerateItemDeclaration] = {
+                                                                                                                                 verilogCheckerDeclaration,
+                                                                                                                                 verilogClockingDeclaration,
+                                                                                                                                 verilogClockingIdentifier,
+                                                                                                                                 verilogCovergroupDeclaration,
+                                                                                                                                 verilogDataDeclaration,
+                                                                                                                                 verilogExpressionOrDist,
+                                                                                                                                 verilogFunctionDeclaration,
+                                                                                                                                 verilogGenvarDeclaration,
+                                                                                                                                 verilogLetDeclaration,
+                                                                                                                                 verilogPropertyDeclaration,
+                                                                                                                                 verilogSequenceDeclaration
+                                                                                                                               }
+                                                                                tmp[verilogCheckerPortItem] = {
+                                                                                                                verilogAssociativeDimension,
+                                                                                                                verilogAttributeInstance,
+                                                                                                                verilogCheckerPortDirection,
+                                                                                                                verilogEventExpression,
+                                                                                                                verilogFormalPortIdentifier,
+                                                                                                                verilogPropertyExpr,
+                                                                                                                verilogPropertyFormalType1,
+                                                                                                                verilogQueueDimension,
+                                                                                                                verilogSequenceExpr,
+                                                                                                                verilogUnpackedDimension,
+                                                                                                                verilogUnsizedDimension
+                                                                                                              }
+                                                                                tmp[verilogCheckerPortList] = {verilogCheckerPortItem}
+                                                                                tmp[verilogClassConstructorDeclaration] = {verilogBlockItemDeclaration, verilogClassScope, verilogFunctionStatementOrNull, verilogListOfArgumentsParent, verilogTfPortList}
+                                                                                tmp[verilogClassConstructorPrototype] = {verilogTfPortList}
+                                                                                tmp[verilogClassDeclaration] = {
+                                                                                                                 verilogClassIdentifier,
+                                                                                                                 verilogClassItem,
+                                                                                                                 verilogClassType,
+                                                                                                                 verilogInterfaceClassType,
+                                                                                                                 verilogLifetime,
+                                                                                                                 verilogListOfArgumentsParent,
+                                                                                                                 verilogParameterPortList
+                                                                                                               }
+                                                                                tmp[verilogClassIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogClassItem] = {
+                                                                                                          verilogAttributeInstance,
+                                                                                                          verilogBeginKeywords,
+                                                                                                          verilogClassDeclaration,
+                                                                                                          verilogClassMethod,
+                                                                                                          verilogClassProperty,
+                                                                                                          verilogConstraintDeclaration,
+                                                                                                          verilogConstraintPrototype,
+                                                                                                          verilogCovergroupDeclaration,
+                                                                                                          verilogDefaultNettypeCompilerDirective,
+                                                                                                          verilogIdDirective,
+                                                                                                          verilogIncludeCompilerDirective,
+                                                                                                          verilogLineCompilerDirective,
+                                                                                                          verilogLocalParameterDeclaration,
+                                                                                                          verilogParameterDeclaration,
+                                                                                                          verilogTextMacroDefinition,
+                                                                                                          verilogTextMacroUsage,
+                                                                                                          verilogTimescaleCompilerDirective,
+                                                                                                          verilogUnconnectedDrive,
+                                                                                                          verilogZeroDirective
+                                                                                                        }
+                                                                                tmp[verilogClassMethod] = {
+                                                                                                            verilogClassConstructorDeclaration,
+                                                                                                            verilogClassConstructorPrototype,
+                                                                                                            verilogClassItemQualifier,
+                                                                                                            verilogFunctionDeclaration,
+                                                                                                            verilogFunctionPrototype,
+                                                                                                            verilogMethodQualifier,
+                                                                                                            verilogTaskDeclaration,
+                                                                                                            verilogTaskPrototype
+                                                                                                          }
+                                                                                tmp[verilogClassNew] = {verilogClassScope, verilogExpression, verilogListOfArgumentsParent}
+                                                                                tmp[verilogClassProperty] = {verilogClassItemQualifier, verilogConstIdentifier, verilogConstantExpression, verilogDataDeclaration, verilogDataType, verilogRandomQualifier}
+                                                                                tmp[verilogClassQualifier] = {verilogClassScope, verilogImplicitClassHandle}
+                                                                                tmp[verilogClassScope] = {verilogClassType}
+                                                                                tmp[verilogClassType] = {verilogClassIdentifier, verilogPackageScope, verilogParameterValueAssignment}
+                                                                                tmp[verilogClockingDeclAssign] = {verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogClockingDeclaration] = {verilogClockingEvent, verilogClockingIdentifier, verilogClockingItem}
+                                                                                tmp[verilogClockingDirection] = {verilogClockingSkew}
+                                                                                tmp[verilogClockingDrive] = {verilogClockvarExpression, verilogCycleDelay, verilogExpression}
+                                                                                tmp[verilogClockingEvent] = {verilogEscapedIdentifier, verilogEventExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogClockingIdentifier] = {verilogClockingIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogClockingItem] = {
+                                                                                                             verilogAttributeInstance,
+                                                                                                             verilogClockingDirection,
+                                                                                                             verilogDefaultSkew,
+                                                                                                             verilogLetDeclaration,
+                                                                                                             verilogListOfClockingDeclAssign,
+                                                                                                             verilogPropertyDeclaration,
+                                                                                                             verilogSequenceDeclaration
+                                                                                                           }
+                                                                                tmp[verilogClockingSkew] = {verilogDelayControl, verilogEdgeIdentifier}
+                                                                                tmp[verilogClockvar] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogClockvarExpression] = {verilogClockvar, verilogSelect1}
+                                                                                tmp[verilogCmosSwitchInstance] = {verilogInputTerminal, verilogNameOfInstance, verilogNcontrolTerminal, verilogOutputTerminal, verilogPcontrolTerminal}
+                                                                                tmp[verilogCombinationalBody] = {verilogCombinationalEntry}
+                                                                                tmp[verilogCombinationalEntry] = {verilogLevelInputList, verilogOutputSymbol}
+                                                                                tmp[verilogConcatenation] = {verilogExpression}
+                                                                                tmp[verilogConcurrentAssertionItem] = {
+                                                                                                                        verilogAssertPropertyStatement,
+                                                                                                                        verilogAssumePropertyStatement,
+                                                                                                                        verilogCheckerInstantiation,
+                                                                                                                        verilogCoverPropertyStatement,
+                                                                                                                        verilogCoverSequenceStatement,
+                                                                                                                        verilogEscapedIdentifier,
+                                                                                                                        verilogRestrictPropertyStatement,
+                                                                                                                        verilogSimpleIdentifier
+                                                                                                                      }
+                                                                                tmp[verilogCondPattern] = {verilogExpression, verilogPattern}
+                                                                                tmp[verilogCondPredicate] = {verilogCondPattern, verilogExpression}
+                                                                                tmp[verilogConditionalExpression] = {verilogAttributeInstance, verilogCondPredicate, verilogExpression}
+                                                                                tmp[verilogConditionalStatement] = {verilogCondPredicate, verilogStatementOrNull, verilogUniquePriority}
+                                                                                tmp[verilogConfigIdentifier] = {verilogConfigIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogConfigRuleStatement] = {verilogCellClause, verilogDefaultClause, verilogInstClause, verilogLiblistClause, verilogUseClause}
+                                                                                tmp[verilogConsecutiveRepetition] = {verilogConstantExpression, verilogCycleDelayConstRangeExpression}
+                                                                                tmp[verilogConstIdentifier] = {verilogConstIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogConstantBitSelect1] = {verilogConstantExpression}
+                                                                                tmp[verilogConstantConcatenation] = {verilogConstantExpression}
+                                                                                tmp[verilogConstantExpression] = {verilogAttributeInstance, verilogConstantExpression, verilogConstantPrimary, verilogUnaryOperator}
+                                                                                tmp[verilogConstantIndexedRange] = {verilogConstantExpression}
+                                                                                tmp[verilogConstantMintypmaxExpression] = {verilogConstantExpression}
+                                                                                tmp[verilogConstantMultipleConcatenation] = {verilogConstantConcatenation, verilogConstantExpression}
+                                                                                tmp[verilogConstantParamExpression] = {verilogConstantMintypmaxExpression, verilogDataType}
+                                                                                tmp[verilogConstantPrimary] = {
+                                                                                                                verilogClassScope,
+                                                                                                                verilogConstantConcatenation,
+                                                                                                                verilogConstantExpression,
+                                                                                                                verilogConstantIndexedRange,
+                                                                                                                verilogConstantMintypmaxExpression,
+                                                                                                                verilogConstantMultipleConcatenation,
+                                                                                                                verilogConstantRange,
+                                                                                                                verilogConstantSelect1,
+                                                                                                                verilogGenerateBlockIdentifier,
+                                                                                                                verilogPackageScope,
+                                                                                                                verilogParameterIdentifier,
+                                                                                                                verilogPrimaryLiteral,
+                                                                                                                verilogTypeReference
+                                                                                                              }
+                                                                                tmp[verilogConstantRange] = {verilogConstantExpression}
+                                                                                tmp[verilogConstantSelect1] = {verilogConstantExpression, verilogConstantIndexedRange, verilogConstantRange}
+                                                                                tmp[verilogConstraintBlock] = {verilogConstraintBlockItem}
+                                                                                tmp[verilogConstraintBlockItem] = {verilogConstraintExpression, verilogSolveBeforeList}
+                                                                                tmp[verilogConstraintDeclaration] = {verilogConstraintBlock, verilogConstraintIdentifier}
+                                                                                tmp[verilogConstraintExpression] = {
+                                                                                                                     verilogConstraintPrimary,
+                                                                                                                     verilogConstraintSet,
+                                                                                                                     verilogExpression,
+                                                                                                                     verilogExpressionOrDist,
+                                                                                                                     verilogLoopVariables1,
+                                                                                                                     verilogPsOrHierarchicalArrayIdentifier,
+                                                                                                                     verilogUniquenessConstraint
+                                                                                                                   }
+                                                                                tmp[verilogConstraintIdentifier] = {verilogConstraintIdentifier, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogConstraintPrimary] = {verilogClassScope, verilogConstantBitSelect1, verilogEscapedIdentifier, verilogImplicitClassHandle, verilogSelect1, verilogSimpleIdentifier}
+                                                                                tmp[verilogConstraintPrototype] = {verilogConstraintIdentifier, verilogConstraintPrototypeQualifier}
+                                                                                tmp[verilogConstraintSet] = {verilogConstraintExpression}
+                                                                                tmp[verilogContinuousAssign] = {verilogDelay3, verilogDelayControl, verilogDriveStrength, verilogListOfNetAssignments, verilogListOfVariableAssignments}
+                                                                                tmp[verilogControlledReferenceEvent] = {verilogControlledReferenceEvent, verilogSpecifyInputTerminalDescriptor, verilogSpecifyOutputTerminalDescriptor, verilogTimingCheckCondition, verilogTimingCheckEventControl}
+                                                                                tmp[verilogCoverCross] = {verilogCrossBody, verilogCrossIdentifier, verilogExpression, verilogListOfCrossItems}
+                                                                                tmp[verilogCoverPoint] = {verilogBinsOrEmpty, verilogCoverPointIdentifier, verilogDataTypeOrImplicit1, verilogExpression}
+                                                                                tmp[verilogCoverPointIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogCoverPropertyStatement] = {verilogPropertySpec, verilogStatementOrNull}
+                                                                                tmp[verilogCoverSequenceStatement] = {verilogClockingEvent, verilogExpressionOrDist, verilogSequenceExpr, verilogStatementOrNull}
+                                                                                tmp[verilogCoverageEvent] = {verilogBlockEventExpression, verilogClockingEvent, verilogTfPortList}
+                                                                                tmp[verilogCoverageOption] = {verilogConstantExpression, verilogExpression, verilogMemberIdentifier}
+                                                                                tmp[verilogCoverageSpecOrOption] = {verilogAttributeInstance, verilogCoverCross, verilogCoverPoint, verilogCoverageOption}
+                                                                                tmp[verilogCovergroupDeclaration] = {verilogCoverageEvent, verilogCoverageSpecOrOption, verilogCovergroupIdentifier, verilogTfPortList}
+                                                                                tmp[verilogCovergroupIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogCovergroupRangeList] = {verilogCovergroupValueRange}
+                                                                                tmp[verilogCovergroupValueRange] = {verilogExpression}
+                                                                                tmp[verilogCrossBody] = {verilogCrossBodyItem}
+                                                                                tmp[verilogCrossBodyItem] = {verilogBinsSelectionOrOption, verilogFunctionDeclaration}
+                                                                                tmp[verilogCrossIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogCycleDelay] = {verilogEscapedIdentifier, verilogExpression, verilogIntegralNumber, verilogSimpleIdentifier}
+                                                                                tmp[verilogCycleDelayConstRangeExpression] = {verilogConstantExpression}
+                                                                                tmp[verilogCycleDelayRange] = {verilogConstantPrimary, verilogCycleDelayConstRangeExpression}
+                                                                                tmp[verilogDataDeclaration] = {verilogDataTypeOrImplicit1, verilogLifetime, verilogListOfVariableDeclAssignments, verilogNetTypeDeclaration, verilogPackageImportDeclaration, verilogTypeDeclaration}
+                                                                                tmp[verilogDataEvent] = {verilogTimingCheckEvent}
+                                                                                tmp[verilogDataSourceExpression] = {verilogExpression}
+                                                                                tmp[verilogDataType] = {
+                                                                                                         verilogClassScope,
+                                                                                                         verilogClassType,
+                                                                                                         verilogCovergroupIdentifier,
+                                                                                                         verilogEnumBaseType,
+                                                                                                         verilogEnumNameDeclaration,
+                                                                                                         verilogEscapedIdentifier,
+                                                                                                         verilogIntegerAtomType,
+                                                                                                         verilogIntegerVectorType,
+                                                                                                         verilogInterfaceIdentifier,
+                                                                                                         verilogModportIdentifier,
+                                                                                                         verilogNonIntegerType,
+                                                                                                         verilogPackageScope,
+                                                                                                         verilogPackedDimension,
+                                                                                                         verilogParameterValueAssignment,
+                                                                                                         verilogSimpleIdentifier,
+                                                                                                         verilogStructUnion,
+                                                                                                         verilogStructUnionMember,
+                                                                                                         verilogTypeReference
+                                                                                                       }
+                                                                                tmp[verilogDataTypeOrImplicit1] = {verilogDataType, verilogImplicitDataType1}
+                                                                                tmp[verilogDataTypeOrVoid] = {verilogDataType}
+                                                                                tmp[verilogDecimalNumber] = {verilogUnsignedNumber}
+                                                                                tmp[verilogDefaultNettypeCompilerDirective] = {verilogDefaultNettypeValue}
+                                                                                tmp[verilogDefaultSkew] = {verilogClockingSkew}
+                                                                                tmp[verilogDeferredImmediateAssertStatement] = {verilogActionBlock, verilogExpression}
+                                                                                tmp[verilogDeferredImmediateAssertionItem] = {verilogDeferredImmediateAssertStatement, verilogDeferredImmediateAssumeStatement, verilogDeferredImmediateCoverStatement, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogDeferredImmediateAssumeStatement] = {verilogActionBlock, verilogExpression}
+                                                                                tmp[verilogDeferredImmediateCoverStatement] = {verilogExpression, verilogStatementOrNull}
+                                                                                tmp[verilogDefparamAssignment] = {verilogConstantBitSelect1, verilogConstantMintypmaxExpression, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogDelay2] = {verilogDelayValue, verilogMintypmaxExpression}
+                                                                                tmp[verilogDelay3] = {verilogDelayValue, verilogMintypmaxExpression}
+                                                                                tmp[verilogDelayControl] = {verilogDelayValue, verilogMintypmaxExpression}
+                                                                                tmp[verilogDelayOrEventControl] = {verilogDelayControl, verilogEventControl, verilogExpression}
+                                                                                tmp[verilogDelayValue] = {verilogPsIdentifier, verilogRealNumber, verilogTimeLiteral, verilogUnsignedNumber}
+                                                                                tmp[verilogDelayedData] = {verilogConstantMintypmaxExpression, verilogTerminalIdentifier}
+                                                                                tmp[verilogDelayedReference] = {verilogConstantMintypmaxExpression, verilogTerminalIdentifier}
+                                                                                tmp[verilogDesignStatement] = {verilogCellIdentifier, verilogLibraryIdentifier}
+                                                                                tmp[verilogDisableStatement] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogDistItem] = {verilogDistWeight, verilogValueRange}
+                                                                                tmp[verilogDistList] = {verilogDistItem}
+                                                                                tmp[verilogDistWeight] = {verilogExpression}
+                                                                                tmp[verilogDpiFunctionProto] = {verilogFunctionPrototype}
+                                                                                tmp[verilogDpiImportExport] = {
+                                                                                                                verilogCIdentifier,
+                                                                                                                verilogDpiFunctionImportProperty,
+                                                                                                                verilogDpiFunctionProto,
+                                                                                                                verilogDpiSpecString,
+                                                                                                                verilogDpiTaskImportProperty,
+                                                                                                                verilogDpiTaskProto,
+                                                                                                                verilogFunctionIdentifier,
+                                                                                                                verilogTaskIdentifier
+                                                                                                              }
+                                                                                tmp[verilogDpiTaskProto] = {verilogTaskPrototype}
+                                                                                tmp[verilogDriveStrength] = {verilogStrength0, verilogStrength1}
+                                                                                tmp[verilogDynamicArrayNew] = {verilogExpression}
+                                                                                tmp[verilogEdgeControlSpecifier] = {verilogEdgeDescriptor}
+                                                                                tmp[verilogEdgeIndicator] = {verilogEdgeSymbol, verilogLevelSymbol}
+                                                                                tmp[verilogEdgeInputList] = {verilogEdgeIndicator, verilogLevelSymbol}
+                                                                                tmp[verilogEdgeSensitivePathDeclaration] = {verilogFullEdgeSensitivePathDescription, verilogParallelEdgeSensitivePathDescription, verilogPathDelayValue}
+                                                                                tmp[verilogElaborationSystemTask] = {verilogFinishNumber, verilogListOfArguments, verilogListOfArgumentsParent}
+                                                                                tmp[verilogEnableGateInstance] = {verilogEnableTerminal, verilogInputTerminal, verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogEnableTerminal] = {verilogExpression}
+                                                                                tmp[verilogEndEdgeOffset] = {verilogMintypmaxExpression}
+                                                                                tmp[verilogEnumBaseType] = {verilogEscapedIdentifier, verilogIntegerAtomType, verilogIntegerVectorType, verilogPackedDimension, verilogSimpleIdentifier}
+                                                                                tmp[verilogEnumIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogEnumNameDeclaration] = {verilogConstantExpression, verilogEnumIdentifier, verilogIntegralNumber}
+                                                                                tmp[verilogErrorLimitValue] = {verilogLimitValue}
+                                                                                tmp[verilogEventBasedFlag] = {verilogConstantExpression}
+                                                                                tmp[verilogEventControl] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogEventExpression, verilogPackageScope, verilogSimpleIdentifier}
+                                                                                tmp[verilogEventExpression] = {verilogEdgeIdentifier, verilogEventExpression, verilogExpression}
+                                                                                tmp[verilogEventTrigger] = {verilogConstantBitSelect1, verilogDelayOrEventControl, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogExpectPropertyStatement] = {verilogActionBlock, verilogPropertySpec}
+                                                                                tmp[verilogExpression] = {
+                                                                                                           verilogAttributeInstance,
+                                                                                                           verilogConditionalExpression,
+                                                                                                           verilogExpression,
+                                                                                                           verilogIncOrDecExpression,
+                                                                                                           verilogInsideExpression,
+                                                                                                           verilogOperatorAssignment,
+                                                                                                           verilogPrimary,
+                                                                                                           verilogTaggedUnionExpression,
+                                                                                                           verilogUnaryOperator
+                                                                                                         }
+                                                                                tmp[verilogExpressionOrDist] = {verilogDistList, verilogExpression}
+                                                                                tmp[verilogExternConstraintDeclaration] = {verilogClassScope, verilogConstraintBlock, verilogConstraintIdentifier}
+                                                                                tmp[verilogExternTfDeclaration] = {verilogFunctionPrototype, verilogTaskPrototype}
+                                                                                tmp[verilogFinalConstruct] = {verilogFunctionStatement}
+                                                                                tmp[verilogForInitialization] = {verilogForVariableDeclaration, verilogListOfVariableAssignments}
+                                                                                tmp[verilogForStep] = {verilogFunctionSubroutineCall, verilogIncOrDecExpression, verilogOperatorAssignment}
+                                                                                tmp[verilogForVariableDeclaration] = {verilogDataType, verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogFormalArgument] = {verilogDefaultText, verilogSimpleIdentifier}
+                                                                                tmp[verilogFormalIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogFormalPortIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogFullEdgeSensitivePathDescription] = {verilogDataSourceExpression, verilogEdgeIdentifier, verilogListOfPathInputs, verilogListOfPathOutputs, verilogPolarityOperator}
+                                                                                tmp[verilogFullPathDescription] = {verilogListOfPathInputs, verilogListOfPathOutputs, verilogPolarityOperator}
+                                                                                tmp[verilogFunctionBodyDeclaration] = {
+                                                                                                                        verilogBlockItemDeclaration,
+                                                                                                                        verilogClassScope,
+                                                                                                                        verilogFunctionDataTypeOrImplicit1,
+                                                                                                                        verilogFunctionIdentifier,
+                                                                                                                        verilogFunctionStatementOrNull,
+                                                                                                                        verilogInterfaceIdentifier,
+                                                                                                                        verilogTfItemDeclaration,
+                                                                                                                        verilogTfPortList
+                                                                                                                      }
+                                                                                tmp[verilogFunctionDataTypeOrImplicit1] = {verilogDataTypeOrVoid, verilogImplicitDataType1}
+                                                                                tmp[verilogFunctionDeclaration] = {verilogFunctionBodyDeclaration, verilogLifetime}
+                                                                                tmp[verilogFunctionIdentifier] = {verilogEscapedIdentifier, verilogFunctionIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogFunctionPrototype] = {verilogDataTypeOrVoid, verilogFunctionIdentifier, verilogTfPortList}
+                                                                                tmp[verilogFunctionStatement] = {verilogStatement}
+                                                                                tmp[verilogFunctionStatementOrNull] = {verilogAttributeInstance, verilogFunctionStatement}
+                                                                                tmp[verilogFunctionSubroutineCall] = {verilogSubroutineCall}
+                                                                                tmp[verilogGateInstantiation] = {
+                                                                                                                  verilogCmosSwitchInstance,
+                                                                                                                  verilogCmosSwitchtype,
+                                                                                                                  verilogDelay2,
+                                                                                                                  verilogDelay3,
+                                                                                                                  verilogDriveStrength,
+                                                                                                                  verilogEnableGateInstance,
+                                                                                                                  verilogEnableGatetype,
+                                                                                                                  verilogMosSwitchInstance,
+                                                                                                                  verilogMosSwitchtype,
+                                                                                                                  verilogNInputGateInstance,
+                                                                                                                  verilogNInputGatetype,
+                                                                                                                  verilogNOutputGateInstance,
+                                                                                                                  verilogNOutputGatetype,
+                                                                                                                  verilogPassEnSwitchtype,
+                                                                                                                  verilogPassEnableSwitchInstance,
+                                                                                                                  verilogPassSwitchInstance,
+                                                                                                                  verilogPassSwitchtype,
+                                                                                                                  verilogPullGateInstance,
+                                                                                                                  verilogPulldownStrength,
+                                                                                                                  verilogPullupStrength
+                                                                                                                }
+                                                                                tmp[verilogGenerateBlock] = {
+                                                                                                              verilogAlwaysConstruct,
+                                                                                                              verilogCaseGenerateConstruct,
+                                                                                                              verilogCheckerOrGenerateItemDeclaration,
+                                                                                                              verilogConcurrentAssertionItem,
+                                                                                                              verilogContinuousAssign,
+                                                                                                              verilogDeferredImmediateAssertionItem,
+                                                                                                              verilogElaborationSystemTask,
+                                                                                                              verilogFinalConstruct,
+                                                                                                              verilogGenerateBlockIdentifier,
+                                                                                                              verilogGenerateRegion,
+                                                                                                              verilogIfGenerateConstruct,
+                                                                                                              verilogInitialConstruct,
+                                                                                                              verilogInterfaceOrGenerateItem,
+                                                                                                              verilogLoopGenerateConstruct,
+                                                                                                              verilogModuleOrGenerateItem
+                                                                                                            }
+                                                                                tmp[verilogGenerateBlockIdentifier] = {verilogEscapedIdentifier, verilogGenerateBlockIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogGenerateRegion] = {
+                                                                                                               verilogAlwaysConstruct,
+                                                                                                               verilogCaseGenerateConstruct,
+                                                                                                               verilogCheckerOrGenerateItemDeclaration,
+                                                                                                               verilogConcurrentAssertionItem,
+                                                                                                               verilogContinuousAssign,
+                                                                                                               verilogDeferredImmediateAssertionItem,
+                                                                                                               verilogElaborationSystemTask,
+                                                                                                               verilogFinalConstruct,
+                                                                                                               verilogGenerateRegion,
+                                                                                                               verilogIfGenerateConstruct,
+                                                                                                               verilogInitialConstruct,
+                                                                                                               verilogInterfaceOrGenerateItem,
+                                                                                                               verilogLoopGenerateConstruct,
+                                                                                                               verilogModuleOrGenerateItem
+                                                                                                             }
+                                                                                tmp[verilogGenvarDeclaration] = {verilogListOfGenvarIdentifiers}
+                                                                                tmp[verilogGenvarIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogGenvarInitialization] = {verilogConstantExpression, verilogGenvarIdentifier}
+                                                                                tmp[verilogGenvarIteration] = {verilogAssignmentOperator, verilogConstantExpression, verilogGenvarIdentifier, verilogIncOrDecOperator}
+                                                                                tmp[verilogGotoRepetition] = {verilogConstantExpression, verilogCycleDelayConstRangeExpression}
+                                                                                tmp[verilogHierarchicalBtfIdentifier] = {verilogClassScope, verilogConstantBitSelect1, verilogEscapedIdentifier, verilogMethodIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogHierarchicalInstance] = {verilogListOfPortConnections, verilogNameOfInstance}
+                                                                                tmp[verilogIdDirective] = {verilogTextMacroIdentifier}
+                                                                                tmp[verilogIdentifierList] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogIfGenerateConstruct] = {verilogConstantExpression, verilogGenerateBlock}
+                                                                                tmp[verilogImplicitDataType1] = {verilogPackedDimension}
+                                                                                tmp[verilogIncOrDecExpression] = {verilogAttributeInstance, verilogIncOrDecOperator, verilogVariableLvalue}
+                                                                                tmp[verilogIncludeCompilerDirective] = {verilogDoubleQuotedString, verilogIncludeCompilerDirectiveStandard}
+                                                                                tmp[verilogIndexVariableIdentifier] = {verilogEscapedIdentifier, verilogIndexVariableIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogIndexedRange] = {verilogConstantExpression, verilogExpression}
+                                                                                tmp[verilogInitialConstruct] = {verilogStatementOrNull}
+                                                                                tmp[verilogInoutDeclaration] = {verilogListOfPortIdentifiers, verilogNetPortType1}
+                                                                                tmp[verilogInoutPortIdentifier] = {verilogEscapedIdentifier, verilogInoutPortIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogInoutTerminal] = {verilogNetLvalue}
+                                                                                tmp[verilogInputDeclaration] = {verilogDataType, verilogDataTypeOrImplicit1, verilogListOfPortIdentifiers, verilogListOfVariableIdentifiers, verilogNetPortType1}
+                                                                                tmp[verilogInputIdentifier] = {verilogInoutPortIdentifier, verilogInputPortIdentifier, verilogInterfaceIdentifier, verilogPortIdentifier}
+                                                                                tmp[verilogInputPortIdentifier] = {verilogEscapedIdentifier, verilogInputPortIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogInputTerminal] = {verilogExpression}
+                                                                                tmp[verilogInsideExpression] = {verilogExpression, verilogOpenRangeList}
+                                                                                tmp[verilogInstClause] = {verilogInstName}
+                                                                                tmp[verilogInstName] = {verilogInstanceIdentifier, verilogTopmoduleIdentifier}
+                                                                                tmp[verilogInstanceIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogIntegralNumber] = {verilogBinaryNumber, verilogDecimalNumber, verilogHexNumber, verilogOctalNumber}
+                                                                                tmp[verilogInterfaceAnsiHeader] = {verilogAttributeInstance, verilogInterfaceIdentifier, verilogLifetime, verilogListOfPortDeclarations, verilogPackageImportDeclaration, verilogParameterPortList}
+                                                                                tmp[verilogInterfaceClassDeclaration] = {verilogClassIdentifier, verilogInterfaceClassItem, verilogInterfaceClassType, verilogParameterPortList}
+                                                                                tmp[verilogInterfaceClassItem] = {verilogAttributeInstance, verilogInterfaceClassMethod, verilogLocalParameterDeclaration, verilogParameterDeclaration, verilogTypeDeclaration}
+                                                                                tmp[verilogInterfaceClassMethod] = {verilogFunctionPrototype, verilogTaskPrototype}
+                                                                                tmp[verilogInterfaceClassType] = {verilogClassIdentifier, verilogPackageScope, verilogParameterValueAssignment}
+                                                                                tmp[verilogInterfaceDeclaration] = {
+                                                                                                                     verilogAttributeInstance,
+                                                                                                                     verilogGenerateRegion,
+                                                                                                                     verilogInterfaceAnsiHeader,
+                                                                                                                     verilogInterfaceDeclaration,
+                                                                                                                     verilogInterfaceIdentifier,
+                                                                                                                     verilogInterfaceItem,
+                                                                                                                     verilogInterfaceNonansiHeader,
+                                                                                                                     verilogInterfaceOrGenerateItem,
+                                                                                                                     verilogModportDeclaration,
+                                                                                                                     verilogProgramDeclaration,
+                                                                                                                     verilogTimeunitsDeclaration
+                                                                                                                   }
+                                                                                tmp[verilogInterfaceIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogInterfaceInstanceIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogInterfaceInstantiation] = {verilogHierarchicalInstance, verilogInterfaceIdentifier, verilogParameterValueAssignment}
+                                                                                tmp[verilogInterfaceItem] = {
+                                                                                                              verilogGenerateRegion,
+                                                                                                              verilogInterfaceDeclaration,
+                                                                                                              verilogInterfaceOrGenerateItem,
+                                                                                                              verilogModportDeclaration,
+                                                                                                              verilogPortDeclaration,
+                                                                                                              verilogProgramDeclaration,
+                                                                                                              verilogTimeunitsDeclaration
+                                                                                                            }
+                                                                                tmp[verilogInterfaceNonansiHeader] = {verilogAttributeInstance, verilogInterfaceIdentifier, verilogLifetime, verilogListOfPorts, verilogPackageImportDeclaration, verilogParameterPortList}
+                                                                                tmp[verilogInterfaceOrGenerateItem] = {
+                                                                                                                        verilogAlwaysConstruct,
+                                                                                                                        verilogAttributeInstance,
+                                                                                                                        verilogBindDirective,
+                                                                                                                        verilogCaseGenerateConstruct,
+                                                                                                                        verilogClockingDeclaration,
+                                                                                                                        verilogClockingIdentifier,
+                                                                                                                        verilogConcurrentAssertionItem,
+                                                                                                                        verilogContinuousAssign,
+                                                                                                                        verilogDeferredImmediateAssertionItem,
+                                                                                                                        verilogElaborationSystemTask,
+                                                                                                                        verilogExpressionOrDist,
+                                                                                                                        verilogExternTfDeclaration,
+                                                                                                                        verilogFinalConstruct,
+                                                                                                                        verilogGenvarDeclaration,
+                                                                                                                        verilogIfGenerateConstruct,
+                                                                                                                        verilogInitialConstruct,
+                                                                                                                        verilogInterfaceInstantiation,
+                                                                                                                        verilogLoopGenerateConstruct,
+                                                                                                                        verilogNetAlias,
+                                                                                                                        verilogPackageOrGenerateItemDeclaration,
+                                                                                                                        verilogProgramInstantiation
+                                                                                                                      }
+                                                                                tmp[verilogInterfacePortDeclaration] = {verilogInterfaceIdentifier, verilogListOfInterfaceIdentifiers, verilogModportIdentifier}
+                                                                                tmp[verilogInterfacePortHeader] = {verilogInterfaceIdentifier, verilogModportIdentifier}
+                                                                                tmp[verilogJumpStatement] = {verilogExpression}
+                                                                                tmp[verilogLetActualArg] = {verilogExpression}
+                                                                                tmp[verilogLetDeclaration] = {verilogEscapedIdentifier, verilogExpression, verilogLetPortList, verilogSimpleIdentifier}
+                                                                                tmp[verilogLetExpression] = {verilogEscapedIdentifier, verilogLetListOfArguments, verilogPackageScope, verilogSimpleIdentifier}
+                                                                                tmp[verilogLetFormalType1] = {verilogDataTypeOrImplicit1}
+                                                                                tmp[verilogLetListOfArguments] = {verilogEscapedIdentifier, verilogLetActualArg, verilogSimpleIdentifier}
+                                                                                tmp[verilogLetPortItem] = {
+                                                                                                            verilogAssociativeDimension,
+                                                                                                            verilogAttributeInstance,
+                                                                                                            verilogExpression,
+                                                                                                            verilogFormalPortIdentifier,
+                                                                                                            verilogLetFormalType1,
+                                                                                                            verilogQueueDimension,
+                                                                                                            verilogUnpackedDimension,
+                                                                                                            verilogUnsizedDimension
+                                                                                                          }
+                                                                                tmp[verilogLetPortList] = {verilogLetPortItem}
+                                                                                tmp[verilogLevelInputList] = {verilogLevelSymbol}
+                                                                                tmp[verilogLiblistClause] = {verilogLibraryIdentifier}
+                                                                                tmp[verilogLibraryIdentifier] = {verilogEscapedIdentifier, verilogLibraryIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogLimitValue] = {verilogConstantMintypmaxExpression}
+                                                                                tmp[verilogLineCompilerDirective] = {verilogDoubleQuotedString, verilogUnsignedNumber}
+                                                                                tmp[verilogListOfActualArguments] = {verilogExpression}
+                                                                                tmp[verilogListOfArguments] = {verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogListOfArgumentsParent] = {verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier}
+                                                                                tmp[verilogListOfClockingDeclAssign] = {verilogClockingDeclAssign}
+                                                                                tmp[verilogListOfCrossItems] = {verilogCoverPointIdentifier}
+                                                                                tmp[verilogListOfDefparamAssignments] = {verilogDefparamAssignment}
+                                                                                tmp[verilogListOfFormalArguments] = {verilogFormalArgument}
+                                                                                tmp[verilogListOfGenvarIdentifiers] = {verilogGenvarIdentifier}
+                                                                                tmp[verilogListOfInterfaceIdentifiers] = {verilogInterfaceIdentifier, verilogUnpackedDimension}
+                                                                                tmp[verilogListOfNetAssignments] = {verilogNetAssignment}
+                                                                                tmp[verilogListOfNetDeclAssignments] = {verilogNetDeclAssignment}
+                                                                                tmp[verilogListOfParamAssignments] = {verilogParamAssignment}
+                                                                                tmp[verilogListOfParameterAssignments] = {verilogNamedParameterAssignment, verilogOrderedParameterAssignment}
+                                                                                tmp[verilogListOfPathDelayExpressions] = {verilogPathDelayExpression}
+                                                                                tmp[verilogListOfPathInputs] = {verilogSpecifyInputTerminalDescriptor}
+                                                                                tmp[verilogListOfPathOutputs] = {verilogSpecifyOutputTerminalDescriptor}
+                                                                                tmp[verilogListOfPortConnections] = {verilogNamedPortConnection, verilogOrderedPortConnection}
+                                                                                tmp[verilogListOfPortDeclarations] = {verilogAnsiPortDeclaration, verilogAttributeInstance}
+                                                                                tmp[verilogListOfPortIdentifiers] = {verilogPortIdentifier, verilogUnpackedDimension}
+                                                                                tmp[verilogListOfPorts] = {verilogLineCompilerDirective, verilogPort}
+                                                                                tmp[verilogListOfSpecparamAssignments] = {verilogSpecparamAssignment}
+                                                                                tmp[verilogListOfTfVariableIdentifiers] = {verilogAssociativeDimension, verilogExpression, verilogPortIdentifier, verilogQueueDimension, verilogUnpackedDimension, verilogUnsizedDimension}
+                                                                                tmp[verilogListOfTypeAssignments] = {verilogTypeAssignment}
+                                                                                tmp[verilogListOfUdpPortIdentifiers] = {verilogPortIdentifier}
+                                                                                tmp[verilogListOfVariableAssignments] = {verilogVariableAssignment}
+                                                                                tmp[verilogListOfVariableDeclAssignments] = {verilogVariableDeclAssignment}
+                                                                                tmp[verilogListOfVariableIdentifiers] = {verilogAssociativeDimension, verilogEscapedIdentifier, verilogQueueDimension, verilogSimpleIdentifier, verilogUnpackedDimension, verilogUnsizedDimension}
+                                                                                tmp[verilogListOfVariablePortIdentifiers] = {verilogAssociativeDimension, verilogConstantExpression, verilogPortIdentifier, verilogQueueDimension, verilogUnpackedDimension, verilogUnsizedDimension}
+                                                                                tmp[verilogLocalParameterDeclaration] = {verilogDataTypeOrImplicit1, verilogListOfParamAssignments, verilogListOfTypeAssignments}
+                                                                                tmp[verilogLoopGenerateConstruct] = {verilogConstantExpression, verilogGenerateBlock, verilogGenvarInitialization, verilogGenvarIteration}
+                                                                                tmp[verilogLoopStatement] = {
+                                                                                                              verilogExpression,
+                                                                                                              verilogForInitialization,
+                                                                                                              verilogForStep,
+                                                                                                              verilogLoopVariables1,
+                                                                                                              verilogPsOrHierarchicalArrayIdentifier,
+                                                                                                              verilogStatement,
+                                                                                                              verilogStatementOrNull
+                                                                                                            }
+                                                                                tmp[verilogLoopVariables1] = {verilogIndexVariableIdentifier}
+                                                                                tmp[verilogMemberIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogMethodCall] = {verilogImplicitClassHandle, verilogMethodCallBody, verilogPrimary}
+                                                                                tmp[verilogMethodCallBody] = {verilogArrayManipulationCall, verilogAttributeInstance, verilogListOfArgumentsParent, verilogMethodIdentifier, verilogRandomizeCall}
+                                                                                tmp[verilogMethodIdentifier] = {verilogEscapedIdentifier, verilogMethodIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogMethodQualifier] = {verilogClassItemQualifier}
+                                                                                tmp[verilogMintypmaxExpression] = {verilogExpression}
+                                                                                tmp[verilogModportClockingDeclaration] = {verilogClockingIdentifier}
+                                                                                tmp[verilogModportDeclaration] = {verilogModportItem}
+                                                                                tmp[verilogModportIdentifier] = {verilogEscapedIdentifier, verilogModportIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogModportItem] = {verilogModportIdentifier, verilogModportPortsDeclaration}
+                                                                                tmp[verilogModportPortsDeclaration] = {verilogAttributeInstance, verilogModportClockingDeclaration, verilogModportSimplePortsDeclaration, verilogModportTfPortsDeclaration}
+                                                                                tmp[verilogModportSimplePort] = {verilogExpression, verilogPortIdentifier}
+                                                                                tmp[verilogModportSimplePortsDeclaration] = {verilogModportSimplePort, verilogPortDirection}
+                                                                                tmp[verilogModportTfPortsDeclaration] = {verilogFunctionPrototype, verilogImportExport, verilogTaskPrototype, verilogTfIdentifier}
+                                                                                tmp[verilogModuleAnsiHeader] = {verilogListOfPortDeclarations, verilogPackageImportDeclaration, verilogParameterPortList}
+                                                                                tmp[verilogModuleDeclaration] = {
+                                                                                                                  verilogAttributeInstance,
+                                                                                                                  verilogBeginKeywords,
+                                                                                                                  verilogDefaultNettypeCompilerDirective,
+                                                                                                                  verilogEscapedIdentifier,
+                                                                                                                  verilogGenerateRegion,
+                                                                                                                  verilogIdDirective,
+                                                                                                                  verilogIncludeCompilerDirective,
+                                                                                                                  verilogInterfaceDeclaration,
+                                                                                                                  verilogLineCompilerDirective,
+                                                                                                                  verilogModuleAnsiHeader,
+                                                                                                                  verilogModuleDeclaration,
+                                                                                                                  verilogModuleHeader,
+                                                                                                                  verilogModuleNonansiHeader,
+                                                                                                                  verilogModuleOrGenerateItem,
+                                                                                                                  verilogPortDeclaration,
+                                                                                                                  verilogProgramDeclaration,
+                                                                                                                  verilogSimpleIdentifier,
+                                                                                                                  verilogSpecifyBlock,
+                                                                                                                  verilogSpecparamDeclaration,
+                                                                                                                  verilogTextMacroDefinition,
+                                                                                                                  verilogTextMacroUsage,
+                                                                                                                  verilogTimescaleCompilerDirective,
+                                                                                                                  verilogTimeunitsDeclaration,
+                                                                                                                  verilogUnconnectedDrive,
+                                                                                                                  verilogZeroDirective
+                                                                                                                }
+                                                                                tmp[verilogModuleHeader] = {verilogAttributeInstance, verilogEscapedIdentifier, verilogLifetime, verilogModuleKeyword, verilogSimpleIdentifier}
+                                                                                tmp[verilogModuleInstantiation] = {verilogEscapedIdentifier, verilogHierarchicalInstance, verilogParameterValueAssignment, verilogSimpleIdentifier}
+                                                                                tmp[verilogModuleNonansiHeader] = {verilogListOfPorts, verilogPackageImportDeclaration, verilogParameterPortList}
+                                                                                tmp[verilogModuleOrGenerateItem] = {
+                                                                                                                     verilogAlwaysConstruct,
+                                                                                                                     verilogAttributeInstance,
+                                                                                                                     verilogBindDirective,
+                                                                                                                     verilogCaseGenerateConstruct,
+                                                                                                                     verilogClockingDeclaration,
+                                                                                                                     verilogClockingIdentifier,
+                                                                                                                     verilogConcurrentAssertionItem,
+                                                                                                                     verilogContinuousAssign,
+                                                                                                                     verilogDeferredImmediateAssertionItem,
+                                                                                                                     verilogElaborationSystemTask,
+                                                                                                                     verilogExpressionOrDist,
+                                                                                                                     verilogFinalConstruct,
+                                                                                                                     verilogGateInstantiation,
+                                                                                                                     verilogGenvarDeclaration,
+                                                                                                                     verilogIfGenerateConstruct,
+                                                                                                                     verilogInitialConstruct,
+                                                                                                                     verilogInterfaceInstantiation,
+                                                                                                                     verilogLoopGenerateConstruct,
+                                                                                                                     verilogModuleInstantiation,
+                                                                                                                     verilogNetAlias,
+                                                                                                                     verilogPackageOrGenerateItemDeclaration,
+                                                                                                                     verilogParameterOverride,
+                                                                                                                     verilogProgramInstantiation,
+                                                                                                                     verilogUdpInstantiation
+                                                                                                                   }
+                                                                                tmp[verilogModulePathConcatenation] = {verilogModulePathExpression}
+                                                                                tmp[verilogModulePathExpression] = {verilogModulePathPrimary}
+                                                                                tmp[verilogModulePathMintypmaxExpression] = {verilogModulePathExpression}
+                                                                                tmp[verilogModulePathMultipleConcatenation] = {verilogConstantExpression, verilogModulePathConcatenation}
+                                                                                tmp[verilogModulePathPrimary] = {
+                                                                                                                  verilogEscapedIdentifier,
+                                                                                                                  verilogFunctionSubroutineCall,
+                                                                                                                  verilogIntegralNumber,
+                                                                                                                  verilogModulePathConcatenation,
+                                                                                                                  verilogModulePathMintypmaxExpression,
+                                                                                                                  verilogModulePathMultipleConcatenation,
+                                                                                                                  verilogRealNumber,
+                                                                                                                  verilogSimpleIdentifier
+                                                                                                                }
+                                                                                tmp[verilogMosSwitchInstance] = {verilogEnableTerminal, verilogInputTerminal, verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogMultipleConcatenation] = {verilogConcatenation, verilogExpression}
+                                                                                tmp[verilogNInputGateInstance] = {verilogInputTerminal, verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogNOutputGateInstance] = {verilogInputTerminal, verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogNameOfInstance] = {verilogInstanceIdentifier, verilogUnpackedDimension}
+                                                                                tmp[verilogNamedParameterAssignment] = {verilogParamExpression, verilogParameterIdentifier}
+                                                                                tmp[verilogNamedPortConnection] = {verilogAttributeInstance, verilogExpression, verilogPortIdentifier}
+                                                                                tmp[verilogNcontrolTerminal] = {verilogExpression}
+                                                                                tmp[verilogNetAlias] = {verilogNetLvalue}
+                                                                                tmp[verilogNetAssignment] = {verilogExpression, verilogNetLvalue}
+                                                                                tmp[verilogNetDeclAssignment] = {verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier, verilogUnpackedDimension}
+                                                                                tmp[verilogNetDeclaration] = {
+                                                                                                               verilogChargeStrength,
+                                                                                                               verilogDataTypeOrImplicit1,
+                                                                                                               verilogDelay3,
+                                                                                                               verilogDelayControl,
+                                                                                                               verilogDelayValue,
+                                                                                                               verilogDriveStrength,
+                                                                                                               verilogEscapedIdentifier,
+                                                                                                               verilogImplicitDataType1,
+                                                                                                               verilogListOfNetDeclAssignments,
+                                                                                                               verilogNetType,
+                                                                                                               verilogSimpleIdentifier,
+                                                                                                               verilogUnpackedDimension
+                                                                                                             }
+                                                                                tmp[verilogNetLvalue] = {
+                                                                                                          verilogAssignmentPatternNetLvalue,
+                                                                                                          verilogClassScope,
+                                                                                                          verilogConstantBitSelect1,
+                                                                                                          verilogConstantSelect1,
+                                                                                                          verilogEscapedIdentifier,
+                                                                                                          verilogIntegerAtomType,
+                                                                                                          verilogNetLvalue,
+                                                                                                          verilogPackageScope,
+                                                                                                          verilogSimpleIdentifier,
+                                                                                                          verilogTypeReference
+                                                                                                        }
+                                                                                tmp[verilogNetPortHeader1] = {verilogNetPortType1, verilogPortDirection}
+                                                                                tmp[verilogNetPortType1] = {verilogDataTypeOrImplicit1, verilogEscapedIdentifier, verilogImplicitDataType1, verilogNetType, verilogSimpleIdentifier}
+                                                                                tmp[verilogNetTypeDeclaration] = {verilogClassScope, verilogDataType, verilogEscapedIdentifier, verilogPackageScope, verilogSimpleIdentifier, verilogTfIdentifier}
+                                                                                tmp[verilogNextState] = {verilogOutputSymbol}
+                                                                                tmp[verilogNonConsecutiveRepetition] = {verilogConstantExpression, verilogCycleDelayConstRangeExpression}
+                                                                                tmp[verilogNonPortProgramItem] = {
+                                                                                                                   verilogAttributeInstance,
+                                                                                                                   verilogCaseGenerateConstruct,
+                                                                                                                   verilogClockingDeclaration,
+                                                                                                                   verilogClockingIdentifier,
+                                                                                                                   verilogConcurrentAssertionItem,
+                                                                                                                   verilogContinuousAssign,
+                                                                                                                   verilogElaborationSystemTask,
+                                                                                                                   verilogExpressionOrDist,
+                                                                                                                   verilogFinalConstruct,
+                                                                                                                   verilogGenerateRegion,
+                                                                                                                   verilogGenvarDeclaration,
+                                                                                                                   verilogIfGenerateConstruct,
+                                                                                                                   verilogInitialConstruct,
+                                                                                                                   verilogLoopGenerateConstruct,
+                                                                                                                   verilogPackageOrGenerateItemDeclaration,
+                                                                                                                   verilogTimeunitsDeclaration
+                                                                                                                 }
+                                                                                tmp[verilogNonblockingAssignment] = {verilogDelayOrEventControl, verilogExpression, verilogVariableLvalue}
+                                                                                tmp[verilogNonrangeSelect1] = {verilogBitSelect1, verilogMemberIdentifier}
+                                                                                tmp[verilogNonrangeVariableLvalue] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogImplicitClassHandle, verilogNonrangeSelect1, verilogPackageScope, verilogSimpleIdentifier}
+                                                                                tmp[verilogNotifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogOpenRangeList] = {verilogOpenValueRange}
+                                                                                tmp[verilogOpenValueRange] = {verilogValueRange}
+                                                                                tmp[verilogOperatorAssignment] = {verilogAssignmentOperator, verilogExpression, verilogVariableLvalue}
+                                                                                tmp[verilogOrderedParameterAssignment] = {verilogOrderedParameterAssignment}
+                                                                                tmp[verilogOrderedPortConnection] = {verilogAttributeInstance, verilogExpression}
+                                                                                tmp[verilogOutputDeclaration] = {verilogDataType, verilogDataTypeOrImplicit1, verilogListOfPortIdentifiers, verilogListOfVariablePortIdentifiers, verilogNetPortType1}
+                                                                                tmp[verilogOutputIdentifier] = {verilogInoutPortIdentifier, verilogInterfaceIdentifier, verilogOutputPortIdentifier, verilogPortIdentifier}
+                                                                                tmp[verilogOutputPortIdentifier] = {verilogEscapedIdentifier, verilogOutputPortIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogOutputTerminal] = {verilogNetLvalue}
+                                                                                tmp[verilogOverloadDeclaration] = {verilogDataType, verilogFunctionIdentifier, verilogOverloadOperator, verilogOverloadProtoFormals}
+                                                                                tmp[verilogOverloadProtoFormals] = {verilogDataType}
+                                                                                tmp[verilogPackageDeclaration] = {
+                                                                                                                   verilogAnonymousProgram,
+                                                                                                                   verilogAttributeInstance,
+                                                                                                                   verilogLifetime,
+                                                                                                                   verilogPackageExportDeclaration,
+                                                                                                                   verilogPackageIdentifier,
+                                                                                                                   verilogPackageOrGenerateItemDeclaration,
+                                                                                                                   verilogTimeunitsDeclaration
+                                                                                                                 }
+                                                                                tmp[verilogPackageExportDeclaration] = {verilogPackageImportItem}
+                                                                                tmp[verilogPackageIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogPackageImportDeclaration] = {verilogPackageImportItem}
+                                                                                tmp[verilogPackageImportItem] = {verilogEscapedIdentifier, verilogPackageIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogPackageOrGenerateItemDeclaration] = {
+                                                                                                                                 verilogCheckerDeclaration,
+                                                                                                                                 verilogClassConstructorDeclaration,
+                                                                                                                                 verilogClassDeclaration,
+                                                                                                                                 verilogCovergroupDeclaration,
+                                                                                                                                 verilogDataDeclaration,
+                                                                                                                                 verilogDpiImportExport,
+                                                                                                                                 verilogExternConstraintDeclaration,
+                                                                                                                                 verilogFunctionDeclaration,
+                                                                                                                                 verilogInterfaceClassDeclaration,
+                                                                                                                                 verilogLetDeclaration,
+                                                                                                                                 verilogLocalParameterDeclaration,
+                                                                                                                                 verilogNetDeclaration,
+                                                                                                                                 verilogOverloadDeclaration,
+                                                                                                                                 verilogParameterDeclaration,
+                                                                                                                                 verilogPropertyDeclaration,
+                                                                                                                                 verilogSequenceDeclaration,
+                                                                                                                                 verilogTaskDeclaration
+                                                                                                                               }
+                                                                                tmp[verilogPackageScope] = {verilogPackageIdentifier}
+                                                                                tmp[verilogPackedDimension] = {verilogConstantRange, verilogUnsizedDimension}
+                                                                                tmp[verilogParBlock] = {verilogBlockItemDeclaration, verilogEscapedIdentifier, verilogJoinKeyword, verilogSimpleIdentifier, verilogStatementOrNull}
+                                                                                tmp[verilogParallelEdgeSensitivePathDescription] = {verilogDataSourceExpression, verilogEdgeIdentifier, verilogPolarityOperator, verilogSpecifyInputTerminalDescriptor, verilogSpecifyOutputTerminalDescriptor}
+                                                                                tmp[verilogParallelPathDescription] = {verilogPolarityOperator, verilogSpecifyInputTerminalDescriptor, verilogSpecifyOutputTerminalDescriptor}
+                                                                                tmp[verilogParamAssignment] = {verilogConstantParamExpression, verilogParameterIdentifier, verilogUnpackedDimension}
+                                                                                tmp[verilogParamExpression] = {verilogDataType, verilogMintypmaxExpression}
+                                                                                tmp[verilogParameterDeclaration] = {verilogDataTypeOrImplicit1, verilogListOfParamAssignments, verilogListOfTypeAssignments}
+                                                                                tmp[verilogParameterIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogParameterOverride] = {verilogListOfDefparamAssignments}
+                                                                                tmp[verilogParameterPortDeclaration] = {verilogDataType, verilogListOfParamAssignments, verilogListOfTypeAssignments, verilogLocalParameterDeclaration, verilogParameterDeclaration}
+                                                                                tmp[verilogParameterPortList] = {verilogListOfParamAssignments, verilogParameterPortDeclaration}
+                                                                                tmp[verilogParameterValueAssignment] = {verilogListOfParameterAssignments}
+                                                                                tmp[verilogPassEnableSwitchInstance] = {verilogEnableTerminal, verilogInoutTerminal, verilogNameOfInstance}
+                                                                                tmp[verilogPassSwitchInstance] = {verilogInoutTerminal, verilogNameOfInstance}
+                                                                                tmp[verilogPathDeclaration] = {verilogEdgeSensitivePathDeclaration, verilogSimplePathDeclaration, verilogStateDependentPathDeclaration}
+                                                                                tmp[verilogPathDelayExpression] = {verilogConstantMintypmaxExpression}
+                                                                                tmp[verilogPathDelayValue] = {verilogListOfPathDelayExpressions}
+                                                                                tmp[verilogPattern] = {verilogConstantExpression, verilogEscapedIdentifier, verilogMemberIdentifier, verilogPattern, verilogSimpleIdentifier}
+                                                                                tmp[verilogPcontrolTerminal] = {verilogExpression}
+                                                                                tmp[verilogPort] = {verilogPortIdentifier, verilogPortReference}
+                                                                                tmp[verilogPortDeclaration] = {verilogAttributeInstance, verilogInoutDeclaration, verilogInputDeclaration, verilogInterfacePortDeclaration, verilogOutputDeclaration, verilogRefDeclaration}
+                                                                                tmp[verilogPortIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogPortReference] = {verilogConstantSelect1, verilogPortIdentifier}
+                                                                                tmp[verilogPrimary] = {
+                                                                                                        verilogAssignmentPatternExpression,
+                                                                                                        verilogCast,
+                                                                                                        verilogClassQualifier,
+                                                                                                        verilogConcatenation,
+                                                                                                        verilogConstantBitSelect1,
+                                                                                                        verilogEmptyUnpackedArrayConcatenation,
+                                                                                                        verilogEscapedIdentifier,
+                                                                                                        verilogFunctionSubroutineCall,
+                                                                                                        verilogLetExpression,
+                                                                                                        verilogMintypmaxExpression,
+                                                                                                        verilogMultipleConcatenation,
+                                                                                                        verilogPackageScope,
+                                                                                                        verilogPrimaryLiteral,
+                                                                                                        verilogRangeExpression,
+                                                                                                        verilogSelect1,
+                                                                                                        verilogSequenceMethodCall,
+                                                                                                        verilogSimpleIdentifier,
+                                                                                                        verilogStreamingConcatenation
+                                                                                                      }
+                                                                                tmp[verilogPrimaryLiteral] = {verilogIntegralNumber, verilogRealNumber, verilogSimpleTextMacroUsage, verilogStringLiteral, verilogTimeLiteral, verilogUnbasedUnsizedLiteral}
+                                                                                tmp[verilogProceduralContinuousAssignment] = {verilogNetAssignment, verilogNetLvalue, verilogVariableAssignment, verilogVariableLvalue}
+                                                                                tmp[verilogProceduralTimingControlStatement] = {verilogCycleDelay, verilogDelayControl, verilogEventControl, verilogStatementOrNull}
+                                                                                tmp[verilogProductionIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogProgramAnsiHeader] = {verilogAttributeInstance, verilogLifetime, verilogListOfPortDeclarations, verilogPackageImportDeclaration, verilogParameterPortList, verilogProgramIdentifier}
+                                                                                tmp[verilogProgramDeclaration] = {
+                                                                                                                   verilogAttributeInstance,
+                                                                                                                   verilogNonPortProgramItem,
+                                                                                                                   verilogProgramAnsiHeader,
+                                                                                                                   verilogProgramIdentifier,
+                                                                                                                   verilogProgramItem,
+                                                                                                                   verilogProgramNonansiHeader,
+                                                                                                                   verilogTimeunitsDeclaration
+                                                                                                                 }
+                                                                                tmp[verilogProgramIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogProgramInstantiation] = {verilogHierarchicalInstance, verilogParameterValueAssignment, verilogProgramIdentifier}
+                                                                                tmp[verilogProgramItem] = {verilogNonPortProgramItem, verilogPortDeclaration}
+                                                                                tmp[verilogProgramNonansiHeader] = {verilogAttributeInstance, verilogLifetime, verilogListOfPorts, verilogPackageImportDeclaration, verilogParameterPortList, verilogProgramIdentifier}
+                                                                                tmp[verilogPropertyCaseItem] = {verilogExpressionOrDist, verilogPropertyExpr}
+                                                                                tmp[verilogPropertyDeclaration] = {verilogAssertionVariableDeclaration, verilogPropertyIdentifier, verilogPropertyPortList, verilogPropertySpec}
+                                                                                tmp[verilogPropertyExpr] = {
+                                                                                                             verilogClockingEvent,
+                                                                                                             verilogConstantExpression,
+                                                                                                             verilogConstantRange,
+                                                                                                             verilogCycleDelayConstRangeExpression,
+                                                                                                             verilogExpressionOrDist,
+                                                                                                             verilogPropertyCaseItem,
+                                                                                                             verilogPropertyExpr,
+                                                                                                             verilogSequenceExpr
+                                                                                                           }
+                                                                                tmp[verilogPropertyFormalType1] = {verilogSequenceFormalType1}
+                                                                                tmp[verilogPropertyIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogPropertyListOfArguments] = {verilogEscapedIdentifier, verilogEventExpression, verilogPropertyExpr, verilogSequenceExpr, verilogSimpleIdentifier}
+                                                                                tmp[verilogPropertyPortItem] = {
+                                                                                                                 verilogAssociativeDimension,
+                                                                                                                 verilogAttributeInstance,
+                                                                                                                 verilogEventExpression,
+                                                                                                                 verilogFormalPortIdentifier,
+                                                                                                                 verilogPropertyExpr,
+                                                                                                                 verilogPropertyFormalType1,
+                                                                                                                 verilogPropertyLvarPortDirection,
+                                                                                                                 verilogQueueDimension,
+                                                                                                                 verilogSequenceExpr,
+                                                                                                                 verilogUnpackedDimension,
+                                                                                                                 verilogUnsizedDimension
+                                                                                                               }
+                                                                                tmp[verilogPropertyPortList] = {verilogPropertyPortItem}
+                                                                                tmp[verilogPropertySpec] = {verilogClockingEvent, verilogExpressionOrDist, verilogPropertyExpr}
+                                                                                tmp[verilogPsIdentifier] = {verilogEscapedIdentifier, verilogPackageScope, verilogSimpleIdentifier}
+                                                                                tmp[verilogPsOrHierarchicalArrayIdentifier] = {verilogClassScope, verilogConstantBitSelect1, verilogEscapedIdentifier, verilogImplicitClassHandle, verilogPackageScope, verilogSimpleIdentifier}
+                                                                                tmp[verilogPullGateInstance] = {verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogPulldownStrength] = {verilogStrength0, verilogStrength1}
+                                                                                tmp[verilogPullupStrength] = {verilogStrength0, verilogStrength1}
+                                                                                tmp[verilogPulseControlSpecparam] = {verilogErrorLimitValue, verilogRejectLimitValue}
+                                                                                tmp[verilogPulsestyleDeclaration] = {verilogListOfPathOutputs}
+                                                                                tmp[verilogQueueDimension] = {verilogConstantExpression}
+                                                                                tmp[verilogRandcaseItem] = {verilogExpression, verilogStatementOrNull}
+                                                                                tmp[verilogRandcaseStatement] = {verilogRandcaseItem}
+                                                                                tmp[verilogRandomizeCall] = {verilogAttributeInstance, verilogConstraintBlock, verilogIdentifierList, verilogVariableIdentifierList}
+                                                                                tmp[verilogRangeExpression] = {verilogConstantRange, verilogExpression, verilogIndexedRange}
+                                                                                tmp[verilogRealNumber] = {verilogFixedPointNumber}
+                                                                                tmp[verilogRefDeclaration] = {verilogDataType, verilogDataTypeOrImplicit1, verilogListOfVariableIdentifiers}
+                                                                                tmp[verilogReferenceEvent] = {verilogTimingCheckEvent}
+                                                                                tmp[verilogRejectLimitValue] = {verilogLimitValue}
+                                                                                tmp[verilogRemainActiveFlag] = {verilogConstantMintypmaxExpression}
+                                                                                tmp[verilogRepeatRange] = {verilogExpression}
+                                                                                tmp[verilogRestrictPropertyStatement] = {verilogPropertySpec}
+                                                                                tmp[verilogScalarTimingCheckCondition] = {verilogExpression, verilogScalarConstant}
+                                                                                tmp[verilogSelect1] = {verilogBitSelect1, verilogConstantRange, verilogIndexedRange, verilogMemberIdentifier}
+                                                                                tmp[verilogSelectCondition] = {verilogBinsExpression, verilogCovergroupRangeList}
+                                                                                tmp[verilogSelectExpression] = {verilogCrossIdentifier, verilogExpression, verilogSelectCondition, verilogSelectExpression}
+                                                                                tmp[verilogSeqBlock] = {verilogBlockItemDeclaration, verilogEscapedIdentifier, verilogSimpleIdentifier, verilogStatementOrNull}
+                                                                                tmp[verilogSequenceAbbrev] = {verilogConsecutiveRepetition}
+                                                                                tmp[verilogSequenceDeclaration] = {verilogAssertionVariableDeclaration, verilogEscapedIdentifier, verilogSequenceExpr, verilogSequencePortList, verilogSimpleIdentifier}
+                                                                                tmp[verilogSequenceExpr] = {
+                                                                                                             verilogClockingEvent,
+                                                                                                             verilogConsecutiveRepetition,
+                                                                                                             verilogCycleDelayRange,
+                                                                                                             verilogExpressionOrDist,
+                                                                                                             verilogGotoRepetition,
+                                                                                                             verilogIncOrDecExpression,
+                                                                                                             verilogNonConsecutiveRepetition,
+                                                                                                             verilogOperatorAssignment,
+                                                                                                             verilogSequenceAbbrev,
+                                                                                                             verilogSequenceExpr,
+                                                                                                             verilogSequenceInstance,
+                                                                                                             verilogSubroutineCall
+                                                                                                           }
+                                                                                tmp[verilogSequenceFormalType1] = {verilogDataTypeOrImplicit1}
+                                                                                tmp[verilogSequenceInstance] = {verilogConstantBitSelect1, verilogEscapedIdentifier, verilogPackageScope, verilogSequenceListOfArguments, verilogSimpleIdentifier}
+                                                                                tmp[verilogSequenceListOfArguments] = {verilogEscapedIdentifier, verilogEventExpression, verilogSequenceExpr, verilogSimpleIdentifier}
+                                                                                tmp[verilogSequenceMethodCall] = {verilogMethodIdentifier, verilogSequenceInstance}
+                                                                                tmp[verilogSequencePortItem] = {
+                                                                                                                 verilogAssociativeDimension,
+                                                                                                                 verilogAttributeInstance,
+                                                                                                                 verilogEventExpression,
+                                                                                                                 verilogFormalPortIdentifier,
+                                                                                                                 verilogQueueDimension,
+                                                                                                                 verilogSequenceExpr,
+                                                                                                                 verilogSequenceFormalType1,
+                                                                                                                 verilogSequenceLvarPortDirection,
+                                                                                                                 verilogUnpackedDimension,
+                                                                                                                 verilogUnsizedDimension
+                                                                                                               }
+                                                                                tmp[verilogSequencePortList] = {verilogSequencePortItem}
+                                                                                tmp[verilogSequentialBody] = {verilogSequentialEntry, verilogUdpInitialStatement}
+                                                                                tmp[verilogSequentialEntry] = {verilogEdgeInputList, verilogLevelInputList, verilogLevelSymbol, verilogNextState}
+                                                                                tmp[verilogShowcancelledDeclaration] = {verilogListOfPathOutputs}
+                                                                                tmp[verilogSimpleImmediateAssertStatement] = {verilogActionBlock, verilogExpression}
+                                                                                tmp[verilogSimpleImmediateAssumeStatement] = {verilogActionBlock, verilogExpression}
+                                                                                tmp[verilogSimpleImmediateCoverStatement] = {verilogExpression, verilogStatementOrNull}
+                                                                                tmp[verilogSimplePathDeclaration] = {verilogFullPathDescription, verilogParallelPathDescription, verilogPathDelayValue}
+                                                                                tmp[verilogSimpleTextMacroUsage] = {verilogTextMacroIdentifier}
+                                                                                tmp[verilogSliceSize] = {
+                                                                                                          verilogClassScope,
+                                                                                                          verilogConstantExpression,
+                                                                                                          verilogEscapedIdentifier,
+                                                                                                          verilogGenerateBlockIdentifier,
+                                                                                                          verilogIntegerAtomType,
+                                                                                                          verilogIntegerVectorType,
+                                                                                                          verilogNonIntegerType,
+                                                                                                          verilogPackageScope,
+                                                                                                          verilogParameterIdentifier,
+                                                                                                          verilogSimpleIdentifier
+                                                                                                        }
+                                                                                tmp[verilogSolveBeforeList] = {verilogConstraintPrimary}
+                                                                                tmp[verilogSourceFile] = {
+                                                                                                           verilogAnonymousProgram,
+                                                                                                           verilogAttributeInstance,
+                                                                                                           verilogBeginKeywords,
+                                                                                                           verilogBindDirective,
+                                                                                                           verilogDefaultNettypeCompilerDirective,
+                                                                                                           verilogIdDirective,
+                                                                                                           verilogIncludeCompilerDirective,
+                                                                                                           verilogInterfaceDeclaration,
+                                                                                                           verilogLineCompilerDirective,
+                                                                                                           verilogModuleDeclaration,
+                                                                                                           verilogPackageDeclaration,
+                                                                                                           verilogPackageExportDeclaration,
+                                                                                                           verilogPackageOrGenerateItemDeclaration,
+                                                                                                           verilogProgramDeclaration,
+                                                                                                           verilogTextMacroDefinition,
+                                                                                                           verilogTextMacroUsage,
+                                                                                                           verilogTimescaleCompilerDirective,
+                                                                                                           verilogTimeunitsDeclaration,
+                                                                                                           verilogUdpDeclaration,
+                                                                                                           verilogUnconnectedDrive,
+                                                                                                           verilogZeroDirective
+                                                                                                         }
+                                                                                tmp[verilogSpecifyBlock] = {
+                                                                                                             verilogDollarfulskewUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarholdUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarnochangeUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarperiodUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarrecoveryUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarrecremUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarremovalUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarsetupUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarsetupholdUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarskewUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollartimeskewUnderscoretimingUnderscorecheck,
+                                                                                                             verilogDollarwidthUnderscoretimingUnderscorecheck,
+                                                                                                             verilogPathDeclaration,
+                                                                                                             verilogPulsestyleDeclaration,
+                                                                                                             verilogShowcancelledDeclaration,
+                                                                                                             verilogSpecparamDeclaration
+                                                                                                           }
+                                                                                tmp[verilogSpecifyInputTerminalDescriptor] = {verilogConstantExpression, verilogConstantIndexedRange, verilogConstantRange, verilogInputIdentifier}
+                                                                                tmp[verilogSpecifyOutputTerminalDescriptor] = {verilogConstantExpression, verilogConstantIndexedRange, verilogConstantRange, verilogOutputIdentifier}
+                                                                                tmp[verilogSpecparamAssignment] = {verilogConstantMintypmaxExpression, verilogPulseControlSpecparam, verilogSpecparamIdentifier}
+                                                                                tmp[verilogSpecparamDeclaration] = {verilogListOfSpecparamAssignments, verilogPackedDimension}
+                                                                                tmp[verilogSpecparamIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogStartEdgeOffset] = {verilogMintypmaxExpression}
+                                                                                tmp[verilogStateDependentPathDeclaration] = {verilogEdgeSensitivePathDeclaration, verilogModulePathExpression, verilogSimplePathDeclaration}
+                                                                                tmp[verilogStatement] = {verilogAttributeInstance, verilogEscapedIdentifier, verilogSimpleIdentifier, verilogStatementItem}
+                                                                                tmp[verilogStatementItem] = {
+                                                                                                              verilogAssertPropertyStatement,
+                                                                                                              verilogAssumePropertyStatement,
+                                                                                                              verilogBlockingAssignment,
+                                                                                                              verilogCaseStatement,
+                                                                                                              verilogCheckerInstantiation,
+                                                                                                              verilogClockingDrive,
+                                                                                                              verilogConditionalStatement,
+                                                                                                              verilogCoverPropertyStatement,
+                                                                                                              verilogCoverSequenceStatement,
+                                                                                                              verilogDeferredImmediateAssertStatement,
+                                                                                                              verilogDeferredImmediateAssumeStatement,
+                                                                                                              verilogDeferredImmediateCoverStatement,
+                                                                                                              verilogDisableStatement,
+                                                                                                              verilogEventTrigger,
+                                                                                                              verilogExpectPropertyStatement,
+                                                                                                              verilogIncOrDecExpression,
+                                                                                                              verilogJumpStatement,
+                                                                                                              verilogLoopStatement,
+                                                                                                              verilogNonblockingAssignment,
+                                                                                                              verilogParBlock,
+                                                                                                              verilogProceduralContinuousAssignment,
+                                                                                                              verilogProceduralTimingControlStatement,
+                                                                                                              verilogRandcaseStatement,
+                                                                                                              verilogRestrictPropertyStatement,
+                                                                                                              verilogSeqBlock,
+                                                                                                              verilogSimpleImmediateAssertStatement,
+                                                                                                              verilogSimpleImmediateAssumeStatement,
+                                                                                                              verilogSimpleImmediateCoverStatement,
+                                                                                                              verilogSystemTfCall,
+                                                                                                              verilogWaitStatement
+                                                                                                            }
+                                                                                tmp[verilogStatementOrNull] = {verilogAttributeInstance, verilogStatement}
+                                                                                tmp[verilogStreamConcatenation] = {verilogStreamExpression}
+                                                                                tmp[verilogStreamExpression] = {verilogArrayRangeExpression, verilogExpression}
+                                                                                tmp[verilogStreamingConcatenation] = {verilogSliceSize, verilogStreamConcatenation, verilogStreamOperator}
+                                                                                tmp[verilogStructUnionMember] = {verilogAttributeInstance, verilogDataTypeOrVoid, verilogListOfVariableDeclAssignments, verilogRandomQualifier}
+                                                                                tmp[verilogSubroutineCall] = {verilogMethodCall, verilogRandomizeCall, verilogSystemTfCall, verilogTfCall}
+                                                                                tmp[verilogSystemTfCall] = {verilogClockingEvent, verilogDataType, verilogExpression, verilogListOfArgumentsParent, verilogSystemTfIdentifier}
+                                                                                tmp[verilogTaggedUnionExpression] = {verilogExpression, verilogMemberIdentifier}
+                                                                                tmp[verilogTaskBodyDeclaration] = {
+                                                                                                                    verilogBlockItemDeclaration,
+                                                                                                                    verilogClassScope,
+                                                                                                                    verilogInterfaceIdentifier,
+                                                                                                                    verilogStatementOrNull,
+                                                                                                                    verilogTaskIdentifier,
+                                                                                                                    verilogTfItemDeclaration,
+                                                                                                                    verilogTfPortList
+                                                                                                                  }
+                                                                                tmp[verilogTaskDeclaration] = {verilogLifetime, verilogTaskBodyDeclaration}
+                                                                                tmp[verilogTaskIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier, verilogTaskIdentifier}
+                                                                                tmp[verilogTaskPrototype] = {verilogTaskIdentifier, verilogTfPortList}
+                                                                                tmp[verilogTerminalIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier, verilogTerminalIdentifier}
+                                                                                tmp[verilogTextMacroDefinition] = {verilogMacroText, verilogTextMacroName}
+                                                                                tmp[verilogTextMacroIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogTextMacroName] = {verilogListOfFormalArguments, verilogTextMacroIdentifier}
+                                                                                tmp[verilogTextMacroUsage] = {verilogListOfActualArguments, verilogTextMacroIdentifier}
+                                                                                tmp[verilogTfCall] = {verilogAttributeInstance, verilogConstantBitSelect1, verilogEscapedIdentifier, verilogListOfArgumentsParent, verilogSimpleIdentifier}
+                                                                                tmp[verilogTfIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogTfItemDeclaration] = {verilogBlockItemDeclaration, verilogTfPortDeclaration}
+                                                                                tmp[verilogTfPortDeclaration] = {verilogAttributeInstance, verilogDataTypeOrImplicit1, verilogListOfTfVariableIdentifiers, verilogTfPortDirection}
+                                                                                tmp[verilogTfPortDirection] = {verilogPortDirection}
+                                                                                tmp[verilogTfPortItem1] = {
+                                                                                                            verilogAssociativeDimension,
+                                                                                                            verilogAttributeInstance,
+                                                                                                            verilogDataTypeOrImplicit1,
+                                                                                                            verilogExpression,
+                                                                                                            verilogPortIdentifier,
+                                                                                                            verilogQueueDimension,
+                                                                                                            verilogTfPortDirection,
+                                                                                                            verilogUnpackedDimension,
+                                                                                                            verilogUnsizedDimension
+                                                                                                          }
+                                                                                tmp[verilogTfPortList] = {verilogTfPortItem1}
+                                                                                tmp[verilogThreshold] = {verilogConstantExpression}
+                                                                                tmp[verilogTimeLiteral] = {verilogFixedPointNumber, verilogTimeUnit, verilogUnsignedNumber}
+                                                                                tmp[verilogTimecheckCondition] = {verilogMintypmaxExpression}
+                                                                                tmp[verilogTimescaleCompilerDirective] = {verilogTimeLiteral}
+                                                                                tmp[verilogTimestampCondition] = {verilogMintypmaxExpression}
+                                                                                tmp[verilogTimeunitsDeclaration] = {verilogTimeLiteral}
+                                                                                tmp[verilogTimingCheckCondition] = {verilogScalarTimingCheckCondition}
+                                                                                tmp[verilogTimingCheckEvent] = {verilogSpecifyInputTerminalDescriptor, verilogSpecifyOutputTerminalDescriptor, verilogTimingCheckCondition, verilogTimingCheckEventControl}
+                                                                                tmp[verilogTimingCheckEventControl] = {verilogEdgeControlSpecifier}
+                                                                                tmp[verilogTimingCheckLimit] = {verilogExpression}
+                                                                                tmp[verilogTopmoduleIdentifier] = {verilogEscapedIdentifier, verilogSimpleIdentifier, verilogTopmoduleIdentifier}
+                                                                                tmp[verilogTransItem] = {verilogCovergroupRangeList}
+                                                                                tmp[verilogTransList] = {verilogTransSet}
+                                                                                tmp[verilogTransRangeList] = {verilogRepeatRange, verilogTransItem}
+                                                                                tmp[verilogTransSet] = {verilogTransRangeList}
+                                                                                tmp[verilogTypeAssignment] = {verilogDataType, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogTypeDeclaration] = {
+                                                                                                                verilogAssociativeDimension,
+                                                                                                                verilogConstantBitSelect1,
+                                                                                                                verilogDataType,
+                                                                                                                verilogEscapedIdentifier,
+                                                                                                                verilogInterfaceInstanceIdentifier,
+                                                                                                                verilogQueueDimension,
+                                                                                                                verilogSimpleIdentifier,
+                                                                                                                verilogUnpackedDimension,
+                                                                                                                verilogUnsizedDimension
+                                                                                                              }
+                                                                                tmp[verilogTypeReference] = {verilogDataType, verilogExpression}
+                                                                                tmp[verilogUdpAnsiDeclaration] = {verilogAttributeInstance, verilogEscapedIdentifier, verilogSimpleIdentifier, verilogUdpDeclarationPortList}
+                                                                                tmp[verilogUdpDeclaration] = {
+                                                                                                               verilogAttributeInstance,
+                                                                                                               verilogCombinationalBody,
+                                                                                                               verilogEscapedIdentifier,
+                                                                                                               verilogSequentialBody,
+                                                                                                               verilogSimpleIdentifier,
+                                                                                                               verilogUdpAnsiDeclaration,
+                                                                                                               verilogUdpNonansiDeclaration,
+                                                                                                               verilogUdpPortDeclaration
+                                                                                                             }
+                                                                                tmp[verilogUdpDeclarationPortList] = {verilogUdpInputDeclaration, verilogUdpOutputDeclaration}
+                                                                                tmp[verilogUdpInitialStatement] = {verilogInitVal, verilogOutputPortIdentifier}
+                                                                                tmp[verilogUdpInputDeclaration] = {verilogAttributeInstance, verilogListOfUdpPortIdentifiers}
+                                                                                tmp[verilogUdpInstance] = {verilogInputTerminal, verilogNameOfInstance, verilogOutputTerminal}
+                                                                                tmp[verilogUdpInstantiation] = {verilogDelay2, verilogDriveStrength, verilogEscapedIdentifier, verilogSimpleIdentifier, verilogUdpInstance}
+                                                                                tmp[verilogUdpNonansiDeclaration] = {verilogAttributeInstance, verilogEscapedIdentifier, verilogSimpleIdentifier, verilogUdpPortList}
+                                                                                tmp[verilogUdpOutputDeclaration] = {verilogAttributeInstance, verilogConstantExpression, verilogPortIdentifier}
+                                                                                tmp[verilogUdpPortDeclaration] = {verilogUdpInputDeclaration, verilogUdpOutputDeclaration, verilogUdpRegDeclaration}
+                                                                                tmp[verilogUdpPortList] = {verilogInputPortIdentifier, verilogOutputPortIdentifier}
+                                                                                tmp[verilogUdpRegDeclaration] = {verilogAttributeInstance, verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogUniquenessConstraint] = {verilogOpenRangeList}
+                                                                                tmp[verilogUnpackedDimension] = {verilogConstantExpression, verilogConstantRange}
+                                                                                tmp[verilogUseClause] = {verilogCellIdentifier, verilogLibraryIdentifier, verilogNamedParameterAssignment}
+                                                                                tmp[verilogValueRange] = {verilogExpression}
+                                                                                tmp[verilogVariableAssignment] = {verilogExpression, verilogVariableLvalue}
+                                                                                tmp[verilogVariableDeclAssignment] = {
+                                                                                                                       verilogAssociativeDimension,
+                                                                                                                       verilogClassNew,
+                                                                                                                       verilogDynamicArrayNew,
+                                                                                                                       verilogDynamicArrayVariableIdentifier,
+                                                                                                                       verilogEscapedIdentifier,
+                                                                                                                       verilogExpression,
+                                                                                                                       verilogQueueDimension,
+                                                                                                                       verilogSimpleIdentifier,
+                                                                                                                       verilogUnpackedDimension,
+                                                                                                                       verilogUnsizedDimension
+                                                                                                                     }
+                                                                                tmp[verilogVariableIdentifierList] = {verilogEscapedIdentifier, verilogSimpleIdentifier}
+                                                                                tmp[verilogVariableLvalue] = {
+                                                                                                               verilogAssignmentPatternVariableLvalue,
+                                                                                                               verilogClassScope,
+                                                                                                               verilogConstantBitSelect1,
+                                                                                                               verilogEscapedIdentifier,
+                                                                                                               verilogImplicitClassHandle,
+                                                                                                               verilogIntegerAtomType,
+                                                                                                               verilogPackageScope,
+                                                                                                               verilogSelect1,
+                                                                                                               verilogSimpleIdentifier,
+                                                                                                               verilogStreamingConcatenation,
+                                                                                                               verilogTypeReference,
+                                                                                                               verilogVariableLvalue
+                                                                                                             }
+                                                                                tmp[verilogVariablePortHeader] = {verilogDataType, verilogDataTypeOrImplicit1, verilogPortDirection}
+                                                                                tmp[verilogWaitStatement] = {verilogActionBlock, verilogConstantBitSelect1, verilogEscapedIdentifier, verilogExpression, verilogSimpleIdentifier, verilogStatementOrNull}
+                                                                                tmp
+const verilogTokenKinds*: set[VerilogNodeKind] = {
+                                                   verilogNewlineTok,
+                                                   verilogExclamationTok,
+                                                   verilogExclamationEqualTok,
+                                                   verilogExclamationDoubleEqualTok,
+                                                   verilogExclamationEqualQuestionTok,
+                                                   verilogQuoteTok,
+                                                   verilogQuoteDPIQuoteTok,
+                                                   verilogQuoteDPIMinusCQuoteTok,
+                                                   verilogHashTok,
+                                                   verilogDoubleHashTok,
+                                                   verilogDoubleHashLBrackAsteriskRBrackTok,
+                                                   verilogDoubleHashLBrackPlusRBrackTok,
+                                                   verilogHashMinusHashTok,
+                                                   verilogHash0Tok,
+                                                   verilogHashEqualHashTok,
+                                                   verilogDollarTok,
+                                                   verilogDollarerorTok,
+                                                   verilogDollarfatalTok,
+                                                   verilogDollarfulskewTok,
+                                                   verilogDollarholdTok,
+                                                   verilogDollarinfoTok,
+                                                   verilogDollarnochangeTok,
+                                                   verilogDollarperiodTok,
+                                                   verilogDollarrecoveryTok,
+                                                   verilogDollarrecremTok,
+                                                   verilogDollarremovalTok,
+                                                   verilogDollarrotTok,
+                                                   verilogDollarsetupTok,
+                                                   verilogDollarsetupholdTok,
+                                                   verilogDollarskewTok,
+                                                   verilogDollartimeskewTok,
+                                                   verilogDollarunitTok,
+                                                   verilogDollarwarningTok,
+                                                   verilogDollarwidthTok,
+                                                   verilogPercentTok,
+                                                   verilogPercentEqualTok,
+                                                   verilogAmpersandTok,
+                                                   verilogDoubleAmpersandTok,
+                                                   verilogTripleAmpersandTok,
+                                                   verilogAmpersandEqualTok,
+                                                   verilogApostropheTok,
+                                                   verilogApostrophe0Tok,
+                                                   verilogApostrophe1Tok,
+                                                   verilogApostropheB0Tok,
+                                                   verilogApostropheB1Tok,
+                                                   verilogApostropheb0Tok1,
+                                                   verilogApostropheb1Tok1,
+                                                   verilogApostropheLCurlyTok,
+                                                   verilogLParTok,
+                                                   verilogLParAsteriskTok,
+                                                   verilogRParTok,
+                                                   verilogAsteriskTok,
+                                                   verilogAsteriskRParTok,
+                                                   verilogDoubleAsteriskTok,
+                                                   verilogAsteriskDoubleColonAsteriskTok,
+                                                   verilogAsteriskEqualTok,
+                                                   verilogAsteriskGreaterThanTok,
+                                                   verilogPlusTok,
+                                                   verilogDoublePlusTok,
+                                                   verilogPlusColonTok,
+                                                   verilogPlusEqualTok,
+                                                   verilogCommaTok,
+                                                   verilogMinusTok,
+                                                   verilogDoubleMinusTok,
+                                                   verilogMinusColonTok,
+                                                   verilogMinusEqualTok,
+                                                   verilogMinusGreaterThanTok,
+                                                   verilogMinusDoubleGreaterThanTok,
+                                                   verilogDotTok,
+                                                   verilogDotAsteriskTok,
+                                                   verilogSlashTok,
+                                                   verilogSlashEqualTok,
+                                                   verilog0Tok,
+                                                   verilog01Tok,
+                                                   verilog1Tok,
+                                                   verilog1ApostropheB0Tok,
+                                                   verilog1ApostropheB1Tok,
+                                                   verilog1ApostropheBXTok,
+                                                   verilog1ApostropheBxTok1,
+                                                   verilog1Apostropheb0Tok1,
+                                                   verilog1Apostropheb1Tok1,
+                                                   verilog1ApostrophebXTok2,
+                                                   verilog1ApostrophebxTok3,
+                                                   verilog10Tok,
+                                                   verilog1stepTok,
+                                                   verilog2Tok,
+                                                   verilogColonTok,
+                                                   verilogColonSlashTok,
+                                                   verilogDoubleColonTok,
+                                                   verilogColonEqualTok,
+                                                   verilogSemicolonTok,
+                                                   verilogLessThanTok,
+                                                   verilogLessThanMinusGreaterThanTok,
+                                                   verilogDoubleLessThanTok,
+                                                   verilogTripleLessThanTok,
+                                                   verilogTripleLessThanEqualTok,
+                                                   verilogDoubleLessThanEqualTok,
+                                                   verilogLessThanEqualTok,
+                                                   verilogEqualTok,
+                                                   verilogDoubleEqualTok,
+                                                   verilogTripleEqualTok,
+                                                   verilogDoubleEqualQuestionTok,
+                                                   verilogEqualGreaterThanTok,
+                                                   verilogGreaterThanTok,
+                                                   verilogGreaterThanEqualTok,
+                                                   verilogDoubleGreaterThanTok,
+                                                   verilogDoubleGreaterThanEqualTok,
+                                                   verilogTripleGreaterThanTok,
+                                                   verilogTripleGreaterThanEqualTok,
+                                                   verilogQuestionTok,
+                                                   verilogAtTok,
+                                                   verilogAtAsteriskTok,
+                                                   verilogDoubleAtTok,
+                                                   verilogPATHPULSEDollarEqualTok,
+                                                   verilogLBrackTok,
+                                                   verilogLBrackAsteriskTok,
+                                                   verilogLBrackAsteriskRBrackTok,
+                                                   verilogLBrackPlusRBrackTok,
+                                                   verilogLBrackMinusGreaterThanTok,
+                                                   verilogLBrackEqualTok,
+                                                   verilogLBrack–GreaterThanTok,
+                                                   verilogBackslashTok,
+                                                   verilogRBrackTok,
+                                                   verilogAccentTok,
+                                                   verilogAccentEqualTok,
+                                                   verilogAccentTildeTok,
+                                                   verilogBacktickTok,
+                                                   verilogAcceptOnTok,
+                                                   verilogAliasTok,
+                                                   verilogAlwaysTok,
+                                                   verilogAlwaysCombTok,
+                                                   verilogAlwaysFfTok,
+                                                   verilogAlwaysLatchTok,
+                                                   verilogAndTok,
+                                                   verilogAssertTok,
+                                                   verilogAssignTok,
+                                                   verilogAssumeTok,
+                                                   verilogAutomaticTok,
+                                                   verilogBeforeTok,
+                                                   verilogBeginTok,
+                                                   verilogBindTok,
+                                                   verilogBinsTok,
+                                                   verilogBinsofTok,
+                                                   verilogBitTok,
+                                                   verilogBreakTok,
+                                                   verilogBufTok,
+                                                   verilogBufif0Tok,
+                                                   verilogBufif1Tok,
+                                                   verilogByteTok,
+                                                   verilogCaseTok,
+                                                   verilogCasexTok,
+                                                   verilogCasezTok,
+                                                   verilogCellTok,
+                                                   verilogChandleTok,
+                                                   verilogCheckerTok,
+                                                   verilogClassTok,
+                                                   verilogClockingTok,
+                                                   verilogCmosTok,
+                                                   verilogConfigTok,
+                                                   verilogConstTok,
+                                                   verilogConstraintTok,
+                                                   verilogContextTok,
+                                                   verilogContinueTok,
+                                                   verilogCoverTok,
+                                                   verilogCovergroupTok,
+                                                   verilogCoverpointTok,
+                                                   verilogCrossTok,
+                                                   verilogDeassignTok,
+                                                   verilogDefaultTok,
+                                                   verilogDefparamTok,
+                                                   verilogDesignTok,
+                                                   verilogDirectiveBeginKeywordsTok,
+                                                   verilogDirectiveCelldefineTok,
+                                                   verilogDirectiveDefaultNettypeTok,
+                                                   verilogDirectiveDefineTok,
+                                                   verilogDirectiveElseTok,
+                                                   verilogDirectiveElsifTok,
+                                                   verilogDirectiveEndKeywordsTok,
+                                                   verilogDirectiveEndcelldefineTok,
+                                                   verilogDirectiveEndifTok,
+                                                   verilogDirectiveIfdefTok,
+                                                   verilogDirectiveIfndefTok,
+                                                   verilogDirectiveIncludeTok,
+                                                   verilogDirectiveLineTok,
+                                                   verilogDirectiveNounconnectedDriveTok,
+                                                   verilogDirectiveResetallTok,
+                                                   verilogDirectiveTimescaleTok,
+                                                   verilogDirectiveUnconnectedDriveTok,
+                                                   verilogDirectiveUndefTok,
+                                                   verilogDirectiveUndefineallTok,
+                                                   verilogDisableTok,
+                                                   verilogDistTok,
+                                                   verilogDoTok,
+                                                   verilogEdgeTok,
+                                                   verilogElseTok,
+                                                   verilogEndTok,
+                                                   verilogEndcaseTok,
+                                                   verilogEndcheckerTok,
+                                                   verilogEndclassTok,
+                                                   verilogEndclockingTok,
+                                                   verilogEndconfigTok,
+                                                   verilogEndfunctionTok,
+                                                   verilogEndgenerateTok,
+                                                   verilogEndgroupTok,
+                                                   verilogEndinterfaceTok,
+                                                   verilogEndmoduleTok,
+                                                   verilogEndpackageTok,
+                                                   verilogEndprimitiveTok,
+                                                   verilogEndprogramTok,
+                                                   verilogEndpropertyTok,
+                                                   verilogEndsequenceTok,
+                                                   verilogEndspecifyTok,
+                                                   verilogEndtableTok,
+                                                   verilogEndtaskTok,
+                                                   verilogEnumTok,
+                                                   verilogEventTok,
+                                                   verilogEventuallyTok,
+                                                   verilogExpectTok,
+                                                   verilogExportTok,
+                                                   verilogExtendsTok,
+                                                   verilogExternTok,
+                                                   verilogFinalTok,
+                                                   verilogFirstMatchTok,
+                                                   verilogForTok,
+                                                   verilogForceTok,
+                                                   verilogForeachTok,
+                                                   verilogForeverTok,
+                                                   verilogForkTok,
+                                                   verilogForkjoinTok,
+                                                   verilogFsTok,
+                                                   verilogFunctionTok,
+                                                   verilogGenerateTok,
+                                                   verilogGenvarTok,
+                                                   verilogGlobalTok,
+                                                   verilogHighz0Tok,
+                                                   verilogHighz1Tok,
+                                                   verilogIfTok,
+                                                   verilogIffTok,
+                                                   verilogIfnoneTok,
+                                                   verilogIgnoreBinsTok,
+                                                   verilogIllegalBinsTok,
+                                                   verilogImplementsTok,
+                                                   verilogImpliesTok,
+                                                   verilogImportTok,
+                                                   verilogInitialTok,
+                                                   verilogInoutTok,
+                                                   verilogInputTok,
+                                                   verilogInsideTok,
+                                                   verilogInstanceTok,
+                                                   verilogIntTok,
+                                                   verilogIntegerTok,
+                                                   verilogInterconnectTok,
+                                                   verilogInterfaceTok,
+                                                   verilogIntersectTok,
+                                                   verilogJoinTok,
+                                                   verilogJoinAnyTok,
+                                                   verilogJoinNoneTok,
+                                                   verilogLargeTok,
+                                                   verilogLetTok,
+                                                   verilogLiblistTok,
+                                                   verilogLocalTok,
+                                                   verilogLocalparamTok,
+                                                   verilogLogicTok,
+                                                   verilogLongintTok,
+                                                   verilogMacromoduleTok,
+                                                   verilogMatchesTok,
+                                                   verilogMediumTok,
+                                                   verilogModportTok,
+                                                   verilogModuleTok,
+                                                   verilogMsTok,
+                                                   verilogNandTok,
+                                                   verilogNegedgeTok,
+                                                   verilogNettypeTok,
+                                                   verilogNewTok,
+                                                   verilogNexttimeTok,
+                                                   verilogNmosTok,
+                                                   verilogNoneTok,
+                                                   verilogNorTok,
+                                                   verilogNoshowcancelledTok,
+                                                   verilogNotTok,
+                                                   verilogNotif0Tok,
+                                                   verilogNotif1Tok,
+                                                   verilogNsTok,
+                                                   verilogNullTok,
+                                                   verilogOptionTok,
+                                                   verilogOrTok,
+                                                   verilogOutputTok,
+                                                   verilogPackageTok,
+                                                   verilogPackedTok,
+                                                   verilogParameterTok,
+                                                   verilogPmosTok,
+                                                   verilogPosedgeTok,
+                                                   verilogPrimitiveTok,
+                                                   verilogPriorityTok,
+                                                   verilogProgramTok,
+                                                   verilogPropertyTok,
+                                                   verilogProtectedTok,
+                                                   verilogPsTok,
+                                                   verilogPull0Tok,
+                                                   verilogPull1Tok,
+                                                   verilogPulldownTok,
+                                                   verilogPullupTok,
+                                                   verilogPulsestyleOndetectTok,
+                                                   verilogPulsestyleOneventTok,
+                                                   verilogPureTok,
+                                                   verilogRandTok,
+                                                   verilogRandcTok,
+                                                   verilogRandcaseTok,
+                                                   verilogRandomizeTok,
+                                                   verilogRcmosTok,
+                                                   verilogRealTok,
+                                                   verilogRealtimeTok,
+                                                   verilogRefTok,
+                                                   verilogRegTok,
+                                                   verilogRejectOnTok,
+                                                   verilogReleaseTok,
+                                                   verilogRepeatTok,
+                                                   verilogRestrictTok,
+                                                   verilogReturnTok,
+                                                   verilogRnmosTok,
+                                                   verilogRpmosTok,
+                                                   verilogRtranTok,
+                                                   verilogRtranif0Tok,
+                                                   verilogRtranif1Tok,
+                                                   verilogSTok,
+                                                   verilogSAlwaysTok,
+                                                   verilogSEventuallyTok,
+                                                   verilogSNexttimeTok,
+                                                   verilogSUntilTok,
+                                                   verilogSUntilWithTok,
+                                                   verilogSampleTok,
+                                                   verilogScalaredTok,
+                                                   verilogSequenceTok,
+                                                   verilogShortintTok,
+                                                   verilogShortrealTok,
+                                                   verilogShowcancelledTok,
+                                                   verilogSignedTok,
+                                                   verilogSmallTok,
+                                                   verilogSoftTok,
+                                                   verilogSolveTok,
+                                                   verilogSpecifyTok,
+                                                   verilogSpecparamTok,
+                                                   verilogStaticTok,
+                                                   verilogStdTok,
+                                                   verilogStringTok,
+                                                   verilogStrongTok,
+                                                   verilogStrong0Tok,
+                                                   verilogStrong1Tok,
+                                                   verilogStructTok,
+                                                   verilogSuperTok,
+                                                   verilogSupply0Tok,
+                                                   verilogSupply1Tok,
+                                                   verilogSyncAcceptOnTok,
+                                                   verilogSyncRejectOnTok,
+                                                   verilogTableTok,
+                                                   verilogTaggedTok,
+                                                   verilogTaskTok,
+                                                   verilogThisTok,
+                                                   verilogThroughoutTok,
+                                                   verilogTimeTok,
+                                                   verilogTimeprecisionTok,
+                                                   verilogTimeunitTok,
+                                                   verilogTranTok,
+                                                   verilogTranif0Tok,
+                                                   verilogTranif1Tok,
+                                                   verilogTriTok,
+                                                   verilogTri0Tok,
+                                                   verilogTri1Tok,
+                                                   verilogTriandTok,
+                                                   verilogTriorTok,
+                                                   verilogTriregTok,
+                                                   verilogTypeTok,
+                                                   verilogTypeOptionTok,
+                                                   verilogTypedefTok,
+                                                   verilogUnionTok,
+                                                   verilogUniqueTok,
+                                                   verilogUnique0Tok,
+                                                   verilogUnsignedTok,
+                                                   verilogUntilTok,
+                                                   verilogUntilWithTok,
+                                                   verilogUntypedTok,
+                                                   verilogUsTok,
+                                                   verilogUseTok,
+                                                   verilogUwireTok,
+                                                   verilogVarTok,
+                                                   verilogVectoredTok,
+                                                   verilogVirtualTok,
+                                                   verilogVoidTok,
+                                                   verilogVoidApostropheTok,
+                                                   verilogWaitTok,
+                                                   verilogWaitOrderTok,
+                                                   verilogWandTok,
+                                                   verilogWeakTok,
+                                                   verilogWeak0Tok,
+                                                   verilogWeak1Tok,
+                                                   verilogWhileTok,
+                                                   verilogWildcardTok,
+                                                   verilogWireTok,
+                                                   verilogWithTok,
+                                                   verilogWithinTok,
+                                                   verilogWorTok,
+                                                   verilogXnorTok,
+                                                   verilogXorTok,
+                                                   verilogLCurlyTok,
+                                                   verilogPipeTok,
+                                                   verilogPipeMinusGreaterThanTok,
+                                                   verilogPipeEqualTok,
+                                                   verilogPipeEqualGreaterThanTok,
+                                                   verilogDoublePipeTok,
+                                                   verilogRCurlyTok,
+                                                   verilogTildeTok,
+                                                   verilogTildeAmpersandTok,
+                                                   verilogTildeAccentTok,
+                                                   verilogTildePipeTok,
+                                                   verilog–Tok,
+                                                   verilog–GreaterThanTok,
+                                                   verilog––Tok
+                                                 }
 
 proc tsNodeType*(node: TsVerilogNode): string
 
