@@ -4,12 +4,12 @@ export treesitter_core
 
 type
   RustNodeKind* = enum
-    rustDeclarationStatement               ## _declaration_statement
-    rustExpression                         ## _expression
-    rustLiteral                            ## _literal
-    rustLiteralPattern                     ## _literal_pattern
-    rustPattern                            ## _pattern
-    rustType                               ## _type
+    rustUsDeclarationStatement             ## _declaration_statement
+    rustUsExpression                       ## _expression
+    rustUsLiteral                          ## _literal
+    rustUsLiteralPattern                   ## _literal_pattern
+    rustUsPattern                          ## _pattern
+    rustUsType                             ## _type
     rustAbstractType                       ## abstract_type
     rustArguments                          ## arguments
     rustArrayExpression                    ## array_expression
@@ -193,7 +193,7 @@ type
     rustRBrackTok                          ## ]
     rustAccentTok                          ## ^
     rustAccentEqualTok                     ## ^=
-    rustUnderscoreTok                      ## _
+    rustUsUnderscoreTok                    ## _
     rustAsTok                              ## as
     rustAsyncTok                           ## async
     rustAwaitTok                           ## await
@@ -270,12 +270,12 @@ type
 
 proc strRepr*(kind: RustNodeKind): string =
   case kind:
-    of rustDeclarationStatement:               "_declaration_statement"
-    of rustExpression:                         "_expression"
-    of rustLiteral:                            "_literal"
-    of rustLiteralPattern:                     "_literal_pattern"
-    of rustPattern:                            "_pattern"
-    of rustType:                               "_type"
+    of rustUsDeclarationStatement:             "_declaration_statement"
+    of rustUsExpression:                       "_expression"
+    of rustUsLiteral:                          "_literal"
+    of rustUsLiteralPattern:                   "_literal_pattern"
+    of rustUsPattern:                          "_pattern"
+    of rustUsType:                             "_type"
     of rustAbstractType:                       "abstract_type"
     of rustArguments:                          "arguments"
     of rustArrayExpression:                    "array_expression"
@@ -459,7 +459,7 @@ proc strRepr*(kind: RustNodeKind): string =
     of rustRBrackTok:                          "]"
     of rustAccentTok:                          "^"
     of rustAccentEqualTok:                     "^="
-    of rustUnderscoreTok:                      "_"
+    of rustUsUnderscoreTok:                    "_"
     of rustAsTok:                              "as"
     of rustAsyncTok:                           "async"
     of rustAwaitTok:                           "await"
@@ -552,21 +552,21 @@ type
 
 const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                        var tmp: array[RustNodeKind, set[RustNodeKind]]
-                                                                       tmp[rustArguments] = {rustExpression, rustAttributeItem}
-                                                                       tmp[rustArrayExpression] = {rustExpression, rustAttributeItem}
+                                                                       tmp[rustArguments] = {rustUsExpression, rustAttributeItem}
+                                                                       tmp[rustArrayExpression] = {rustUsExpression, rustAttributeItem}
                                                                        tmp[rustAsyncBlock] = {rustBlock}
                                                                        tmp[rustAttributeItem] = {rustMetaItem}
-                                                                       tmp[rustAwaitExpression] = {rustExpression}
-                                                                       tmp[rustBaseFieldInitializer] = {rustExpression}
-                                                                       tmp[rustBlock] = {rustDeclarationStatement, rustExpression}
-                                                                       tmp[rustBoundedType] = {rustType, rustLifetime}
-                                                                       tmp[rustBracketedType] = {rustType, rustQualifiedType}
-                                                                       tmp[rustBreakExpression] = {rustExpression, rustLoopLabel}
-                                                                       tmp[rustCapturedPattern] = {rustPattern}
-                                                                       tmp[rustClosureParameters] = {rustPattern, rustParameter}
+                                                                       tmp[rustAwaitExpression] = {rustUsExpression}
+                                                                       tmp[rustBaseFieldInitializer] = {rustUsExpression}
+                                                                       tmp[rustBlock] = {rustUsDeclarationStatement, rustUsExpression}
+                                                                       tmp[rustBoundedType] = {rustUsType, rustLifetime}
+                                                                       tmp[rustBracketedType] = {rustUsType, rustQualifiedType}
+                                                                       tmp[rustBreakExpression] = {rustUsExpression, rustLoopLabel}
+                                                                       tmp[rustCapturedPattern] = {rustUsPattern}
+                                                                       tmp[rustClosureParameters] = {rustUsPattern, rustParameter}
                                                                        tmp[rustConstItem] = {rustVisibilityModifier}
                                                                        tmp[rustContinueExpression] = {rustLoopLabel}
-                                                                       tmp[rustDeclarationList] = {rustDeclarationStatement}
+                                                                       tmp[rustDeclarationList] = {rustUsDeclarationStatement}
                                                                        tmp[rustElseClause] = {rustBlock, rustIfExpression, rustIfLetExpression}
                                                                        tmp[rustEnumItem] = {rustVisibilityModifier, rustWhereClause}
                                                                        tmp[rustEnumVariant] = {rustVisibilityModifier}
@@ -586,7 +586,7 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                        tmp[rustFunctionSignatureItem] = {rustFunctionModifiers, rustVisibilityModifier, rustWhereClause}
                                                                        tmp[rustFunctionType] = {rustForLifetimes, rustFunctionModifiers}
                                                                        tmp[rustImplItem] = {rustWhereClause}
-                                                                       tmp[rustIndexExpression] = {rustExpression}
+                                                                       tmp[rustIndexExpression] = {rustUsExpression}
                                                                        tmp[rustInnerAttributeItem] = {rustMetaItem}
                                                                        tmp[rustLetDeclaration] = {rustMutableSpecifier}
                                                                        tmp[rustLifetime] = {rustIdentifier}
@@ -596,21 +596,21 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                        tmp[rustMacroInvocation] = {rustTokenTree}
                                                                        tmp[rustMatchArm] = {rustAttributeItem}
                                                                        tmp[rustMatchBlock] = {rustMatchArm}
-                                                                       tmp[rustMatchPattern] = {rustPattern}
-                                                                       tmp[rustMetaArguments] = {rustLiteral, rustMetaItem}
+                                                                       tmp[rustMatchPattern] = {rustUsPattern}
+                                                                       tmp[rustMetaArguments] = {rustUsLiteral, rustMetaItem}
                                                                        tmp[rustMetaItem] = {rustCrate, rustIdentifier, rustMetavariable, rustScopedIdentifier, rustSelf, rustSuper}
                                                                        tmp[rustModItem] = {rustVisibilityModifier}
-                                                                       tmp[rustMutPattern] = {rustPattern, rustMutableSpecifier}
+                                                                       tmp[rustMutPattern] = {rustUsPattern, rustMutableSpecifier}
                                                                        tmp[rustNegativeLiteral] = {rustFloatLiteral, rustIntegerLiteral}
-                                                                       tmp[rustOrPattern] = {rustPattern}
+                                                                       tmp[rustOrPattern] = {rustUsPattern}
                                                                        tmp[rustOrderedFieldDeclarationList] = {rustAttributeItem, rustVisibilityModifier}
                                                                        tmp[rustParameter] = {rustMutableSpecifier}
-                                                                       tmp[rustParameters] = {rustType, rustAttributeItem, rustParameter, rustSelfParameter, rustVariadicParameter}
-                                                                       tmp[rustParenthesizedExpression] = {rustExpression}
+                                                                       tmp[rustParameters] = {rustUsType, rustAttributeItem, rustParameter, rustSelfParameter, rustVariadicParameter}
+                                                                       tmp[rustParenthesizedExpression] = {rustUsExpression}
                                                                        tmp[rustPointerType] = {rustMutableSpecifier}
-                                                                       tmp[rustRangeExpression] = {rustExpression}
+                                                                       tmp[rustRangeExpression] = {rustUsExpression}
                                                                        tmp[rustRangePattern] = {
-                                                                                                 rustLiteralPattern,
+                                                                                                 rustUsLiteralPattern,
                                                                                                  rustCrate,
                                                                                                  rustIdentifier,
                                                                                                  rustMetavariable,
@@ -618,22 +618,22 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                                                  rustSelf,
                                                                                                  rustSuper
                                                                                                }
-                                                                       tmp[rustRefPattern] = {rustPattern}
+                                                                       tmp[rustRefPattern] = {rustUsPattern}
                                                                        tmp[rustReferenceExpression] = {rustMutableSpecifier}
-                                                                       tmp[rustReferencePattern] = {rustPattern, rustMutableSpecifier}
+                                                                       tmp[rustReferencePattern] = {rustUsPattern, rustMutableSpecifier}
                                                                        tmp[rustReferenceType] = {rustLifetime, rustMutableSpecifier}
-                                                                       tmp[rustRemovedTraitBound] = {rustType}
-                                                                       tmp[rustReturnExpression] = {rustExpression}
+                                                                       tmp[rustRemovedTraitBound] = {rustUsType}
+                                                                       tmp[rustReturnExpression] = {rustUsExpression}
                                                                        tmp[rustSelfParameter] = {rustLifetime, rustMutableSpecifier, rustSelf}
                                                                        tmp[rustShorthandFieldInitializer] = {rustAttributeItem, rustIdentifier}
-                                                                       tmp[rustSlicePattern] = {rustPattern}
-                                                                       tmp[rustSourceFile] = {rustDeclarationStatement, rustExpression}
+                                                                       tmp[rustSlicePattern] = {rustUsPattern}
+                                                                       tmp[rustSourceFile] = {rustUsDeclarationStatement, rustUsExpression}
                                                                        tmp[rustStaticItem] = {rustMutableSpecifier, rustVisibilityModifier}
                                                                        tmp[rustStringLiteral] = {rustEscapeSequence}
                                                                        tmp[rustStructItem] = {rustVisibilityModifier, rustWhereClause}
                                                                        tmp[rustStructPattern] = {rustFieldPattern, rustRemainingFieldPattern}
                                                                        tmp[rustTokenRepetition] = {
-                                                                                                    rustLiteral,
+                                                                                                    rustUsLiteral,
                                                                                                     rustCrate,
                                                                                                     rustIdentifier,
                                                                                                     rustMetavariable,
@@ -645,7 +645,7 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                                                     rustTokenTree
                                                                                                   }
                                                                        tmp[rustTokenRepetitionPattern] = {
-                                                                                                           rustLiteral,
+                                                                                                           rustUsLiteral,
                                                                                                            rustCrate,
                                                                                                            rustIdentifier,
                                                                                                            rustMetavariable,
@@ -658,7 +658,7 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                                                            rustTokenTreePattern
                                                                                                          }
                                                                        tmp[rustTokenTree] = {
-                                                                                              rustLiteral,
+                                                                                              rustUsLiteral,
                                                                                               rustCrate,
                                                                                               rustIdentifier,
                                                                                               rustMetavariable,
@@ -670,7 +670,7 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                                               rustTokenTree
                                                                                             }
                                                                        tmp[rustTokenTreePattern] = {
-                                                                                                     rustLiteral,
+                                                                                                     rustUsLiteral,
                                                                                                      rustCrate,
                                                                                                      rustIdentifier,
                                                                                                      rustMetavariable,
@@ -682,17 +682,17 @@ const rustAllowedSubnodes*: array[RustNodeKind, set[RustNodeKind]] = block:
                                                                                                      rustTokenRepetitionPattern,
                                                                                                      rustTokenTreePattern
                                                                                                    }
-                                                                       tmp[rustTraitBounds] = {rustType, rustHigherRankedTraitBound, rustLifetime, rustRemovedTraitBound}
+                                                                       tmp[rustTraitBounds] = {rustUsType, rustHigherRankedTraitBound, rustLifetime, rustRemovedTraitBound}
                                                                        tmp[rustTraitItem] = {rustVisibilityModifier, rustWhereClause}
-                                                                       tmp[rustTryExpression] = {rustExpression}
-                                                                       tmp[rustTupleExpression] = {rustExpression, rustAttributeItem}
-                                                                       tmp[rustTuplePattern] = {rustPattern}
-                                                                       tmp[rustTupleStructPattern] = {rustPattern}
-                                                                       tmp[rustTupleType] = {rustType}
-                                                                       tmp[rustTypeArguments] = {rustLiteral, rustType, rustBlock, rustLifetime, rustTypeBinding}
+                                                                       tmp[rustTryExpression] = {rustUsExpression}
+                                                                       tmp[rustTupleExpression] = {rustUsExpression, rustAttributeItem}
+                                                                       tmp[rustTuplePattern] = {rustUsPattern}
+                                                                       tmp[rustTupleStructPattern] = {rustUsPattern}
+                                                                       tmp[rustTupleType] = {rustUsType}
+                                                                       tmp[rustTypeArguments] = {rustUsLiteral, rustUsType, rustBlock, rustLifetime, rustTypeBinding}
                                                                        tmp[rustTypeItem] = {rustVisibilityModifier}
                                                                        tmp[rustTypeParameters] = {rustConstParameter, rustConstrainedTypeParameter, rustLifetime, rustMetavariable, rustOptionalTypeParameter, rustTypeIdentifier}
-                                                                       tmp[rustUnaryExpression] = {rustExpression}
+                                                                       tmp[rustUnaryExpression] = {rustUsExpression}
                                                                        tmp[rustUnionItem] = {rustVisibilityModifier, rustWhereClause}
                                                                        tmp[rustUnsafeBlock] = {rustBlock}
                                                                        tmp[rustUseDeclaration] = {rustVisibilityModifier}
@@ -762,7 +762,7 @@ const rustTokenKinds*: set[RustNodeKind] = {
                                              rustRBrackTok,
                                              rustAccentTok,
                                              rustAccentEqualTok,
-                                             rustUnderscoreTok,
+                                             rustUsUnderscoreTok,
                                              rustAsTok,
                                              rustAsyncTok,
                                              rustAwaitTok,
@@ -826,12 +826,12 @@ proc tsNodeType*(node: TsRustNode): string
 proc kind*(node: TsRustNode): RustNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_declaration_statement":         rustDeclarationStatement
-      of "_expression":                    rustExpression
-      of "_literal":                       rustLiteral
-      of "_literal_pattern":               rustLiteralPattern
-      of "_pattern":                       rustPattern
-      of "_type":                          rustType
+      of "_declaration_statement":         rustUsDeclarationStatement
+      of "_expression":                    rustUsExpression
+      of "_literal":                       rustUsLiteral
+      of "_literal_pattern":               rustUsLiteralPattern
+      of "_pattern":                       rustUsPattern
+      of "_type":                          rustUsType
       of "abstract_type":                  rustAbstractType
       of "arguments":                      rustArguments
       of "array_expression":               rustArrayExpression
@@ -1015,7 +1015,7 @@ proc kind*(node: TsRustNode): RustNodeKind {.noSideEffect.} =
       of "]":                              rustRBrackTok
       of "^":                              rustAccentTok
       of "^=":                             rustAccentEqualTok
-      of "_":                              rustUnderscoreTok
+      of "_":                              rustUsUnderscoreTok
       of "as":                             rustAsTok
       of "async":                          rustAsyncTok
       of "await":                          rustAwaitTok

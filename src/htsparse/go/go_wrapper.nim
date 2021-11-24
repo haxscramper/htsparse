@@ -7,11 +7,11 @@ export treesitter
 
 type
   GoNodeKind* = enum
-    goExpression                   ## _expression
-    goSimpleStatement              ## _simple_statement
-    goSimpleType                   ## _simple_type
-    goStatement                    ## _statement
-    goType                         ## _type
+    goUsExpression                 ## _expression
+    goUsSimpleStatement            ## _simple_statement
+    goUsSimpleType                 ## _simple_type
+    goUsStatement                  ## _statement
+    goUsType                       ## _type
     goArgumentList                 ## argument_list
     goArrayType                    ## array_type
     goAssignmentStatement          ## assignment_statement
@@ -186,11 +186,11 @@ type
 
 proc strRepr*(kind: GoNodeKind): string =
   case kind:
-    of goExpression:                   "_expression"
-    of goSimpleStatement:              "_simple_statement"
-    of goSimpleType:                   "_simple_type"
-    of goStatement:                    "_statement"
-    of goType:                         "_type"
+    of goUsExpression:                 "_expression"
+    of goUsSimpleStatement:            "_simple_statement"
+    of goUsSimpleType:                 "_simple_type"
+    of goUsStatement:                  "_statement"
+    of goUsType:                       "_type"
     of goArgumentList:                 "argument_list"
     of goArrayType:                    "array_type"
     of goAssignmentStatement:          "assignment_statement"
@@ -372,46 +372,46 @@ type
 
 const goAllowedSubnodes*: array[GoNodeKind, set[GoNodeKind]] = block:
                                                                  var tmp: array[GoNodeKind, set[GoNodeKind]]
-                                                                 tmp[goArgumentList] = {goExpression, goType, goVariadicArgument}
-                                                                 tmp[goBlock] = {goStatement}
+                                                                 tmp[goArgumentList] = {goUsExpression, goUsType, goVariadicArgument}
+                                                                 tmp[goBlock] = {goUsStatement}
                                                                  tmp[goBreakStatement] = {goLabelName}
-                                                                 tmp[goCommunicationCase] = {goStatement}
+                                                                 tmp[goCommunicationCase] = {goUsStatement}
                                                                  tmp[goConstDeclaration] = {goConstSpec}
                                                                  tmp[goContinueStatement] = {goLabelName}
-                                                                 tmp[goDecStatement] = {goExpression}
-                                                                 tmp[goDefaultCase] = {goStatement}
-                                                                 tmp[goDeferStatement] = {goExpression}
-                                                                 tmp[goElement] = {goExpression, goLiteralValue}
-                                                                 tmp[goExpressionCase] = {goStatement}
-                                                                 tmp[goExpressionList] = {goExpression}
+                                                                 tmp[goDecStatement] = {goUsExpression}
+                                                                 tmp[goDefaultCase] = {goUsStatement}
+                                                                 tmp[goDeferStatement] = {goUsExpression}
+                                                                 tmp[goElement] = {goUsExpression, goLiteralValue}
+                                                                 tmp[goExpressionCase] = {goUsStatement}
+                                                                 tmp[goExpressionList] = {goUsExpression}
                                                                  tmp[goExpressionSwitchStatement] = {goDefaultCase, goExpressionCase}
                                                                  tmp[goFieldDeclarationList] = {goFieldDeclaration}
-                                                                 tmp[goForStatement] = {goExpression, goForClause, goRangeClause}
-                                                                 tmp[goGoStatement] = {goExpression}
+                                                                 tmp[goForStatement] = {goUsExpression, goForClause, goRangeClause}
+                                                                 tmp[goGoStatement] = {goUsExpression}
                                                                  tmp[goGotoStatement] = {goLabelName}
                                                                  tmp[goImportDeclaration] = {goImportSpec, goImportSpecList}
                                                                  tmp[goImportSpecList] = {goImportSpec}
-                                                                 tmp[goIncStatement] = {goExpression}
+                                                                 tmp[goIncStatement] = {goUsExpression}
                                                                  tmp[goInterfaceType] = {goMethodSpecList}
                                                                  tmp[goInterpretedStringLiteral] = {goEscapeSequence}
-                                                                 tmp[goKeyedElement] = {goExpression, goFieldIdentifier, goLiteralValue}
-                                                                 tmp[goLabeledStatement] = {goStatement}
+                                                                 tmp[goKeyedElement] = {goUsExpression, goFieldIdentifier, goLiteralValue}
+                                                                 tmp[goLabeledStatement] = {goUsStatement}
                                                                  tmp[goLiteralValue] = {goElement, goKeyedElement}
                                                                  tmp[goMethodSpecList] = {goMethodSpec, goQualifiedType, goTypeIdentifier}
                                                                  tmp[goPackageClause] = {goPackageIdentifier}
                                                                  tmp[goParameterList] = {goParameterDeclaration, goVariadicParameterDeclaration}
-                                                                 tmp[goParenthesizedExpression] = {goExpression}
-                                                                 tmp[goParenthesizedType] = {goType}
-                                                                 tmp[goPointerType] = {goType}
+                                                                 tmp[goParenthesizedExpression] = {goUsExpression}
+                                                                 tmp[goParenthesizedType] = {goUsType}
+                                                                 tmp[goPointerType] = {goUsType}
                                                                  tmp[goReturnStatement] = {goExpressionList}
                                                                  tmp[goSelectStatement] = {goCommunicationCase, goDefaultCase}
-                                                                 tmp[goSourceFile] = {goStatement, goFunctionDeclaration, goImportDeclaration, goMethodDeclaration, goPackageClause}
+                                                                 tmp[goSourceFile] = {goUsStatement, goFunctionDeclaration, goImportDeclaration, goMethodDeclaration, goPackageClause}
                                                                  tmp[goStructType] = {goFieldDeclarationList}
-                                                                 tmp[goTypeCase] = {goStatement}
+                                                                 tmp[goTypeCase] = {goUsStatement}
                                                                  tmp[goTypeDeclaration] = {goTypeAlias, goTypeSpec}
                                                                  tmp[goTypeSwitchStatement] = {goDefaultCase, goTypeCase}
                                                                  tmp[goVarDeclaration] = {goVarSpec}
-                                                                 tmp[goVariadicArgument] = {goExpression}
+                                                                 tmp[goVariadicArgument] = {goUsExpression}
                                                                  tmp
 const goTokenKinds*: set[GoNodeKind] = {
                                          goNewlineTok,
@@ -497,11 +497,11 @@ proc tsNodeType*(node: TsGoNode): string
 proc kind*(node: TsGoNode): GoNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":                    goExpression
-      of "_simple_statement":              goSimpleStatement
-      of "_simple_type":                   goSimpleType
-      of "_statement":                     goStatement
-      of "_type":                          goType
+      of "_expression":                    goUsExpression
+      of "_simple_statement":              goUsSimpleStatement
+      of "_simple_type":                   goUsSimpleType
+      of "_statement":                     goUsStatement
+      of "_type":                          goUsType
       of "argument_list":                  goArgumentList
       of "array_type":                     goArrayType
       of "assignment_statement":           goAssignmentStatement

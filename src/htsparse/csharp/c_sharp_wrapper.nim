@@ -7,10 +7,10 @@ export treesitter
 
 type
   C_sharpNodeKind* = enum
-    c_sharpDeclaration                                   ## _declaration
-    c_sharpExpression                                    ## _expression
-    c_sharpStatement                                     ## _statement
-    c_sharpType                                          ## _type
+    c_sharpUsDeclaration                                 ## _declaration
+    c_sharpUsExpression                                  ## _expression
+    c_sharpUsStatement                                   ## _statement
+    c_sharpUsType                                        ## _type
     c_sharpAccessorDeclaration                           ## accessor_declaration
     c_sharpAccessorList                                  ## accessor_list
     c_sharpAliasQualifiedName                            ## alias_qualified_name
@@ -256,9 +256,9 @@ type
     c_sharpRBrackTok                                     ## ]
     c_sharpAccentTok                                     ## ^
     c_sharpAccentEqualTok                                ## ^=
-    c_sharpMakerefTok                                    ## __makeref
-    c_sharpReftypeTok                                    ## __reftype
-    c_sharpRefvalueTok                                   ## __refvalue
+    c_sharpUsUsMakerefTok                                ## __makeref
+    c_sharpUsUsReftypeTok                                ## __reftype
+    c_sharpUsUsRefvalueTok                               ## __refvalue
     c_sharpAbstractTok                                   ## abstract
     c_sharpAddTok                                        ## add
     c_sharpAliasTok                                      ## alias
@@ -384,10 +384,10 @@ type
 
 proc strRepr*(kind: C_sharpNodeKind): string =
   case kind:
-    of c_sharpDeclaration:                                   "_declaration"
-    of c_sharpExpression:                                    "_expression"
-    of c_sharpStatement:                                     "_statement"
-    of c_sharpType:                                          "_type"
+    of c_sharpUsDeclaration:                                 "_declaration"
+    of c_sharpUsExpression:                                  "_expression"
+    of c_sharpUsStatement:                                   "_statement"
+    of c_sharpUsType:                                        "_type"
     of c_sharpAccessorDeclaration:                           "accessor_declaration"
     of c_sharpAccessorList:                                  "accessor_list"
     of c_sharpAliasQualifiedName:                            "alias_qualified_name"
@@ -633,9 +633,9 @@ proc strRepr*(kind: C_sharpNodeKind): string =
     of c_sharpRBrackTok:                                     "]"
     of c_sharpAccentTok:                                     "^"
     of c_sharpAccentEqualTok:                                "^="
-    of c_sharpMakerefTok:                                    "__makeref"
-    of c_sharpReftypeTok:                                    "__reftype"
-    of c_sharpRefvalueTok:                                   "__refvalue"
+    of c_sharpUsUsMakerefTok:                                "__makeref"
+    of c_sharpUsUsReftypeTok:                                "__reftype"
+    of c_sharpUsUsRefvalueTok:                               "__refvalue"
     of c_sharpAbstractTok:                                   "abstract"
     of c_sharpAddTok:                                        "add"
     of c_sharpAliasTok:                                      "alias"
@@ -778,20 +778,20 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                 tmp[c_sharpAccessorList] = {c_sharpAccessorDeclaration}
                                                                                 tmp[c_sharpAliasQualifiedName] = {c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier}
                                                                                 tmp[c_sharpAnonymousMethodExpression] = {c_sharpBlock, c_sharpParameterList}
-                                                                                tmp[c_sharpAnonymousObjectCreationExpression] = {c_sharpExpression, c_sharpNameEquals}
-                                                                                tmp[c_sharpArgument] = {c_sharpExpression, c_sharpDeclarationExpression, c_sharpNameColon}
+                                                                                tmp[c_sharpAnonymousObjectCreationExpression] = {c_sharpUsExpression, c_sharpNameEquals}
+                                                                                tmp[c_sharpArgument] = {c_sharpUsExpression, c_sharpDeclarationExpression, c_sharpNameColon}
                                                                                 tmp[c_sharpArgumentList] = {c_sharpArgument}
                                                                                 tmp[c_sharpArrayCreationExpression] = {c_sharpArrayType, c_sharpInitializerExpression}
-                                                                                tmp[c_sharpArrayRankSpecifier] = {c_sharpExpression}
-                                                                                tmp[c_sharpArrowExpressionClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpArrayRankSpecifier] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpArrowExpressionClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpAssignmentExpression] = {c_sharpAssignmentOperator}
                                                                                 tmp[c_sharpAttribute] = {c_sharpAttributeArgumentList}
-                                                                                tmp[c_sharpAttributeArgument] = {c_sharpExpression, c_sharpNameColon, c_sharpNameEquals}
+                                                                                tmp[c_sharpAttributeArgument] = {c_sharpUsExpression, c_sharpNameColon, c_sharpNameEquals}
                                                                                 tmp[c_sharpAttributeArgumentList] = {c_sharpAttributeArgument}
                                                                                 tmp[c_sharpAttributeList] = {c_sharpAttribute, c_sharpAttributeTargetSpecifier}
-                                                                                tmp[c_sharpAwaitExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpBaseList] = {c_sharpType, c_sharpPrimaryConstructorBaseType}
-                                                                                tmp[c_sharpBlock] = {c_sharpStatement}
+                                                                                tmp[c_sharpAwaitExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpBaseList] = {c_sharpUsType, c_sharpPrimaryConstructorBaseType}
+                                                                                tmp[c_sharpBlock] = {c_sharpUsStatement}
                                                                                 tmp[c_sharpBracketedArgumentList] = {c_sharpArgument}
                                                                                 tmp[c_sharpBracketedParameterList] = {c_sharpParameter}
                                                                                 tmp[c_sharpCasePatternSwitchLabel] = {
@@ -807,11 +807,11 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                        c_sharpVarPattern,
                                                                                                                        c_sharpWhenClause
                                                                                                                      }
-                                                                                tmp[c_sharpCaseSwitchLabel] = {c_sharpExpression}
+                                                                                tmp[c_sharpCaseSwitchLabel] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpCatchClause] = {c_sharpCatchDeclaration, c_sharpCatchFilterClause}
-                                                                                tmp[c_sharpCatchFilterClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpCatchFilterClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpCharacterLiteral] = {c_sharpEscapeSequence}
-                                                                                tmp[c_sharpCheckedExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpCheckedExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpCheckedStatement] = {c_sharpBlock}
                                                                                 tmp[c_sharpClassDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
                                                                                 tmp[c_sharpCompilationUnit] = {
@@ -828,58 +828,58 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                 c_sharpUsingDirective
                                                                                                               }
                                                                                 tmp[c_sharpConditionalAccessExpression] = {c_sharpElementBindingExpression, c_sharpMemberBindingExpression}
-                                                                                tmp[c_sharpConstantPattern] = {c_sharpExpression}
+                                                                                tmp[c_sharpConstantPattern] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpConstructorDeclaration] = {c_sharpAttributeList, c_sharpConstructorInitializer, c_sharpModifier}
                                                                                 tmp[c_sharpConstructorInitializer] = {c_sharpArgumentList}
                                                                                 tmp[c_sharpConversionOperatorDeclaration] = {c_sharpAttributeList, c_sharpModifier}
-                                                                                tmp[c_sharpDeclarationList] = {c_sharpDeclaration}
+                                                                                tmp[c_sharpDeclarationList] = {c_sharpUsDeclaration}
                                                                                 tmp[c_sharpDeclarationPattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
                                                                                 tmp[c_sharpDelegateDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
                                                                                 tmp[c_sharpDestructorDeclaration] = {c_sharpAttributeList, c_sharpIdentifier, c_sharpParameterList}
-                                                                                tmp[c_sharpDoStatement] = {c_sharpExpression, c_sharpStatement}
+                                                                                tmp[c_sharpDoStatement] = {c_sharpUsExpression, c_sharpUsStatement}
                                                                                 tmp[c_sharpElementBindingExpression] = {c_sharpBracketedArgumentList}
                                                                                 tmp[c_sharpEnumDeclaration] = {c_sharpAttributeList, c_sharpModifier}
                                                                                 tmp[c_sharpEnumMemberDeclaration] = {c_sharpAttributeList}
                                                                                 tmp[c_sharpEnumMemberDeclarationList] = {c_sharpEnumMemberDeclaration}
-                                                                                tmp[c_sharpEqualsValueClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpEqualsValueClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpEventDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier}
                                                                                 tmp[c_sharpEventFieldDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpVariableDeclaration}
                                                                                 tmp[c_sharpExplicitInterfaceSpecifier] = {c_sharpAliasQualifiedName, c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier, c_sharpQualifiedName}
-                                                                                tmp[c_sharpExpressionStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpExpressionStatement] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpExternAliasDirective] = {c_sharpIdentifier}
                                                                                 tmp[c_sharpFieldDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpVariableDeclaration}
                                                                                 tmp[c_sharpFinallyClause] = {c_sharpBlock}
-                                                                                tmp[c_sharpFixedStatement] = {c_sharpStatement, c_sharpVariableDeclaration}
-                                                                                tmp[c_sharpFromClause] = {c_sharpExpression, c_sharpType}
+                                                                                tmp[c_sharpFixedStatement] = {c_sharpUsStatement, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpFromClause] = {c_sharpUsExpression, c_sharpUsType}
                                                                                 tmp[c_sharpFunctionPointerCallingConvention] = {c_sharpFunctionPointerUnmanagedCallingConventionList}
-                                                                                tmp[c_sharpFunctionPointerParameter] = {c_sharpType, c_sharpVoidKeyword}
+                                                                                tmp[c_sharpFunctionPointerParameter] = {c_sharpUsType, c_sharpVoidKeyword}
                                                                                 tmp[c_sharpFunctionPointerType] = {c_sharpFunctionPointerCallingConvention, c_sharpFunctionPointerParameter}
                                                                                 tmp[c_sharpFunctionPointerUnmanagedCallingConvention] = {c_sharpIdentifier}
                                                                                 tmp[c_sharpFunctionPointerUnmanagedCallingConventionList] = {c_sharpFunctionPointerUnmanagedCallingConvention}
                                                                                 tmp[c_sharpGenericName] = {c_sharpIdentifier, c_sharpTypeArgumentList}
                                                                                 tmp[c_sharpGlobalAttributeList] = {c_sharpAttribute}
-                                                                                tmp[c_sharpGlobalStatement] = {c_sharpStatement}
-                                                                                tmp[c_sharpGotoStatement] = {c_sharpExpression, c_sharpLabelName}
-                                                                                tmp[c_sharpGroupClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpGlobalStatement] = {c_sharpUsStatement}
+                                                                                tmp[c_sharpGotoStatement] = {c_sharpUsExpression, c_sharpLabelName}
+                                                                                tmp[c_sharpGroupClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpImplicitArrayCreationExpression] = {c_sharpInitializerExpression}
                                                                                 tmp[c_sharpImplicitObjectCreationExpression] = {c_sharpArgumentList, c_sharpInitializerExpression}
                                                                                 tmp[c_sharpImplicitStackAllocArrayCreationExpression] = {c_sharpInitializerExpression}
                                                                                 tmp[c_sharpIndexerDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier}
-                                                                                tmp[c_sharpInitializerExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpInitializerExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpInterfaceDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
                                                                                 tmp[c_sharpInterpolatedStringExpression] = {c_sharpInterpolatedStringText, c_sharpInterpolatedVerbatimStringText, c_sharpInterpolation}
                                                                                 tmp[c_sharpInterpolatedStringText] = {c_sharpEscapeSequence}
-                                                                                tmp[c_sharpInterpolation] = {c_sharpExpression, c_sharpInterpolationAlignmentClause, c_sharpInterpolationFormatClause}
-                                                                                tmp[c_sharpInterpolationAlignmentClause] = {c_sharpExpression}
-                                                                                tmp[c_sharpJoinClause] = {c_sharpExpression, c_sharpType, c_sharpJoinIntoClause}
+                                                                                tmp[c_sharpInterpolation] = {c_sharpUsExpression, c_sharpInterpolationAlignmentClause, c_sharpInterpolationFormatClause}
+                                                                                tmp[c_sharpInterpolationAlignmentClause] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpJoinClause] = {c_sharpUsExpression, c_sharpUsType, c_sharpJoinIntoClause}
                                                                                 tmp[c_sharpJoinIntoClause] = {c_sharpIdentifier}
-                                                                                tmp[c_sharpLabeledStatement] = {c_sharpStatement, c_sharpLabelName}
+                                                                                tmp[c_sharpLabeledStatement] = {c_sharpUsStatement, c_sharpLabelName}
                                                                                 tmp[c_sharpLambdaExpression] = {c_sharpIdentifier, c_sharpParameterList}
-                                                                                tmp[c_sharpLetClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpLetClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpLocalDeclarationStatement] = {c_sharpModifier, c_sharpVariableDeclaration}
                                                                                 tmp[c_sharpLocalFunctionStatement] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
-                                                                                tmp[c_sharpLockStatement] = {c_sharpExpression, c_sharpStatement}
-                                                                                tmp[c_sharpMakeRefExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpLockStatement] = {c_sharpUsExpression, c_sharpUsStatement}
+                                                                                tmp[c_sharpMakeRefExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpMethodDeclaration] = {c_sharpAttributeList, c_sharpExplicitInterfaceSpecifier, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
                                                                                 tmp[c_sharpNameColon] = {c_sharpGlobal, c_sharpIdentifier}
                                                                                 tmp[c_sharpNameEquals] = {c_sharpGlobal, c_sharpIdentifier}
@@ -895,13 +895,13 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                c_sharpTypePattern,
                                                                                                                c_sharpVarPattern
                                                                                                              }
-                                                                                tmp[c_sharpNullableType] = {c_sharpType}
+                                                                                tmp[c_sharpNullableType] = {c_sharpUsType}
                                                                                 tmp[c_sharpOperatorDeclaration] = {c_sharpAttributeList, c_sharpModifier}
-                                                                                tmp[c_sharpOrderByClause] = {c_sharpExpression}
+                                                                                tmp[c_sharpOrderByClause] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpParameter] = {c_sharpAttributeList, c_sharpEqualsValueClause, c_sharpParameterModifier}
                                                                                 tmp[c_sharpParameterArray] = {c_sharpArrayType, c_sharpAttributeList, c_sharpIdentifier, c_sharpNullableType}
                                                                                 tmp[c_sharpParameterList] = {c_sharpParameter, c_sharpParameterArray}
-                                                                                tmp[c_sharpParenthesizedExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpParenthesizedExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpParenthesizedPattern] = {
                                                                                                                      c_sharpBinaryPattern,
                                                                                                                      c_sharpConstantPattern,
@@ -915,10 +915,10 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                      c_sharpVarPattern
                                                                                                                    }
                                                                                 tmp[c_sharpParenthesizedVariableDesignation] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
-                                                                                tmp[c_sharpPointerType] = {c_sharpType}
+                                                                                tmp[c_sharpPointerType] = {c_sharpUsType}
                                                                                 tmp[c_sharpPositionalPatternClause] = {c_sharpSubpattern}
-                                                                                tmp[c_sharpPostfixUnaryExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpPrefixUnaryExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpPostfixUnaryExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpPrefixUnaryExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpPreprocessorCall] = {
                                                                                                                  c_sharpBooleanLiteral,
                                                                                                                  c_sharpCharacterLiteral,
@@ -955,16 +955,16 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                 c_sharpSelectClause,
                                                                                                                 c_sharpWhereClause
                                                                                                               }
-                                                                                tmp[c_sharpRangeExpression] = {c_sharpExpression}
+                                                                                tmp[c_sharpRangeExpression] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpRecordDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
-                                                                                tmp[c_sharpRecursivePattern] = {c_sharpType, c_sharpDiscard, c_sharpParenthesizedVariableDesignation, c_sharpPositionalPatternClause, c_sharpPropertyPatternClause}
-                                                                                tmp[c_sharpRefExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpRefTypeExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpRelationalPattern] = {c_sharpExpression}
-                                                                                tmp[c_sharpReturnStatement] = {c_sharpExpression}
-                                                                                tmp[c_sharpSelectClause] = {c_sharpExpression}
-                                                                                tmp[c_sharpSimpleAssignmentExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpSizeOfExpression] = {c_sharpType}
+                                                                                tmp[c_sharpRecursivePattern] = {c_sharpUsType, c_sharpDiscard, c_sharpParenthesizedVariableDesignation, c_sharpPositionalPatternClause, c_sharpPropertyPatternClause}
+                                                                                tmp[c_sharpRefExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpRefTypeExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpRelationalPattern] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpReturnStatement] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpSelectClause] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpSimpleAssignmentExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpSizeOfExpression] = {c_sharpUsType}
                                                                                 tmp[c_sharpStackAllocArrayCreationExpression] = {c_sharpArrayType, c_sharpInitializerExpression}
                                                                                 tmp[c_sharpStringLiteral] = {c_sharpEscapeSequence}
                                                                                 tmp[c_sharpStructDeclaration] = {c_sharpAttributeList, c_sharpModifier, c_sharpTypeParameterConstraintsClause}
@@ -982,9 +982,9 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                            c_sharpVarPattern
                                                                                                          }
                                                                                 tmp[c_sharpSwitchBody] = {c_sharpSwitchSection}
-                                                                                tmp[c_sharpSwitchExpression] = {c_sharpExpression, c_sharpSwitchExpressionArm}
+                                                                                tmp[c_sharpSwitchExpression] = {c_sharpUsExpression, c_sharpSwitchExpressionArm}
                                                                                 tmp[c_sharpSwitchExpressionArm] = {
-                                                                                                                    c_sharpExpression,
+                                                                                                                    c_sharpUsExpression,
                                                                                                                     c_sharpBinaryPattern,
                                                                                                                     c_sharpConstantPattern,
                                                                                                                     c_sharpDeclarationPattern,
@@ -997,31 +997,31 @@ const c_sharpAllowedSubnodes*: array[C_sharpNodeKind, set[C_sharpNodeKind]] = bl
                                                                                                                     c_sharpVarPattern,
                                                                                                                     c_sharpWhenClause
                                                                                                                   }
-                                                                                tmp[c_sharpSwitchSection] = {c_sharpStatement, c_sharpCasePatternSwitchLabel, c_sharpCaseSwitchLabel, c_sharpDefaultSwitchLabel}
-                                                                                tmp[c_sharpThrowExpression] = {c_sharpExpression}
-                                                                                tmp[c_sharpThrowStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpSwitchSection] = {c_sharpUsStatement, c_sharpCasePatternSwitchLabel, c_sharpCaseSwitchLabel, c_sharpDefaultSwitchLabel}
+                                                                                tmp[c_sharpThrowExpression] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpThrowStatement] = {c_sharpUsExpression}
                                                                                 tmp[c_sharpTryStatement] = {c_sharpCatchClause, c_sharpFinallyClause}
                                                                                 tmp[c_sharpTupleExpression] = {c_sharpArgument}
                                                                                 tmp[c_sharpTuplePattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpTuplePattern}
                                                                                 tmp[c_sharpTupleType] = {c_sharpTupleElement}
-                                                                                tmp[c_sharpTypeArgumentList] = {c_sharpType}
-                                                                                tmp[c_sharpTypeOfExpression] = {c_sharpType}
+                                                                                tmp[c_sharpTypeArgumentList] = {c_sharpUsType}
+                                                                                tmp[c_sharpTypeOfExpression] = {c_sharpUsType}
                                                                                 tmp[c_sharpTypeParameter] = {c_sharpAttributeList, c_sharpIdentifier}
                                                                                 tmp[c_sharpTypeParameterConstraint] = {c_sharpConstructorConstraint, c_sharpTypeConstraint}
                                                                                 tmp[c_sharpTypeParameterList] = {c_sharpTypeParameter}
-                                                                                tmp[c_sharpTypePattern] = {c_sharpType}
+                                                                                tmp[c_sharpTypePattern] = {c_sharpUsType}
                                                                                 tmp[c_sharpUnsafeStatement] = {c_sharpBlock}
                                                                                 tmp[c_sharpUsingDirective] = {c_sharpAliasQualifiedName, c_sharpGenericName, c_sharpGlobal, c_sharpIdentifier, c_sharpNameEquals, c_sharpQualifiedName}
-                                                                                tmp[c_sharpUsingStatement] = {c_sharpExpression, c_sharpVariableDeclaration}
+                                                                                tmp[c_sharpUsingStatement] = {c_sharpUsExpression, c_sharpVariableDeclaration}
                                                                                 tmp[c_sharpVarPattern] = {c_sharpDiscard, c_sharpIdentifier, c_sharpParenthesizedVariableDesignation}
                                                                                 tmp[c_sharpVariableDeclaration] = {c_sharpVariableDeclarator}
                                                                                 tmp[c_sharpVariableDeclarator] = {c_sharpBracketedArgumentList, c_sharpEqualsValueClause, c_sharpIdentifier, c_sharpTuplePattern}
-                                                                                tmp[c_sharpWhenClause] = {c_sharpExpression}
-                                                                                tmp[c_sharpWhereClause] = {c_sharpExpression}
-                                                                                tmp[c_sharpWhileStatement] = {c_sharpExpression, c_sharpStatement}
-                                                                                tmp[c_sharpWithExpression] = {c_sharpExpression, c_sharpWithInitializerExpression}
+                                                                                tmp[c_sharpWhenClause] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpWhereClause] = {c_sharpUsExpression}
+                                                                                tmp[c_sharpWhileStatement] = {c_sharpUsExpression, c_sharpUsStatement}
+                                                                                tmp[c_sharpWithExpression] = {c_sharpUsExpression, c_sharpWithInitializerExpression}
                                                                                 tmp[c_sharpWithInitializerExpression] = {c_sharpSimpleAssignmentExpression}
-                                                                                tmp[c_sharpYieldStatement] = {c_sharpExpression}
+                                                                                tmp[c_sharpYieldStatement] = {c_sharpUsExpression}
                                                                                 tmp
 const c_sharpTokenKinds*: set[C_sharpNodeKind] = {
                                                    c_sharpExclamationTok,
@@ -1078,9 +1078,9 @@ const c_sharpTokenKinds*: set[C_sharpNodeKind] = {
                                                    c_sharpRBrackTok,
                                                    c_sharpAccentTok,
                                                    c_sharpAccentEqualTok,
-                                                   c_sharpMakerefTok,
-                                                   c_sharpReftypeTok,
-                                                   c_sharpRefvalueTok,
+                                                   c_sharpUsUsMakerefTok,
+                                                   c_sharpUsUsReftypeTok,
+                                                   c_sharpUsUsRefvalueTok,
                                                    c_sharpAbstractTok,
                                                    c_sharpAddTok,
                                                    c_sharpAliasTok,
@@ -1200,10 +1200,10 @@ proc tsNodeType*(node: TsC_sharpNode): string
 proc kind*(node: TsC_sharpNode): C_sharpNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_declaration":                                       c_sharpDeclaration
-      of "_expression":                                        c_sharpExpression
-      of "_statement":                                         c_sharpStatement
-      of "_type":                                              c_sharpType
+      of "_declaration":                                       c_sharpUsDeclaration
+      of "_expression":                                        c_sharpUsExpression
+      of "_statement":                                         c_sharpUsStatement
+      of "_type":                                              c_sharpUsType
       of "accessor_declaration":                               c_sharpAccessorDeclaration
       of "accessor_list":                                      c_sharpAccessorList
       of "alias_qualified_name":                               c_sharpAliasQualifiedName
@@ -1449,9 +1449,9 @@ proc kind*(node: TsC_sharpNode): C_sharpNodeKind {.noSideEffect.} =
       of "]":                                                  c_sharpRBrackTok
       of "^":                                                  c_sharpAccentTok
       of "^=":                                                 c_sharpAccentEqualTok
-      of "__makeref":                                          c_sharpMakerefTok
-      of "__reftype":                                          c_sharpReftypeTok
-      of "__refvalue":                                         c_sharpRefvalueTok
+      of "__makeref":                                          c_sharpUsUsMakerefTok
+      of "__reftype":                                          c_sharpUsUsReftypeTok
+      of "__refvalue":                                         c_sharpUsUsRefvalueTok
       of "abstract":                                           c_sharpAbstractTok
       of "add":                                                c_sharpAddTok
       of "alias":                                              c_sharpAliasTok

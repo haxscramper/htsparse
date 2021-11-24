@@ -364,7 +364,7 @@ type
     vhdlLBrackTok                             ## [
     vhdlRBrackTok                             ## ]
     vhdlAccentDotTok                          ## ^.
-    vhdlUnderscoreTok                         ## _
+    vhdlUsUnderscoreTok                       ## _
     vhdlBacktickTok                           ## `
     vhdlAbortTok                              ## abort
     vhdlAbsTok                                ## abs
@@ -564,6 +564,9 @@ type
     vhdlPipeMinusGreaterThanTok               ## |->
     vhdlPipeEqualGreaterThanTok               ## |=>
     vhdlRCurlyTok                             ## }
+    vhdlUsSeparator                           ## _separator
+    vhdlPSLIdentifier                         ## PSL_Identifier
+    vhdlArrayElementConstraint                ## array_element_constraint
     vhdlSyntaxError                           ## Tree-sitter parser syntax error
 
 
@@ -926,7 +929,7 @@ proc strRepr*(kind: VhdlNodeKind): string =
     of vhdlLBrackTok:                             "["
     of vhdlRBrackTok:                             "]"
     of vhdlAccentDotTok:                          "^."
-    of vhdlUnderscoreTok:                         "_"
+    of vhdlUsUnderscoreTok:                       "_"
     of vhdlBacktickTok:                           "`"
     of vhdlAbortTok:                              "abort"
     of vhdlAbsTok:                                "abs"
@@ -1126,6 +1129,9 @@ proc strRepr*(kind: VhdlNodeKind): string =
     of vhdlPipeMinusGreaterThanTok:               "|->"
     of vhdlPipeEqualGreaterThanTok:               "|=>"
     of vhdlRCurlyTok:                             "}"
+    of vhdlUsSeparator:                           "_separator"
+    of vhdlPSLIdentifier:                         "PSL_Identifier"
+    of vhdlArrayElementConstraint:                "array_element_constraint"
     of vhdlSyntaxError:                           "ERROR"
 
 
@@ -2953,7 +2959,7 @@ const vhdlTokenKinds*: set[VhdlNodeKind] = {
                                              vhdlLBrackTok,
                                              vhdlRBrackTok,
                                              vhdlAccentDotTok,
-                                             vhdlUnderscoreTok,
+                                             vhdlUsUnderscoreTok,
                                              vhdlBacktickTok,
                                              vhdlAbortTok,
                                              vhdlAbsTok,
@@ -3507,7 +3513,7 @@ proc kind*(node: TsVhdlNode): VhdlNodeKind {.noSideEffect.} =
       of "[":                                        vhdlLBrackTok
       of "]":                                        vhdlRBrackTok
       of "^.":                                       vhdlAccentDotTok
-      of "_":                                        vhdlUnderscoreTok
+      of "_":                                        vhdlUsUnderscoreTok
       of "`":                                        vhdlBacktickTok
       of "abort":                                    vhdlAbortTok
       of "abs":                                      vhdlAbsTok
@@ -3690,7 +3696,7 @@ proc kind*(node: TsVhdlNode): VhdlNodeKind {.noSideEffect.} =
       of "|->":                                      vhdlPipeMinusGreaterThanTok
       of "|=>":                                      vhdlPipeEqualGreaterThanTok
       of "}":                                        vhdlRCurlyTok
-      of "_separator":                               vhdlSeparator
+      of "_separator":                               vhdlUsSeparator
       of "ERROR":                                    vhdlSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")

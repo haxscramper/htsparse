@@ -63,8 +63,8 @@ type
     luaLBrackTok                ## [
     luaRBrackTok                ## ]
     luaAccentTok                ## ^
-    luaGTok                     ## _G
-    luaVERSIONTok               ## _VERSION
+    luaUsGTok                   ## _G
+    luaUsVERSIONTok             ## _VERSION
     luaAndTok                   ## and
     luaBreakStatement           ## break_statement
     luaComment                  ## comment
@@ -165,8 +165,8 @@ proc strRepr*(kind: LuaNodeKind): string =
     of luaLBrackTok:                "["
     of luaRBrackTok:                "]"
     of luaAccentTok:                "^"
-    of luaGTok:                     "_G"
-    of luaVERSIONTok:               "_VERSION"
+    of luaUsGTok:                   "_G"
+    of luaUsVERSIONTok:             "_VERSION"
     of luaAndTok:                   "and"
     of luaBreakStatement:           "break_statement"
     of luaComment:                  "comment"
@@ -725,8 +725,8 @@ const luaTokenKinds*: set[LuaNodeKind] = {
                                            luaLBrackTok,
                                            luaRBrackTok,
                                            luaAccentTok,
-                                           luaGTok,
-                                           luaVERSIONTok,
+                                           luaUsGTok,
+                                           luaUsVERSIONTok,
                                            luaAndTok,
                                            luaDoTok,
                                            luaElseTok,
@@ -818,8 +818,8 @@ proc kind*(node: TsLuaNode): LuaNodeKind {.noSideEffect.} =
       of "[":                          luaLBrackTok
       of "]":                          luaRBrackTok
       of "^":                          luaAccentTok
-      of "_G":                         luaGTok
-      of "_VERSION":                   luaVERSIONTok
+      of "_G":                         luaUsGTok
+      of "_VERSION":                   luaUsVERSIONTok
       of "and":                        luaAndTok
       of "break_statement":            luaBreakStatement
       of "comment":                    luaComment

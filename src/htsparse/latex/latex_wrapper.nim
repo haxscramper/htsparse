@@ -218,6 +218,7 @@ type
     latexUnit                 ## unit
     latexVerbDelim            ## verb_delim
     latexVerbatim             ## verbatim
+    latexUsSpace              ## _space
     latexSyntaxError          ## Tree-sitter parser syntax error
 
 
@@ -434,6 +435,7 @@ proc strRepr*(kind: LatexNodeKind): string =
     of latexUnit:                 "unit"
     of latexVerbDelim:            "verb_delim"
     of latexVerbatim:             "verbatim"
+    of latexUsSpace:              "_space"
     of latexSyntaxError:          "ERROR"
 
 
@@ -5747,7 +5749,7 @@ proc kind*(node: TsLatexNode): LatexNodeKind {.noSideEffect.} =
       of "unit":                 latexUnit
       of "verb_delim":           latexVerbDelim
       of "verbatim":             latexVerbatim
-      of "_space":               latexSpace
+      of "_space":               latexUsSpace
       of "ERROR":                latexSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")

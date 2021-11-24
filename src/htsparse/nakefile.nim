@@ -251,10 +251,11 @@ proc javaCompile*() =
 
 
 proc javascriptCompile*() =
+  # https://github.com/tree-sitter/tree-sitter-javascript/tree/v0.19.0
   build(
     "javascript",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/master/grammar.js"),
-    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/master/src/scanner.c")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/v0.19.0/grammar.js"),
+    some Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/v0.19.0/src/scanner.c")
   )
 
 
@@ -312,15 +313,16 @@ proc systemrdlCompile*() =
 # Typescript has multiple scanner sources and non-standard grammar directory layout.
 
 proc systemVerilogCompile*() =
+  # https://github.com/tree-sitter/tree-sitter-verilog
   build(
     "systemVerilog",
-    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-verilog/master/grammar.js")
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-verilog/6fae7414fa854b5052bee9111b200e9137797f3d/grammar.js")
   )
 
 proc vhdlCompile*() =
   build(
     "vhdl",
-    Url("https://raw.githubusercontent.com/alemuller/tree-sitter-vhdl/main/grammar.js")
+    Url("https://raw.githubusercontent.com/alemuller/tree-sitter-vhdl/d545b5cfc7bb1fb345587026f034ad24d0898527/grammar.js")
   )
 
 proc vueCompile*() =
@@ -401,6 +403,7 @@ proc scalaCompile*() =
   )
 
 proc kotlinCompile*() =
+  # https://github.com/fwcd/tree-sitter-kotlin/tree/0.2.11
   build(
     "kotlin",
     Url("https://raw.githubusercontent.com/fwcd/tree-sitter-kotlin/0.2.11/grammar.js"),
@@ -442,7 +445,6 @@ type
     lRuby             = "ruby"
     lRust             = "rust"
     lSystemrdl        = "systemrdl"
-    lSystemVerilog    = "systemVer"
     lVhdl             = "vhdl"
     lVue              = "vue"
     lYaml             = "yaml"
@@ -453,11 +455,14 @@ type
     lJulia            = "julia"
     lNix              = "nix"
     lScala            = "scala"
-    lKotlin           = "kotlin"
     lZig              = "zig"
     lDart             = "dart"
     lClojure          = "clojure"
     lGraphql          = "graphql"
+    lJs               = "js"
+
+    lKotlin           = "kotlin"
+    lSystemVerilog    = "verilog"
 
 proc toClosure*(arg: proc() {.nimcall.}): proc() {.closure.} = arg
 
@@ -483,14 +488,14 @@ proc compile*(lang: Lang) =
     lHtml: htmlCompile,
     lLatex: latexCompile,
     lJava: javaCompile,
-    # : # javascriptCompile,
+    lJs: javascriptCompile,
     lLua: luaCompile,
     lPhp: phpCompile,
     lPython: pythonCompile,
     lRuby: rubyCompile,
     lRust: rustCompile,
     lSystemrdl: systemrdlCompile,
-    lSystemVerilog: systemVerilogCompile,
+    # lSystemVerilog: systemVerilogCompile,
     lVhdl: vhdlCompile,
     lVue: vueCompile,
     lYaml: yamlCompile,
@@ -501,10 +506,10 @@ proc compile*(lang: Lang) =
     lJulia: juliaCompile,
     lNix: nixCompile,
     lScala: scalaCompile,
-    # lKotlin: kotlinCompile,
     lZig: zigCompile,
     lDart: dartCompile,
     lClojure: clojureCompile,
+    lKotlin: kotlinCompile,
     lGraphql: graphqlCompile,
   }
 
@@ -551,6 +556,7 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
 when isMainModule:
   startHax()
   main(@["total"])
-  # main(@["lua"])
+  # main(@["kotlin"])
+  # main(@["verilog"])
   # main(paramStrs())
   echo "all ok"

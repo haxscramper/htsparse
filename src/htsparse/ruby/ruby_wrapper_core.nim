@@ -4,19 +4,19 @@ export treesitter_core
 
 type
   RubyNodeKind* = enum
-    rubyArg                         ## _arg
-    rubyExpression                  ## _expression
-    rubyLhs                         ## _lhs
-    rubyMethodName                  ## _method_name
-    rubyPatternConstant             ## _pattern_constant
-    rubyPatternExpr                 ## _pattern_expr
-    rubyPatternExprBasic            ## _pattern_expr_basic
-    rubyPatternPrimitive            ## _pattern_primitive
-    rubyPatternTopExprBody          ## _pattern_top_expr_body
-    rubyPrimary                     ## _primary
-    rubySimpleNumeric               ## _simple_numeric
-    rubyStatement                   ## _statement
-    rubyVariable                    ## _variable
+    rubyUsArg                       ## _arg
+    rubyUsExpression                ## _expression
+    rubyUsLhs                       ## _lhs
+    rubyUsMethodName                ## _method_name
+    rubyUsPatternConstant           ## _pattern_constant
+    rubyUsPatternExpr               ## _pattern_expr
+    rubyUsPatternExprBasic          ## _pattern_expr_basic
+    rubyUsPatternPrimitive          ## _pattern_primitive
+    rubyUsPatternTopExprBody        ## _pattern_top_expr_body
+    rubyUsPrimary                   ## _primary
+    rubyUsSimpleNumeric             ## _simple_numeric
+    rubyUsStatement                 ## _statement
+    rubyUsVariable                  ## _variable
     rubyAlias                       ## alias
     rubyAlternativePattern          ## alternative_pattern
     rubyArgumentList                ## argument_list
@@ -179,6 +179,7 @@ type
     rubyRBrackTok                   ## ]
     rubyAccentTok                   ## ^
     rubyAccentEqualTok              ## ^=
+    rubyUsUsENDTok                  ## __END__
     rubyBacktickTok                 ## `
     rubyAliasTok                    ## alias
     rubyAndTok                      ## and
@@ -217,8 +218,8 @@ type
     rubyLine                        ## line
     rubyModuleTok                   ## module
     rubyNextTok                     ## next
-    rubyNil                         ## nil
     rubyNilTok                      ## nil
+    rubyNil                         ## nil
     rubyNotTok                      ## not
     rubyOrTok                       ## or
     rubyRTok                        ## r
@@ -251,19 +252,19 @@ type
 
 proc strRepr*(kind: RubyNodeKind): string =
   case kind:
-    of rubyArg:                         "_arg"
-    of rubyExpression:                  "_expression"
-    of rubyLhs:                         "_lhs"
-    of rubyMethodName:                  "_method_name"
-    of rubyPatternConstant:             "_pattern_constant"
-    of rubyPatternExpr:                 "_pattern_expr"
-    of rubyPatternExprBasic:            "_pattern_expr_basic"
-    of rubyPatternPrimitive:            "_pattern_primitive"
-    of rubyPatternTopExprBody:          "_pattern_top_expr_body"
-    of rubyPrimary:                     "_primary"
-    of rubySimpleNumeric:               "_simple_numeric"
-    of rubyStatement:                   "_statement"
-    of rubyVariable:                    "_variable"
+    of rubyUsArg:                       "_arg"
+    of rubyUsExpression:                "_expression"
+    of rubyUsLhs:                       "_lhs"
+    of rubyUsMethodName:                "_method_name"
+    of rubyUsPatternConstant:           "_pattern_constant"
+    of rubyUsPatternExpr:               "_pattern_expr"
+    of rubyUsPatternExprBasic:          "_pattern_expr_basic"
+    of rubyUsPatternPrimitive:          "_pattern_primitive"
+    of rubyUsPatternTopExprBody:        "_pattern_top_expr_body"
+    of rubyUsPrimary:                   "_primary"
+    of rubyUsSimpleNumeric:             "_simple_numeric"
+    of rubyUsStatement:                 "_statement"
+    of rubyUsVariable:                  "_variable"
     of rubyAlias:                       "alias"
     of rubyAlternativePattern:          "alternative_pattern"
     of rubyArgumentList:                "argument_list"
@@ -426,6 +427,7 @@ proc strRepr*(kind: RubyNodeKind): string =
     of rubyRBrackTok:                   "]"
     of rubyAccentTok:                   "^"
     of rubyAccentEqualTok:              "^="
+    of rubyUsUsENDTok:                  "__END__"
     of rubyBacktickTok:                 "`"
     of rubyAliasTok:                    "alias"
     of rubyAndTok:                      "and"
@@ -464,8 +466,8 @@ proc strRepr*(kind: RubyNodeKind): string =
     of rubyLine:                        "line"
     of rubyModuleTok:                   "module"
     of rubyNextTok:                     "next"
-    of rubyNil:                         "nil"
     of rubyNilTok:                      "nil"
+    of rubyNil:                         "nil"
     of rubyNotTok:                      "not"
     of rubyOrTok:                       "or"
     of rubyRTok:                        "r"
@@ -534,15 +536,15 @@ type
 
 const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
                                                                        var tmp: array[RubyNodeKind, set[RubyNodeKind]]
-                                                                       tmp[rubyArgumentList] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
-                                                                       tmp[rubyArray] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
-                                                                       tmp[rubyArrayPattern] = {rubyPatternExpr, rubySplatParameter}
+                                                                       tmp[rubyArgumentList] = {rubyUsExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyArray] = {rubyUsExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyArrayPattern] = {rubyUsPatternExpr, rubySplatParameter}
                                                                        tmp[rubyBareString] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
                                                                        tmp[rubyBareSymbol] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
-                                                                       tmp[rubyBegin] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
-                                                                       tmp[rubyBeginBlock] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyBlock] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyBlockArgument] = {rubyArg}
+                                                                       tmp[rubyBegin] = {rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyBeginBlock] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyBlock] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyBlockArgument] = {rubyUsArg}
                                                                        tmp[rubyBlockParameters] = {
                                                                                                     rubyBlockParameter,
                                                                                                     rubyDestructuredParameter,
@@ -557,9 +559,9 @@ const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
                                                                        tmp[rubyBreak] = {rubyArgumentList}
                                                                        tmp[rubyCase] = {rubyElse, rubyWhen}
                                                                        tmp[rubyChainedString] = {rubyString}
-                                                                       tmp[rubyClass] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyClass] = {rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
                                                                        tmp[rubyDelimitedSymbol] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
-                                                                       tmp[rubyDestructuredLeftAssignment] = {rubyLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
+                                                                       tmp[rubyDestructuredLeftAssignment] = {rubyUsLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
                                                                        tmp[rubyDestructuredParameter] = {
                                                                                                           rubyBlockParameter,
                                                                                                           rubyDestructuredParameter,
@@ -571,21 +573,21 @@ const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
                                                                                                           rubyOptionalParameter,
                                                                                                           rubySplatParameter
                                                                                                         }
-                                                                       tmp[rubyDo] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyDoBlock] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
-                                                                       tmp[rubyElementReference] = {rubyExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
-                                                                       tmp[rubyElse] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyEndBlock] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyEnsure] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyExceptionVariable] = {rubyLhs}
-                                                                       tmp[rubyExceptions] = {rubyArg, rubySplatArgument}
-                                                                       tmp[rubyFindPattern] = {rubyPatternExpr, rubySplatParameter}
+                                                                       tmp[rubyDo] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyDoBlock] = {rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyElementReference] = {rubyUsExpression, rubyBlockArgument, rubyForwardArgument, rubyHashSplatArgument, rubyPair, rubySplatArgument}
+                                                                       tmp[rubyElse] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyEndBlock] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyEnsure] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyExceptionVariable] = {rubyUsLhs}
+                                                                       tmp[rubyExceptions] = {rubyUsArg, rubySplatArgument}
+                                                                       tmp[rubyFindPattern] = {rubyUsPatternExpr, rubySplatParameter}
                                                                        tmp[rubyHash] = {rubyHashSplatArgument, rubyPair}
                                                                        tmp[rubyHashPattern] = {rubyHashSplatNil, rubyHashSplatParameter, rubyKeywordPattern}
-                                                                       tmp[rubyHashSplatArgument] = {rubyArg}
+                                                                       tmp[rubyHashSplatArgument] = {rubyUsArg}
                                                                        tmp[rubyHeredocBody] = {rubyEscapeSequence, rubyHeredocContent, rubyHeredocEnd, rubyInterpolation}
-                                                                       tmp[rubyIn] = {rubyArg}
-                                                                       tmp[rubyInterpolation] = {rubyStatement, rubyEmptyStatement}
+                                                                       tmp[rubyIn] = {rubyUsArg}
+                                                                       tmp[rubyInterpolation] = {rubyUsStatement, rubyEmptyStatement}
                                                                        tmp[rubyLambdaParameters] = {
                                                                                                      rubyBlockParameter,
                                                                                                      rubyDestructuredParameter,
@@ -597,8 +599,8 @@ const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
                                                                                                      rubyOptionalParameter,
                                                                                                      rubySplatParameter
                                                                                                    }
-                                                                       tmp[rubyLeftAssignmentList] = {rubyLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
-                                                                       tmp[rubyMethod] = {rubyArg, rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyLeftAssignmentList] = {rubyUsLhs, rubyDestructuredLeftAssignment, rubyRestAssignment}
+                                                                       tmp[rubyMethod] = {rubyUsArg, rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
                                                                        tmp[rubyMethodParameters] = {
                                                                                                      rubyBlockParameter,
                                                                                                      rubyDestructuredParameter,
@@ -610,28 +612,28 @@ const rubyAllowedSubnodes*: array[RubyNodeKind, set[RubyNodeKind]] = block:
                                                                                                      rubyOptionalParameter,
                                                                                                      rubySplatParameter
                                                                                                    }
-                                                                       tmp[rubyModule] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubyModule] = {rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
                                                                        tmp[rubyNext] = {rubyArgumentList}
-                                                                       tmp[rubyParenthesizedStatements] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyPattern] = {rubyArg, rubySplatArgument}
-                                                                       tmp[rubyProgram] = {rubyStatement, rubyEmptyStatement, rubyUninterpreted}
+                                                                       tmp[rubyParenthesizedStatements] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyPattern] = {rubyUsArg, rubySplatArgument}
+                                                                       tmp[rubyProgram] = {rubyUsStatement, rubyEmptyStatement, rubyUninterpreted}
                                                                        tmp[rubyRational] = {rubyFloat, rubyInteger}
                                                                        tmp[rubyRedo] = {rubyArgumentList}
                                                                        tmp[rubyRegex] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
-                                                                       tmp[rubyRestAssignment] = {rubyLhs}
+                                                                       tmp[rubyRestAssignment] = {rubyUsLhs}
                                                                        tmp[rubyRetry] = {rubyArgumentList}
                                                                        tmp[rubyReturn] = {rubyArgumentList}
-                                                                       tmp[rubyRightAssignmentList] = {rubyArg, rubySplatArgument}
-                                                                       tmp[rubySingletonClass] = {rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
-                                                                       tmp[rubySingletonMethod] = {rubyArg, rubyStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
-                                                                       tmp[rubySplatArgument] = {rubyArg}
+                                                                       tmp[rubyRightAssignmentList] = {rubyUsArg, rubySplatArgument}
+                                                                       tmp[rubySingletonClass] = {rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubySingletonMethod] = {rubyUsArg, rubyUsStatement, rubyElse, rubyEmptyStatement, rubyEnsure, rubyRescue}
+                                                                       tmp[rubySplatArgument] = {rubyUsArg}
                                                                        tmp[rubyString] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
                                                                        tmp[rubyStringArray] = {rubyBareString}
                                                                        tmp[rubySubshell] = {rubyEscapeSequence, rubyInterpolation, rubyStringContent}
-                                                                       tmp[rubySuperclass] = {rubyExpression}
+                                                                       tmp[rubySuperclass] = {rubyUsExpression}
                                                                        tmp[rubySymbolArray] = {rubyBareSymbol}
-                                                                       tmp[rubyThen] = {rubyStatement, rubyEmptyStatement}
-                                                                       tmp[rubyUndef] = {rubyMethodName}
+                                                                       tmp[rubyThen] = {rubyUsStatement, rubyEmptyStatement}
+                                                                       tmp[rubyUndef] = {rubyUsMethodName}
                                                                        tmp[rubyYield] = {rubyArgumentList}
                                                                        tmp
 const rubyTokenKinds*: set[RubyNodeKind] = {
@@ -695,7 +697,7 @@ const rubyTokenKinds*: set[RubyNodeKind] = {
                                              rubyRBrackTok,
                                              rubyAccentTok,
                                              rubyAccentEqualTok,
-                                             rubyENDTok,
+                                             rubyUsUsENDTok,
                                              rubyBacktickTok,
                                              rubyAliasTok,
                                              rubyAndTok,
@@ -746,19 +748,19 @@ proc tsNodeType*(node: TsRubyNode): string
 proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_arg":                         rubyArg
-      of "_expression":                  rubyExpression
-      of "_lhs":                         rubyLhs
-      of "_method_name":                 rubyMethodName
-      of "_pattern_constant":            rubyPatternConstant
-      of "_pattern_expr":                rubyPatternExpr
-      of "_pattern_expr_basic":          rubyPatternExprBasic
-      of "_pattern_primitive":           rubyPatternPrimitive
-      of "_pattern_top_expr_body":       rubyPatternTopExprBody
-      of "_primary":                     rubyPrimary
-      of "_simple_numeric":              rubySimpleNumeric
-      of "_statement":                   rubyStatement
-      of "_variable":                    rubyVariable
+      of "_arg":                         rubyUsArg
+      of "_expression":                  rubyUsExpression
+      of "_lhs":                         rubyUsLhs
+      of "_method_name":                 rubyUsMethodName
+      of "_pattern_constant":            rubyUsPatternConstant
+      of "_pattern_expr":                rubyUsPatternExpr
+      of "_pattern_expr_basic":          rubyUsPatternExprBasic
+      of "_pattern_primitive":           rubyUsPatternPrimitive
+      of "_pattern_top_expr_body":       rubyUsPatternTopExprBody
+      of "_primary":                     rubyUsPrimary
+      of "_simple_numeric":              rubyUsSimpleNumeric
+      of "_statement":                   rubyUsStatement
+      of "_variable":                    rubyUsVariable
       of "alias":                        rubyAlias
       of "alternative_pattern":          rubyAlternativePattern
       of "argument_list":                rubyArgumentList
@@ -921,7 +923,7 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "]":                            rubyRBrackTok
       of "^":                            rubyAccentTok
       of "^=":                           rubyAccentEqualTok
-      of "__END__":                      rubyENDTok
+      of "__END__":                      rubyUsUsENDTok
       of "`":                            rubyBacktickTok
       of "and":                          rubyAndTok
       of "character":                    rubyCharacter
@@ -946,7 +948,7 @@ proc kind*(node: TsRubyNode): RubyNodeKind {.noSideEffect.} =
       of "instance_variable":            rubyInstanceVariable
       of "integer":                      rubyInteger
       of "line":                         rubyLine
-      of "nil":                          rubyNil
+      of "nil":                          rubyNilTok
       of "not":                          rubyNotTok
       of "or":                           rubyOrTok
       of "r":                            rubyRTok

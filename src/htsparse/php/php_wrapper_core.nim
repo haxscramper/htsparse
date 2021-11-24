@@ -4,11 +4,11 @@ export treesitter_core
 
 type
   PhpNodeKind* = enum
-    phpExpression                          ## _expression
-    phpLiteral                             ## _literal
-    phpPrimaryExpression                   ## _primary_expression
-    phpStatement                           ## _statement
-    phpType                                ## _type
+    phpUsExpression                        ## _expression
+    phpUsLiteral                           ## _literal
+    phpUsPrimaryExpression                 ## _primary_expression
+    phpUsStatement                         ## _statement
+    phpUsType                              ## _type
     phpAbstractModifier                    ## abstract_modifier
     phpAnonymousFunctionCreationExpression ## anonymous_function_creation_expression
     phpAnonymousFunctionUseClause          ## anonymous_function_use_clause
@@ -296,11 +296,11 @@ type
 
 proc strRepr*(kind: PhpNodeKind): string =
   case kind:
-    of phpExpression:                          "_expression"
-    of phpLiteral:                             "_literal"
-    of phpPrimaryExpression:                   "_primary_expression"
-    of phpStatement:                           "_statement"
-    of phpType:                                "_type"
+    of phpUsExpression:                        "_expression"
+    of phpUsLiteral:                           "_literal"
+    of phpUsPrimaryExpression:                 "_primary_expression"
+    of phpUsStatement:                         "_statement"
+    of phpUsType:                              "_type"
     of phpAbstractModifier:                    "abstract_modifier"
     of phpAnonymousFunctionCreationExpression: "anonymous_function_creation_expression"
     of phpAnonymousFunctionUseClause:          "anonymous_function_use_clause"
@@ -608,16 +608,16 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                     var tmp: array[PhpNodeKind, set[PhpNodeKind]]
                                                                     tmp[phpAnonymousFunctionCreationExpression] = {phpAnonymousFunctionUseClause}
                                                                     tmp[phpAnonymousFunctionUseClause] = {phpByRef, phpVariableName}
-                                                                    tmp[phpArgument] = {phpExpression, phpVariadicUnpacking}
+                                                                    tmp[phpArgument] = {phpUsExpression, phpVariadicUnpacking}
                                                                     tmp[phpArguments] = {phpArgument}
                                                                     tmp[phpArrayCreationExpression] = {phpArrayElementInitializer}
-                                                                    tmp[phpArrayElementInitializer] = {phpExpression, phpByRef, phpVariadicUnpacking}
+                                                                    tmp[phpArrayElementInitializer] = {phpUsExpression, phpByRef, phpVariadicUnpacking}
                                                                     tmp[phpArrowFunction] = {phpStaticModifier}
                                                                     tmp[phpAttribute] = {phpName, phpQualifiedName}
                                                                     tmp[phpAttributeList] = {phpAttribute}
                                                                     tmp[phpBaseClause] = {phpName, phpQualifiedName}
-                                                                    tmp[phpBinaryExpression] = {phpExpression}
-                                                                    tmp[phpBreakStatement] = {phpExpression}
+                                                                    tmp[phpBinaryExpression] = {phpUsExpression}
+                                                                    tmp[phpBreakStatement] = {phpUsExpression}
                                                                     tmp[phpByRef] = {
                                                                                       phpDynamicVariableName,
                                                                                       phpFunctionCallExpression,
@@ -629,7 +629,7 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                       phpSubscriptExpression,
                                                                                       phpVariableName
                                                                                     }
-                                                                    tmp[phpCaseStatement] = {phpStatement}
+                                                                    tmp[phpCaseStatement] = {phpUsStatement}
                                                                     tmp[phpClassConstantAccessExpression] = {
                                                                                                               phpArrayCreationExpression,
                                                                                                               phpCastExpression,
@@ -654,20 +654,20 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                                             }
                                                                     tmp[phpClassDeclaration] = {phpBaseClause, phpClassInterfaceClause}
                                                                     tmp[phpClassInterfaceClause] = {phpName, phpQualifiedName}
-                                                                    tmp[phpCloneExpression] = {phpPrimaryExpression}
-                                                                    tmp[phpColonBlock] = {phpStatement}
-                                                                    tmp[phpCompoundStatement] = {phpStatement}
+                                                                    tmp[phpCloneExpression] = {phpUsPrimaryExpression}
+                                                                    tmp[phpColonBlock] = {phpUsStatement}
+                                                                    tmp[phpCompoundStatement] = {phpUsStatement}
                                                                     tmp[phpConstDeclaration] = {phpConstElement, phpVisibilityModifier}
-                                                                    tmp[phpConstElement] = {phpExpression, phpName}
-                                                                    tmp[phpContinueStatement] = {phpExpression}
+                                                                    tmp[phpConstElement] = {phpUsExpression, phpName}
+                                                                    tmp[phpContinueStatement] = {phpUsExpression}
                                                                     tmp[phpDeclarationList] = {phpConstDeclaration, phpMethodDeclaration, phpPropertyDeclaration, phpUseDeclaration}
-                                                                    tmp[phpDeclareDirective] = {phpLiteral}
-                                                                    tmp[phpDeclareStatement] = {phpStatement, phpDeclareDirective}
-                                                                    tmp[phpDefaultStatement] = {phpStatement}
-                                                                    tmp[phpDynamicVariableName] = {phpExpression, phpDynamicVariableName, phpVariableName}
-                                                                    tmp[phpEchoStatement] = {phpExpression, phpSequenceExpression}
+                                                                    tmp[phpDeclareDirective] = {phpUsLiteral}
+                                                                    tmp[phpDeclareStatement] = {phpUsStatement, phpDeclareDirective}
+                                                                    tmp[phpDefaultStatement] = {phpUsStatement}
+                                                                    tmp[phpDynamicVariableName] = {phpUsExpression, phpDynamicVariableName, phpVariableName}
+                                                                    tmp[phpEchoStatement] = {phpUsExpression, phpSequenceExpression}
                                                                     tmp[phpEncapsedString] = {
-                                                                                               phpExpression,
+                                                                                               phpUsExpression,
                                                                                                phpDynamicVariableName,
                                                                                                phpEscapeSequence,
                                                                                                phpMemberAccessExpression,
@@ -675,20 +675,20 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                                phpSubscriptExpression,
                                                                                                phpVariableName
                                                                                              }
-                                                                    tmp[phpEnumDeclaration] = {phpType, phpClassInterfaceClause}
+                                                                    tmp[phpEnumDeclaration] = {phpUsType, phpClassInterfaceClause}
                                                                     tmp[phpEnumDeclarationList] = {phpEnumCase, phpMethodDeclaration, phpUseDeclaration}
-                                                                    tmp[phpExpressionStatement] = {phpExpression}
-                                                                    tmp[phpForStatement] = {phpExpression, phpStatement, phpSequenceExpression}
-                                                                    tmp[phpForeachStatement] = {phpExpression, phpByRef, phpListLiteral, phpPair}
+                                                                    tmp[phpExpressionStatement] = {phpUsExpression}
+                                                                    tmp[phpForStatement] = {phpUsExpression, phpUsStatement, phpSequenceExpression}
+                                                                    tmp[phpForeachStatement] = {phpUsExpression, phpByRef, phpListLiteral, phpPair}
                                                                     tmp[phpFormalParameters] = {phpPropertyPromotionParameter, phpSimpleParameter, phpVariadicParameter}
                                                                     tmp[phpFunctionStaticDeclaration] = {phpStaticVariableDeclaration}
                                                                     tmp[phpGlobalDeclaration] = {phpDynamicVariableName, phpVariableName}
                                                                     tmp[phpGotoStatement] = {phpName}
-                                                                    tmp[phpIncludeExpression] = {phpExpression}
-                                                                    tmp[phpIncludeOnceExpression] = {phpExpression}
+                                                                    tmp[phpIncludeExpression] = {phpUsExpression}
+                                                                    tmp[phpIncludeOnceExpression] = {phpUsExpression}
                                                                     tmp[phpInterfaceDeclaration] = {phpBaseClause}
                                                                     tmp[phpListLiteral] = {
-                                                                                            phpExpression,
+                                                                                            phpUsExpression,
                                                                                             phpByRef,
                                                                                             phpDynamicVariableName,
                                                                                             phpFunctionCallExpression,
@@ -703,7 +703,7 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                             phpVariableName
                                                                                           }
                                                                     tmp[phpMatchBlock] = {phpMatchConditionalExpression, phpMatchDefaultExpression}
-                                                                    tmp[phpMatchConditionList] = {phpExpression}
+                                                                    tmp[phpMatchConditionList] = {phpUsExpression}
                                                                     tmp[phpMethodDeclaration] = {phpAbstractModifier, phpFinalModifier, phpStaticModifier, phpVarModifier, phpVisibilityModifier}
                                                                     tmp[phpNamedLabelStatement] = {phpName}
                                                                     tmp[phpNamedType] = {phpName, phpQualifiedName}
@@ -729,20 +729,20 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                                          phpVariableName
                                                                                                        }
                                                                     tmp[phpOptionalType] = {phpNamedType, phpPrimitiveType}
-                                                                    tmp[phpPair] = {phpExpression, phpByRef, phpListLiteral}
-                                                                    tmp[phpParenthesizedExpression] = {phpExpression}
-                                                                    tmp[phpPrintIntrinsic] = {phpExpression}
-                                                                    tmp[phpProgram] = {phpStatement, phpPhpTag, phpText}
+                                                                    tmp[phpPair] = {phpUsExpression, phpByRef, phpListLiteral}
+                                                                    tmp[phpParenthesizedExpression] = {phpUsExpression}
+                                                                    tmp[phpPrintIntrinsic] = {phpUsExpression}
+                                                                    tmp[phpProgram] = {phpUsStatement, phpPhpTag, phpText}
                                                                     tmp[phpPropertyDeclaration] = {phpAbstractModifier, phpFinalModifier, phpPropertyElement, phpStaticModifier, phpVarModifier, phpVisibilityModifier}
                                                                     tmp[phpPropertyElement] = {phpPropertyInitializer, phpVariableName}
-                                                                    tmp[phpPropertyInitializer] = {phpExpression}
+                                                                    tmp[phpPropertyInitializer] = {phpUsExpression}
                                                                     tmp[phpQualifiedName] = {phpName, phpNamespaceNameAsPrefix}
-                                                                    tmp[phpRequireExpression] = {phpExpression}
-                                                                    tmp[phpRequireOnceExpression] = {phpExpression}
-                                                                    tmp[phpReturnStatement] = {phpExpression}
-                                                                    tmp[phpSequenceExpression] = {phpExpression, phpSequenceExpression}
+                                                                    tmp[phpRequireExpression] = {phpUsExpression}
+                                                                    tmp[phpRequireOnceExpression] = {phpUsExpression}
+                                                                    tmp[phpReturnStatement] = {phpUsExpression}
+                                                                    tmp[phpSequenceExpression] = {phpUsExpression, phpSequenceExpression}
                                                                     tmp[phpSubscriptExpression] = {
-                                                                                                    phpExpression,
+                                                                                                    phpUsExpression,
                                                                                                     phpArrayCreationExpression,
                                                                                                     phpClassConstantAccessExpression,
                                                                                                     phpDynamicVariableName,
@@ -765,10 +765,10 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                                                   }
                                                                     tmp[phpSwitchBlock] = {phpCaseStatement, phpDefaultStatement}
                                                                     tmp[phpTextInterpolation] = {phpPhpTag, phpText}
-                                                                    tmp[phpThrowExpression] = {phpExpression}
+                                                                    tmp[phpThrowExpression] = {phpUsExpression}
                                                                     tmp[phpTryStatement] = {phpCatchClause, phpFinallyClause}
                                                                     tmp[phpTypeList] = {phpNamedType, phpOptionalType, phpPrimitiveType}
-                                                                    tmp[phpUnaryOpExpression] = {phpExpression, phpInteger}
+                                                                    tmp[phpUnaryOpExpression] = {phpUsExpression, phpInteger}
                                                                     tmp[phpUnsetStatement] = {
                                                                                                phpCastExpression,
                                                                                                phpDynamicVariableName,
@@ -800,8 +800,8 @@ const phpAllowedSubnodes*: array[PhpNodeKind, set[PhpNodeKind]] = block:
                                                                     tmp[phpUseInsteadOfClause] = {phpClassConstantAccessExpression, phpName}
                                                                     tmp[phpUseList] = {phpUseAsClause, phpUseInsteadOfClause}
                                                                     tmp[phpVariableName] = {phpName}
-                                                                    tmp[phpVariadicUnpacking] = {phpExpression}
-                                                                    tmp[phpYieldExpression] = {phpExpression, phpArrayElementInitializer}
+                                                                    tmp[phpVariadicUnpacking] = {phpUsExpression}
+                                                                    tmp[phpYieldExpression] = {phpUsExpression, phpArrayElementInitializer}
                                                                     tmp
 const phpTokenKinds*: set[PhpNodeKind] = {
                                            phpExclamationTok,
@@ -956,11 +956,11 @@ proc tsNodeType*(node: TsPhpNode): string
 proc kind*(node: TsPhpNode): PhpNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":                            phpExpression
-      of "_literal":                               phpLiteral
-      of "_primary_expression":                    phpPrimaryExpression
-      of "_statement":                             phpStatement
-      of "_type":                                  phpType
+      of "_expression":                            phpUsExpression
+      of "_literal":                               phpUsLiteral
+      of "_primary_expression":                    phpUsPrimaryExpression
+      of "_statement":                             phpUsStatement
+      of "_type":                                  phpUsType
       of "abstract_modifier":                      phpAbstractModifier
       of "anonymous_function_creation_expression": phpAnonymousFunctionCreationExpression
       of "anonymous_function_use_clause":          phpAnonymousFunctionUseClause

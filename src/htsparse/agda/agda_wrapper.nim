@@ -88,7 +88,7 @@ type
     agdaPropN                      ## PropN
     agdaSetTok                     ## Set
     agdaSetN                       ## SetN
-    agdaUnderscoreTok              ## _
+    agdaUsUnderscoreTok            ## _
     agdaAbstractTok                ## abstract
     agdaBidTok                     ## bid
     agdaCodataTok                  ## codata
@@ -238,7 +238,7 @@ proc strRepr*(kind: AgdaNodeKind): string =
     of agdaPropN:                      "PropN"
     of agdaSetTok:                     "Set"
     of agdaSetN:                       "SetN"
-    of agdaUnderscoreTok:              "_"
+    of agdaUsUnderscoreTok:            "_"
     of agdaAbstractTok:                "abstract"
     of agdaBidTok:                     "bid"
     of agdaCodataTok:                  "codata"
@@ -811,7 +811,7 @@ const agdaTokenKinds*: set[AgdaNodeKind] = {
                                              agdaCATCHALLTok,
                                              agdaPropTok,
                                              agdaSetTok,
-                                             agdaUnderscoreTok,
+                                             agdaUsUnderscoreTok,
                                              agdaAbstractTok,
                                              agdaBidTok,
                                              agdaCodataTok,
@@ -961,7 +961,7 @@ proc kind*(node: TsAgdaNode): AgdaNodeKind {.noSideEffect.} =
       of "PropN":                       agdaPropN
       of "Set":                         agdaSetTok
       of "SetN":                        agdaSetN
-      of "_":                           agdaUnderscoreTok
+      of "_":                           agdaUsUnderscoreTok
       of "codata":                      agdaCodataTok
       of "coinductive":                 agdaCoinductiveTok
       of "comment":                     agdaComment

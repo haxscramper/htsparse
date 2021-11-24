@@ -7,52 +7,52 @@ export treesitter
 
 type
   Embedded_templateNodeKind* = enum
-    embedded_templateCode                            ## code
-    embedded_templateComment                         ## comment
-    embedded_templateCommentDirective                ## comment_directive
-    embedded_templateContent                         ## content
-    embedded_templateDirective                       ## directive
-    embedded_templateGraphqlDirective                ## graphql_directive
-    embedded_templateOutputDirective                 ## output_directive
-    embedded_templateTemplate                        ## template
-    embedded_templateDoublePercentGreaterThanTok     ## %%>
-    embedded_templatePercentGreaterThanTok           ## %>
-    embedded_templateMinusPercentGreaterThanTok      ## -%>
-    embedded_templateLessThanPercentTok              ## <%
-    embedded_templateLessThanPercentHashTok          ## <%#
-    embedded_templateLessThanDoublePercentTok        ## <%%
-    embedded_templateLessThanPercentMinusTok         ## <%-
-    embedded_templateLessThanPercentEqualTok         ## <%=
-    embedded_templateLessThanPercentUnderscoreTok    ## <%_
-    embedded_templateLessThanPercentgraphqlTok       ## <%graphql
-    embedded_templateEqualPercentGreaterThanTok      ## =%>
-    embedded_templateUnderscorePercentGreaterThanTok ## _%>
-    embedded_templateSyntaxError                     ## Tree-sitter parser syntax error
+    embedded_templateCode                              ## code
+    embedded_templateComment                           ## comment
+    embedded_templateCommentDirective                  ## comment_directive
+    embedded_templateContent                           ## content
+    embedded_templateDirective                         ## directive
+    embedded_templateGraphqlDirective                  ## graphql_directive
+    embedded_templateOutputDirective                   ## output_directive
+    embedded_templateTemplate                          ## template
+    embedded_templateDoublePercentGreaterThanTok       ## %%>
+    embedded_templatePercentGreaterThanTok             ## %>
+    embedded_templateMinusPercentGreaterThanTok        ## -%>
+    embedded_templateLessThanPercentTok                ## <%
+    embedded_templateLessThanPercentHashTok            ## <%#
+    embedded_templateLessThanDoublePercentTok          ## <%%
+    embedded_templateLessThanPercentMinusTok           ## <%-
+    embedded_templateLessThanPercentEqualTok           ## <%=
+    embedded_templateLessThanPercentUnderscoreTok      ## <%_
+    embedded_templateLessThanPercentgraphqlTok         ## <%graphql
+    embedded_templateEqualPercentGreaterThanTok        ## =%>
+    embedded_templateUsUnderscorePercentGreaterThanTok ## _%>
+    embedded_templateSyntaxError                       ## Tree-sitter parser syntax error
 
 
 proc strRepr*(kind: Embedded_templateNodeKind): string =
   case kind:
-    of embedded_templateCode:                            "code"
-    of embedded_templateComment:                         "comment"
-    of embedded_templateCommentDirective:                "comment_directive"
-    of embedded_templateContent:                         "content"
-    of embedded_templateDirective:                       "directive"
-    of embedded_templateGraphqlDirective:                "graphql_directive"
-    of embedded_templateOutputDirective:                 "output_directive"
-    of embedded_templateTemplate:                        "template"
-    of embedded_templateDoublePercentGreaterThanTok:     "%%>"
-    of embedded_templatePercentGreaterThanTok:           "%>"
-    of embedded_templateMinusPercentGreaterThanTok:      "-%>"
-    of embedded_templateLessThanPercentTok:              "<%"
-    of embedded_templateLessThanPercentHashTok:          "<%#"
-    of embedded_templateLessThanDoublePercentTok:        "<%%"
-    of embedded_templateLessThanPercentMinusTok:         "<%-"
-    of embedded_templateLessThanPercentEqualTok:         "<%="
-    of embedded_templateLessThanPercentUnderscoreTok:    "<%_"
-    of embedded_templateLessThanPercentgraphqlTok:       "<%graphql"
-    of embedded_templateEqualPercentGreaterThanTok:      "=%>"
-    of embedded_templateUnderscorePercentGreaterThanTok: "_%>"
-    of embedded_templateSyntaxError:                     "ERROR"
+    of embedded_templateCode:                              "code"
+    of embedded_templateComment:                           "comment"
+    of embedded_templateCommentDirective:                  "comment_directive"
+    of embedded_templateContent:                           "content"
+    of embedded_templateDirective:                         "directive"
+    of embedded_templateGraphqlDirective:                  "graphql_directive"
+    of embedded_templateOutputDirective:                   "output_directive"
+    of embedded_templateTemplate:                          "template"
+    of embedded_templateDoublePercentGreaterThanTok:       "%%>"
+    of embedded_templatePercentGreaterThanTok:             "%>"
+    of embedded_templateMinusPercentGreaterThanTok:        "-%>"
+    of embedded_templateLessThanPercentTok:                "<%"
+    of embedded_templateLessThanPercentHashTok:            "<%#"
+    of embedded_templateLessThanDoublePercentTok:          "<%%"
+    of embedded_templateLessThanPercentMinusTok:           "<%-"
+    of embedded_templateLessThanPercentEqualTok:           "<%="
+    of embedded_templateLessThanPercentUnderscoreTok:      "<%_"
+    of embedded_templateLessThanPercentgraphqlTok:         "<%graphql"
+    of embedded_templateEqualPercentGreaterThanTok:        "=%>"
+    of embedded_templateUsUnderscorePercentGreaterThanTok: "_%>"
+    of embedded_templateSyntaxError:                       "ERROR"
 
 
 type
@@ -83,7 +83,7 @@ const embedded_templateTokenKinds*: set[Embedded_templateNodeKind] = {
                                                                        embedded_templateLessThanPercentUnderscoreTok,
                                                                        embedded_templateLessThanPercentgraphqlTok,
                                                                        embedded_templateEqualPercentGreaterThanTok,
-                                                                       embedded_templateUnderscorePercentGreaterThanTok
+                                                                       embedded_templateUsUnderscorePercentGreaterThanTok
                                                                      }
 
 proc tsNodeType*(node: TsEmbedded_templateNode): string
@@ -114,7 +114,7 @@ proc kind*(
       of "<%_":               embedded_templateLessThanPercentUnderscoreTok
       of "<%graphql":         embedded_templateLessThanPercentgraphqlTok
       of "=%>":               embedded_templateEqualPercentGreaterThanTok
-      of "_%>":               embedded_templateUnderscorePercentGreaterThanTok
+      of "_%>":               embedded_templateUsUnderscorePercentGreaterThanTok
       of "ERROR":             embedded_templateSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")

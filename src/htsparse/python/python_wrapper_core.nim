@@ -4,8 +4,8 @@ export treesitter_core
 
 type
   PythonNodeKind* = enum
-    pythonCompoundStatement         ## _compound_statement
-    pythonSimpleStatement           ## _simple_statement
+    pythonUsCompoundStatement       ## _compound_statement
+    pythonUsSimpleStatement         ## _simple_statement
     pythonExpression                ## expression
     pythonParameter                 ## parameter
     pythonPattern                   ## pattern
@@ -141,7 +141,7 @@ type
     pythonRBrackTok                 ## ]
     pythonAccentTok                 ## ^
     pythonAccentEqualTok            ## ^=
-    pythonFutureTok                 ## __future__
+    pythonUsUsFutureTok             ## __future__
     pythonAndTok                    ## and
     pythonAsTok                     ## as
     pythonAssertTok                 ## assert
@@ -198,8 +198,8 @@ type
 
 proc strRepr*(kind: PythonNodeKind): string =
   case kind:
-    of pythonCompoundStatement:         "_compound_statement"
-    of pythonSimpleStatement:           "_simple_statement"
+    of pythonUsCompoundStatement:       "_compound_statement"
+    of pythonUsSimpleStatement:         "_simple_statement"
     of pythonExpression:                "expression"
     of pythonParameter:                 "parameter"
     of pythonPattern:                   "pattern"
@@ -335,7 +335,7 @@ proc strRepr*(kind: PythonNodeKind): string =
     of pythonRBrackTok:                 "]"
     of pythonAccentTok:                 "^"
     of pythonAccentEqualTok:            "^="
-    of pythonFutureTok:                 "__future__"
+    of pythonUsUsFutureTok:             "__future__"
     of pythonAndTok:                    "and"
     of pythonAsTok:                     "as"
     of pythonAssertTok:                 "assert"
@@ -413,7 +413,7 @@ const pythonAllowedSubnodes*: array[PythonNodeKind, set[PythonNodeKind]] = block
                                                                              tmp[pythonArgumentList] = {pythonDictionarySplat, pythonExpression, pythonKeywordArgument, pythonListSplat, pythonParenthesizedExpression}
                                                                              tmp[pythonAssertStatement] = {pythonExpression}
                                                                              tmp[pythonAwait] = {pythonExpression}
-                                                                             tmp[pythonBlock] = {pythonCompoundStatement, pythonSimpleStatement}
+                                                                             tmp[pythonBlock] = {pythonUsCompoundStatement, pythonUsSimpleStatement}
                                                                              tmp[pythonChevron] = {pythonExpression}
                                                                              tmp[pythonComparisonOperator] = {pythonPrimaryExpression}
                                                                              tmp[pythonConcatenatedString] = {pythonString}
@@ -444,7 +444,7 @@ const pythonAllowedSubnodes*: array[PythonNodeKind, set[PythonNodeKind]] = block
                                                                              tmp[pythonListPattern] = {pythonPattern}
                                                                              tmp[pythonListSplat] = {pythonExpression}
                                                                              tmp[pythonListSplatPattern] = {pythonAttribute, pythonIdentifier, pythonSubscript}
-                                                                             tmp[pythonModule] = {pythonCompoundStatement, pythonSimpleStatement}
+                                                                             tmp[pythonModule] = {pythonUsCompoundStatement, pythonUsSimpleStatement}
                                                                              tmp[pythonNonlocalStatement] = {pythonIdentifier}
                                                                              tmp[pythonParameters] = {pythonParameter}
                                                                              tmp[pythonParenthesizedExpression] = {pythonExpression, pythonListSplat, pythonParenthesizedExpression, pythonYield}
@@ -511,7 +511,7 @@ const pythonTokenKinds*: set[PythonNodeKind] = {
                                                  pythonRBrackTok,
                                                  pythonAccentTok,
                                                  pythonAccentEqualTok,
-                                                 pythonFutureTok,
+                                                 pythonUsUsFutureTok,
                                                  pythonAndTok,
                                                  pythonAsTok,
                                                  pythonAssertTok,
@@ -562,8 +562,8 @@ proc tsNodeType*(node: TsPythonNode): string
 proc kind*(node: TsPythonNode): PythonNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_compound_statement":      pythonCompoundStatement
-      of "_simple_statement":        pythonSimpleStatement
+      of "_compound_statement":      pythonUsCompoundStatement
+      of "_simple_statement":        pythonUsSimpleStatement
       of "expression":               pythonExpression
       of "parameter":                pythonParameter
       of "pattern":                  pythonPattern
@@ -699,7 +699,7 @@ proc kind*(node: TsPythonNode): PythonNodeKind {.noSideEffect.} =
       of "]":                        pythonRBrackTok
       of "^":                        pythonAccentTok
       of "^=":                       pythonAccentEqualTok
-      of "__future__":               pythonFutureTok
+      of "__future__":               pythonUsUsFutureTok
       of "and":                      pythonAndTok
       of "as":                       pythonAsTok
       of "assert":                   pythonAssertTok

@@ -7,7 +7,7 @@ export treesitter
 
 type
   NixNodeKind* = enum
-    nixExpression          ## _expression
+    nixUsExpression        ## _expression
     nixApp                 ## app
     nixAssert              ## assert
     nixAttrpath            ## attrpath
@@ -92,7 +92,7 @@ type
 
 proc strRepr*(kind: NixNodeKind): string =
   case kind:
-    of nixExpression:          "_expression"
+    of nixUsExpression:        "_expression"
     of nixApp:                 "app"
     of nixAssert:              "assert"
     of nixAttrpath:            "attrpath"
@@ -248,7 +248,7 @@ proc tsNodeType*(node: TsNixNode): string
 proc kind*(node: TsNixNode): NixNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":          nixExpression
+      of "_expression":          nixUsExpression
       of "app":                  nixApp
       of "assert":               nixAssert
       of "attrpath":             nixAttrpath

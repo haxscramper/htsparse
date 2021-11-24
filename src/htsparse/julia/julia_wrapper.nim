@@ -7,9 +7,9 @@ export treesitter
 
 type
   JuliaNodeKind* = enum
-    juliaDefinition                   ## _definition
-    juliaExpression                   ## _expression
-    juliaStatement                    ## _statement
+    juliaUsDefinition                 ## _definition
+    juliaUsExpression                 ## _expression
+    juliaUsStatement                  ## _statement
     juliaAbstractDefinition           ## abstract_definition
     juliaArgumentList                 ## argument_list
     juliaArrayComprehensionExpression ## array_comprehension_expression
@@ -160,9 +160,9 @@ type
 
 proc strRepr*(kind: JuliaNodeKind): string =
   case kind:
-    of juliaDefinition:                   "_definition"
-    of juliaExpression:                   "_expression"
-    of juliaStatement:                    "_statement"
+    of juliaUsDefinition:                 "_definition"
+    of juliaUsExpression:                 "_expression"
+    of juliaUsStatement:                  "_statement"
     of juliaAbstractDefinition:           "abstract_definition"
     of juliaArgumentList:                 "argument_list"
     of juliaArrayComprehensionExpression: "array_comprehension_expression"
@@ -328,12 +328,12 @@ type
 const juliaAllowedSubnodes*: array[JuliaNodeKind, set[JuliaNodeKind]] = block:
                                                                           var tmp: array[JuliaNodeKind, set[JuliaNodeKind]]
                                                                           tmp[juliaAbstractDefinition] = {juliaSubtypeClause}
-                                                                          tmp[juliaArgumentList] = {juliaExpression, juliaNamedArgument}
-                                                                          tmp[juliaArrayComprehensionExpression] = {juliaExpression, juliaForClause, juliaIfClause}
-                                                                          tmp[juliaArrayExpression] = {juliaExpression}
-                                                                          tmp[juliaAssignmentExpression] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaBareTupleExpression] = {juliaExpression}
-                                                                          tmp[juliaBinaryExpression] = {juliaExpression}
+                                                                          tmp[juliaArgumentList] = {juliaUsExpression, juliaNamedArgument}
+                                                                          tmp[juliaArrayComprehensionExpression] = {juliaUsExpression, juliaForClause, juliaIfClause}
+                                                                          tmp[juliaArrayExpression] = {juliaUsExpression}
+                                                                          tmp[juliaAssignmentExpression] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaBareTupleExpression] = {juliaUsExpression}
+                                                                          tmp[juliaBinaryExpression] = {juliaUsExpression}
                                                                           tmp[juliaBroadcastCallExpression] = {
                                                                                                                 juliaArgumentList,
                                                                                                                 juliaArrayComprehensionExpression,
@@ -376,13 +376,13 @@ const juliaAllowedSubnodes*: array[JuliaNodeKind, set[JuliaNodeKind]] = block:
                                                                                                        juliaTripleString,
                                                                                                        juliaTupleExpression
                                                                                                      }
-                                                                          tmp[juliaCatchClause] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaCatchClause] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaCoefficientExpression] = {juliaIdentifier, juliaNumber, juliaParenthesizedExpression}
-                                                                          tmp[juliaCompoundExpression] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaCompoundExpression] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaConstStatement] = {juliaVariableDeclaration}
-                                                                          tmp[juliaDoClause] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaElseClause] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaElseifClause] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaDoClause] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaElseClause] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaElseifClause] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaExportStatement] = {juliaIdentifier}
                                                                           tmp[juliaFieldExpression] = {
                                                                                                         juliaArrayComprehensionExpression,
@@ -402,56 +402,56 @@ const juliaAllowedSubnodes*: array[JuliaNodeKind, set[JuliaNodeKind]] = block:
                                                                                                         juliaTripleString,
                                                                                                         juliaTupleExpression
                                                                                                       }
-                                                                          tmp[juliaFinallyClause] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaForBinding] = {juliaExpression}
+                                                                          tmp[juliaFinallyClause] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaForBinding] = {juliaUsExpression}
                                                                           tmp[juliaForClause] = {juliaForBinding}
-                                                                          tmp[juliaForStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaForBinding}
-                                                                          tmp[juliaFunctionDefinition] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaFunctionExpression] = {juliaExpression, juliaAssignmentExpression, juliaParameterList}
-                                                                          tmp[juliaGeneratorExpression] = {juliaExpression, juliaForClause, juliaIfClause}
-                                                                          tmp[juliaIfClause] = {juliaExpression}
-                                                                          tmp[juliaIfStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaForStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaForBinding}
+                                                                          tmp[juliaFunctionDefinition] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaFunctionExpression] = {juliaUsExpression, juliaAssignmentExpression, juliaParameterList}
+                                                                          tmp[juliaGeneratorExpression] = {juliaUsExpression, juliaForClause, juliaIfClause}
+                                                                          tmp[juliaIfClause] = {juliaUsExpression}
+                                                                          tmp[juliaIfStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaImportStatement] = {juliaIdentifier, juliaScopedIdentifier, juliaSelectedImport}
-                                                                          tmp[juliaInterpolationExpression] = {juliaExpression}
+                                                                          tmp[juliaInterpolationExpression] = {juliaUsExpression}
                                                                           tmp[juliaKeywordParameters] = {juliaIdentifier, juliaOptionalParameter, juliaSpreadParameter, juliaTypedParameter}
-                                                                          tmp[juliaLetStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaVariableDeclaration}
-                                                                          tmp[juliaMacroArgumentList] = {juliaExpression}
-                                                                          tmp[juliaMacroDefinition] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaLetStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaVariableDeclaration}
+                                                                          tmp[juliaMacroArgumentList] = {juliaUsExpression}
+                                                                          tmp[juliaMacroDefinition] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaMacroExpression] = {juliaArgumentList, juliaMacroArgumentList, juliaMacroIdentifier}
                                                                           tmp[juliaMacroIdentifier] = {juliaIdentifier, juliaOperator}
                                                                           tmp[juliaMatrixExpression] = {juliaMatrixRow}
-                                                                          tmp[juliaMatrixRow] = {juliaExpression}
-                                                                          tmp[juliaModuleDefinition] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaNamedArgument] = {juliaExpression}
-                                                                          tmp[juliaNamedField] = {juliaExpression}
-                                                                          tmp[juliaOptionalParameter] = {juliaExpression, juliaTypedParameter}
-                                                                          tmp[juliaPairExpression] = {juliaExpression}
+                                                                          tmp[juliaMatrixRow] = {juliaUsExpression}
+                                                                          tmp[juliaModuleDefinition] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaNamedArgument] = {juliaUsExpression}
+                                                                          tmp[juliaNamedField] = {juliaUsExpression}
+                                                                          tmp[juliaOptionalParameter] = {juliaUsExpression, juliaTypedParameter}
+                                                                          tmp[juliaPairExpression] = {juliaUsExpression}
                                                                           tmp[juliaParameterList] = {juliaIdentifier, juliaKeywordParameters, juliaOptionalParameter, juliaSpreadParameter, juliaTypedParameter}
                                                                           tmp[juliaParameterizedIdentifier] = {juliaFieldExpression, juliaIdentifier, juliaTypeArgumentList}
-                                                                          tmp[juliaParenthesizedExpression] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaParenthesizedExpression] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp[juliaPrimitiveDefinition] = {juliaNumber, juliaSubtypeClause}
-                                                                          tmp[juliaQuoteExpression] = {juliaExpression}
-                                                                          tmp[juliaQuoteStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaRangeExpression] = {juliaExpression}
-                                                                          tmp[juliaReturnStatement] = {juliaExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaQuoteExpression] = {juliaUsExpression}
+                                                                          tmp[juliaQuoteStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaRangeExpression] = {juliaUsExpression}
+                                                                          tmp[juliaReturnStatement] = {juliaUsExpression, juliaBareTupleExpression}
                                                                           tmp[juliaScopedIdentifier] = {juliaIdentifier, juliaScopedIdentifier}
                                                                           tmp[juliaSelectedImport] = {juliaIdentifier, juliaMacroIdentifier, juliaScopedIdentifier}
-                                                                          tmp[juliaSourceFile] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
-                                                                          tmp[juliaSpreadExpression] = {juliaExpression}
+                                                                          tmp[juliaSourceFile] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaSpreadExpression] = {juliaUsExpression}
                                                                           tmp[juliaSpreadParameter] = {juliaIdentifier}
-                                                                          tmp[juliaStructDefinition] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaSubtypeClause}
-                                                                          tmp[juliaSubscriptExpression] = {juliaExpression}
-                                                                          tmp[juliaSubtypeClause] = {juliaExpression}
-                                                                          tmp[juliaTernaryExpression] = {juliaExpression}
-                                                                          tmp[juliaTryStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaCatchClause, juliaFinallyClause}
-                                                                          tmp[juliaTupleExpression] = {juliaExpression, juliaNamedField}
-                                                                          tmp[juliaTypeArgumentList] = {juliaExpression}
+                                                                          tmp[juliaStructDefinition] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaSubtypeClause}
+                                                                          tmp[juliaSubscriptExpression] = {juliaUsExpression}
+                                                                          tmp[juliaSubtypeClause] = {juliaUsExpression}
+                                                                          tmp[juliaTernaryExpression] = {juliaUsExpression}
+                                                                          tmp[juliaTryStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression, juliaCatchClause, juliaFinallyClause}
+                                                                          tmp[juliaTupleExpression] = {juliaUsExpression, juliaNamedField}
+                                                                          tmp[juliaTypeArgumentList] = {juliaUsExpression}
                                                                           tmp[juliaTypeParameterList] = {juliaConstrainedParameter, juliaIdentifier}
-                                                                          tmp[juliaTypedExpression] = {juliaExpression}
+                                                                          tmp[juliaTypedExpression] = {juliaUsExpression}
                                                                           tmp[juliaTypedParameter] = {juliaIdentifier, juliaParameterizedIdentifier}
-                                                                          tmp[juliaUnaryExpression] = {juliaExpression}
-                                                                          tmp[juliaVariableDeclaration] = {juliaExpression}
-                                                                          tmp[juliaWhileStatement] = {juliaExpression, juliaAssignmentExpression, juliaBareTupleExpression}
+                                                                          tmp[juliaUnaryExpression] = {juliaUsExpression}
+                                                                          tmp[juliaVariableDeclaration] = {juliaUsExpression}
+                                                                          tmp[juliaWhileStatement] = {juliaUsExpression, juliaAssignmentExpression, juliaBareTupleExpression}
                                                                           tmp
 const juliaTokenKinds*: set[JuliaNodeKind] = {
                                                juliaNewlineTok,
@@ -528,9 +528,9 @@ proc tsNodeType*(node: TsJuliaNode): string
 proc kind*(node: TsJuliaNode): JuliaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_definition":                    juliaDefinition
-      of "_expression":                    juliaExpression
-      of "_statement":                     juliaStatement
+      of "_definition":                    juliaUsDefinition
+      of "_expression":                    juliaUsExpression
+      of "_statement":                     juliaUsStatement
       of "abstract_definition":            juliaAbstractDefinition
       of "argument_list":                  juliaArgumentList
       of "array_comprehension_expression": juliaArrayComprehensionExpression

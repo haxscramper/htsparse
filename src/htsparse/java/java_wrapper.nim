@@ -7,10 +7,10 @@ export treesitter
 
 type
   JavaNodeKind* = enum
-    javaLiteral                          ## _literal
-    javaSimpleType                       ## _simple_type
-    javaType                             ## _type
-    javaUnannotatedType                  ## _unannotated_type
+    javaUsLiteral                        ## _literal
+    javaUsSimpleType                     ## _simple_type
+    javaUsType                           ## _type
+    javaUsUnannotatedType                ## _unannotated_type
     javaDeclaration                      ## declaration
     javaExpression                       ## expression
     javaPrimaryExpression                ## primary_expression
@@ -250,10 +250,10 @@ type
 
 proc strRepr*(kind: JavaNodeKind): string =
   case kind:
-    of javaLiteral:                          "_literal"
-    of javaSimpleType:                       "_simple_type"
-    of javaType:                             "_type"
-    of javaUnannotatedType:                  "_unannotated_type"
+    of javaUsLiteral:                        "_literal"
+    of javaUsSimpleType:                     "_simple_type"
+    of javaUsType:                           "_type"
+    of javaUsUnannotatedType:                "_unannotated_type"
     of javaDeclaration:                      "declaration"
     of javaExpression:                       "expression"
     of javaPrimaryExpression:                "primary_expression"
@@ -501,7 +501,7 @@ type
 
 const javaAllowedSubnodes*: array[JavaNodeKind, set[JavaNodeKind]] = block:
                                                                        var tmp: array[JavaNodeKind, set[JavaNodeKind]]
-                                                                       tmp[javaAnnotatedType] = {javaUnannotatedType, javaAnnotation, javaMarkerAnnotation}
+                                                                       tmp[javaAnnotatedType] = {javaUsUnannotatedType, javaAnnotation, javaMarkerAnnotation}
                                                                        tmp[javaAnnotationArgumentList] = {javaAnnotation, javaElementValueArrayInitializer, javaElementValuePair, javaExpression, javaMarkerAnnotation}
                                                                        tmp[javaAnnotationTypeBody] = {javaAnnotationTypeDeclaration, javaAnnotationTypeElementDeclaration, javaClassDeclaration, javaConstantDeclaration, javaInterfaceDeclaration}
                                                                        tmp[javaAnnotationTypeDeclaration] = {javaModifiers}
@@ -513,7 +513,7 @@ const javaAllowedSubnodes*: array[JavaNodeKind, set[JavaNodeKind]] = block:
                                                                        tmp[javaBreakStatement] = {javaIdentifier}
                                                                        tmp[javaCatchClause] = {javaCatchFormalParameter}
                                                                        tmp[javaCatchFormalParameter] = {javaCatchType, javaModifiers}
-                                                                       tmp[javaCatchType] = {javaUnannotatedType}
+                                                                       tmp[javaCatchType] = {javaUsUnannotatedType}
                                                                        tmp[javaClassBody] = {
                                                                                               javaAnnotationTypeDeclaration,
                                                                                               javaBlock,
@@ -527,7 +527,7 @@ const javaAllowedSubnodes*: array[JavaNodeKind, set[JavaNodeKind]] = block:
                                                                                               javaStaticInitializer
                                                                                             }
                                                                        tmp[javaClassDeclaration] = {javaModifiers}
-                                                                       tmp[javaClassLiteral] = {javaUnannotatedType}
+                                                                       tmp[javaClassLiteral] = {javaUsUnannotatedType}
                                                                        tmp[javaConstantDeclaration] = {javaModifiers}
                                                                        tmp[javaConstructorBody] = {javaExplicitConstructorInvocation, javaStatement}
                                                                        tmp[javaConstructorDeclaration] = {javaModifiers, javaThrows}
@@ -563,12 +563,12 @@ const javaAllowedSubnodes*: array[JavaNodeKind, set[JavaNodeKind]] = block:
                                                                        tmp[javaInferredParameters] = {javaIdentifier}
                                                                        tmp[javaInterfaceBody] = {javaAnnotationTypeDeclaration, javaClassDeclaration, javaConstantDeclaration, javaEnumDeclaration, javaInterfaceDeclaration, javaMethodDeclaration}
                                                                        tmp[javaInterfaceDeclaration] = {javaExtendsInterfaces, javaModifiers}
-                                                                       tmp[javaInterfaceTypeList] = {javaType}
+                                                                       tmp[javaInterfaceTypeList] = {javaUsType}
                                                                        tmp[javaLabeledStatement] = {javaIdentifier, javaStatement}
                                                                        tmp[javaLocalVariableDeclaration] = {javaModifiers}
                                                                        tmp[javaMethodDeclaration] = {javaAnnotation, javaMarkerAnnotation, javaModifiers, javaThrows}
                                                                        tmp[javaMethodInvocation] = {javaSuper}
-                                                                       tmp[javaMethodReference] = {javaType, javaPrimaryExpression, javaSuper, javaTypeArguments}
+                                                                       tmp[javaMethodReference] = {javaUsType, javaPrimaryExpression, javaSuper, javaTypeArguments}
                                                                        tmp[javaModifiers] = {javaAnnotation, javaMarkerAnnotation}
                                                                        tmp[javaModuleBody] = {javaModuleDirective}
                                                                        tmp[javaModuleDeclaration] = {javaAnnotation, javaMarkerAnnotation}
@@ -577,31 +577,31 @@ const javaAllowedSubnodes*: array[JavaNodeKind, set[JavaNodeKind]] = block:
                                                                        tmp[javaPackageDeclaration] = {javaAnnotation, javaIdentifier, javaMarkerAnnotation, javaScopedIdentifier}
                                                                        tmp[javaParenthesizedExpression] = {javaExpression}
                                                                        tmp[javaProgram] = {javaStatement}
-                                                                       tmp[javaReceiverParameter] = {javaUnannotatedType, javaAnnotation, javaIdentifier, javaMarkerAnnotation, javaThis}
+                                                                       tmp[javaReceiverParameter] = {javaUsUnannotatedType, javaAnnotation, javaIdentifier, javaMarkerAnnotation, javaThis}
                                                                        tmp[javaRecordDeclaration] = {javaModifiers}
                                                                        tmp[javaResource] = {javaFieldAccess, javaIdentifier, javaModifiers}
                                                                        tmp[javaResourceSpecification] = {javaResource}
                                                                        tmp[javaReturnStatement] = {javaExpression}
                                                                        tmp[javaScopedTypeIdentifier] = {javaAnnotation, javaGenericType, javaMarkerAnnotation, javaScopedTypeIdentifier, javaTypeIdentifier}
-                                                                       tmp[javaSpreadParameter] = {javaUnannotatedType, javaModifiers, javaVariableDeclarator}
+                                                                       tmp[javaSpreadParameter] = {javaUsUnannotatedType, javaModifiers, javaVariableDeclarator}
                                                                        tmp[javaStaticInitializer] = {javaBlock}
                                                                        tmp[javaSuperInterfaces] = {javaInterfaceTypeList}
-                                                                       tmp[javaSuperclass] = {javaType}
+                                                                       tmp[javaSuperclass] = {javaUsType}
                                                                        tmp[javaSwitchBlock] = {javaSwitchBlockStatementGroup, javaSwitchRule}
                                                                        tmp[javaSwitchBlockStatementGroup] = {javaStatement, javaSwitchLabel}
                                                                        tmp[javaSwitchLabel] = {javaExpression}
                                                                        tmp[javaSwitchRule] = {javaBlock, javaExpressionStatement, javaSwitchLabel, javaThrowStatement}
                                                                        tmp[javaSynchronizedStatement] = {javaParenthesizedExpression}
                                                                        tmp[javaThrowStatement] = {javaExpression}
-                                                                       tmp[javaThrows] = {javaType}
+                                                                       tmp[javaThrows] = {javaUsType}
                                                                        tmp[javaTryStatement] = {javaCatchClause, javaFinallyClause}
                                                                        tmp[javaTryWithResourcesStatement] = {javaCatchClause, javaFinallyClause}
-                                                                       tmp[javaTypeArguments] = {javaType, javaWildcard}
-                                                                       tmp[javaTypeBound] = {javaType}
+                                                                       tmp[javaTypeArguments] = {javaUsType, javaWildcard}
+                                                                       tmp[javaTypeBound] = {javaUsType}
                                                                        tmp[javaTypeParameter] = {javaAnnotation, javaIdentifier, javaMarkerAnnotation, javaTypeBound}
                                                                        tmp[javaTypeParameters] = {javaTypeParameter}
                                                                        tmp[javaUpdateExpression] = {javaExpression}
-                                                                       tmp[javaWildcard] = {javaType, javaAnnotation, javaMarkerAnnotation, javaSuper}
+                                                                       tmp[javaWildcard] = {javaUsType, javaAnnotation, javaMarkerAnnotation, javaSuper}
                                                                        tmp[javaYieldStatement] = {javaExpression}
                                                                        tmp
 const javaTokenKinds*: set[JavaNodeKind] = {
@@ -721,10 +721,10 @@ proc tsNodeType*(node: TsJavaNode): string
 proc kind*(node: TsJavaNode): JavaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_literal":                            javaLiteral
-      of "_simple_type":                        javaSimpleType
-      of "_type":                               javaType
-      of "_unannotated_type":                   javaUnannotatedType
+      of "_literal":                            javaUsLiteral
+      of "_simple_type":                        javaUsSimpleType
+      of "_type":                               javaUsType
+      of "_unannotated_type":                   javaUsUnannotatedType
       of "declaration":                         javaDeclaration
       of "expression":                          javaExpression
       of "primary_expression":                  javaPrimaryExpression

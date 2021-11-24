@@ -19,7 +19,7 @@ type
     verilogDollarskewUnderscoretimingUnderscorecheck      ## $skew_timing_check
     verilogDollartimeskewUnderscoretimingUnderscorecheck  ## $timeskew_timing_check
     verilogDollarwidthUnderscoretimingUnderscorecheck     ## $width_timing_check
-    verilogOrderedParameterAssignment                     ## _ordered_parameter_assignment
+    verilogUsOrderedParameterAssignment                   ## _ordered_parameter_assignment
     verilogActionBlock                                    ## action_block
     verilogAlwaysConstruct                                ## always_construct
     verilogAlwaysKeyword                                  ## always_keyword
@@ -390,6 +390,7 @@ type
     verilogOpenRangeList                                  ## open_range_list
     verilogOpenValueRange                                 ## open_value_range
     verilogOperatorAssignment                             ## operator_assignment
+    verilogOrderedParameterAssignment                     ## ordered_parameter_assignment
     verilogOrderedPortConnection                          ## ordered_port_connection
     verilogOutputDeclaration                              ## output_declaration
     verilogOutputIdentifier                               ## output_identifier
@@ -1018,6 +1019,7 @@ type
     verilog–Tok                                         ## –
     verilog–GreaterThanTok                              ## –>
     verilog––Tok                                      ## ––
+    verilogDynamicArrayVariableIdentifier                 ## dynamic_array_variable_identifier
     verilogSyntaxError                                    ## Tree-sitter parser syntax error
 
 
@@ -1035,7 +1037,7 @@ proc strRepr*(kind: VerilogNodeKind): string =
     of verilogDollarskewUnderscoretimingUnderscorecheck:      "$skew_timing_check"
     of verilogDollartimeskewUnderscoretimingUnderscorecheck:  "$timeskew_timing_check"
     of verilogDollarwidthUnderscoretimingUnderscorecheck:     "$width_timing_check"
-    of verilogOrderedParameterAssignment:                     "_ordered_parameter_assignment"
+    of verilogUsOrderedParameterAssignment:                   "_ordered_parameter_assignment"
     of verilogActionBlock:                                    "action_block"
     of verilogAlwaysConstruct:                                "always_construct"
     of verilogAlwaysKeyword:                                  "always_keyword"
@@ -1406,6 +1408,7 @@ proc strRepr*(kind: VerilogNodeKind): string =
     of verilogOpenRangeList:                                  "open_range_list"
     of verilogOpenValueRange:                                 "open_value_range"
     of verilogOperatorAssignment:                             "operator_assignment"
+    of verilogOrderedParameterAssignment:                     "ordered_parameter_assignment"
     of verilogOrderedPortConnection:                          "ordered_port_connection"
     of verilogOutputDeclaration:                              "output_declaration"
     of verilogOutputIdentifier:                               "output_identifier"
@@ -2033,6 +2036,7 @@ proc strRepr*(kind: VerilogNodeKind): string =
     of verilog–Tok:                                           "\xE2\x80\x93"
     of verilog–GreaterThanTok:                                "\xE2\x80\x93>"
     of verilog––Tok:                                          "\xE2\x80\x93\xE2\x80\x93"
+    of verilogDynamicArrayVariableIdentifier:                 "dynamic_array_variable_identifier"
     of verilogSyntaxError:                                    "ERROR"
 
 
@@ -2076,7 +2080,7 @@ const verilogAllowedSubnodes*: array[VerilogNodeKind, set[VerilogNodeKind]] = bl
                                                                                 tmp[verilogDollarskewUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogNotifier, verilogReferenceEvent, verilogTimingCheckLimit}
                                                                                 tmp[verilogDollartimeskewUnderscoretimingUnderscorecheck] = {verilogDataEvent, verilogEventBasedFlag, verilogNotifier, verilogReferenceEvent, verilogRemainActiveFlag, verilogTimingCheckLimit}
                                                                                 tmp[verilogDollarwidthUnderscoretimingUnderscorecheck] = {verilogControlledReferenceEvent, verilogNotifier, verilogThreshold, verilogTimingCheckLimit}
-                                                                                tmp[verilogOrderedParameterAssignment] = {verilogDataType, verilogMintypmaxExpression}
+                                                                                tmp[verilogUsOrderedParameterAssignment] = {verilogDataType, verilogMintypmaxExpression}
                                                                                 tmp[verilogActionBlock] = {verilogStatement, verilogStatementOrNull}
                                                                                 tmp[verilogAlwaysConstruct] = {verilogAlwaysKeyword, verilogStatement}
                                                                                 tmp[verilogAnonymousProgram] = {verilogAnonymousProgramItem}
@@ -2855,7 +2859,7 @@ const verilogAllowedSubnodes*: array[VerilogNodeKind, set[VerilogNodeKind]] = bl
                                                                                 tmp[verilogOpenRangeList] = {verilogOpenValueRange}
                                                                                 tmp[verilogOpenValueRange] = {verilogValueRange}
                                                                                 tmp[verilogOperatorAssignment] = {verilogAssignmentOperator, verilogExpression, verilogVariableLvalue}
-                                                                                tmp[verilogOrderedParameterAssignment] = {verilogOrderedParameterAssignment}
+                                                                                tmp[verilogOrderedParameterAssignment] = {verilogUsOrderedParameterAssignment}
                                                                                 tmp[verilogOrderedPortConnection] = {verilogAttributeInstance, verilogExpression}
                                                                                 tmp[verilogOutputDeclaration] = {verilogDataType, verilogDataTypeOrImplicit1, verilogListOfPortIdentifiers, verilogListOfVariablePortIdentifiers, verilogNetPortType1}
                                                                                 tmp[verilogOutputIdentifier] = {verilogInoutPortIdentifier, verilogInterfaceIdentifier, verilogOutputPortIdentifier, verilogPortIdentifier}
@@ -3711,7 +3715,7 @@ proc kind*(node: TsVerilogNode): VerilogNodeKind {.noSideEffect.} =
       of "$skew_timing_check":                       verilogDollarskewUnderscoretimingUnderscorecheck
       of "$timeskew_timing_check":                   verilogDollartimeskewUnderscoretimingUnderscorecheck
       of "$width_timing_check":                      verilogDollarwidthUnderscoretimingUnderscorecheck
-      of "_ordered_parameter_assignment":            verilogOrderedParameterAssignment
+      of "_ordered_parameter_assignment":            verilogUsOrderedParameterAssignment
       of "action_block":                             verilogActionBlock
       of "always_construct":                         verilogAlwaysConstruct
       of "always_keyword":                           verilogAlwaysKeyword

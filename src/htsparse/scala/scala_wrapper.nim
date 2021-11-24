@@ -7,8 +7,8 @@ export treesitter
 
 type
   ScalaNodeKind* = enum
-    scalaDefinition                   ## _definition
-    scalaPattern                      ## _pattern
+    scalaUsDefinition                 ## _definition
+    scalaUsPattern                    ## _pattern
     scalaExpression                   ## expression
     scalaAccessModifier               ## access_modifier
     scalaAccessQualifier              ## access_qualifier
@@ -174,8 +174,8 @@ type
 
 proc strRepr*(kind: ScalaNodeKind): string =
   case kind:
-    of scalaDefinition:                   "_definition"
-    of scalaPattern:                      "_pattern"
+    of scalaUsDefinition:                 "_definition"
+    of scalaUsPattern:                    "_pattern"
     of scalaExpression:                   "expression"
     of scalaAccessModifier:               "access_modifier"
     of scalaAccessQualifier:              "access_qualifier"
@@ -362,7 +362,7 @@ const scalaAllowedSubnodes*: array[ScalaNodeKind, set[ScalaNodeKind]] = block:
                                                                           var tmp: array[ScalaNodeKind, set[ScalaNodeKind]]
                                                                           tmp[scalaAccessModifier] = {scalaAccessQualifier}
                                                                           tmp[scalaAccessQualifier] = {scalaIdentifier}
-                                                                          tmp[scalaAlternativePattern] = {scalaPattern}
+                                                                          tmp[scalaAlternativePattern] = {scalaUsPattern}
                                                                           tmp[scalaArguments] = {scalaExpression}
                                                                           tmp[scalaAscriptionExpression] = {
                                                                                                              scalaAnnotation,
@@ -379,15 +379,15 @@ const scalaAllowedSubnodes*: array[ScalaNodeKind, set[ScalaNodeKind]] = block:
                                                                                                              scalaTypeIdentifier
                                                                                                            }
                                                                           tmp[scalaBindings] = {scalaBinding}
-                                                                          tmp[scalaBlock] = {scalaDefinition, scalaExpression}
+                                                                          tmp[scalaBlock] = {scalaUsDefinition, scalaExpression}
                                                                           tmp[scalaCaseBlock] = {scalaCaseClause}
                                                                           tmp[scalaCaseClause] = {scalaGuard}
                                                                           tmp[scalaCatchClause] = {scalaCaseBlock}
                                                                           tmp[scalaClassDefinition] = {scalaAccessModifier, scalaAnnotation, scalaModifiers}
                                                                           tmp[scalaClassParameter] = {scalaAnnotation, scalaModifiers}
                                                                           tmp[scalaClassParameters] = {scalaClassParameter}
-                                                                          tmp[scalaCompilationUnit] = {scalaDefinition}
-                                                                          tmp[scalaEnumerator] = {scalaPattern, scalaExpression, scalaGuard}
+                                                                          tmp[scalaCompilationUnit] = {scalaUsDefinition}
+                                                                          tmp[scalaEnumerator] = {scalaUsPattern, scalaExpression, scalaGuard}
                                                                           tmp[scalaEnumerators] = {scalaEnumerator}
                                                                           tmp[scalaExtendsClause] = {scalaArguments}
                                                                           tmp[scalaFinallyClause] = {scalaExpression}
@@ -424,12 +424,12 @@ const scalaAllowedSubnodes*: array[ScalaNodeKind, set[ScalaNodeKind]] = block:
                                                                           tmp[scalaReturnExpression] = {scalaExpression}
                                                                           tmp[scalaStableIdentifier] = {scalaIdentifier, scalaStableIdentifier}
                                                                           tmp[scalaStableTypeIdentifier] = {scalaIdentifier, scalaStableIdentifier, scalaTypeIdentifier}
-                                                                          tmp[scalaTemplateBody] = {scalaDefinition, scalaExpression}
+                                                                          tmp[scalaTemplateBody] = {scalaUsDefinition, scalaExpression}
                                                                           tmp[scalaThrowExpression] = {scalaExpression}
                                                                           tmp[scalaTraitDefinition] = {scalaAnnotation, scalaModifiers}
                                                                           tmp[scalaTryExpression] = {scalaCatchClause, scalaFinallyClause}
                                                                           tmp[scalaTupleExpression] = {scalaExpression}
-                                                                          tmp[scalaTuplePattern] = {scalaPattern}
+                                                                          tmp[scalaTuplePattern] = {scalaUsPattern}
                                                                           tmp[scalaTupleType] = {
                                                                                                   scalaAnnotation,
                                                                                                   scalaCompoundType,
@@ -529,8 +529,8 @@ proc tsNodeType*(node: TsScalaNode): string
 proc kind*(node: TsScalaNode): ScalaNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_definition":                    scalaDefinition
-      of "_pattern":                       scalaPattern
+      of "_definition":                    scalaUsDefinition
+      of "_pattern":                       scalaUsPattern
       of "expression":                     scalaExpression
       of "access_modifier":                scalaAccessModifier
       of "access_qualifier":               scalaAccessQualifier

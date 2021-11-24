@@ -7,9 +7,9 @@ export treesitter
 
 type
   DartNodeKind* = enum
-    dartDeclaration                            ## _declaration
-    dartLiteral                                ## _literal
-    dartStatement                              ## _statement
+    dartUsDeclaration                          ## _declaration
+    dartUsLiteral                              ## _literal
+    dartUsStatement                            ## _statement
     dartAdditiveExpression                     ## additive_expression
     dartAdditiveOperator                       ## additive_operator
     dartAnnotation                             ## annotation
@@ -46,6 +46,7 @@ type
     dartConstructorParam                       ## constructor_param
     dartConstructorSignature                   ## constructor_signature
     dartContinueStatement                      ## continue_statement
+    dartDeclaration                            ## declaration
     dartDimensions                             ## dimensions
     dartDoStatement                            ## do_statement
     dartDottedIdentifierList                   ## dotted_identifier_list
@@ -304,9 +305,9 @@ type
 
 proc strRepr*(kind: DartNodeKind): string =
   case kind:
-    of dartDeclaration:                            "_declaration"
-    of dartLiteral:                                "_literal"
-    of dartStatement:                              "_statement"
+    of dartUsDeclaration:                          "_declaration"
+    of dartUsLiteral:                              "_literal"
+    of dartUsStatement:                            "_statement"
     of dartAdditiveExpression:                     "additive_expression"
     of dartAdditiveOperator:                       "additive_operator"
     of dartAnnotation:                             "annotation"
@@ -343,6 +344,7 @@ proc strRepr*(kind: DartNodeKind): string =
     of dartConstructorParam:                       "constructor_param"
     of dartConstructorSignature:                   "constructor_signature"
     of dartContinueStatement:                      "continue_statement"
+    of dartDeclaration:                            "declaration"
     of dartDimensions:                             "dimensions"
     of dartDoStatement:                            "do_statement"
     of dartDottedIdentifierList:                   "dotted_identifier_list"
@@ -619,7 +621,7 @@ type
 const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        var tmp: array[DartNodeKind, set[DartNodeKind]]
                                                                        tmp[dartAdditiveExpression] = {
-                                                                                                       dartLiteral,
+                                                                                                       dartUsLiteral,
                                                                                                        dartAdditiveExpression,
                                                                                                        dartAdditiveOperator,
                                                                                                        dartAssignmentExpression,
@@ -650,7 +652,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                        dartUnconditionalAssignableSelector
                                                                                                      }
                                                                        tmp[dartArgument] = {
-                                                                                             dartLiteral,
+                                                                                             dartUsLiteral,
                                                                                              dartAdditiveExpression,
                                                                                              dartAssignmentExpression,
                                                                                              dartBitwiseAndExpression,
@@ -683,7 +685,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartArguments] = {dartArgument, dartNamedArgument}
                                                                        tmp[dartAssertStatement] = {dartAssertion}
                                                                        tmp[dartAssertion] = {
-                                                                                              dartLiteral,
+                                                                                              dartUsLiteral,
                                                                                               dartAdditiveExpression,
                                                                                               dartAssignmentExpression,
                                                                                               dartBitwiseAndExpression,
@@ -713,7 +715,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                               dartUnconditionalAssignableSelector
                                                                                             }
                                                                        tmp[dartAssignableExpression] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -745,7 +747,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
                                                                        tmp[dartAwaitExpression] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -776,7 +778,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                   }
                                                                        tmp[dartBinaryOperator] = {dartAdditiveOperator, dartBitwiseOperator, dartMultiplicativeOperator, dartRelationalOperator, dartShiftOperator}
                                                                        tmp[dartBitwiseAndExpression] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -806,7 +808,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
                                                                        tmp[dartBitwiseOrExpression] = {
-                                                                                                        dartLiteral,
+                                                                                                        dartUsLiteral,
                                                                                                         dartAdditiveExpression,
                                                                                                         dartAssignmentExpression,
                                                                                                         dartBitwiseAndExpression,
@@ -836,7 +838,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                         dartUnconditionalAssignableSelector
                                                                                                       }
                                                                        tmp[dartBitwiseXorExpression] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -865,10 +867,10 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnaryExpression,
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
-                                                                       tmp[dartBlock] = {dartStatement}
+                                                                       tmp[dartBlock] = {dartUsStatement}
                                                                        tmp[dartBreakStatement] = {dartIdentifier}
                                                                        tmp[dartCascadeSection] = {
-                                                                                                   dartLiteral,
+                                                                                                   dartUsLiteral,
                                                                                                    dartAdditiveExpression,
                                                                                                    dartArgumentPart,
                                                                                                    dartAssignmentExpression,
@@ -903,7 +905,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                    dartUnconditionalAssignableSelector
                                                                                                  }
                                                                        tmp[dartCascadeSelector] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -938,7 +940,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartCombinator] = {dartIdentifier}
                                                                        tmp[dartConditionalAssignableSelector] = {dartIdentifier}
                                                                        tmp[dartConditionalExpression] = {
-                                                                                                          dartLiteral,
+                                                                                                          dartUsLiteral,
                                                                                                           dartAdditiveExpression,
                                                                                                           dartAssignmentExpression,
                                                                                                           dartBitwiseAndExpression,
@@ -1013,7 +1015,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartEnumBody] = {dartEnumConstant}
                                                                        tmp[dartEnumConstant] = {dartAnnotation, dartMarkerAnnotation}
                                                                        tmp[dartEqualityExpression] = {
-                                                                                                       dartLiteral,
+                                                                                                       dartUsLiteral,
                                                                                                        dartAdditiveExpression,
                                                                                                        dartAssignmentExpression,
                                                                                                        dartBitwiseAndExpression,
@@ -1044,7 +1046,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                        dartUnconditionalAssignableSelector
                                                                                                      }
                                                                        tmp[dartExpressionStatement] = {
-                                                                                                        dartLiteral,
+                                                                                                        dartUsLiteral,
                                                                                                         dartAdditiveExpression,
                                                                                                         dartAssignmentExpression,
                                                                                                         dartBitwiseAndExpression,
@@ -1076,7 +1078,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartExtensionBody] = {dartAnnotation, dartDeclaration, dartFunctionBody, dartMarkerAnnotation, dartMethodSignature}
                                                                        tmp[dartFactoryConstructorSignature] = {dartFormalParameterList, dartIdentifier}
                                                                        tmp[dartFieldInitializer] = {
-                                                                                                     dartLiteral,
+                                                                                                     dartUsLiteral,
                                                                                                      dartAdditiveExpression,
                                                                                                      dartAssignmentExpression,
                                                                                                      dartBitwiseAndExpression,
@@ -1147,7 +1149,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                   }
                                                                        tmp[dartFormalParameterList] = {dartFormalParameter, dartOptionalFormalParameters}
                                                                        tmp[dartFunctionBody] = {
-                                                                                                 dartLiteral,
+                                                                                                 dartUsLiteral,
                                                                                                  dartAdditiveExpression,
                                                                                                  dartAssignmentExpression,
                                                                                                  dartBitwiseAndExpression,
@@ -1178,7 +1180,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                  dartUnconditionalAssignableSelector
                                                                                                }
                                                                        tmp[dartFunctionExpressionBody] = {
-                                                                                                           dartLiteral,
+                                                                                                           dartUsLiteral,
                                                                                                            dartAdditiveExpression,
                                                                                                            dartAssignmentExpression,
                                                                                                            dartBitwiseAndExpression,
@@ -1222,7 +1224,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartImportOrExport] = {dartLibraryExport, dartLibraryImport}
                                                                        tmp[dartImportSpecification] = {dartCombinator, dartConfigurableUri, dartIdentifier, dartUri}
                                                                        tmp[dartInitializedIdentifier] = {
-                                                                                                          dartLiteral,
+                                                                                                          dartUsLiteral,
                                                                                                           dartAdditiveExpression,
                                                                                                           dartAssignmentExpression,
                                                                                                           dartBitwiseAndExpression,
@@ -1268,12 +1270,12 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartInitializers] = {dartInitializerListEntry}
                                                                        tmp[dartInterfaces] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartLabel] = {dartIdentifier}
-                                                                       tmp[dartLabeledStatement] = {dartStatement, dartIdentifier}
+                                                                       tmp[dartLabeledStatement] = {dartUsStatement, dartIdentifier}
                                                                        tmp[dartLibraryExport] = {dartAnnotation, dartCombinator, dartConfigurableUri, dartMarkerAnnotation}
                                                                        tmp[dartLibraryImport] = {dartAnnotation, dartImportSpecification, dartMarkerAnnotation}
                                                                        tmp[dartLibraryName] = {dartAnnotation, dartDottedIdentifierList, dartMarkerAnnotation}
                                                                        tmp[dartListLiteral] = {
-                                                                                                dartLiteral,
+                                                                                                dartUsLiteral,
                                                                                                 dartAdditiveExpression,
                                                                                                 dartAssignmentExpression,
                                                                                                 dartBitwiseAndExpression,
@@ -1310,7 +1312,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                               }
                                                                        tmp[dartLocalVariableDeclaration] = {dartInitializedVariableDefinition}
                                                                        tmp[dartLogicalAndExpression] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -1340,7 +1342,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
                                                                        tmp[dartLogicalOrExpression] = {
-                                                                                                        dartLiteral,
+                                                                                                        dartUsLiteral,
                                                                                                         dartAdditiveExpression,
                                                                                                         dartAssignmentExpression,
                                                                                                         dartBitwiseAndExpression,
@@ -1392,7 +1394,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartMixins] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartModuleName] = {dartIdentifier, dartModuleName}
                                                                        tmp[dartMultiplicativeExpression] = {
-                                                                                                             dartLiteral,
+                                                                                                             dartUsLiteral,
                                                                                                              dartAdditiveExpression,
                                                                                                              dartAssignmentExpression,
                                                                                                              dartBitwiseAndExpression,
@@ -1423,7 +1425,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                              dartUnconditionalAssignableSelector
                                                                                                            }
                                                                        tmp[dartNamedArgument] = {
-                                                                                                  dartLiteral,
+                                                                                                  dartUsLiteral,
                                                                                                   dartAdditiveExpression,
                                                                                                   dartAssignmentExpression,
                                                                                                   dartBitwiseAndExpression,
@@ -1466,7 +1468,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                       dartVoidType
                                                                                                     }
                                                                        tmp[dartOptionalFormalParameters] = {
-                                                                                                             dartLiteral,
+                                                                                                             dartUsLiteral,
                                                                                                              dartAdditiveExpression,
                                                                                                              dartAssignmentExpression,
                                                                                                              dartBitwiseAndExpression,
@@ -1500,7 +1502,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartOptionalPositionalParameterTypes] = {dartNormalParameterType}
                                                                        tmp[dartParameterTypeList] = {dartNormalParameterType, dartOptionalParameterTypes}
                                                                        tmp[dartParenthesizedExpression] = {
-                                                                                                            dartLiteral,
+                                                                                                            dartUsLiteral,
                                                                                                             dartAdditiveExpression,
                                                                                                             dartAssignmentExpression,
                                                                                                             dartBitwiseAndExpression,
@@ -1535,7 +1537,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartPostfixOperator] = {dartIncrementOperator}
                                                                        tmp[dartPrefixOperator] = {dartMinusOperator, dartNegationOperator, dartTildeOperator}
                                                                        tmp[dartProgram] = {
-                                                                                            dartStatement,
+                                                                                            dartUsStatement,
                                                                                             dartAnnotation,
                                                                                             dartClassDefinition,
                                                                                             dartConstBuiltin,
@@ -1566,7 +1568,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartRedirectingFactoryConstructorSignature] = {dartConstBuiltin, dartFormalParameterList, dartFunctionType, dartIdentifier, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartRedirection] = {dartArguments, dartIdentifier, dartThis}
                                                                        tmp[dartRelationalExpression] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -1597,7 +1599,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
                                                                        tmp[dartReturnStatement] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -1628,7 +1630,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                   }
                                                                        tmp[dartSelector] = {dartArgumentPart, dartConditionalAssignableSelector, dartUnconditionalAssignableSelector}
                                                                        tmp[dartSetOrMapLiteral] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -1673,7 +1675,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                     dartVoidType
                                                                                                   }
                                                                        tmp[dartShiftExpression] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -1704,7 +1706,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                     dartUnconditionalAssignableSelector
                                                                                                   }
                                                                        tmp[dartSpreadElement] = {
-                                                                                                  dartLiteral,
+                                                                                                  dartUsLiteral,
                                                                                                   dartAdditiveExpression,
                                                                                                   dartAssignmentExpression,
                                                                                                   dartBitwiseAndExpression,
@@ -1734,7 +1736,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                   dartUnconditionalAssignableSelector
                                                                                                 }
                                                                        tmp[dartStaticFinalDeclaration] = {
-                                                                                                           dartLiteral,
+                                                                                                           dartUsLiteral,
                                                                                                            dartAdditiveExpression,
                                                                                                            dartAssignmentExpression,
                                                                                                            dartBitwiseAndExpression,
@@ -1766,9 +1768,9 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartStaticFinalDeclarationList] = {dartStaticFinalDeclaration}
                                                                        tmp[dartStringLiteral] = {dartEscapeSequence, dartTemplateSubstitution}
                                                                        tmp[dartSuperclass] = {dartFunctionType, dartMixins, dartTypeArguments, dartTypeIdentifier}
-                                                                       tmp[dartSwitchBlock] = {dartStatement, dartSwitchLabel}
+                                                                       tmp[dartSwitchBlock] = {dartUsStatement, dartSwitchLabel}
                                                                        tmp[dartSwitchLabel] = {
-                                                                                                dartLiteral,
+                                                                                                dartUsLiteral,
                                                                                                 dartAdditiveExpression,
                                                                                                 dartAssignmentExpression,
                                                                                                 dartBitwiseAndExpression,
@@ -1800,7 +1802,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                               }
                                                                        tmp[dartSymbolLiteral] = {dartIdentifier}
                                                                        tmp[dartTemplateSubstitution] = {
-                                                                                                         dartLiteral,
+                                                                                                         dartUsLiteral,
                                                                                                          dartAdditiveExpression,
                                                                                                          dartAssignmentExpression,
                                                                                                          dartBitwiseAndExpression,
@@ -1831,7 +1833,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                          dartUnconditionalAssignableSelector
                                                                                                        }
                                                                        tmp[dartThrowExpression] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignmentExpression,
                                                                                                     dartBitwiseAndExpression,
@@ -1861,7 +1863,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                     dartUnconditionalAssignableSelector
                                                                                                   }
                                                                        tmp[dartThrowExpressionWithoutCascade] = {
-                                                                                                                  dartLiteral,
+                                                                                                                  dartUsLiteral,
                                                                                                                   dartAdditiveExpression,
                                                                                                                   dartAssignmentExpression,
                                                                                                                   dartAssignmentExpressionWithoutCascade,
@@ -1899,7 +1901,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartTypeBound] = {dartFunctionType, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartTypeCast] = {dartAsOperator, dartFunctionType, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartTypeCastExpression] = {
-                                                                                                       dartLiteral,
+                                                                                                       dartUsLiteral,
                                                                                                        dartAdditiveExpression,
                                                                                                        dartAssignmentExpression,
                                                                                                        dartBitwiseAndExpression,
@@ -1933,7 +1935,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartTypeParameters] = {dartTypeParameter}
                                                                        tmp[dartTypeTest] = {dartFunctionType, dartIsOperator, dartTypeArguments, dartTypeIdentifier}
                                                                        tmp[dartTypeTestExpression] = {
-                                                                                                       dartLiteral,
+                                                                                                       dartUsLiteral,
                                                                                                        dartAdditiveExpression,
                                                                                                        dartAssignmentExpression,
                                                                                                        dartBitwiseAndExpression,
@@ -1973,7 +1975,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                     dartVoidType
                                                                                                   }
                                                                        tmp[dartUnaryExpression] = {
-                                                                                                    dartLiteral,
+                                                                                                    dartUsLiteral,
                                                                                                     dartAdditiveExpression,
                                                                                                     dartAssignableExpression,
                                                                                                     dartAssignmentExpression,
@@ -2009,7 +2011,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                     dartUnconditionalAssignableSelector
                                                                                                   }
                                                                        tmp[dartUnconditionalAssignableSelector] = {
-                                                                                                                    dartLiteral,
+                                                                                                                    dartUsLiteral,
                                                                                                                     dartAdditiveExpression,
                                                                                                                     dartAssignmentExpression,
                                                                                                                     dartBitwiseAndExpression,
@@ -2041,7 +2043,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                        tmp[dartUri] = {dartStringLiteral}
                                                                        tmp[dartUriTest] = {dartDottedIdentifierList, dartStringLiteral}
                                                                        tmp[dartYieldEachStatement] = {
-                                                                                                       dartLiteral,
+                                                                                                       dartUsLiteral,
                                                                                                        dartAdditiveExpression,
                                                                                                        dartAssignmentExpression,
                                                                                                        dartBitwiseAndExpression,
@@ -2071,7 +2073,7 @@ const dartAllowedSubnodes*: array[DartNodeKind, set[DartNodeKind]] = block:
                                                                                                        dartUnconditionalAssignableSelector
                                                                                                      }
                                                                        tmp[dartYieldStatement] = {
-                                                                                                   dartLiteral,
+                                                                                                   dartUsLiteral,
                                                                                                    dartAdditiveExpression,
                                                                                                    dartAssignmentExpression,
                                                                                                    dartBitwiseAndExpression,
@@ -2223,9 +2225,9 @@ proc tsNodeType*(node: TsDartNode): string
 proc kind*(node: TsDartNode): DartNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_declaration":                              dartDeclaration
-      of "_literal":                                  dartLiteral
-      of "_statement":                                dartStatement
+      of "_declaration":                              dartUsDeclaration
+      of "_literal":                                  dartUsLiteral
+      of "_statement":                                dartUsStatement
       of "additive_expression":                       dartAdditiveExpression
       of "additive_operator":                         dartAdditiveOperator
       of "annotation":                                dartAnnotation

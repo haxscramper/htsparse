@@ -7,13 +7,13 @@ export treesitter
 
 type
   CppNodeKind* = enum
-    cppAbstractDeclarator                   ## _abstract_declarator
-    cppDeclarator                           ## _declarator
-    cppExpression                           ## _expression
-    cppFieldDeclarator                      ## _field_declarator
-    cppStatement                            ## _statement
-    cppTypeDeclarator                       ## _type_declarator
-    cppTypeSpecifier                        ## _type_specifier
+    cppUsAbstractDeclarator                 ## _abstract_declarator
+    cppUsDeclarator                         ## _declarator
+    cppUsExpression                         ## _expression
+    cppUsFieldDeclarator                    ## _field_declarator
+    cppUsStatement                          ## _statement
+    cppUsTypeDeclarator                     ## _type_declarator
+    cppUsTypeSpecifier                      ## _type_specifier
     cppAbstractArrayDeclarator              ## abstract_array_declarator
     cppAbstractFunctionDeclarator           ## abstract_function_declarator
     cppAbstractParenthesizedDeclarator      ## abstract_parenthesized_declarator
@@ -224,17 +224,18 @@ type
     cppDoubleRBrackTok                      ## ]]
     cppAccentTok                            ## ^
     cppAccentEqualTok                       ## ^=
-    cppAtomicTok                            ## _Atomic
-    cppAttributeTok                         ## __attribute__
-    cppBasedTok                             ## __based
-    cppCdeclTok                             ## __cdecl
-    cppClrcallTok                           ## __clrcall
-    cppDeclspecTok                          ## __declspec
-    cppFastcallTok                          ## __fastcall
-    cppStdcallTok                           ## __stdcall
-    cppThiscallTok                          ## __thiscall
-    cppUnalignedTok                         ## __unaligned
-    cppVectorcallTok                        ## __vectorcall
+    cppUsAtomicTok                          ## _Atomic
+    cppUsUsAttributeTok                     ## __attribute__
+    cppUsUsBasedTok                         ## __based
+    cppUsUsCdeclTok                         ## __cdecl
+    cppUsUsClrcallTok                       ## __clrcall
+    cppUsUsDeclspecTok                      ## __declspec
+    cppUsUsFastcallTok                      ## __fastcall
+    cppUsUsStdcallTok                       ## __stdcall
+    cppUsUsThiscallTok                      ## __thiscall
+    cppUsUsUnalignedTok                     ## __unaligned
+    cppUsUsVectorcallTok                    ## __vectorcall
+    cppUsUnalignedTok                       ## _unaligned
     cppAuto                                 ## auto
     cppBreakTok                             ## break
     cppCaseTok                              ## case
@@ -330,13 +331,13 @@ type
 
 proc strRepr*(kind: CppNodeKind): string =
   case kind:
-    of cppAbstractDeclarator:                   "_abstract_declarator"
-    of cppDeclarator:                           "_declarator"
-    of cppExpression:                           "_expression"
-    of cppFieldDeclarator:                      "_field_declarator"
-    of cppStatement:                            "_statement"
-    of cppTypeDeclarator:                       "_type_declarator"
-    of cppTypeSpecifier:                        "_type_specifier"
+    of cppUsAbstractDeclarator:                 "_abstract_declarator"
+    of cppUsDeclarator:                         "_declarator"
+    of cppUsExpression:                         "_expression"
+    of cppUsFieldDeclarator:                    "_field_declarator"
+    of cppUsStatement:                          "_statement"
+    of cppUsTypeDeclarator:                     "_type_declarator"
+    of cppUsTypeSpecifier:                      "_type_specifier"
     of cppAbstractArrayDeclarator:              "abstract_array_declarator"
     of cppAbstractFunctionDeclarator:           "abstract_function_declarator"
     of cppAbstractParenthesizedDeclarator:      "abstract_parenthesized_declarator"
@@ -546,17 +547,18 @@ proc strRepr*(kind: CppNodeKind): string =
     of cppDoubleRBrackTok:                      "]]"
     of cppAccentTok:                            "^"
     of cppAccentEqualTok:                       "^="
-    of cppAtomicTok:                            "_Atomic"
-    of cppAttributeTok:                         "__attribute__"
-    of cppBasedTok:                             "__based"
-    of cppCdeclTok:                             "__cdecl"
-    of cppClrcallTok:                           "__clrcall"
-    of cppDeclspecTok:                          "__declspec"
-    of cppFastcallTok:                          "__fastcall"
-    of cppStdcallTok:                           "__stdcall"
-    of cppThiscallTok:                          "__thiscall"
-    of cppUnalignedTok:                         "__unaligned"
-    of cppVectorcallTok:                        "__vectorcall"
+    of cppUsAtomicTok:                          "_Atomic"
+    of cppUsUsAttributeTok:                     "__attribute__"
+    of cppUsUsBasedTok:                         "__based"
+    of cppUsUsCdeclTok:                         "__cdecl"
+    of cppUsUsClrcallTok:                       "__clrcall"
+    of cppUsUsDeclspecTok:                      "__declspec"
+    of cppUsUsFastcallTok:                      "__fastcall"
+    of cppUsUsStdcallTok:                       "__stdcall"
+    of cppUsUsThiscallTok:                      "__thiscall"
+    of cppUsUsUnalignedTok:                     "__unaligned"
+    of cppUsUsVectorcallTok:                    "__vectorcall"
+    of cppUsUnalignedTok:                       "_unaligned"
     of cppAuto:                                 "auto"
     of cppBreakTok:                             "break"
     of cppCaseTok:                              "case"
@@ -667,18 +669,18 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                     var tmp: array[CppNodeKind, set[CppNodeKind]]
                                                                     tmp[cppAbstractArrayDeclarator] = {cppTypeQualifier}
                                                                     tmp[cppAbstractFunctionDeclarator] = {cppNoexcept, cppRefQualifier, cppThrowSpecifier, cppTrailingReturnType, cppTypeQualifier}
-                                                                    tmp[cppAbstractParenthesizedDeclarator] = {cppAbstractDeclarator}
+                                                                    tmp[cppAbstractParenthesizedDeclarator] = {cppUsAbstractDeclarator}
                                                                     tmp[cppAbstractPointerDeclarator] = {cppTypeQualifier}
-                                                                    tmp[cppAbstractReferenceDeclarator] = {cppAbstractDeclarator}
-                                                                    tmp[cppArgumentList] = {cppExpression, cppInitializerList, cppPreprocDefined}
+                                                                    tmp[cppAbstractReferenceDeclarator] = {cppUsAbstractDeclarator}
+                                                                    tmp[cppArgumentList] = {cppUsExpression, cppInitializerList, cppPreprocDefined}
                                                                     tmp[cppArrayDeclarator] = {cppTypeQualifier}
                                                                     tmp[cppAttribute] = {cppArgumentList}
                                                                     tmp[cppAttributeDeclaration] = {cppAttribute}
                                                                     tmp[cppAttributeSpecifier] = {cppArgumentList}
-                                                                    tmp[cppAttributedDeclarator] = {cppDeclarator, cppFieldDeclarator, cppTypeDeclarator, cppAttributeDeclaration}
-                                                                    tmp[cppAttributedStatement] = {cppStatement, cppAttributeDeclaration}
+                                                                    tmp[cppAttributedDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppUsTypeDeclarator, cppAttributeDeclaration}
+                                                                    tmp[cppAttributedStatement] = {cppUsStatement, cppAttributeDeclaration}
                                                                     tmp[cppBaseClassClause] = {cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
-                                                                    tmp[cppBitfieldClause] = {cppExpression}
+                                                                    tmp[cppBitfieldClause] = {cppUsExpression}
                                                                     tmp[cppCaseStatement] = {
                                                                                               cppAttributedStatement,
                                                                                               cppBreakStatement,
@@ -703,11 +705,11 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             }
                                                                     tmp[cppCharLiteral] = {cppEscapeSequence}
                                                                     tmp[cppClassSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
-                                                                    tmp[cppCoReturnStatement] = {cppExpression}
-                                                                    tmp[cppCoYieldStatement] = {cppExpression}
+                                                                    tmp[cppCoReturnStatement] = {cppUsExpression}
+                                                                    tmp[cppCoYieldStatement] = {cppUsExpression}
                                                                     tmp[cppCompoundStatement] = {
-                                                                                                  cppStatement,
-                                                                                                  cppTypeSpecifier,
+                                                                                                  cppUsStatement,
+                                                                                                  cppUsTypeSpecifier,
                                                                                                   cppAliasDeclaration,
                                                                                                   cppAttributedStatement,
                                                                                                   cppDeclaration,
@@ -738,8 +740,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppVirtualFunctionSpecifier
                                                                                           }
                                                                     tmp[cppDeclarationList] = {
-                                                                                                cppStatement,
-                                                                                                cppTypeSpecifier,
+                                                                                                cppUsStatement,
+                                                                                                cppUsTypeSpecifier,
                                                                                                 cppAliasDeclaration,
                                                                                                 cppAttributedStatement,
                                                                                                 cppDeclaration,
@@ -759,14 +761,14 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                 cppTypeDefinition,
                                                                                                 cppUsingDeclaration
                                                                                               }
-                                                                    tmp[cppDecltype] = {cppExpression}
-                                                                    tmp[cppDeleteExpression] = {cppExpression}
+                                                                    tmp[cppDecltype] = {cppUsExpression}
+                                                                    tmp[cppDeleteExpression] = {cppUsExpression}
                                                                     tmp[cppDependentName] = {cppTemplateFunction, cppTemplateMethod, cppTemplateType}
-                                                                    tmp[cppDependentType] = {cppTypeSpecifier}
+                                                                    tmp[cppDependentType] = {cppUsTypeSpecifier}
                                                                     tmp[cppDestructorName] = {cppIdentifier}
                                                                     tmp[cppEnumeratorList] = {cppEnumerator}
-                                                                    tmp[cppExplicitFunctionSpecifier] = {cppExpression}
-                                                                    tmp[cppExpressionStatement] = {cppExpression, cppCommaExpression}
+                                                                    tmp[cppExplicitFunctionSpecifier] = {cppUsExpression}
+                                                                    tmp[cppExpressionStatement] = {cppUsExpression, cppCommaExpression}
                                                                     tmp[cppFieldDeclaration] = {
                                                                                                  cppAttributeDeclaration,
                                                                                                  cppAttributeSpecifier,
@@ -798,7 +800,7 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                     tmp[cppFieldInitializer] = {cppArgumentList, cppFieldIdentifier, cppInitializerList, cppQualifiedIdentifier, cppTemplateMethod}
                                                                     tmp[cppFieldInitializerList] = {cppFieldInitializer}
                                                                     tmp[cppForRangeLoop] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
-                                                                    tmp[cppForStatement] = {cppStatement}
+                                                                    tmp[cppForStatement] = {cppUsStatement}
                                                                     tmp[cppFriendDeclaration] = {cppDeclaration, cppFunctionDefinition, cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
                                                                     tmp[cppFunctionDeclarator] = {
                                                                                                    cppAttributeSpecifier,
@@ -822,28 +824,28 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                    cppTypeQualifier,
                                                                                                    cppVirtualFunctionSpecifier
                                                                                                  }
-                                                                    tmp[cppInitializerList] = {cppExpression, cppInitializerList, cppInitializerPair}
-                                                                    tmp[cppLabeledStatement] = {cppStatement}
-                                                                    tmp[cppLambdaCaptureSpecifier] = {cppExpression, cppLambdaDefaultCapture}
+                                                                    tmp[cppInitializerList] = {cppUsExpression, cppInitializerList, cppInitializerPair}
+                                                                    tmp[cppLabeledStatement] = {cppUsStatement}
+                                                                    tmp[cppLambdaCaptureSpecifier] = {cppUsExpression, cppLambdaDefaultCapture}
                                                                     tmp[cppMsBasedModifier] = {cppArgumentList}
                                                                     tmp[cppMsDeclspecModifier] = {cppIdentifier}
                                                                     tmp[cppMsPointerModifier] = {cppMsRestrictModifier, cppMsSignedPtrModifier, cppMsUnalignedPtrModifier, cppMsUnsignedPtrModifier}
                                                                     tmp[cppNamespaceAliasDefinition] = {cppIdentifier, cppQualifiedIdentifier}
                                                                     tmp[cppNamespaceDefinitionName] = {cppIdentifier, cppNamespaceDefinitionName}
                                                                     tmp[cppNewDeclarator] = {cppNewDeclarator}
-                                                                    tmp[cppNoexcept] = {cppExpression}
+                                                                    tmp[cppNoexcept] = {cppUsExpression}
                                                                     tmp[cppOperatorCast] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppOperatorName] = {cppIdentifier}
                                                                     tmp[cppOptionalParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppParameterList] = {cppOptionalParameterDeclaration, cppParameterDeclaration, cppVariadicParameterDeclaration}
-                                                                    tmp[cppParenthesizedDeclarator] = {cppDeclarator, cppFieldDeclarator, cppTypeDeclarator}
-                                                                    tmp[cppParenthesizedExpression] = {cppExpression, cppCommaExpression, cppPreprocDefined}
+                                                                    tmp[cppParenthesizedDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppUsTypeDeclarator}
+                                                                    tmp[cppParenthesizedExpression] = {cppUsExpression, cppCommaExpression, cppPreprocDefined}
                                                                     tmp[cppPointerDeclarator] = {cppMsBasedModifier, cppMsPointerModifier, cppTypeQualifier}
                                                                     tmp[cppPreprocDefined] = {cppIdentifier}
                                                                     tmp[cppPreprocElif] = {
-                                                                                            cppStatement,
-                                                                                            cppTypeSpecifier,
+                                                                                            cppUsStatement,
+                                                                                            cppUsTypeSpecifier,
                                                                                             cppAccessSpecifier,
                                                                                             cppAliasDeclaration,
                                                                                             cppAttributedStatement,
@@ -868,8 +870,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppUsingDeclaration
                                                                                           }
                                                                     tmp[cppPreprocElse] = {
-                                                                                            cppStatement,
-                                                                                            cppTypeSpecifier,
+                                                                                            cppUsStatement,
+                                                                                            cppUsTypeSpecifier,
                                                                                             cppAccessSpecifier,
                                                                                             cppAliasDeclaration,
                                                                                             cppAttributedStatement,
@@ -894,8 +896,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppUsingDeclaration
                                                                                           }
                                                                     tmp[cppPreprocIf] = {
-                                                                                          cppStatement,
-                                                                                          cppTypeSpecifier,
+                                                                                          cppUsStatement,
+                                                                                          cppUsTypeSpecifier,
                                                                                           cppAccessSpecifier,
                                                                                           cppAliasDeclaration,
                                                                                           cppAttributedStatement,
@@ -920,8 +922,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                           cppUsingDeclaration
                                                                                         }
                                                                     tmp[cppPreprocIfdef] = {
-                                                                                             cppStatement,
-                                                                                             cppTypeSpecifier,
+                                                                                             cppUsStatement,
+                                                                                             cppUsTypeSpecifier,
                                                                                              cppAccessSpecifier,
                                                                                              cppAliasDeclaration,
                                                                                              cppAttributedStatement,
@@ -947,14 +949,14 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                            }
                                                                     tmp[cppPreprocParams] = {cppIdentifier}
                                                                     tmp[cppQpropertyDeclaration] = {cppTypeIdentifier}
-                                                                    tmp[cppReferenceDeclarator] = {cppDeclarator, cppFieldDeclarator, cppVariadicDeclarator}
-                                                                    tmp[cppReturnStatement] = {cppExpression, cppCommaExpression, cppInitializerList}
+                                                                    tmp[cppReferenceDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppVariadicDeclarator}
+                                                                    tmp[cppReturnStatement] = {cppUsExpression, cppCommaExpression, cppInitializerList}
                                                                     tmp[cppStringLiteral] = {cppEscapeSequence}
                                                                     tmp[cppStructSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
                                                                     tmp[cppStructuredBindingDeclarator] = {cppIdentifier}
-                                                                    tmp[cppSubscriptDesignator] = {cppExpression}
-                                                                    tmp[cppTemplateArgumentList] = {cppExpression, cppTypeDescriptor}
-                                                                    tmp[cppTemplateDeclaration] = {cppTypeSpecifier, cppAliasDeclaration, cppDeclaration, cppFunctionDefinition, cppTemplateDeclaration}
+                                                                    tmp[cppSubscriptDesignator] = {cppUsExpression}
+                                                                    tmp[cppTemplateArgumentList] = {cppUsExpression, cppTypeDescriptor}
+                                                                    tmp[cppTemplateDeclaration] = {cppUsTypeSpecifier, cppAliasDeclaration, cppDeclaration, cppFunctionDefinition, cppTemplateDeclaration}
                                                                     tmp[cppTemplateInstantiation] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppTemplateParameterList] = {
                                                                                                       cppOptionalParameterDeclaration,
@@ -967,11 +969,11 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                     }
                                                                     tmp[cppTemplateTemplateParameterDeclaration] = {cppOptionalTypeParameterDeclaration, cppTypeParameterDeclaration, cppVariadicTypeParameterDeclaration}
                                                                     tmp[cppThrowSpecifier] = {cppTypeDescriptor}
-                                                                    tmp[cppThrowStatement] = {cppExpression}
-                                                                    tmp[cppTrailingReturnType] = {cppAbstractDeclarator, cppTypeSpecifier, cppTypeQualifier}
+                                                                    tmp[cppThrowStatement] = {cppUsExpression}
+                                                                    tmp[cppTrailingReturnType] = {cppUsAbstractDeclarator, cppUsTypeSpecifier, cppTypeQualifier}
                                                                     tmp[cppTranslationUnit] = {
-                                                                                                cppStatement,
-                                                                                                cppTypeSpecifier,
+                                                                                                cppUsStatement,
+                                                                                                cppUsTypeSpecifier,
                                                                                                 cppAliasDeclaration,
                                                                                                 cppAttributedStatement,
                                                                                                 cppDeclaration,
@@ -1066,18 +1068,18 @@ const cppTokenKinds*: set[CppNodeKind] = {
                                            cppDoubleRBrackTok,
                                            cppAccentTok,
                                            cppAccentEqualTok,
-                                           cppAtomicTok,
-                                           cppAttributeTok,
-                                           cppBasedTok,
-                                           cppCdeclTok,
-                                           cppClrcallTok,
-                                           cppDeclspecTok,
-                                           cppFastcallTok,
-                                           cppStdcallTok,
-                                           cppThiscallTok,
-                                           cppUnalignedTok,
-                                           cppVectorcallTok,
-                                           cppUnalignedTok,
+                                           cppUsAtomicTok,
+                                           cppUsUsAttributeTok,
+                                           cppUsUsBasedTok,
+                                           cppUsUsCdeclTok,
+                                           cppUsUsClrcallTok,
+                                           cppUsUsDeclspecTok,
+                                           cppUsUsFastcallTok,
+                                           cppUsUsStdcallTok,
+                                           cppUsUsThiscallTok,
+                                           cppUsUsUnalignedTok,
+                                           cppUsUsVectorcallTok,
+                                           cppUsUnalignedTok,
                                            cppBreakTok,
                                            cppCaseTok,
                                            cppCatchTok,
@@ -1156,13 +1158,13 @@ proc tsNodeType*(node: TsCppNode): string
 proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_abstract_declarator":                    cppAbstractDeclarator
-      of "_declarator":                             cppDeclarator
-      of "_expression":                             cppExpression
-      of "_field_declarator":                       cppFieldDeclarator
-      of "_statement":                              cppStatement
-      of "_type_declarator":                        cppTypeDeclarator
-      of "_type_specifier":                         cppTypeSpecifier
+      of "_abstract_declarator":                    cppUsAbstractDeclarator
+      of "_declarator":                             cppUsDeclarator
+      of "_expression":                             cppUsExpression
+      of "_field_declarator":                       cppUsFieldDeclarator
+      of "_statement":                              cppUsStatement
+      of "_type_declarator":                        cppUsTypeDeclarator
+      of "_type_specifier":                         cppUsTypeSpecifier
       of "abstract_array_declarator":               cppAbstractArrayDeclarator
       of "abstract_function_declarator":            cppAbstractFunctionDeclarator
       of "abstract_parenthesized_declarator":       cppAbstractParenthesizedDeclarator
@@ -1372,18 +1374,18 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "]]":                                      cppDoubleRBrackTok
       of "^":                                       cppAccentTok
       of "^=":                                      cppAccentEqualTok
-      of "_Atomic":                                 cppAtomicTok
-      of "__attribute__":                           cppAttributeTok
-      of "__based":                                 cppBasedTok
-      of "__cdecl":                                 cppCdeclTok
-      of "__clrcall":                               cppClrcallTok
-      of "__declspec":                              cppDeclspecTok
-      of "__fastcall":                              cppFastcallTok
-      of "__stdcall":                               cppStdcallTok
-      of "__thiscall":                              cppThiscallTok
-      of "__unaligned":                             cppUnalignedTok
-      of "__vectorcall":                            cppVectorcallTok
-      of "_unaligned":                              cppUnalignedTok
+      of "_Atomic":                                 cppUsAtomicTok
+      of "__attribute__":                           cppUsUsAttributeTok
+      of "__based":                                 cppUsUsBasedTok
+      of "__cdecl":                                 cppUsUsCdeclTok
+      of "__clrcall":                               cppUsUsClrcallTok
+      of "__declspec":                              cppUsUsDeclspecTok
+      of "__fastcall":                              cppUsUsFastcallTok
+      of "__stdcall":                               cppUsUsStdcallTok
+      of "__thiscall":                              cppUsUsThiscallTok
+      of "__unaligned":                             cppUsUsUnalignedTok
+      of "__vectorcall":                            cppUsUsVectorcallTok
+      of "_unaligned":                              cppUsUnalignedTok
       of "auto":                                    cppAuto
       of "break":                                   cppBreakTok
       of "case":                                    cppCaseTok

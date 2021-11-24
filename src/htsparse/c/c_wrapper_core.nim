@@ -4,13 +4,13 @@ export treesitter_core
 
 type
   CNodeKind* = enum
-    cAbstractDeclarator              ## _abstract_declarator
-    cDeclarator                      ## _declarator
-    cExpression                      ## _expression
-    cFieldDeclarator                 ## _field_declarator
-    cStatement                       ## _statement
-    cTypeDeclarator                  ## _type_declarator
-    cTypeSpecifier                   ## _type_specifier
+    cUsAbstractDeclarator            ## _abstract_declarator
+    cUsDeclarator                    ## _declarator
+    cUsExpression                    ## _expression
+    cUsFieldDeclarator               ## _field_declarator
+    cUsStatement                     ## _statement
+    cUsTypeDeclarator                ## _type_declarator
+    cUsTypeSpecifier                 ## _type_specifier
     cAbstractArrayDeclarator         ## abstract_array_declarator
     cAbstractFunctionDeclarator      ## abstract_function_declarator
     cAbstractParenthesizedDeclarator ## abstract_parenthesized_declarator
@@ -156,17 +156,18 @@ type
     cDoubleRBrackTok                 ## ]]
     cAccentTok                       ## ^
     cAccentEqualTok                  ## ^=
-    cAtomicTok                       ## _Atomic
-    cAttributeTok                    ## __attribute__
-    cBasedTok                        ## __based
-    cCdeclTok                        ## __cdecl
-    cClrcallTok                      ## __clrcall
-    cDeclspecTok                     ## __declspec
-    cFastcallTok                     ## __fastcall
-    cStdcallTok                      ## __stdcall
-    cThiscallTok                     ## __thiscall
-    cUnalignedTok                    ## __unaligned
-    cVectorcallTok                   ## __vectorcall
+    cUsAtomicTok                     ## _Atomic
+    cUsUsAttributeTok                ## __attribute__
+    cUsUsBasedTok                    ## __based
+    cUsUsCdeclTok                    ## __cdecl
+    cUsUsClrcallTok                  ## __clrcall
+    cUsUsDeclspecTok                 ## __declspec
+    cUsUsFastcallTok                 ## __fastcall
+    cUsUsStdcallTok                  ## __stdcall
+    cUsUsThiscallTok                 ## __thiscall
+    cUsUsUnalignedTok                ## __unaligned
+    cUsUsVectorcallTok               ## __vectorcall
+    cUsUnalignedTok                  ## _unaligned
     cAutoTok                         ## auto
     cBreakTok                        ## break
     cCaseTok                         ## case
@@ -227,13 +228,13 @@ type
 
 proc strRepr*(kind: CNodeKind): string =
   case kind:
-    of cAbstractDeclarator:              "_abstract_declarator"
-    of cDeclarator:                      "_declarator"
-    of cExpression:                      "_expression"
-    of cFieldDeclarator:                 "_field_declarator"
-    of cStatement:                       "_statement"
-    of cTypeDeclarator:                  "_type_declarator"
-    of cTypeSpecifier:                   "_type_specifier"
+    of cUsAbstractDeclarator:            "_abstract_declarator"
+    of cUsDeclarator:                    "_declarator"
+    of cUsExpression:                    "_expression"
+    of cUsFieldDeclarator:               "_field_declarator"
+    of cUsStatement:                     "_statement"
+    of cUsTypeDeclarator:                "_type_declarator"
+    of cUsTypeSpecifier:                 "_type_specifier"
     of cAbstractArrayDeclarator:         "abstract_array_declarator"
     of cAbstractFunctionDeclarator:      "abstract_function_declarator"
     of cAbstractParenthesizedDeclarator: "abstract_parenthesized_declarator"
@@ -378,17 +379,18 @@ proc strRepr*(kind: CNodeKind): string =
     of cDoubleRBrackTok:                 "]]"
     of cAccentTok:                       "^"
     of cAccentEqualTok:                  "^="
-    of cAtomicTok:                       "_Atomic"
-    of cAttributeTok:                    "__attribute__"
-    of cBasedTok:                        "__based"
-    of cCdeclTok:                        "__cdecl"
-    of cClrcallTok:                      "__clrcall"
-    of cDeclspecTok:                     "__declspec"
-    of cFastcallTok:                     "__fastcall"
-    of cStdcallTok:                      "__stdcall"
-    of cThiscallTok:                     "__thiscall"
-    of cUnalignedTok:                    "__unaligned"
-    of cVectorcallTok:                   "__vectorcall"
+    of cUsAtomicTok:                     "_Atomic"
+    of cUsUsAttributeTok:                "__attribute__"
+    of cUsUsBasedTok:                    "__based"
+    of cUsUsCdeclTok:                    "__cdecl"
+    of cUsUsClrcallTok:                  "__clrcall"
+    of cUsUsDeclspecTok:                 "__declspec"
+    of cUsUsFastcallTok:                 "__fastcall"
+    of cUsUsStdcallTok:                  "__stdcall"
+    of cUsUsThiscallTok:                 "__thiscall"
+    of cUsUsUnalignedTok:                "__unaligned"
+    of cUsUsVectorcallTok:               "__vectorcall"
+    of cUsUnalignedTok:                  "_unaligned"
     of cAutoTok:                         "auto"
     of cBreakTok:                        "break"
     of cCaseTok:                         "case"
@@ -458,16 +460,16 @@ type
 const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                               var tmp: array[CNodeKind, set[CNodeKind]]
                                                               tmp[cAbstractArrayDeclarator] = {cTypeQualifier}
-                                                              tmp[cAbstractParenthesizedDeclarator] = {cAbstractDeclarator}
+                                                              tmp[cAbstractParenthesizedDeclarator] = {cUsAbstractDeclarator}
                                                               tmp[cAbstractPointerDeclarator] = {cTypeQualifier}
-                                                              tmp[cArgumentList] = {cExpression, cPreprocDefined}
+                                                              tmp[cArgumentList] = {cUsExpression, cPreprocDefined}
                                                               tmp[cArrayDeclarator] = {cTypeQualifier}
                                                               tmp[cAttribute] = {cArgumentList}
                                                               tmp[cAttributeDeclaration] = {cAttribute}
                                                               tmp[cAttributeSpecifier] = {cArgumentList}
-                                                              tmp[cAttributedDeclarator] = {cDeclarator, cFieldDeclarator, cTypeDeclarator, cAttributeDeclaration}
-                                                              tmp[cAttributedStatement] = {cStatement, cAttributeDeclaration}
-                                                              tmp[cBitfieldClause] = {cExpression}
+                                                              tmp[cAttributedDeclarator] = {cUsDeclarator, cUsFieldDeclarator, cUsTypeDeclarator, cAttributeDeclaration}
+                                                              tmp[cAttributedStatement] = {cUsStatement, cAttributeDeclaration}
+                                                              tmp[cBitfieldClause] = {cUsExpression}
                                                               tmp[cCaseStatement] = {
                                                                                       cAttributedStatement,
                                                                                       cBreakStatement,
@@ -487,8 +489,8 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                     }
                                                               tmp[cCharLiteral] = {cEscapeSequence}
                                                               tmp[cCompoundStatement] = {
-                                                                                          cStatement,
-                                                                                          cTypeSpecifier,
+                                                                                          cUsStatement,
+                                                                                          cUsTypeSpecifier,
                                                                                           cAttributedStatement,
                                                                                           cDeclaration,
                                                                                           cFunctionDefinition,
@@ -504,8 +506,8 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                               tmp[cConcatenatedString] = {cStringLiteral}
                                                               tmp[cDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
                                                               tmp[cDeclarationList] = {
-                                                                                        cStatement,
-                                                                                        cTypeSpecifier,
+                                                                                        cUsStatement,
+                                                                                        cUsTypeSpecifier,
                                                                                         cAttributedStatement,
                                                                                         cDeclaration,
                                                                                         cFunctionDefinition,
@@ -519,27 +521,27 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                         cTypeDefinition
                                                                                       }
                                                               tmp[cEnumeratorList] = {cEnumerator}
-                                                              tmp[cExpressionStatement] = {cExpression, cCommaExpression}
+                                                              tmp[cExpressionStatement] = {cUsExpression, cCommaExpression}
                                                               tmp[cFieldDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cBitfieldClause, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
                                                               tmp[cFieldDeclarationList] = {cFieldDeclaration, cPreprocCall, cPreprocDef, cPreprocFunctionDef, cPreprocIf, cPreprocIfdef}
                                                               tmp[cFieldDesignator] = {cFieldIdentifier}
-                                                              tmp[cForStatement] = {cStatement}
+                                                              tmp[cForStatement] = {cUsStatement}
                                                               tmp[cFunctionDeclarator] = {cAttributeSpecifier}
                                                               tmp[cFunctionDefinition] = {cAttributeDeclaration, cAttributeSpecifier, cMsCallModifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
-                                                              tmp[cInitializerList] = {cExpression, cInitializerList, cInitializerPair}
-                                                              tmp[cLabeledStatement] = {cStatement}
+                                                              tmp[cInitializerList] = {cUsExpression, cInitializerList, cInitializerPair}
+                                                              tmp[cLabeledStatement] = {cUsStatement}
                                                               tmp[cMsBasedModifier] = {cArgumentList}
                                                               tmp[cMsDeclspecModifier] = {cIdentifier}
                                                               tmp[cMsPointerModifier] = {cMsRestrictModifier, cMsSignedPtrModifier, cMsUnalignedPtrModifier, cMsUnsignedPtrModifier}
                                                               tmp[cParameterDeclaration] = {cAttributeDeclaration, cAttributeSpecifier, cMsDeclspecModifier, cStorageClassSpecifier, cTypeQualifier}
                                                               tmp[cParameterList] = {cParameterDeclaration, cVariadicParameter}
-                                                              tmp[cParenthesizedDeclarator] = {cDeclarator, cFieldDeclarator, cTypeDeclarator}
-                                                              tmp[cParenthesizedExpression] = {cExpression, cCommaExpression, cPreprocDefined}
+                                                              tmp[cParenthesizedDeclarator] = {cUsDeclarator, cUsFieldDeclarator, cUsTypeDeclarator}
+                                                              tmp[cParenthesizedExpression] = {cUsExpression, cCommaExpression, cPreprocDefined}
                                                               tmp[cPointerDeclarator] = {cMsBasedModifier, cMsPointerModifier, cTypeQualifier}
                                                               tmp[cPreprocDefined] = {cIdentifier}
                                                               tmp[cPreprocElif] = {
-                                                                                    cStatement,
-                                                                                    cTypeSpecifier,
+                                                                                    cUsStatement,
+                                                                                    cUsTypeSpecifier,
                                                                                     cAttributedStatement,
                                                                                     cDeclaration,
                                                                                     cFieldDeclaration,
@@ -554,8 +556,8 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                     cTypeDefinition
                                                                                   }
                                                               tmp[cPreprocElse] = {
-                                                                                    cStatement,
-                                                                                    cTypeSpecifier,
+                                                                                    cUsStatement,
+                                                                                    cUsTypeSpecifier,
                                                                                     cAttributedStatement,
                                                                                     cDeclaration,
                                                                                     cFieldDeclaration,
@@ -570,8 +572,8 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                     cTypeDefinition
                                                                                   }
                                                               tmp[cPreprocIf] = {
-                                                                                  cStatement,
-                                                                                  cTypeSpecifier,
+                                                                                  cUsStatement,
+                                                                                  cUsTypeSpecifier,
                                                                                   cAttributedStatement,
                                                                                   cDeclaration,
                                                                                   cFieldDeclaration,
@@ -586,8 +588,8 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                   cTypeDefinition
                                                                                 }
                                                               tmp[cPreprocIfdef] = {
-                                                                                     cStatement,
-                                                                                     cTypeSpecifier,
+                                                                                     cUsStatement,
+                                                                                     cUsTypeSpecifier,
                                                                                      cAttributedStatement,
                                                                                      cDeclaration,
                                                                                      cFieldDeclaration,
@@ -602,13 +604,13 @@ const cAllowedSubnodes*: array[CNodeKind, set[CNodeKind]] = block:
                                                                                      cTypeDefinition
                                                                                    }
                                                               tmp[cPreprocParams] = {cIdentifier}
-                                                              tmp[cReturnStatement] = {cExpression, cCommaExpression}
+                                                              tmp[cReturnStatement] = {cUsExpression, cCommaExpression}
                                                               tmp[cStringLiteral] = {cEscapeSequence}
                                                               tmp[cStructSpecifier] = {cMsDeclspecModifier}
-                                                              tmp[cSubscriptDesignator] = {cExpression}
+                                                              tmp[cSubscriptDesignator] = {cUsExpression}
                                                               tmp[cTranslationUnit] = {
-                                                                                        cStatement,
-                                                                                        cTypeSpecifier,
+                                                                                        cUsStatement,
+                                                                                        cUsTypeSpecifier,
                                                                                         cAttributedStatement,
                                                                                         cDeclaration,
                                                                                         cFunctionDefinition,
@@ -684,18 +686,18 @@ const cTokenKinds*: set[CNodeKind] = {
                                        cDoubleRBrackTok,
                                        cAccentTok,
                                        cAccentEqualTok,
-                                       cAtomicTok,
-                                       cAttributeTok,
-                                       cBasedTok,
-                                       cCdeclTok,
-                                       cClrcallTok,
-                                       cDeclspecTok,
-                                       cFastcallTok,
-                                       cStdcallTok,
-                                       cThiscallTok,
-                                       cUnalignedTok,
-                                       cVectorcallTok,
-                                       cUnalignedTok,
+                                       cUsAtomicTok,
+                                       cUsUsAttributeTok,
+                                       cUsUsBasedTok,
+                                       cUsUsCdeclTok,
+                                       cUsUsClrcallTok,
+                                       cUsUsDeclspecTok,
+                                       cUsUsFastcallTok,
+                                       cUsUsStdcallTok,
+                                       cUsUsThiscallTok,
+                                       cUsUsUnalignedTok,
+                                       cUsUsVectorcallTok,
+                                       cUsUnalignedTok,
                                        cAutoTok,
                                        cBreakTok,
                                        cCaseTok,
@@ -745,13 +747,13 @@ proc tsNodeType*(node: TsCNode): string
 proc kind*(node: TsCNode): CNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_abstract_declarator":              cAbstractDeclarator
-      of "_declarator":                       cDeclarator
-      of "_expression":                       cExpression
-      of "_field_declarator":                 cFieldDeclarator
-      of "_statement":                        cStatement
-      of "_type_declarator":                  cTypeDeclarator
-      of "_type_specifier":                   cTypeSpecifier
+      of "_abstract_declarator":              cUsAbstractDeclarator
+      of "_declarator":                       cUsDeclarator
+      of "_expression":                       cUsExpression
+      of "_field_declarator":                 cUsFieldDeclarator
+      of "_statement":                        cUsStatement
+      of "_type_declarator":                  cUsTypeDeclarator
+      of "_type_specifier":                   cUsTypeSpecifier
       of "abstract_array_declarator":         cAbstractArrayDeclarator
       of "abstract_function_declarator":      cAbstractFunctionDeclarator
       of "abstract_parenthesized_declarator": cAbstractParenthesizedDeclarator
@@ -896,18 +898,18 @@ proc kind*(node: TsCNode): CNodeKind {.noSideEffect.} =
       of "]]":                                cDoubleRBrackTok
       of "^":                                 cAccentTok
       of "^=":                                cAccentEqualTok
-      of "_Atomic":                           cAtomicTok
-      of "__attribute__":                     cAttributeTok
-      of "__based":                           cBasedTok
-      of "__cdecl":                           cCdeclTok
-      of "__clrcall":                         cClrcallTok
-      of "__declspec":                        cDeclspecTok
-      of "__fastcall":                        cFastcallTok
-      of "__stdcall":                         cStdcallTok
-      of "__thiscall":                        cThiscallTok
-      of "__unaligned":                       cUnalignedTok
-      of "__vectorcall":                      cVectorcallTok
-      of "_unaligned":                        cUnalignedTok
+      of "_Atomic":                           cUsAtomicTok
+      of "__attribute__":                     cUsUsAttributeTok
+      of "__based":                           cUsUsBasedTok
+      of "__cdecl":                           cUsUsCdeclTok
+      of "__clrcall":                         cUsUsClrcallTok
+      of "__declspec":                        cUsUsDeclspecTok
+      of "__fastcall":                        cUsUsFastcallTok
+      of "__stdcall":                         cUsUsStdcallTok
+      of "__thiscall":                        cUsUsThiscallTok
+      of "__unaligned":                       cUsUsUnalignedTok
+      of "__vectorcall":                      cUsUsVectorcallTok
+      of "_unaligned":                        cUsUnalignedTok
       of "auto":                              cAutoTok
       of "break":                             cBreakTok
       of "case":                              cCaseTok

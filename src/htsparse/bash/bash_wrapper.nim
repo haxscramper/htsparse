@@ -7,9 +7,9 @@ export treesitter
 
 type
   BashNodeKind* = enum
-    bashExpression                    ## _expression
-    bashPrimaryExpression             ## _primary_expression
-    bashStatement                     ## _statement
+    bashUsExpression                  ## _expression
+    bashUsPrimaryExpression           ## _primary_expression
+    bashUsStatement                   ## _statement
     bashArray                         ## array
     bashBinaryExpression              ## binary_expression
     bashCStyleForStatement            ## c_style_for_statement
@@ -145,9 +145,9 @@ type
 
 proc strRepr*(kind: BashNodeKind): string =
   case kind:
-    of bashExpression:                    "_expression"
-    of bashPrimaryExpression:             "_primary_expression"
-    of bashStatement:                     "_statement"
+    of bashUsExpression:                  "_expression"
+    of bashUsPrimaryExpression:           "_primary_expression"
+    of bashUsStatement:                   "_statement"
     of bashArray:                         "array"
     of bashBinaryExpression:              "binary_expression"
     of bashCStyleForStatement:            "c_style_for_statement"
@@ -304,37 +304,37 @@ type
 
 const bashAllowedSubnodes*: array[BashNodeKind, set[BashNodeKind]] = block:
                                                                        var tmp: array[BashNodeKind, set[BashNodeKind]]
-                                                                       tmp[bashArray] = {bashPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashCaseItem] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashArray] = {bashUsPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCaseItem] = {bashUsStatement, bashHeredocBody}
                                                                        tmp[bashCaseStatement] = {bashCaseItem}
                                                                        tmp[bashCommand] = {bashFileRedirect, bashVariableAssignment}
-                                                                       tmp[bashCommandName] = {bashPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashCommandSubstitution] = {bashStatement, bashFileRedirect, bashHeredocBody}
-                                                                       tmp[bashCompoundStatement] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashConcatenation] = {bashPrimaryExpression}
-                                                                       tmp[bashDeclarationCommand] = {bashPrimaryExpression, bashConcatenation, bashVariableAssignment, bashVariableName}
-                                                                       tmp[bashDoGroup] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashElifClause] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashElseClause] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashExpansion] = {bashPrimaryExpression, bashConcatenation, bashRegex, bashSpecialVariableName, bashSubscript, bashVariableName}
+                                                                       tmp[bashCommandName] = {bashUsPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCommandSubstitution] = {bashUsStatement, bashFileRedirect, bashHeredocBody}
+                                                                       tmp[bashCompoundStatement] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashConcatenation] = {bashUsPrimaryExpression}
+                                                                       tmp[bashDeclarationCommand] = {bashUsPrimaryExpression, bashConcatenation, bashVariableAssignment, bashVariableName}
+                                                                       tmp[bashDoGroup] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashElifClause] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashElseClause] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashExpansion] = {bashUsPrimaryExpression, bashConcatenation, bashRegex, bashSpecialVariableName, bashSubscript, bashVariableName}
                                                                        tmp[bashHeredocBody] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
                                                                        tmp[bashHeredocRedirect] = {bashHeredocStart}
-                                                                       tmp[bashHerestringRedirect] = {bashPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashIfStatement] = {bashStatement, bashElifClause, bashElseClause, bashHeredocBody}
-                                                                       tmp[bashList] = {bashStatement}
+                                                                       tmp[bashHerestringRedirect] = {bashUsPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashIfStatement] = {bashUsStatement, bashElifClause, bashElseClause, bashHeredocBody}
+                                                                       tmp[bashList] = {bashUsStatement}
                                                                        tmp[bashNegatedCommand] = {bashCommand, bashSubshell, bashTestCommand}
-                                                                       tmp[bashParenthesizedExpression] = {bashExpression}
-                                                                       tmp[bashPipeline] = {bashStatement}
-                                                                       tmp[bashPostfixExpression] = {bashExpression}
-                                                                       tmp[bashProcessSubstitution] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashProgram] = {bashStatement, bashHeredocBody}
+                                                                       tmp[bashParenthesizedExpression] = {bashUsExpression}
+                                                                       tmp[bashPipeline] = {bashUsStatement}
+                                                                       tmp[bashPostfixExpression] = {bashUsExpression}
+                                                                       tmp[bashProcessSubstitution] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashProgram] = {bashUsStatement, bashHeredocBody}
                                                                        tmp[bashSimpleExpansion] = {bashSpecialVariableName, bashVariableName}
                                                                        tmp[bashString] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
                                                                        tmp[bashStringExpansion] = {bashRawString, bashString}
-                                                                       tmp[bashSubshell] = {bashStatement, bashHeredocBody}
-                                                                       tmp[bashTestCommand] = {bashExpression}
-                                                                       tmp[bashUnaryExpression] = {bashExpression, bashTestOperator}
-                                                                       tmp[bashUnsetCommand] = {bashPrimaryExpression, bashConcatenation, bashVariableName}
+                                                                       tmp[bashSubshell] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashTestCommand] = {bashUsExpression}
+                                                                       tmp[bashUnaryExpression] = {bashUsExpression, bashTestOperator}
+                                                                       tmp[bashUnsetCommand] = {bashUsPrimaryExpression, bashConcatenation, bashVariableName}
                                                                        tmp
 const bashTokenKinds*: set[BashNodeKind] = {
                                              bashNewlineTok,
@@ -424,9 +424,9 @@ proc tsNodeType*(node: TsBashNode): string
 proc kind*(node: TsBashNode): BashNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":              bashExpression
-      of "_primary_expression":      bashPrimaryExpression
-      of "_statement":               bashStatement
+      of "_expression":              bashUsExpression
+      of "_primary_expression":      bashUsPrimaryExpression
+      of "_statement":               bashUsStatement
       of "array":                    bashArray
       of "binary_expression":        bashBinaryExpression
       of "c_style_for_statement":    bashCStyleForStatement
