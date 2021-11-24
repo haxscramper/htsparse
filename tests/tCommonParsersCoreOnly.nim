@@ -95,6 +95,8 @@ print(fact(a))
     let node = parseTsLuaString(str)
     echo node.treeRepr(str)
 
+    echo str[node[1]]
+
 suite "C":
   test "Parse string":
     let str = """

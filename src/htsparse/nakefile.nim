@@ -551,6 +551,6 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
 when isMainModule:
   startHax()
   # main(@["total"])
-  main(@["graphql"])
+  main(@["lua"])
   # main(paramStrs())
   echo "all ok"
