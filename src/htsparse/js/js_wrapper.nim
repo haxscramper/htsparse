@@ -4,7 +4,6 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   JsNodeKind* = enum
     jsDeclaration                        ## declaration
@@ -222,8 +221,32 @@ type
     jsDoublePipeEqualTok                 ## ||=
     jsRCurlyTok                          ## }
     jsTildeTok                           ## ~
+    jsHidFromClause                      ## _from_clause
+    jsHidLhsExpression                   ## _lhs_expression
+    jsHidExpressions                     ## _expressions
+    jsHidJsxElement                      ## _jsx_element
+    jsHidPropertyName                    ## _property_name
+    jsHidJsxChild                        ## _jsx_child
+    jsHidJsxElementName                  ## _jsx_element_name
+    jsHidReservedIdentifier              ## _reserved_identifier
+    jsHidJsxIdentifier                   ## _jsx_identifier
+    jsHidSemicolon                       ## _semicolon
+    jsHidCallSignature                   ## _call_signature
+    jsHidDestructuringPattern            ## _destructuring_pattern
+    jsHidJsxAttribute                    ## _jsx_attribute
+    jsHidImportExportSpecifier           ## _import_export_specifier
+    jsHidTemplateChars                   ## _template_chars
+    jsDecoratorCallExpression            ## decorator_call_expression
+    jsDecoratorMemberExpression          ## decorator_member_expression
+    jsHidJsxAttributeValue               ## _jsx_attribute_value
+    jsHidForHeader                       ## _for_header
+    jsJsxIdentifier                      ## jsx_identifier
+    jsHidAutomaticSemicolon              ## _automatic_semicolon
+    jsHidInitializer                     ## _initializer
+    jsHidFormalParameter                 ## _formal_parameter
+    jsHidJsxAttributeName                ## _jsx_attribute_name
+    jsHidAugmentedAssignmentLhs          ## _augmented_assignment_lhs
     jsSyntaxError                        ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: JsNodeKind): string =
   case kind:
@@ -442,22 +465,43 @@ proc strRepr*(kind: JsNodeKind): string =
     of jsDoublePipeEqualTok:                 "||="
     of jsRCurlyTok:                          "}"
     of jsTildeTok:                           "~"
+    of jsHidFromClause:                      "_from_clause"
+    of jsHidLhsExpression:                   "_lhs_expression"
+    of jsHidExpressions:                     "_expressions"
+    of jsHidJsxElement:                      "_jsx_element"
+    of jsHidPropertyName:                    "_property_name"
+    of jsHidJsxChild:                        "_jsx_child"
+    of jsHidJsxElementName:                  "_jsx_element_name"
+    of jsHidReservedIdentifier:              "_reserved_identifier"
+    of jsHidJsxIdentifier:                   "_jsx_identifier"
+    of jsHidSemicolon:                       "_semicolon"
+    of jsHidCallSignature:                   "_call_signature"
+    of jsHidDestructuringPattern:            "_destructuring_pattern"
+    of jsHidJsxAttribute:                    "_jsx_attribute"
+    of jsHidImportExportSpecifier:           "_import_export_specifier"
+    of jsHidTemplateChars:                   "_template_chars"
+    of jsDecoratorCallExpression:            "decorator_call_expression"
+    of jsDecoratorMemberExpression:          "decorator_member_expression"
+    of jsHidJsxAttributeValue:               "_jsx_attribute_value"
+    of jsHidForHeader:                       "_for_header"
+    of jsJsxIdentifier:                      "jsx_identifier"
+    of jsHidAutomaticSemicolon:              "_automatic_semicolon"
+    of jsHidInitializer:                     "_initializer"
+    of jsHidFormalParameter:                 "_formal_parameter"
+    of jsHidJsxAttributeName:                "_jsx_attribute_name"
+    of jsHidAugmentedAssignmentLhs:          "_augmented_assignment_lhs"
     of jsSyntaxError:                        "ERROR"
-
 
 type
   JsExternalTok* = enum
     jsExtern_automatic_semicolon ## _automatic_semicolon
     jsExtern_template_chars      ## _template_chars
 
-
 type
   TsJsNode* = distinct TSNode
 
-
 type
   JsParser* = distinct PtsParser
-
 
 const jsAllowedSubnodes*: array[JsNodeKind, set[JsNodeKind]] = block:
                                                                  var tmp: array[JsNodeKind, set[JsNodeKind]]
@@ -618,9 +662,34 @@ const jsTokenKinds*: set[JsNodeKind] = {
                                          jsRCurlyTok,
                                          jsTildeTok
                                        }
-
+const jsHiddenKinds*: set[JsNodeKind] = {
+                                          jsHidFromClause,
+                                          jsHidLhsExpression,
+                                          jsHidExpressions,
+                                          jsHidJsxElement,
+                                          jsHidPropertyName,
+                                          jsHidJsxChild,
+                                          jsHidJsxElementName,
+                                          jsHidReservedIdentifier,
+                                          jsHidJsxIdentifier,
+                                          jsHidSemicolon,
+                                          jsHidCallSignature,
+                                          jsHidDestructuringPattern,
+                                          jsHidJsxAttribute,
+                                          jsHidImportExportSpecifier,
+                                          jsHidTemplateChars,
+                                          jsDecoratorCallExpression,
+                                          jsDecoratorMemberExpression,
+                                          jsHidJsxAttributeValue,
+                                          jsHidForHeader,
+                                          jsJsxIdentifier,
+                                          jsHidAutomaticSemicolon,
+                                          jsHidInitializer,
+                                          jsHidFormalParameter,
+                                          jsHidJsxAttributeName,
+                                          jsHidAugmentedAssignmentLhs
+                                        }
 proc tsNodeType*(node: TsJsNode): string
-
 
 
 proc kind*(node: TsJsNode): JsNodeKind {.noSideEffect.} =
@@ -842,7 +911,6 @@ proc kind*(node: TsJsNode): JsNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsJsNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -915,4 +983,143 @@ proc parseJsString*(str: string, unnamed: bool = false): JsNode =
   let parser = newTsJsParser()
   return toHtsTree[TsJsNode, JsNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  htsparse/describe_grammar
+let jsGrammar = block:
+                  var rules: array[JsNodeKind, HtsRule[JsNodeKind]]
+                  type
+                    K = JsNodeKind
+
+
+                  rules[jsHidFromClause] = tsSeq[K](tsString[K]("from"), tsSymbol[K](jsString))
+                  rules[jsYieldExpression] = tsSeq[K](tsString[K]("yield"), tsChoice[K](tsSeq[K](tsString[K]("*"), tsSymbol[K](jsExpression)), tsChoice[K](tsSymbol[K](jsExpression), tsBlank[K]())))
+                  rules[jsGeneratorFunction] = tsSeq[K](tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsString[K]("function"), tsString[K]("*"), tsChoice[K](tsSymbol[K](jsIdentifier), tsBlank[K]()), tsSymbol[K](jsHidCallSignature), tsSymbol[K](jsStatementBlock))
+                  rules[jsMemberExpression] = tsSeq[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsPrimaryExpression)), tsChoice[K](tsString[K]("."), tsString[K]("?.")), tsSymbol[K](jsIdentifier))
+                  rules[jsHidLhsExpression] = tsChoice[K](tsSymbol[K](jsMemberExpression), tsSymbol[K](jsSubscriptExpression), tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsHidDestructuringPattern))
+                  rules[jsPrimaryExpression] = tsChoice[K](tsSymbol[K](jsSubscriptExpression), tsSymbol[K](jsMemberExpression), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsThis), tsSymbol[K](jsSuper), tsSymbol[K](jsNumber), tsSymbol[K](jsString), tsSymbol[K](jsTemplateString), tsSymbol[K](jsRegex), tsSymbol[K](jsTrue), tsSymbol[K](jsFalse), tsSymbol[K](jsNull), tsSymbol[K](jsUndefined), tsSymbol[K](jsImport), tsSymbol[K](jsObject), tsSymbol[K](jsArray), tsSymbol[K](jsFunction), tsSymbol[K](jsArrowFunction), tsSymbol[K](jsGeneratorFunction), tsSymbol[K](jsClass), tsSymbol[K](jsMetaProperty), tsSymbol[K](jsCallExpression))
+                  rules[jsWithStatement] = tsSeq[K](tsString[K]("with"), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsStatement))
+                  rules[jsReturnStatement] = tsSeq[K](tsString[K]("return"), tsChoice[K](tsSymbol[K](jsHidExpressions), tsBlank[K]()), tsSymbol[K](jsHidSemicolon))
+                  rules[jsFalse] = tsString[K]("false")
+                  rules[jsJsxSelfClosingElement] = tsSeq[K](tsString[K]("<"), tsSymbol[K](jsHidJsxElementName), tsRepeat[K](tsSymbol[K](jsHidJsxAttribute)), tsString[K]("/"), tsString[K](">"))
+                  rules[jsExportClause] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsSymbol[K](jsHidImportExportSpecifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](jsHidImportExportSpecifier)))), tsBlank[K]()), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K]("}"))
+                  rules[jsForStatement] = tsSeq[K](tsString[K]("for"), tsString[K]("("), tsChoice[K](tsSymbol[K](jsLexicalDeclaration), tsSymbol[K](jsVariableDeclaration), tsSymbol[K](jsExpressionStatement), tsSymbol[K](jsEmptyStatement)), tsChoice[K](tsSymbol[K](jsExpressionStatement), tsSymbol[K](jsEmptyStatement)), tsChoice[K](tsSymbol[K](jsHidExpressions), tsBlank[K]()), tsString[K](")"), tsSymbol[K](jsStatement))
+                  rules[jsImport] = tsString[K]("import")
+                  rules[jsArrowFunction] = tsSeq[K](tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsChoice[K](tsChoice[K](tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsIdentifier)), tsSymbol[K](jsHidCallSignature)), tsString[K]("=>"), tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsStatementBlock)))
+                  rules[jsSwitchStatement] = tsSeq[K](tsString[K]("switch"), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsSwitchBody))
+                  rules[jsNewExpression] = tsSeq[K](tsString[K]("new"), tsSymbol[K](jsPrimaryExpression), tsChoice[K](tsSymbol[K](jsArguments), tsBlank[K]()))
+                  rules[jsHidJsxElement] = tsChoice[K](tsSymbol[K](jsJsxElement), tsSymbol[K](jsJsxSelfClosingElement))
+                  rules[jsDebuggerStatement] = tsSeq[K](tsString[K]("debugger"), tsSymbol[K](jsHidSemicolon))
+                  rules[jsClassHeritage] = tsSeq[K](tsString[K]("extends"), tsSymbol[K](jsExpression))
+                  rules[jsClassDeclaration] = tsSeq[K](tsRepeat[K](tsSymbol[K](jsDecorator)), tsString[K]("class"), tsSymbol[K](jsIdentifier), tsChoice[K](tsSymbol[K](jsClassHeritage), tsBlank[K]()), tsSymbol[K](jsClassBody), tsChoice[K](tsSymbol[K](jsHidAutomaticSemicolon), tsBlank[K]()))
+                  rules[jsRestPattern] = tsSeq[K](tsString[K]("..."), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidDestructuringPattern)))
+                  rules[jsExportStatement] = tsChoice[K](tsSeq[K](tsString[K]("export"), tsChoice[K](tsSeq[K](tsString[K]("*"), tsSymbol[K](jsHidFromClause), tsSymbol[K](jsHidSemicolon)), tsSeq[K](tsSymbol[K](jsExportClause), tsSymbol[K](jsHidFromClause), tsSymbol[K](jsHidSemicolon)), tsSeq[K](tsSymbol[K](jsExportClause), tsSymbol[K](jsHidSemicolon)))), tsSeq[K](tsRepeat[K](tsSymbol[K](jsDecorator)), tsString[K]("export"), tsChoice[K](tsSymbol[K](jsDeclaration), tsSeq[K](tsString[K]("default"), tsSymbol[K](jsExpression), tsSymbol[K](jsHidSemicolon)))))
+                  rules[jsThrowStatement] = tsSeq[K](tsString[K]("throw"), tsSymbol[K](jsHidExpressions), tsSymbol[K](jsHidSemicolon))
+                  rules[jsAwaitExpression] = tsSeq[K](tsString[K]("await"), tsSymbol[K](jsExpression))
+                  rules[jsObjectPattern] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsPairPattern), tsSymbol[K](jsRestPattern), tsSymbol[K](jsObjectAssignmentPattern), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier))), tsBlank[K]()), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsChoice[K](tsSymbol[K](jsPairPattern), tsSymbol[K](jsRestPattern), tsSymbol[K](jsObjectAssignmentPattern), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier))), tsBlank[K]())))), tsBlank[K]()), tsString[K]("}"))
+                  rules[jsPattern] = tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsHidDestructuringPattern), tsSymbol[K](jsRestPattern))
+                  rules[jsObjectAssignmentPattern] = tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsIdentifier)), tsSymbol[K](jsHidDestructuringPattern)), tsString[K]("="), tsSymbol[K](jsExpression))
+                  rules[jsNamedImports] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsSymbol[K](jsHidImportExportSpecifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](jsHidImportExportSpecifier)))), tsBlank[K]()), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K]("}"))
+                  rules[jsVariableDeclarator] = tsSeq[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidDestructuringPattern)), tsChoice[K](tsSymbol[K](jsHidInitializer), tsBlank[K]()))
+                  rules[jsObject] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsPair), tsSymbol[K](jsSpreadElement), tsSymbol[K](jsMethodDefinition), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier))), tsBlank[K]()), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsChoice[K](tsSymbol[K](jsPair), tsSymbol[K](jsSpreadElement), tsSymbol[K](jsMethodDefinition), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier))), tsBlank[K]())))), tsBlank[K]()), tsString[K]("}"))
+                  rules[jsHidJsxElementName] = tsChoice[K](tsSymbol[K](jsHidJsxIdentifier), tsSymbol[K](jsNestedIdentifier), tsSymbol[K](jsJsxNamespaceName))
+                  rules[jsPair] = tsSeq[K](tsSymbol[K](jsHidPropertyName), tsString[K](":"), tsSymbol[K](jsExpression))
+                  rules[jsUnaryExpression] = tsChoice[K](tsSeq[K](tsString[K]("!"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("~"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("-"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("+"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("typeof"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("void"), tsSymbol[K](jsExpression)), tsSeq[K](tsString[K]("delete"), tsSymbol[K](jsExpression)))
+                  rules[jsComment] = tsChoice[K](tsSeq[K](tsString[K]("//"), tsRegex[K](".*")), tsSeq[K](tsString[K]("/*"), tsRegex[K]("[^*]*\\*+([^/*][^*]*\\*+)*"), tsString[K]("/")))
+                  rules[jsImportStatement] = tsSeq[K](tsString[K]("import"), tsChoice[K](tsSeq[K](tsSymbol[K](jsImportClause), tsSymbol[K](jsHidFromClause)), tsSymbol[K](jsString)), tsSymbol[K](jsHidSemicolon))
+                  rules[jsExpression] = tsChoice[K](tsSymbol[K](jsPrimaryExpression), tsSymbol[K](jsHidJsxElement), tsSymbol[K](jsJsxFragment), tsSymbol[K](jsAssignmentExpression), tsSymbol[K](jsAugmentedAssignmentExpression), tsSymbol[K](jsAwaitExpression), tsSymbol[K](jsUnaryExpression), tsSymbol[K](jsBinaryExpression), tsSymbol[K](jsTernaryExpression), tsSymbol[K](jsUpdateExpression), tsSymbol[K](jsNewExpression), tsSymbol[K](jsYieldExpression))
+                  rules[jsElseClause] = tsSeq[K](tsString[K]("else"), tsSymbol[K](jsStatement))
+                  rules[jsJsxClosingElement] = tsSeq[K](tsString[K]("<"), tsString[K]("/"), tsSymbol[K](jsHidJsxElementName), tsString[K](">"))
+                  rules[jsHidJsxAttribute] = tsChoice[K](tsSymbol[K](jsJsxAttribute), tsSymbol[K](jsJsxExpression))
+                  rules[jsHidDestructuringPattern] = tsChoice[K](tsSymbol[K](jsObjectPattern), tsSymbol[K](jsArrayPattern))
+                  rules[jsThis] = tsString[K]("this")
+                  rules[jsIdentifier] = tsSeq[K](tsRegex[K]("[^\\x00-\\x1F\\s0-9:;`\"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u00A0]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"), tsRepeat[K](tsRegex[K]("[^\\x00-\\x1F\\s:;`\"\'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u00A0]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}")))
+                  rules[jsArguments] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSpreadElement)), tsBlank[K]()), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSpreadElement)), tsBlank[K]())))), tsBlank[K]()), tsString[K](")"))
+                  rules[jsPublicFieldDefinition] = tsSeq[K](tsChoice[K](tsString[K]("static"), tsBlank[K]()), tsSymbol[K](jsHidPropertyName), tsChoice[K](tsSymbol[K](jsHidInitializer), tsBlank[K]()))
+                  rules[jsNamespaceImport] = tsSeq[K](tsString[K]("*"), tsString[K]("as"), tsSymbol[K](jsIdentifier))
+                  rules[jsDecoratorCallExpression] = tsSeq[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsDecoratorMemberExpression)), tsSymbol[K](jsArguments))
+                  rules[jsHashBangLine] = tsRegex[K]("#!.*")
+                  rules[jsAssignmentPattern] = tsSeq[K](tsSymbol[K](jsPattern), tsString[K]("="), tsSymbol[K](jsExpression))
+                  rules[jsSubscriptExpression] = tsSeq[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsPrimaryExpression)), tsChoice[K](tsString[K]("?."), tsBlank[K]()), tsString[K]("["), tsSymbol[K](jsHidExpressions), tsString[K]("]"))
+                  rules[jsTernaryExpression] = tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("?"), tsSymbol[K](jsExpression), tsString[K](":"), tsSymbol[K](jsExpression))
+                  rules[jsClassBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSeq[K](tsSymbol[K](jsMethodDefinition), tsChoice[K](tsString[K](";"), tsBlank[K]())), tsSeq[K](tsSymbol[K](jsPublicFieldDefinition), tsSymbol[K](jsHidSemicolon)))), tsString[K]("}"))
+                  rules[jsDecoratorMemberExpression] = tsSeq[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsDecoratorMemberExpression)), tsString[K]("."), tsSymbol[K](jsIdentifier))
+                  rules[jsJsxExpression] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSequenceExpression), tsSymbol[K](jsSpreadElement)), tsBlank[K]()), tsString[K]("}"))
+                  rules[jsHidJsxAttributeValue] = tsChoice[K](tsSymbol[K](jsString), tsSymbol[K](jsJsxExpression), tsSymbol[K](jsHidJsxElement), tsSymbol[K](jsJsxFragment))
+                  rules[jsTrue] = tsString[K]("true")
+                  rules[jsFinallyClause] = tsSeq[K](tsString[K]("finally"), tsSymbol[K](jsStatementBlock))
+                  rules[jsJsxFragment] = tsSeq[K](tsString[K]("<"), tsString[K](">"), tsRepeat[K](tsSymbol[K](jsHidJsxChild)), tsString[K]("<"), tsString[K]("/"), tsString[K](">"))
+                  rules[jsHidForHeader] = tsSeq[K](tsString[K]("("), tsChoice[K](tsChoice[K](tsSymbol[K](jsHidLhsExpression), tsSymbol[K](jsParenthesizedExpression)), tsSeq[K](tsChoice[K](tsString[K]("var"), tsString[K]("let"), tsString[K]("const")), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidDestructuringPattern)))), tsChoice[K](tsString[K]("in"), tsString[K]("of")), tsSymbol[K](jsHidExpressions), tsString[K](")"))
+                  rules[jsLabeledStatement] = tsSeq[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier)), tsString[K](":"), tsSymbol[K](jsStatement))
+                  rules[jsFunction] = tsSeq[K](tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsString[K]("function"), tsChoice[K](tsSymbol[K](jsIdentifier), tsBlank[K]()), tsSymbol[K](jsHidCallSignature), tsSymbol[K](jsStatementBlock))
+                  rules[jsHidInitializer] = tsSeq[K](tsString[K]("="), tsSymbol[K](jsExpression))
+                  rules[jsHidFormalParameter] = tsChoice[K](tsSymbol[K](jsPattern), tsSymbol[K](jsAssignmentPattern))
+                  rules[jsParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](jsHidExpressions), tsString[K](")"))
+                  rules[jsHidAugmentedAssignmentLhs] = tsChoice[K](tsSymbol[K](jsMemberExpression), tsSymbol[K](jsSubscriptExpression), tsSymbol[K](jsHidReservedIdentifier), tsSymbol[K](jsIdentifier), tsSymbol[K](jsParenthesizedExpression))
+                  rules[jsSwitchCase] = tsSeq[K](tsString[K]("case"), tsSymbol[K](jsHidExpressions), tsString[K](":"), tsRepeat[K](tsSymbol[K](jsStatement)))
+                  rules[jsRegex] = tsSeq[K](tsString[K]("/"), tsSymbol[K](jsRegexPattern), tsString[K]("/"), tsChoice[K](tsSymbol[K](jsRegexFlags), tsBlank[K]()))
+                  rules[jsMetaProperty] = tsSeq[K](tsString[K]("new"), tsString[K]("."), tsString[K]("target"))
+                  rules[jsFunctionDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsString[K]("function"), tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidCallSignature), tsSymbol[K](jsStatementBlock), tsChoice[K](tsSymbol[K](jsHidAutomaticSemicolon), tsBlank[K]()))
+                  rules[jsWhileStatement] = tsSeq[K](tsString[K]("while"), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsStatement))
+                  rules[jsPairPattern] = tsSeq[K](tsSymbol[K](jsHidPropertyName), tsString[K](":"), tsSymbol[K](jsPattern))
+                  rules[jsLexicalDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("let"), tsString[K]("const")), tsSeq[K](tsSymbol[K](jsVariableDeclarator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](jsVariableDeclarator)))), tsSymbol[K](jsHidSemicolon))
+                  rules[jsTemplateString] = tsSeq[K](tsString[K]("`"), tsRepeat[K](tsChoice[K](tsSymbol[K](jsHidTemplateChars), tsSymbol[K](jsEscapeSequence), tsSymbol[K](jsTemplateSubstitution))), tsString[K]("`"))
+                  rules[jsForInStatement] = tsSeq[K](tsString[K]("for"), tsChoice[K](tsString[K]("await"), tsBlank[K]()), tsSymbol[K](jsHidForHeader), tsSymbol[K](jsStatement))
+                  rules[jsGeneratorFunctionDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsString[K]("function"), tsString[K]("*"), tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidCallSignature), tsSymbol[K](jsStatementBlock), tsChoice[K](tsSymbol[K](jsHidAutomaticSemicolon), tsBlank[K]()))
+                  rules[jsHidExpressions] = tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSequenceExpression))
+                  rules[jsRegexPattern] = tsRepeat1[K](tsChoice[K](tsSeq[K](tsString[K]("["), tsRepeat[K](tsChoice[K](tsSeq[K](tsString[K]("\\"), tsRegex[K](".")), tsRegex[K]("[^\\]\\n\\\\]"))), tsString[K]("]")), tsSeq[K](tsString[K]("\\"), tsRegex[K](".")), tsRegex[K]("[^/\\\\\\[\\n]")))
+                  rules[jsNull] = tsString[K]("null")
+                  rules[jsSwitchDefault] = tsSeq[K](tsString[K]("default"), tsString[K](":"), tsRepeat[K](tsSymbol[K](jsStatement)))
+                  rules[jsCallExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](jsExpression), tsChoice[K](tsSymbol[K](jsArguments), tsSymbol[K](jsTemplateString))), tsSeq[K](tsSymbol[K](jsPrimaryExpression), tsString[K]("?."), tsSymbol[K](jsArguments)))
+                  rules[jsRegexFlags] = tsRegex[K]("[a-z]+")
+                  rules[jsArrayPattern] = tsSeq[K](tsString[K]("["), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsPattern), tsSymbol[K](jsAssignmentPattern)), tsBlank[K]()), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsChoice[K](tsSymbol[K](jsPattern), tsSymbol[K](jsAssignmentPattern)), tsBlank[K]())))), tsBlank[K]()), tsString[K]("]"))
+                  rules[jsClass] = tsSeq[K](tsRepeat[K](tsSymbol[K](jsDecorator)), tsString[K]("class"), tsChoice[K](tsSymbol[K](jsIdentifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](jsClassHeritage), tsBlank[K]()), tsSymbol[K](jsClassBody))
+                  rules[jsTryStatement] = tsSeq[K](tsString[K]("try"), tsSymbol[K](jsStatementBlock), tsChoice[K](tsSymbol[K](jsCatchClause), tsBlank[K]()), tsChoice[K](tsSymbol[K](jsFinallyClause), tsBlank[K]()))
+                  rules[jsNestedIdentifier] = tsSeq[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsNestedIdentifier)), tsString[K]("."), tsSymbol[K](jsIdentifier))
+                  rules[jsBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("&&"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("||"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K](">>"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K](">>>"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("<<"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("&"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("^"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("|"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("+"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("-"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("*"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("/"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("%"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("**"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("<"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("<="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("=="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("==="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("!="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("!=="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K](">="), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K](">"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("??"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("instanceof"), tsSymbol[K](jsExpression)), tsSeq[K](tsSymbol[K](jsExpression), tsString[K]("in"), tsSymbol[K](jsExpression)))
+                  rules[jsUndefined] = tsString[K]("undefined")
+                  rules[jsString] = tsChoice[K](tsSeq[K](tsString[K]("\""), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\"\\\\]+"), tsSymbol[K](jsEscapeSequence))), tsString[K]("\"")), tsSeq[K](tsString[K]("\'"), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\'\\\\]+"), tsSymbol[K](jsEscapeSequence))), tsString[K]("\'")))
+                  rules[jsDeclaration] = tsChoice[K](tsSymbol[K](jsFunctionDeclaration), tsSymbol[K](jsGeneratorFunctionDeclaration), tsSymbol[K](jsClassDeclaration), tsSymbol[K](jsLexicalDeclaration), tsSymbol[K](jsVariableDeclaration))
+                  rules[jsJsxText] = tsRegex[K]("[^{}<>]+")
+                  rules[jsHidPropertyName] = tsChoice[K](tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidReservedIdentifier)), tsSymbol[K](jsString), tsSymbol[K](jsNumber), tsSymbol[K](jsComputedPropertyName))
+                  rules[jsBreakStatement] = tsSeq[K](tsString[K]("break"), tsChoice[K](tsSymbol[K](jsIdentifier), tsBlank[K]()), tsSymbol[K](jsHidSemicolon))
+                  rules[jsHidJsxChild] = tsChoice[K](tsSymbol[K](jsJsxText), tsSymbol[K](jsHidJsxElement), tsSymbol[K](jsJsxFragment), tsSymbol[K](jsJsxExpression))
+                  rules[jsSpreadElement] = tsSeq[K](tsString[K]("..."), tsSymbol[K](jsExpression))
+                  rules[jsMethodDefinition] = tsSeq[K](tsRepeat[K](tsSymbol[K](jsDecorator)), tsChoice[K](tsString[K]("static"), tsBlank[K]()), tsChoice[K](tsString[K]("async"), tsBlank[K]()), tsChoice[K](tsChoice[K](tsString[K]("get"), tsString[K]("set"), tsString[K]("*")), tsBlank[K]()), tsSymbol[K](jsHidPropertyName), tsSymbol[K](jsFormalParameters), tsSymbol[K](jsStatementBlock))
+                  rules[jsEscapeSequence] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsRegex[K]("[^xu0-7]"), tsRegex[K]("[0-7]{1,3}"), tsRegex[K]("x[0-9a-fA-F]{2}"), tsRegex[K]("u[0-9a-fA-F]{4}"), tsRegex[K]("u{[0-9a-fA-F]+}")))
+                  rules[jsHidReservedIdentifier] = tsChoice[K](tsString[K]("get"), tsString[K]("set"), tsString[K]("async"), tsString[K]("static"), tsString[K]("export"))
+                  rules[jsIfStatement] = tsSeq[K](tsString[K]("if"), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsStatement), tsChoice[K](tsSymbol[K](jsElseClause), tsBlank[K]()))
+                  rules[jsContinueStatement] = tsSeq[K](tsString[K]("continue"), tsChoice[K](tsSymbol[K](jsIdentifier), tsBlank[K]()), tsSymbol[K](jsHidSemicolon))
+                  rules[jsHidJsxIdentifier] = tsChoice[K](tsSymbol[K](jsJsxIdentifier), tsSymbol[K](jsIdentifier))
+                  rules[jsAugmentedAssignmentExpression] = tsSeq[K](tsSymbol[K](jsHidAugmentedAssignmentLhs), tsChoice[K](tsString[K]("+="), tsString[K]("-="), tsString[K]("*="), tsString[K]("/="), tsString[K]("%="), tsString[K]("^="), tsString[K]("&="), tsString[K]("|="), tsString[K](">>="), tsString[K](">>>="), tsString[K]("<<="), tsString[K]("**="), tsString[K]("&&="), tsString[K]("||="), tsString[K]("??=")), tsSymbol[K](jsExpression))
+                  rules[jsHidSemicolon] = tsChoice[K](tsSymbol[K](jsHidAutomaticSemicolon), tsString[K](";"))
+                  rules[jsSwitchBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](jsSwitchCase), tsSymbol[K](jsSwitchDefault))), tsString[K]("}"))
+                  rules[jsHidCallSignature] = tsSymbol[K](jsFormalParameters)
+                  rules[jsUpdateExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](jsExpression), tsChoice[K](tsString[K]("++"), tsString[K]("--"))), tsSeq[K](tsChoice[K](tsString[K]("++"), tsString[K]("--")), tsSymbol[K](jsExpression)))
+                  rules[jsHidImportExportSpecifier] = tsSeq[K](tsSymbol[K](jsIdentifier), tsChoice[K](tsSeq[K](tsString[K]("as"), tsSymbol[K](jsIdentifier)), tsBlank[K]()))
+                  rules[jsCatchClause] = tsSeq[K](tsString[K]("catch"), tsChoice[K](tsSeq[K](tsString[K]("("), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsHidDestructuringPattern)), tsString[K](")")), tsBlank[K]()), tsSymbol[K](jsStatementBlock))
+                  rules[jsExpressionStatement] = tsSeq[K](tsSymbol[K](jsHidExpressions), tsSymbol[K](jsHidSemicolon))
+                  rules[jsNumber] = tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("0x"), tsString[K]("0X")), tsRegex[K]("[\\da-fA-F](_?[\\da-fA-F])*")), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("0"), tsSeq[K](tsChoice[K](tsString[K]("0"), tsBlank[K]()), tsRegex[K]("[1-9]"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("\\d(_?\\d)*")), tsBlank[K]()))), tsString[K]("."), tsChoice[K](tsRegex[K]("\\d(_?\\d)*"), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("\\d(_?\\d)*"))), tsBlank[K]())), tsSeq[K](tsString[K]("."), tsRegex[K]("\\d(_?\\d)*"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("\\d(_?\\d)*"))), tsBlank[K]())), tsSeq[K](tsChoice[K](tsString[K]("0"), tsSeq[K](tsChoice[K](tsString[K]("0"), tsBlank[K]()), tsRegex[K]("[1-9]"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("\\d(_?\\d)*")), tsBlank[K]()))), tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("-"), tsString[K]("+")), tsBlank[K]()), tsRegex[K]("\\d(_?\\d)*")))), tsSeq[K](tsRegex[K]("\\d(_?\\d)*"))), tsSeq[K](tsChoice[K](tsString[K]("0b"), tsString[K]("0B")), tsRegex[K]("[0-1](_?[0-1])*")), tsSeq[K](tsChoice[K](tsString[K]("0o"), tsString[K]("0O")), tsRegex[K]("[0-7](_?[0-7])*")), tsSeq[K](tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("0x"), tsString[K]("0X")), tsRegex[K]("[\\da-fA-F](_?[\\da-fA-F])*")), tsSeq[K](tsChoice[K](tsString[K]("0b"), tsString[K]("0B")), tsRegex[K]("[0-1](_?[0-1])*")), tsSeq[K](tsChoice[K](tsString[K]("0o"), tsString[K]("0O")), tsRegex[K]("[0-7](_?[0-7])*")), tsRegex[K]("\\d(_?\\d)*")), tsString[K]("n")))
+                  rules[jsFormalParameters] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsSeq[K](tsSymbol[K](jsHidFormalParameter), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](jsHidFormalParameter)))), tsChoice[K](tsString[K](","), tsBlank[K]())), tsBlank[K]()), tsString[K](")"))
+                  rules[jsDecorator] = tsSeq[K](tsString[K]("@"), tsChoice[K](tsSymbol[K](jsIdentifier), tsSymbol[K](jsDecoratorMemberExpression), tsSymbol[K](jsDecoratorCallExpression)))
+                  rules[jsSuper] = tsString[K]("super")
+                  rules[jsEmptyStatement] = tsString[K](";")
+                  rules[jsAssignmentExpression] = tsSeq[K](tsChoice[K](tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsHidLhsExpression)), tsString[K]("="), tsSymbol[K](jsExpression))
+                  rules[jsJsxOpeningElement] = tsSeq[K](tsString[K]("<"), tsSymbol[K](jsHidJsxElementName), tsRepeat[K](tsSymbol[K](jsHidJsxAttribute)), tsString[K](">"))
+                  rules[jsJsxAttribute] = tsSeq[K](tsSymbol[K](jsHidJsxAttributeName), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](jsHidJsxAttributeValue)), tsBlank[K]()))
+                  rules[jsStatement] = tsChoice[K](tsSymbol[K](jsExportStatement), tsSymbol[K](jsImportStatement), tsSymbol[K](jsDebuggerStatement), tsSymbol[K](jsExpressionStatement), tsSymbol[K](jsDeclaration), tsSymbol[K](jsStatementBlock), tsSymbol[K](jsIfStatement), tsSymbol[K](jsSwitchStatement), tsSymbol[K](jsForStatement), tsSymbol[K](jsForInStatement), tsSymbol[K](jsWhileStatement), tsSymbol[K](jsDoStatement), tsSymbol[K](jsTryStatement), tsSymbol[K](jsWithStatement), tsSymbol[K](jsBreakStatement), tsSymbol[K](jsContinueStatement), tsSymbol[K](jsReturnStatement), tsSymbol[K](jsThrowStatement), tsSymbol[K](jsEmptyStatement), tsSymbol[K](jsLabeledStatement))
+                  rules[jsProgram] = tsSeq[K](tsChoice[K](tsSymbol[K](jsHashBangLine), tsBlank[K]()), tsRepeat[K](tsSymbol[K](jsStatement)))
+                  rules[jsDoStatement] = tsSeq[K](tsString[K]("do"), tsSymbol[K](jsStatement), tsString[K]("while"), tsSymbol[K](jsParenthesizedExpression), tsSymbol[K](jsHidSemicolon))
+                  rules[jsJsxElement] = tsSeq[K](tsSymbol[K](jsJsxOpeningElement), tsRepeat[K](tsSymbol[K](jsHidJsxChild)), tsSymbol[K](jsJsxClosingElement))
+                  rules[jsImportClause] = tsChoice[K](tsSymbol[K](jsNamespaceImport), tsSymbol[K](jsNamedImports), tsSeq[K](tsSymbol[K](jsIdentifier), tsChoice[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](jsNamespaceImport), tsSymbol[K](jsNamedImports))), tsBlank[K]())))
+                  rules[jsJsxNamespaceName] = tsSeq[K](tsSymbol[K](jsHidJsxIdentifier), tsString[K](":"), tsSymbol[K](jsHidJsxIdentifier))
+                  rules[jsSequenceExpression] = tsSeq[K](tsSymbol[K](jsExpression), tsString[K](","), tsChoice[K](tsSymbol[K](jsSequenceExpression), tsSymbol[K](jsExpression)))
+                  rules[jsArray] = tsSeq[K](tsString[K]("["), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSpreadElement)), tsBlank[K]()), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsChoice[K](tsSymbol[K](jsExpression), tsSymbol[K](jsSpreadElement)), tsBlank[K]())))), tsBlank[K]()), tsString[K]("]"))
+                  rules[jsTemplateSubstitution] = tsSeq[K](tsString[K]("${"), tsSymbol[K](jsHidExpressions), tsString[K]("}"))
+                  rules[jsStatementBlock] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](jsStatement)), tsString[K]("}"), tsChoice[K](tsSymbol[K](jsHidAutomaticSemicolon), tsBlank[K]()))
+                  rules[jsJsxIdentifier] = tsRegex[K]("[a-zA-Z_$][a-zA-Z\\d_$]*-[a-zA-Z\\d_$\\-]*")
+                  rules[jsVariableDeclaration] = tsSeq[K](tsString[K]("var"), tsSeq[K](tsSymbol[K](jsVariableDeclarator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](jsVariableDeclarator)))), tsSymbol[K](jsHidSemicolon))
+                  rules[jsComputedPropertyName] = tsSeq[K](tsString[K]("["), tsSymbol[K](jsExpression), tsString[K]("]"))
+                  rules[jsHidJsxAttributeName] = tsChoice[K](tsSymbol[K](jsHidJsxIdentifier), tsSymbol[K](jsJsxNamespaceName))
+                  rules
 

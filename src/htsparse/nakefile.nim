@@ -2,15 +2,71 @@ import
   hnimast/codegen/hts_wrapgen
 
 import
+  hnimast
+
+import
   hmisc/other/[oswrap, hlogger, hargparse],
-  hmisc/algo/[halgorithm, clformat],
+  hmisc/algo/[halgorithm, clformat, namegen],
   hmisc/core/all
 
-import std/[uri, options, httpclient, strutils, sequtils, strformat]
+import std/[uri, options, httpclient, strutils, sequtils, strformat, tables]
 
 # let rawgh = "https://raw.githubusercontent.com/"
 
 var logger: HLogger
+
+proc describeGrammar*(
+    g: GrammarSpec, names: var StringNameCache, inputLang: string): PNode =
+
+  var desc = newPStmtList()
+  let kindType = inputLang.makeNodeKindName().newPIdent()
+
+  var pnames = addr names
+
+  proc aux(rule: GrammarRule): PNode =
+    let (call, args) = case rule.ttype:
+      of "SEQ":     ("tsSeq", rule.members.mapIt(aux(it)))
+      of "CHOICE":  ("tsChoice", rule.members.mapIt(aux(it)))
+      of "STRING":  ("tsString", @[newPLit(rule.value)])
+      of "PATTERN": ("tsRegex", @[newPLIt(rule.value)])
+      of "REPEAT":  ("tsRepeat", @[aux(rule.content)])
+      of "REPEAT1": ("tsRepeat1", @[aux(rule.content)])
+      of "BLANK":   ("tsBlank", newSeq[PNode]())
+      of "SYMBOL":
+          ("tsSymbol", @[newPIdent(ntermName(rule.name, true, inputLang))])
+
+      else:
+        raise newUnexpectedKindError(rule.ttype)
+
+    # block:
+    #   let args = args.filterIt(it.notNil())
+    #   if args.len == 0:
+    #     return nil
+
+    #   else:
+    result = newXCall(newPIdent(call), args, @[newPIdent("K")])
+
+  for name, rule in g.rules:
+    if names.tryGetName(name, true, inputLang).canGet(ruleName):
+      let res = aux(rule)
+      if notNil(res):
+        desc.add newXCall(
+          "[]=", newPIdent("rules"), newPIdent(ruleName), res)
+
+
+  let grammarId = newPIdent(inputLang & "Grammar")
+
+  result = pquote do:
+    import htsparse/describe_grammar
+
+    let `grammarId` = block:
+      var rules: array[`kindType`, HtsRule[`kindType`]]
+      type K = `kindType`
+      `desc`
+
+      rules
+
+
 
 proc build*(
     lang: string,
@@ -25,15 +81,19 @@ proc build*(
   grammarFromUrl(
     grammarUrl  = grammarUrl,
     scannerUrl  = scannerUrl,
-    grammarFile = cwd() /. "grammar.js",
-    scannerFile = if scannerUrl.isSome(): some cwd() / scannerFile else: none(AbsFile),
-    parserOut   = some cwd() / parserOut,
-    l           = logger,
-    langPrefix = lang,
-    testLink = false
-  )
+    defaultHtsGenConf.withIt do:
+      it.junkDir = getAppTempDir()
+      it.grammarJs   = cwd() /. "grammar.js"
+      it.scannerFile = if scannerUrl.isSome(): some cwd() / scannerFile else: none(AbsFile)
+      it.parserOut   = some cwd() / parserOut
+      it.l           = logger
+      it.langPrefix  = lang
+      it.testLink    = false
+      it.describeGrammar = proc(g: GrammarSpec, names: var StringNameCache): PNode =
+                             describeGrammar(g, names, lang)
 
-  # execShell shellCmd(nim, check, errormax = 2, )
+
+  )
 
 proc build*(
     lang: string,
@@ -57,13 +117,17 @@ proc build*(
 
 
   grammarFromFile(
-    langPrefix  = lang,
-    grammarJs   = cwd() / grammarJs,
-    scannerFile = scannerMain.mapItSome(cwd() / it),
-    parserOut   = some(cwd() / parserOut),
-    extraFiles  = extraFiles,
-    l           = logger,
-    testLink = false
+    defaultHtsGenConf.withIt do:
+      it.junkDir = getAppTempDir()
+      it.langPrefix  = lang
+      it.grammarJs   = cwd() / grammarJs
+      it.scannerFile = scannerMain.mapItSome(cwd() / it)
+      it.parserOut   = some(cwd() / parserOut)
+      it.extraFiles  = extraFiles
+      it.l           = logger
+      it.testLink    = false
+      it.describeGrammar = proc(g: GrammarSpec, names: var StringNameCache): PNode =
+                             describeGrammar(g, names, lang)
   )
 
 proc tomlCompile*() =
@@ -557,7 +621,16 @@ proc main*(args: seq[string], inLogger: HLogger = newTermLogger()) =
 
 when isMainModule:
   startHax()
+  let root = cwd()
+
+  cd root
   main(@["js"])
+
+  cd root
+  main(@["lua"])
+
+  cd root
+  main(@["eno"])
   # main(@["kotlin"])
   # main(@["verilog"])
   # main(paramStrs())
