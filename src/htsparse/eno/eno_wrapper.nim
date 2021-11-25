@@ -304,42 +304,42 @@ proc parseEnoString*(str: string, unnamed: bool = false): EnoNode =
 
 import
   htsparse/describe_grammar
-let enoGrammar = block:
-                   var rules: array[EnoNodeKind, HtsRule[EnoNodeKind]]
-                   type
-                     K = EnoNodeKind
+let enoGrammar*: array[EnoNodeKind, HtsRule[EnoNodeKind]] = block:
+                                                              var rules: array[EnoNodeKind, HtsRule[EnoNodeKind]]
+                                                              type
+                                                                K = EnoNodeKind
 
 
-                   rules[enoHidEscapedOrUnescapedSectionKey] = tsChoice[K](tsSymbol[K](enoSectionKey), tsSeq[K](tsSymbol[K](enoEscapeOperator), tsSymbol[K](enoEscapedKey), tsSymbol[K](enoEscapeOperator)))
-                   rules[enoToken] = tsRegex[K]("\\S|\\S[^\\n]*\\S")
-                   rules[enoCopyOperator] = tsString[K]("<")
-                   rules[enoKey] = tsRegex[K]("[^`>:=<\\-#|\\\\\\s]|[^`>:=<\\-#|\\\\\\s][^:=<\\n]*[^:=<\\s]")
-                   rules[enoEntry] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoEntryOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation))))
-                   rules[enoSpacedContinuationOperator] = tsString[K]("\\")
-                   rules[enoComment] = tsRepeat1[K](tsSeq[K](tsSymbol[K](enoCommentOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine)))
-                   rules[enoField] = tsChoice[K](tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoElementOperator), tsSymbol[K](enoToken), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation)))), tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoElementOperator), tsSymbol[K](enoHidEndOfLine), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation)))))
-                   rules[enoSection] = tsSeq[K](tsSymbol[K](enoHidSectionDescend), tsSymbol[K](enoSectionOperator), tsSymbol[K](enoHidEscapedOrUnescapedSectionKey), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](enoCopyOperator), tsSymbol[K](enoDeepCopyOperator)), tsSymbol[K](enoToken)), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSymbol[K](enoHidInstruction)), tsSymbol[K](enoHidSectionAscend))
-                   rules[enoDocument] = tsRepeat[K](tsSymbol[K](enoHidInstruction))
-                   rules[enoHidEmptyLine] = tsRegex[K]("[ \\t\\uFEFF\\u2060\\u200B]*\\n")
-                   rules[enoSectionKey] = tsRegex[K]("[^`<\\s]|[^`<\\s][^<\\n]*[^<\\s]")
-                   rules[enoCommentOperator] = tsString[K](">")
-                   rules[enoDeepCopyOperator] = tsString[K]("<<")
-                   rules[enoHidElementOrFieldsetOrList] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsChoice[K](tsSymbol[K](enoElementOperator), tsSeq[K](tsSymbol[K](enoCopyOperator), tsSymbol[K](enoToken))), tsSymbol[K](enoHidEndOfLine))
-                   rules[enoElementOperator] = tsString[K](":")
-                   rules[enoMultilineField] = tsSeq[K](tsSymbol[K](enoMultilineFieldOperator), tsSymbol[K](enoMultilineFieldKey), tsSymbol[K](enoHidEndOfLine), tsChoice[K](tsSymbol[K](enoMultilineFieldValue), tsBlank[K]()), tsSymbol[K](enoHidMultilineFieldEnd), tsSymbol[K](enoMultilineFieldOperator), tsSymbol[K](enoMultilineFieldKey), tsSymbol[K](enoHidEndOfLine))
-                   rules[enoDirectContinuationOperator] = tsString[K]("|")
-                   rules[enoFieldset] = tsSeq[K](tsSymbol[K](enoHidElementOrFieldsetOrList), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoEntry))))
-                   rules[enoMultilineFieldValue] = tsRepeat1[K](tsSeq[K](tsSymbol[K](enoHidMultilineFieldLine), tsSymbol[K](enoHidEndOfLine)))
-                   rules[enoElement] = tsSymbol[K](enoHidElementOrFieldsetOrList)
-                   rules[enoEntryOperator] = tsString[K]("=")
-                   rules[enoSectionOperator] = tsRegex[K]("#+")
-                   rules[enoHidInstruction] = tsChoice[K](tsSymbol[K](enoHidCommentOrEmpty), tsSymbol[K](enoElement), tsSymbol[K](enoEmpty), tsSymbol[K](enoField), tsSymbol[K](enoFieldset), tsSymbol[K](enoList), tsSymbol[K](enoMultilineField), tsSymbol[K](enoSection))
-                   rules[enoHidEscapedOrUnescapedKey] = tsChoice[K](tsSymbol[K](enoKey), tsSeq[K](tsSymbol[K](enoEscapeOperator), tsSymbol[K](enoEscapedKey), tsSymbol[K](enoEscapeOperator)))
-                   rules[enoEmpty] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoHidEndOfLine))
-                   rules[enoHidCommentOrEmpty] = tsChoice[K](tsSymbol[K](enoComment), tsSymbol[K](enoHidEmptyLine))
-                   rules[enoList] = tsSeq[K](tsSymbol[K](enoHidElementOrFieldsetOrList), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoItem))))
-                   rules[enoContinuation] = tsSeq[K](tsChoice[K](tsSymbol[K](enoDirectContinuationOperator), tsSymbol[K](enoSpacedContinuationOperator)), tsSymbol[K](enoToken), tsSymbol[K](enoHidEndOfLine))
-                   rules[enoItem] = tsSeq[K](tsSymbol[K](enoItemOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation))))
-                   rules[enoItemOperator] = tsString[K]("-")
-                   rules
+                                                              rules[enoHidEscapedOrUnescapedSectionKey] = tsChoice[K](tsSymbol[K](enoSectionKey), tsSeq[K](tsSymbol[K](enoEscapeOperator), tsSymbol[K](enoEscapedKey), tsSymbol[K](enoEscapeOperator)))
+                                                              rules[enoToken] = tsRegex[K]("\\S|\\S[^\\n]*\\S")
+                                                              rules[enoCopyOperator] = tsString[K]("<")
+                                                              rules[enoKey] = tsRegex[K]("[^`>:=<\\-#|\\\\\\s]|[^`>:=<\\-#|\\\\\\s][^:=<\\n]*[^:=<\\s]")
+                                                              rules[enoEntry] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoEntryOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation))))
+                                                              rules[enoSpacedContinuationOperator] = tsString[K]("\\")
+                                                              rules[enoComment] = tsRepeat1[K](tsSeq[K](tsSymbol[K](enoCommentOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine)))
+                                                              rules[enoField] = tsChoice[K](tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoElementOperator), tsSymbol[K](enoToken), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation)))), tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoElementOperator), tsSymbol[K](enoHidEndOfLine), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation)))))
+                                                              rules[enoSection] = tsSeq[K](tsSymbol[K](enoHidSectionDescend), tsSymbol[K](enoSectionOperator), tsSymbol[K](enoHidEscapedOrUnescapedSectionKey), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](enoCopyOperator), tsSymbol[K](enoDeepCopyOperator)), tsSymbol[K](enoToken)), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSymbol[K](enoHidInstruction)), tsSymbol[K](enoHidSectionAscend))
+                                                              rules[enoDocument] = tsRepeat[K](tsSymbol[K](enoHidInstruction))
+                                                              rules[enoHidEmptyLine] = tsRegex[K]("[ \\t\\uFEFF\\u2060\\u200B]*\\n")
+                                                              rules[enoSectionKey] = tsRegex[K]("[^`<\\s]|[^`<\\s][^<\\n]*[^<\\s]")
+                                                              rules[enoCommentOperator] = tsString[K](">")
+                                                              rules[enoDeepCopyOperator] = tsString[K]("<<")
+                                                              rules[enoHidElementOrFieldsetOrList] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsChoice[K](tsSymbol[K](enoElementOperator), tsSeq[K](tsSymbol[K](enoCopyOperator), tsSymbol[K](enoToken))), tsSymbol[K](enoHidEndOfLine))
+                                                              rules[enoElementOperator] = tsString[K](":")
+                                                              rules[enoMultilineField] = tsSeq[K](tsSymbol[K](enoMultilineFieldOperator), tsSymbol[K](enoMultilineFieldKey), tsSymbol[K](enoHidEndOfLine), tsChoice[K](tsSymbol[K](enoMultilineFieldValue), tsBlank[K]()), tsSymbol[K](enoHidMultilineFieldEnd), tsSymbol[K](enoMultilineFieldOperator), tsSymbol[K](enoMultilineFieldKey), tsSymbol[K](enoHidEndOfLine))
+                                                              rules[enoDirectContinuationOperator] = tsString[K]("|")
+                                                              rules[enoFieldset] = tsSeq[K](tsSymbol[K](enoHidElementOrFieldsetOrList), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoEntry))))
+                                                              rules[enoMultilineFieldValue] = tsRepeat1[K](tsSeq[K](tsSymbol[K](enoHidMultilineFieldLine), tsSymbol[K](enoHidEndOfLine)))
+                                                              rules[enoElement] = tsSymbol[K](enoHidElementOrFieldsetOrList)
+                                                              rules[enoEntryOperator] = tsString[K]("=")
+                                                              rules[enoSectionOperator] = tsRegex[K]("#+")
+                                                              rules[enoHidInstruction] = tsChoice[K](tsSymbol[K](enoHidCommentOrEmpty), tsSymbol[K](enoElement), tsSymbol[K](enoEmpty), tsSymbol[K](enoField), tsSymbol[K](enoFieldset), tsSymbol[K](enoList), tsSymbol[K](enoMultilineField), tsSymbol[K](enoSection))
+                                                              rules[enoHidEscapedOrUnescapedKey] = tsChoice[K](tsSymbol[K](enoKey), tsSeq[K](tsSymbol[K](enoEscapeOperator), tsSymbol[K](enoEscapedKey), tsSymbol[K](enoEscapeOperator)))
+                                                              rules[enoEmpty] = tsSeq[K](tsSymbol[K](enoHidEscapedOrUnescapedKey), tsSymbol[K](enoHidEndOfLine))
+                                                              rules[enoHidCommentOrEmpty] = tsChoice[K](tsSymbol[K](enoComment), tsSymbol[K](enoHidEmptyLine))
+                                                              rules[enoList] = tsSeq[K](tsSymbol[K](enoHidElementOrFieldsetOrList), tsRepeat1[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoItem))))
+                                                              rules[enoContinuation] = tsSeq[K](tsChoice[K](tsSymbol[K](enoDirectContinuationOperator), tsSymbol[K](enoSpacedContinuationOperator)), tsSymbol[K](enoToken), tsSymbol[K](enoHidEndOfLine))
+                                                              rules[enoItem] = tsSeq[K](tsSymbol[K](enoItemOperator), tsChoice[K](tsSymbol[K](enoToken), tsBlank[K]()), tsSymbol[K](enoHidEndOfLine), tsRepeat[K](tsSeq[K](tsRepeat[K](tsSymbol[K](enoHidCommentOrEmpty)), tsSymbol[K](enoContinuation))))
+                                                              rules[enoItemOperator] = tsString[K]("-")
+                                                              rules
 

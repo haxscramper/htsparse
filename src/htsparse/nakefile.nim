@@ -59,7 +59,7 @@ proc describeGrammar*(
   result = pquote do:
     import htsparse/describe_grammar
 
-    let `grammarId` = block:
+    let `grammarId`*: array[`kindType`, HtsRule[`kindType`]] = block:
       var rules: array[`kindType`, HtsRule[`kindType`]]
       type K = `kindType`
       `desc`
