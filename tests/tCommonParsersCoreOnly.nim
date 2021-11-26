@@ -97,6 +97,17 @@ print(fact(a))
 
     echo str[node[1]]
 
+  test "expr":
+    let str = "1 + 2"
+    let node = parseTsLuaString(str)
+    let expr = node[0][0]
+
+    # echo expr.treeRepr(str)
+
+    doAssert str[expr{0}] == "1"
+    doAssert str[expr{1}] == "+"
+    doAssert str[expr{2}] == "2"
+
 suite "C":
   test "Parse string":
     let str = """
