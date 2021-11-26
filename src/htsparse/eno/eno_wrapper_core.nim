@@ -285,7 +285,7 @@ proc treeRepr*(node: TsEnoNode, str: string): string =
 
 
 import
-  htsparse/describe_grammar
+  hmisc / wrappers/treesitter_core
 let enoGrammar*: array[EnoNodeKind, HtsRule[EnoNodeKind]] = block:
                                                               var rules: array[EnoNodeKind, HtsRule[EnoNodeKind]]
                                                               type

@@ -116,6 +116,11 @@ print(fact(a))
     discard parser.parseString(str).treeRepr(str)
     echo parseLuaString(str).treeRepr()
 
+
+    echo parser.parseString("1 + 2").treeRepr("1 + 2", unnamed = true)
+    echo parser.parseString("1 + 2").treeRepr("1 + 2", unnamed = false)
+
+
 suite "C":
   test "Parse string":
     let str = """
@@ -331,6 +336,15 @@ class Counter {
     echo parser.parseString(str).treeRepr(str)
     echo parser.parseString(str).treeRepr(str, true)
 
+  test "Readme":
+    let str = """
+int main () {
+  std::cout << "Hello world";
+}
+"""
+
+    echo parseCppString(str).treeRepr()
+
 suite "java":
   test "Parse string":
     let parser = newTsJavaParser()
@@ -342,6 +356,8 @@ class HelloWorld {
 }
 """
     echo parser.parseString(str).treeRepr(str)
+
+
 
 suite "html":
   test "Parse string":

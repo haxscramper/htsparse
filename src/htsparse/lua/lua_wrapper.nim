@@ -970,7 +970,7 @@ proc parseLuaString*(str: string, unnamed: bool = false): LuaNode =
 
 
 import
-  htsparse/describe_grammar
+  hmisc / wrappers/treesitter_core
 let luaGrammar*: array[LuaNodeKind, HtsRule[LuaNodeKind]] = block:
                                                               var rules: array[LuaNodeKind, HtsRule[LuaNodeKind]]
                                                               type

@@ -57,7 +57,7 @@ proc describeGrammar*(
   let grammarId = newPIdent(inputLang & "Grammar")
 
   result = pquote do:
-    import htsparse/describe_grammar
+    import hmisc/wrappers/treesitter_core
 
     let `grammarId`*: array[`kindType`, HtsRule[`kindType`]] = block:
       var rules: array[`kindType`, HtsRule[`kindType`]]

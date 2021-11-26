@@ -2,6 +2,59 @@
 # #+property: header-args:nim+ :flags -d:plainStdout --hints:off
 # #+property: header-args:nim
 
+This package provides auto-generated wrappers for multiple tree-sitter
+grammars, - cpp, java, lua, js, latex, clojure etc (for the full list see
+[[https://github.com/haxscramper/htsparse/tree/master/src/htsparse][htsparse module list]]). Each wrapper has two versions - ~core_only~ (does
+not depend on most of the hmisc features and only imports [[https://haxscramper.github.io/hmisc/hmisc/wrappers/treesitter_core.html][treesitter_core]]
+from hmisc) and more feature-full one.
+
+"core_only" wrapper provides a simple interfaces to the tree-sitter - node
+is wrapped in the ~distinct~ type and helper procedures for ~.kind~ are
+provided. In order to read and analyze the nodes you can use procedures
+defined in the ~treesitter_core~, such as ~[]~ (get idx-th named subnode),
+~{}~ (get any idx-th subnode) and ~items~ iterator.
+
+"full" wrapper proviedes an additional convenience layer on top of the bare
+tree-sitter, by rewriting ~distinct~ tree into much more useable structure
+that supports ~[]~ for named fields (~node["type"]~), stores pointer to the
+base string (and has proper ~.strVal()~ call implemented, without the need
+to pass original string everywhere), and has more sophisticated
+~.treeRepr()~ implementation that is very useuful for understanding the
+parsed AST.
+
+Both "full" and "core only" versions include seveal helper types, consts
+and procs:
+
+- node kinds :: enum with all possible node kinds. Tree-sitter has two
+  different node types - named and unnamed, with named nodes further
+  subdivided into regular and [[https://tree-sitter.github.io/tree-sitter/creating-parsers#hiding-rules][hidden]]. All of these types are listed in the
+  single enum. Fields that end with ~Tok~ correspond to the token nodes,
+  ones that have ~Hid~ in name are "hidden" (regular parser won't show
+  these nodes in the resulting AST).
+  - Full list of token nodes can be accessed via ~<lang>HiddenKinds~ constant
+  - List of tokens kinds is stored in ~<lang>TokenKinds~
+  - Most of the operations hide token nodes by deafult (~.len()~, ~[]~,
+    ~items()~ etc). In order to access those, ~unnamed = true~ argument can
+    be used. ~node[<idx>, true]~ has a shorthand version - ~{}~ operator.
+    In most cases this is not necessary, except for maybe various operators
+    that used literal tokens - to properly iterate subnodes of ~1 + 2~ you
+    probably need to use ~for sub in items(node, true)~
+- allowed subnodes :: Short list of the allowed node kinds for each subnode
+  is stored in the ~<lang>AllowedSubnodes~ const
+- original grammar :: Most of the original grammar production rules are
+  copied into the ~<lang>Grammar~ variable. These rules correspond to the
+  original productions in the ~grammar.js~ and might be used to generate
+  new source code from the AST.
+
+In addition to the shared features, "full" vesion also includes helpers to
+
+- parse text :: ~parse<lang>String~ - helper proc to convert ~string~ into
+  rewritten node. Node the ~unnamed: bool = false~ argument - by default
+  only named nodes are rewritten, and resulting tokens are discareded. To
+  get full tree rewrite with tokens intact set this argument to true, or
+  use ~.getTs()~ for the rewritten node to access the original tree-sitter
+  node.
+
 ** Installation and setup
 
 #+begin_src sh
@@ -25,29 +78,24 @@ int main () {
 }
 """
 
-let node = parseCppString(str)
-
-echo node[0].kind
-
-echo node.treeRepr(str)
+echo parseCppString(str).treeRepr()
 #+end_src
 
 #+RESULTS:
 #+begin_example
-cppFunctionDefinition
-TranslationUnit
-  FunctionDefinition
-    PrimitiveType int
-    FunctionDeclarator
-      Identifier main
-      ParameterList ()
-    CompoundStatement
-      ExpressionStatement
-        BinaryExpression
-          ScopedIdentifier
-            NamespaceIdentifier std
-            Identifier cout
-          StringLiteral "Hello world"
+   TranslationUnit 0:0-3:0
+  [0] FunctionDefinition 0:0-2:1
+    [0] PrimitiveType <type(0)> 0:0..3 int
+    [1] FunctionDeclarator <declarator(1)> 0:4..11
+      [0] Identifier <declarator(0)> 0:4..8 main
+      [1] ParameterList <parameters(1)> 0:9..11 ()
+    [2] CompoundStatement <body(2)> 0:12-2:1
+      [0] ExpressionStatement 1:2..29
+        [0] BinaryExpression 1:2..28
+          [0] QualifiedIdentifier <left(0)> 1:2..11
+            [0] NamespaceIdentifier <scope(0)> 1:2..5 std
+            [1] Identifier <name(1)> 1:7..11 cout
+          [1] StringLiteral <right(1)> 1:15..28 "Hello world"
 #+end_example
 
 ** Tree-sitter library
@@ -57,7 +105,7 @@ can be done by installing [[https://www.archlinux.org/packages/community/x86_64/
 manually:
 
 #+begin_src sh
-  wget https://github.com/tree-sitter/tree-sitter/archive/0.17.3.tar.gz
-  tar -xvf 0.17.3.tar.gz && cd tree-sitter-0.17.3
+  wget https://github.com/tree-sitter/tree-sitter/archive/0.20.0.tar.gz
+  tar -xvf 0.20.0.tar.gz && cd tree-sitter-0.20.0
   sudo make install PREFIX=/usr
 #+end_src

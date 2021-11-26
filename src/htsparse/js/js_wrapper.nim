@@ -985,7 +985,7 @@ proc parseJsString*(str: string, unnamed: bool = false): JsNode =
 
 
 import
-  htsparse/describe_grammar
+  hmisc / wrappers/treesitter_core
 let jsGrammar*: array[JsNodeKind, HtsRule[JsNodeKind]] = block:
                                                            var rules: array[JsNodeKind, HtsRule[JsNodeKind]]
                                                            type
