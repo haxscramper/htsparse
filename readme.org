@@ -55,6 +55,43 @@ In addition to the shared features, "full" vesion also includes helpers to
   use ~.getTs()~ for the rewritten node to access the original tree-sitter
   node.
 
+- agda
+- bash
+- c
+- clojure
+- common.nim
+- cpp
+- csharp
+- css
+- dart
+- elisp
+- embeddedTemplate
+- eno
+- fennel
+- go
+- graphql
+- html
+- java
+- js
+- julia
+- kotlin
+- latex
+- lua
+- make
+- nix
+- php
+- python
+- regex
+- ruby
+- rust
+- scala
+- systemrdl
+- systemVerilog
+- toml
+- vhdl
+- zig
+
+
 ** Installation and setup
 
 #+begin_src sh
