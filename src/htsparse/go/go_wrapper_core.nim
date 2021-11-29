@@ -1,14 +1,13 @@
 import
   hmisc / wrappers/treesitter_core
 export treesitter_core
-
 type
   GoNodeKind* = enum
-    goUsExpression                 ## _expression
-    goUsSimpleStatement            ## _simple_statement
-    goUsSimpleType                 ## _simple_type
-    goUsStatement                  ## _statement
-    goUsType                       ## _type
+    goHidExpression                ## _expression
+    goHidSimpleStatement           ## _simple_statement
+    goHidSimpleType                ## _simple_type
+    goHidStatement                 ## _statement
+    goHidType                      ## _type
     goArgumentList                 ## argument_list
     goArrayType                    ## array_type
     goAssignmentStatement          ## assignment_statement
@@ -178,16 +177,26 @@ type
     goPipeEqualTok                 ## |=
     goDoublePipeTok                ## ||
     goRCurlyTok                    ## }
+    goSpecialArgumentList          ## special_argument_list
+    goFieldNameList                ## field_name_list
+    goHidFieldIdentifier           ## _field_identifier
+    goHidStringLiteral             ## _string_literal
+    goEmptyLabeledStatement        ## empty_labeled_statement
+    goHidTypeSwitchHeader          ## _type_switch_header
+    goHidTypeIdentifier            ## _type_identifier
+    goHidStatementList             ## _statement_list
+    goHidDeclaration               ## _declaration
+    goHidTopLevelDeclaration       ## _top_level_declaration
+    goHidPackageIdentifier         ## _package_identifier
     goSyntaxError                  ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: GoNodeKind): string =
   case kind:
-    of goUsExpression:                 "_expression"
-    of goUsSimpleStatement:            "_simple_statement"
-    of goUsSimpleType:                 "_simple_type"
-    of goUsStatement:                  "_statement"
-    of goUsType:                       "_type"
+    of goHidExpression:                "_expression"
+    of goHidSimpleStatement:           "_simple_statement"
+    of goHidSimpleType:                "_simple_type"
+    of goHidStatement:                 "_statement"
+    of goHidType:                      "_type"
     of goArgumentList:                 "argument_list"
     of goArrayType:                    "array_type"
     of goAssignmentStatement:          "assignment_statement"
@@ -356,59 +365,67 @@ proc strRepr*(kind: GoNodeKind): string =
     of goPipeEqualTok:                 "|="
     of goDoublePipeTok:                "||"
     of goRCurlyTok:                    "}"
+    of goSpecialArgumentList:          "special_argument_list"
+    of goFieldNameList:                "field_name_list"
+    of goHidFieldIdentifier:           "_field_identifier"
+    of goHidStringLiteral:             "_string_literal"
+    of goEmptyLabeledStatement:        "empty_labeled_statement"
+    of goHidTypeSwitchHeader:          "_type_switch_header"
+    of goHidTypeIdentifier:            "_type_identifier"
+    of goHidStatementList:             "_statement_list"
+    of goHidDeclaration:               "_declaration"
+    of goHidTopLevelDeclaration:       "_top_level_declaration"
+    of goHidPackageIdentifier:         "_package_identifier"
     of goSyntaxError:                  "ERROR"
-
 
 type
   TsGoNode* = distinct TSNode
 
-
 type
   GoParser* = distinct PtsParser
 
-
 const goAllowedSubnodes*: array[GoNodeKind, set[GoNodeKind]] = block:
                                                                  var tmp: array[GoNodeKind, set[GoNodeKind]]
-                                                                 tmp[goArgumentList] = {goUsExpression, goUsType, goVariadicArgument}
-                                                                 tmp[goBlock] = {goUsStatement}
+                                                                 tmp[goArgumentList] = {goHidExpression, goHidType, goVariadicArgument}
+                                                                 tmp[goBlock] = {goHidStatement}
                                                                  tmp[goBreakStatement] = {goLabelName}
-                                                                 tmp[goCommunicationCase] = {goUsStatement}
+                                                                 tmp[goCommunicationCase] = {goHidStatement}
                                                                  tmp[goConstDeclaration] = {goConstSpec}
                                                                  tmp[goContinueStatement] = {goLabelName}
-                                                                 tmp[goDecStatement] = {goUsExpression}
-                                                                 tmp[goDefaultCase] = {goUsStatement}
-                                                                 tmp[goDeferStatement] = {goUsExpression}
-                                                                 tmp[goElement] = {goUsExpression, goLiteralValue}
-                                                                 tmp[goExpressionCase] = {goUsStatement}
-                                                                 tmp[goExpressionList] = {goUsExpression}
+                                                                 tmp[goDecStatement] = {goHidExpression}
+                                                                 tmp[goDefaultCase] = {goHidStatement}
+                                                                 tmp[goDeferStatement] = {goHidExpression}
+                                                                 tmp[goElement] = {goHidExpression, goLiteralValue}
+                                                                 tmp[goExpressionCase] = {goHidStatement}
+                                                                 tmp[goExpressionList] = {goHidExpression}
                                                                  tmp[goExpressionSwitchStatement] = {goDefaultCase, goExpressionCase}
                                                                  tmp[goFieldDeclarationList] = {goFieldDeclaration}
-                                                                 tmp[goForStatement] = {goUsExpression, goForClause, goRangeClause}
-                                                                 tmp[goGoStatement] = {goUsExpression}
+                                                                 tmp[goForStatement] = {goHidExpression, goForClause, goRangeClause}
+                                                                 tmp[goGoStatement] = {goHidExpression}
                                                                  tmp[goGotoStatement] = {goLabelName}
                                                                  tmp[goImportDeclaration] = {goImportSpec, goImportSpecList}
                                                                  tmp[goImportSpecList] = {goImportSpec}
-                                                                 tmp[goIncStatement] = {goUsExpression}
+                                                                 tmp[goIncStatement] = {goHidExpression}
                                                                  tmp[goInterfaceType] = {goMethodSpecList}
                                                                  tmp[goInterpretedStringLiteral] = {goEscapeSequence}
-                                                                 tmp[goKeyedElement] = {goUsExpression, goFieldIdentifier, goLiteralValue}
-                                                                 tmp[goLabeledStatement] = {goUsStatement}
+                                                                 tmp[goKeyedElement] = {goHidExpression, goFieldIdentifier, goLiteralValue}
+                                                                 tmp[goLabeledStatement] = {goHidStatement}
                                                                  tmp[goLiteralValue] = {goElement, goKeyedElement}
                                                                  tmp[goMethodSpecList] = {goMethodSpec, goQualifiedType, goTypeIdentifier}
                                                                  tmp[goPackageClause] = {goPackageIdentifier}
                                                                  tmp[goParameterList] = {goParameterDeclaration, goVariadicParameterDeclaration}
-                                                                 tmp[goParenthesizedExpression] = {goUsExpression}
-                                                                 tmp[goParenthesizedType] = {goUsType}
-                                                                 tmp[goPointerType] = {goUsType}
+                                                                 tmp[goParenthesizedExpression] = {goHidExpression}
+                                                                 tmp[goParenthesizedType] = {goHidType}
+                                                                 tmp[goPointerType] = {goHidType}
                                                                  tmp[goReturnStatement] = {goExpressionList}
                                                                  tmp[goSelectStatement] = {goCommunicationCase, goDefaultCase}
-                                                                 tmp[goSourceFile] = {goUsStatement, goFunctionDeclaration, goImportDeclaration, goMethodDeclaration, goPackageClause}
+                                                                 tmp[goSourceFile] = {goHidStatement, goFunctionDeclaration, goImportDeclaration, goMethodDeclaration, goPackageClause}
                                                                  tmp[goStructType] = {goFieldDeclarationList}
-                                                                 tmp[goTypeCase] = {goUsStatement}
+                                                                 tmp[goTypeCase] = {goHidStatement}
                                                                  tmp[goTypeDeclaration] = {goTypeAlias, goTypeSpec}
                                                                  tmp[goTypeSwitchStatement] = {goDefaultCase, goTypeCase}
                                                                  tmp[goVarDeclaration] = {goVarSpec}
-                                                                 tmp[goVariadicArgument] = {goUsExpression}
+                                                                 tmp[goVariadicArgument] = {goHidExpression}
                                                                  tmp
 const goTokenKinds*: set[GoNodeKind] = {
                                          goNewlineTok,
@@ -486,19 +503,35 @@ const goTokenKinds*: set[GoNodeKind] = {
                                          goDoublePipeTok,
                                          goRCurlyTok
                                        }
-
+const goHiddenKinds*: set[GoNodeKind] = {
+                                          goSpecialArgumentList,
+                                          goFieldNameList,
+                                          goHidSimpleType,
+                                          goHidType,
+                                          goHidExpression,
+                                          goHidFieldIdentifier,
+                                          goHidStringLiteral,
+                                          goEmptyLabeledStatement,
+                                          goHidTypeSwitchHeader,
+                                          goHidSimpleStatement,
+                                          goHidTypeIdentifier,
+                                          goHidStatementList,
+                                          goHidStatement,
+                                          goHidDeclaration,
+                                          goHidTopLevelDeclaration,
+                                          goHidPackageIdentifier
+                                        }
 proc tsNodeType*(node: TsGoNode): string
-
 
 
 proc kind*(node: TsGoNode): GoNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":                    goUsExpression
-      of "_simple_statement":              goUsSimpleStatement
-      of "_simple_type":                   goUsSimpleType
-      of "_statement":                     goUsStatement
-      of "_type":                          goUsType
+      of "_expression":                    goHidExpression
+      of "_simple_statement":              goHidSimpleStatement
+      of "_simple_type":                   goHidSimpleType
+      of "_statement":                     goHidStatement
+      of "_type":                          goHidType
       of "argument_list":                  goArgumentList
       of "array_type":                     goArrayType
       of "assignment_statement":           goAssignmentStatement
@@ -671,7 +704,6 @@ proc kind*(node: TsGoNode): GoNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsGoNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -729,4 +761,120 @@ proc treeRepr*(node: TsGoNode, str: string): string =
 
   aux(node, 0)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let goGrammar*: array[GoNodeKind, HtsRule[GoNodeKind]] = block:
+                                                           var rules: array[GoNodeKind, HtsRule[GoNodeKind]]
+                                                           type
+                                                             K = GoNodeKind
+
+
+                                                           rules[goImaginaryLiteral] = tsSeq[K](tsChoice[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsChoice[K](tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("b"), tsString[K]("B")), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[01]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[01]"))))), tsChoice[K](tsString[K]("0"), tsSeq[K](tsRegex[K]("[1-9]"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]()))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsChoice[K](tsString[K]("o"), tsString[K]("O")), tsBlank[K]()), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-7]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-7]"))))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("x"), tsString[K]("X")), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))))), tsChoice[K](tsChoice[K](tsSeq[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsString[K]("."), tsChoice[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]())), tsSeq[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))))), tsSeq[K](tsString[K]("."), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]()))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("x"), tsString[K]("X")), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))), tsString[K]("."), tsChoice[K](tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))), tsBlank[K]())), tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]"))))), tsSeq[K](tsString[K]("."), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))))), tsSeq[K](tsChoice[K](tsString[K]("p"), tsString[K]("P")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))))))), tsString[K]("i"))
+                                                           rules[goDecStatement] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("--"))
+                                                           rules[goChannelType] = tsChoice[K](tsSeq[K](tsString[K]("chan"), tsSymbol[K](goHidType)), tsSeq[K](tsString[K]("chan"), tsString[K]("<-"), tsSymbol[K](goHidType)), tsSeq[K](tsString[K]("<-"), tsString[K]("chan"), tsSymbol[K](goHidType)))
+                                                           rules[goConstSpec] = tsSeq[K](tsSeq[K](tsSymbol[K](goIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goIdentifier)))), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goHidType), tsBlank[K]()), tsString[K]("="), tsSymbol[K](goExpressionList)), tsBlank[K]()))
+                                                           rules[goForClause] = tsSeq[K](tsChoice[K](tsSymbol[K](goHidSimpleStatement), tsBlank[K]()), tsString[K](";"), tsChoice[K](tsSymbol[K](goHidExpression), tsBlank[K]()), tsString[K](";"), tsChoice[K](tsSymbol[K](goHidSimpleStatement), tsBlank[K]()))
+                                                           rules[goImportSpec] = tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](goDot), tsSymbol[K](goBlankIdentifier), tsSymbol[K](goHidPackageIdentifier)), tsBlank[K]()), tsSymbol[K](goHidStringLiteral))
+                                                           rules[goStructType] = tsSeq[K](tsString[K]("struct"), tsSymbol[K](goFieldDeclarationList))
+                                                           rules[goReturnStatement] = tsSeq[K](tsString[K]("return"), tsChoice[K](tsSymbol[K](goExpressionList), tsBlank[K]()))
+                                                           rules[goExpressionSwitchStatement] = tsSeq[K](tsString[K]("switch"), tsChoice[K](tsSeq[K](tsSymbol[K](goHidSimpleStatement), tsString[K](";")), tsBlank[K]()), tsChoice[K](tsSymbol[K](goHidExpression), tsBlank[K]()), tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](goExpressionCase), tsSymbol[K](goDefaultCase))), tsString[K]("}"))
+                                                           rules[goGotoStatement] = tsSeq[K](tsString[K]("goto"), tsSymbol[K](goIdentifier))
+                                                           rules[goFuncLiteral] = tsSeq[K](tsString[K]("func"), tsSymbol[K](goParameterList), tsChoice[K](tsChoice[K](tsSymbol[K](goParameterList), tsSymbol[K](goHidSimpleType)), tsBlank[K]()), tsSymbol[K](goBlock))
+                                                           rules[goFalse] = tsString[K]("false")
+                                                           rules[goMapType] = tsSeq[K](tsString[K]("map"), tsString[K]("["), tsSymbol[K](goHidType), tsString[K]("]"), tsSymbol[K](goHidType))
+                                                           rules[goHidExpression] = tsChoice[K](tsSymbol[K](goUnaryExpression), tsSymbol[K](goBinaryExpression), tsSymbol[K](goSelectorExpression), tsSymbol[K](goIndexExpression), tsSymbol[K](goSliceExpression), tsSymbol[K](goCallExpression), tsSymbol[K](goTypeAssertionExpression), tsSymbol[K](goTypeConversionExpression), tsSymbol[K](goIdentifier), tsChoice[K](tsString[K]("new"), tsString[K]("make")), tsSymbol[K](goCompositeLiteral), tsSymbol[K](goFuncLiteral), tsSymbol[K](goHidStringLiteral), tsSymbol[K](goIntLiteral), tsSymbol[K](goFloatLiteral), tsSymbol[K](goImaginaryLiteral), tsSymbol[K](goRuneLiteral), tsSymbol[K](goNil), tsSymbol[K](goTrue), tsSymbol[K](goFalse), tsSymbol[K](goParenthesizedExpression))
+                                                           rules[goForStatement] = tsSeq[K](tsString[K]("for"), tsChoice[K](tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goForClause), tsSymbol[K](goRangeClause)), tsBlank[K]()), tsSymbol[K](goBlock))
+                                                           rules[goHidFieldIdentifier] = tsSymbol[K](goIdentifier)
+                                                           rules[goImportSpecList] = tsSeq[K](tsString[K]("("), tsRepeat[K](tsSeq[K](tsSymbol[K](goImportSpec), tsChoice[K](tsString[K]("\x0A"), tsString[K](";")))), tsString[K](")"))
+                                                           rules[goTypeSpec] = tsSeq[K](tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goHidType))
+                                                           rules[goParenthesizedType] = tsSeq[K](tsString[K]("("), tsSymbol[K](goHidType), tsString[K](")"))
+                                                           rules[goBlock] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSymbol[K](goHidStatementList), tsBlank[K]()), tsString[K]("}"))
+                                                           rules[goVariadicParameterDeclaration] = tsSeq[K](tsChoice[K](tsSymbol[K](goIdentifier), tsBlank[K]()), tsString[K]("..."), tsSymbol[K](goHidType))
+                                                           rules[goHidTypeSwitchHeader] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](goHidSimpleStatement), tsString[K](";")), tsBlank[K]()), tsChoice[K](tsSeq[K](tsSymbol[K](goExpressionList), tsString[K](":=")), tsBlank[K]()), tsSymbol[K](goHidExpression), tsString[K]("."), tsString[K]("("), tsString[K]("type"), tsString[K](")"))
+                                                           rules[goFallthroughStatement] = tsString[K]("fallthrough")
+                                                           rules[goFunctionType] = tsSeq[K](tsString[K]("func"), tsSymbol[K](goParameterList), tsChoice[K](tsChoice[K](tsSymbol[K](goParameterList), tsSymbol[K](goHidSimpleType)), tsBlank[K]()))
+                                                           rules[goVarDeclaration] = tsSeq[K](tsString[K]("var"), tsChoice[K](tsSymbol[K](goVarSpec), tsSeq[K](tsString[K]("("), tsRepeat[K](tsSeq[K](tsSymbol[K](goVarSpec), tsChoice[K](tsString[K]("\x0A"), tsString[K](";")))), tsString[K](")"))))
+                                                           rules[goUnaryExpression] = tsSeq[K](tsChoice[K](tsString[K]("+"), tsString[K]("-"), tsString[K]("!"), tsString[K]("^"), tsString[K]("*"), tsString[K]("&"), tsString[K]("<-")), tsSymbol[K](goHidExpression))
+                                                           rules[goSourceFile] = tsRepeat[K](tsChoice[K](tsSeq[K](tsSymbol[K](goHidStatement), tsChoice[K](tsString[K]("\x0A"), tsString[K](";"))), tsSeq[K](tsSymbol[K](goHidTopLevelDeclaration), tsChoice[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsBlank[K]()))))
+                                                           rules[goKeyedElement] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](goHidExpression), tsString[K](":")), tsSeq[K](tsSymbol[K](goLiteralValue), tsString[K](":")), tsSeq[K](tsSymbol[K](goHidFieldIdentifier), tsString[K](":"))), tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goLiteralValue)))
+                                                           rules[goArrayType] = tsSeq[K](tsString[K]("["), tsSymbol[K](goHidExpression), tsString[K]("]"), tsSymbol[K](goHidType))
+                                                           rules[goHidTypeIdentifier] = tsSymbol[K](goIdentifier)
+                                                           rules[goNil] = tsString[K]("nil")
+                                                           rules[goHidStatementList] = tsChoice[K](tsSeq[K](tsSymbol[K](goHidStatement), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsSymbol[K](goHidStatement))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsChoice[K](tsSymbol[K](goEmptyLabeledStatement), tsBlank[K]())), tsBlank[K]())), tsSymbol[K](goEmptyLabeledStatement))
+                                                           rules[goMethodDeclaration] = tsSeq[K](tsString[K]("func"), tsSymbol[K](goParameterList), tsSymbol[K](goHidFieldIdentifier), tsSymbol[K](goParameterList), tsChoice[K](tsChoice[K](tsSymbol[K](goParameterList), tsSymbol[K](goHidSimpleType)), tsBlank[K]()), tsChoice[K](tsSymbol[K](goBlock), tsBlank[K]()))
+                                                           rules[goDefaultCase] = tsSeq[K](tsString[K]("default"), tsString[K](":"), tsChoice[K](tsSymbol[K](goHidStatementList), tsBlank[K]()))
+                                                           rules[goComment] = tsChoice[K](tsSeq[K](tsString[K]("//"), tsRegex[K](".*")), tsSeq[K](tsString[K]("/*"), tsRegex[K]("[^*]*\\*+([^/*][^*]*\\*+)*"), tsString[K]("/")))
+                                                           rules[goHidStatement] = tsChoice[K](tsSymbol[K](goHidDeclaration), tsSymbol[K](goHidSimpleStatement), tsSymbol[K](goReturnStatement), tsSymbol[K](goGoStatement), tsSymbol[K](goDeferStatement), tsSymbol[K](goIfStatement), tsSymbol[K](goForStatement), tsSymbol[K](goExpressionSwitchStatement), tsSymbol[K](goTypeSwitchStatement), tsSymbol[K](goSelectStatement), tsSymbol[K](goLabeledStatement), tsSymbol[K](goFallthroughStatement), tsSymbol[K](goBreakStatement), tsSymbol[K](goContinueStatement), tsSymbol[K](goGotoStatement), tsSymbol[K](goBlock), tsSymbol[K](goEmptyStatement))
+                                                           rules[goSendStatement] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("<-"), tsSymbol[K](goHidExpression))
+                                                           rules[goTypeCase] = tsSeq[K](tsString[K]("case"), tsSeq[K](tsSymbol[K](goHidType), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goHidType)))), tsString[K](":"), tsChoice[K](tsSymbol[K](goHidStatementList), tsBlank[K]()))
+                                                           rules[goIdentifier] = tsSeq[K](tsChoice[K](tsRegex[K]("\\p{L}"), tsString[K]("_")), tsRepeat[K](tsChoice[K](tsChoice[K](tsRegex[K]("\\p{L}"), tsString[K]("_")), tsRegex[K]("[0-9]"))))
+                                                           rules[goSelectStatement] = tsSeq[K](tsString[K]("select"), tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](goCommunicationCase), tsSymbol[K](goDefaultCase))), tsString[K]("}"))
+                                                           rules[goTypeSwitchStatement] = tsSeq[K](tsString[K]("switch"), tsSymbol[K](goHidTypeSwitchHeader), tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](goTypeCase), tsSymbol[K](goDefaultCase))), tsString[K]("}"))
+                                                           rules[goMethodSpecList] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goQualifiedType), tsSymbol[K](goMethodSpec)), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsChoice[K](tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goQualifiedType), tsSymbol[K](goMethodSpec)))), tsChoice[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsBlank[K]())), tsBlank[K]()), tsString[K]("}"))
+                                                           rules[goPointerType] = tsSeq[K](tsString[K]("*"), tsSymbol[K](goHidType))
+                                                           rules[goFieldDeclaration] = tsSeq[K](tsChoice[K](tsSeq[K](tsSeq[K](tsSymbol[K](goHidFieldIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goHidFieldIdentifier)))), tsSymbol[K](goHidType)), tsSeq[K](tsChoice[K](tsString[K]("*"), tsBlank[K]()), tsChoice[K](tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goQualifiedType)))), tsChoice[K](tsSymbol[K](goHidStringLiteral), tsBlank[K]()))
+                                                           rules[goParameterList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goParameterDeclaration), tsSymbol[K](goVariadicParameterDeclaration)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](goParameterDeclaration), tsSymbol[K](goVariadicParameterDeclaration))))), tsBlank[K]()), tsChoice[K](tsString[K](","), tsBlank[K]())), tsBlank[K]()), tsString[K](")"))
+                                                           rules[goHidDeclaration] = tsChoice[K](tsSymbol[K](goConstDeclaration), tsSymbol[K](goTypeDeclaration), tsSymbol[K](goVarDeclaration))
+                                                           rules[goIntLiteral] = tsChoice[K](tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("b"), tsString[K]("B")), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[01]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[01]"))))), tsChoice[K](tsString[K]("0"), tsSeq[K](tsRegex[K]("[1-9]"), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]()))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsChoice[K](tsString[K]("o"), tsString[K]("O")), tsBlank[K]()), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-7]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-7]"))))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("x"), tsString[K]("X")), tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]"))))))
+                                                           rules[goTrue] = tsString[K]("true")
+                                                           rules[goFieldDeclarationList] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsSymbol[K](goFieldDeclaration), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsSymbol[K](goFieldDeclaration))), tsChoice[K](tsChoice[K](tsString[K]("\x0A"), tsString[K](";")), tsBlank[K]())), tsBlank[K]()), tsString[K]("}"))
+                                                           rules[goParameterDeclaration] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](goIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goIdentifier)))), tsBlank[K]()), tsSymbol[K](goHidType))
+                                                           rules[goLabeledStatement] = tsSeq[K](tsSymbol[K](goIdentifier), tsString[K](":"), tsSymbol[K](goHidStatement))
+                                                           rules[goParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](goHidExpression), tsString[K](")"))
+                                                           rules[goHidPackageIdentifier] = tsSymbol[K](goIdentifier)
+                                                           rules[goSpecialArgumentList] = tsSeq[K](tsString[K]("("), tsSymbol[K](goHidType), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goHidExpression))), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K](")"))
+                                                           rules[goQualifiedType] = tsSeq[K](tsSymbol[K](goHidPackageIdentifier), tsString[K]("."), tsSymbol[K](goHidTypeIdentifier))
+                                                           rules[goGoStatement] = tsSeq[K](tsString[K]("go"), tsSymbol[K](goHidExpression))
+                                                           rules[goVarSpec] = tsSeq[K](tsSeq[K](tsSymbol[K](goIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goIdentifier)))), tsChoice[K](tsSeq[K](tsSymbol[K](goHidType), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](goExpressionList)), tsBlank[K]())), tsSeq[K](tsString[K]("="), tsSymbol[K](goExpressionList))))
+                                                           rules[goFieldNameList] = tsSeq[K](tsSymbol[K](goHidFieldIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goHidFieldIdentifier))))
+                                                           rules[goCommunicationCase] = tsSeq[K](tsString[K]("case"), tsChoice[K](tsSymbol[K](goSendStatement), tsSymbol[K](goReceiveStatement)), tsString[K](":"), tsChoice[K](tsSymbol[K](goHidStatementList), tsBlank[K]()))
+                                                           rules[goFunctionDeclaration] = tsSeq[K](tsString[K]("func"), tsSymbol[K](goIdentifier), tsSymbol[K](goParameterList), tsChoice[K](tsChoice[K](tsSymbol[K](goParameterList), tsSymbol[K](goHidSimpleType)), tsBlank[K]()), tsChoice[K](tsSymbol[K](goBlock), tsBlank[K]()))
+                                                           rules[goHidSimpleType] = tsChoice[K](tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goQualifiedType), tsSymbol[K](goPointerType), tsSymbol[K](goStructType), tsSymbol[K](goInterfaceType), tsSymbol[K](goArrayType), tsSymbol[K](goSliceType), tsSymbol[K](goMapType), tsSymbol[K](goChannelType), tsSymbol[K](goFunctionType))
+                                                           rules[goReceiveStatement] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](goExpressionList), tsChoice[K](tsString[K]("="), tsString[K](":="))), tsBlank[K]()), tsSymbol[K](goHidExpression))
+                                                           rules[goIndexExpression] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("["), tsSymbol[K](goHidExpression), tsString[K]("]"))
+                                                           rules[goSliceExpression] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("["), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goHidExpression), tsBlank[K]()), tsString[K](":"), tsChoice[K](tsSymbol[K](goHidExpression), tsBlank[K]())), tsSeq[K](tsChoice[K](tsSymbol[K](goHidExpression), tsBlank[K]()), tsString[K](":"), tsSymbol[K](goHidExpression), tsString[K](":"), tsSymbol[K](goHidExpression))), tsString[K]("]"))
+                                                           rules[goHidType] = tsChoice[K](tsSymbol[K](goHidSimpleType), tsSymbol[K](goParenthesizedType))
+                                                           rules[goMethodSpec] = tsSeq[K](tsSymbol[K](goHidFieldIdentifier), tsSymbol[K](goParameterList), tsChoice[K](tsChoice[K](tsSymbol[K](goParameterList), tsSymbol[K](goHidSimpleType)), tsBlank[K]()))
+                                                           rules[goIncStatement] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("++"))
+                                                           rules[goCallExpression] = tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("new"), tsString[K]("make")), tsSymbol[K](goSpecialArgumentList)), tsSeq[K](tsSymbol[K](goHidExpression), tsSymbol[K](goArgumentList)))
+                                                           rules[goBlankIdentifier] = tsString[K]("_")
+                                                           rules[goSliceType] = tsSeq[K](tsString[K]("["), tsString[K]("]"), tsSymbol[K](goHidType))
+                                                           rules[goTypeDeclaration] = tsSeq[K](tsString[K]("type"), tsChoice[K](tsSymbol[K](goTypeSpec), tsSymbol[K](goTypeAlias), tsSeq[K](tsString[K]("("), tsRepeat[K](tsSeq[K](tsChoice[K](tsSymbol[K](goTypeSpec), tsSymbol[K](goTypeAlias)), tsChoice[K](tsString[K]("\x0A"), tsString[K](";")))), tsString[K](")"))))
+                                                           rules[goBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](goHidExpression), tsChoice[K](tsString[K]("*"), tsString[K]("/"), tsString[K]("%"), tsString[K]("<<"), tsString[K](">>"), tsString[K]("&"), tsString[K]("&^")), tsSymbol[K](goHidExpression)), tsSeq[K](tsSymbol[K](goHidExpression), tsChoice[K](tsString[K]("+"), tsString[K]("-"), tsString[K]("|"), tsString[K]("^")), tsSymbol[K](goHidExpression)), tsSeq[K](tsSymbol[K](goHidExpression), tsChoice[K](tsString[K]("=="), tsString[K]("!="), tsString[K]("<"), tsString[K]("<="), tsString[K](">"), tsString[K](">=")), tsSymbol[K](goHidExpression)), tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("&&"), tsSymbol[K](goHidExpression)), tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("||"), tsSymbol[K](goHidExpression)))
+                                                           rules[goShortVarDeclaration] = tsSeq[K](tsSymbol[K](goExpressionList), tsString[K](":="), tsSymbol[K](goExpressionList))
+                                                           rules[goEmptyLabeledStatement] = tsSeq[K](tsSymbol[K](goIdentifier), tsString[K](":"))
+                                                           rules[goHidStringLiteral] = tsChoice[K](tsSymbol[K](goRawStringLiteral), tsSymbol[K](goInterpretedStringLiteral))
+                                                           rules[goConstDeclaration] = tsSeq[K](tsString[K]("const"), tsChoice[K](tsSymbol[K](goConstSpec), tsSeq[K](tsString[K]("("), tsRepeat[K](tsSeq[K](tsSymbol[K](goConstSpec), tsChoice[K](tsString[K]("\x0A"), tsString[K](";")))), tsString[K](")"))))
+                                                           rules[goBreakStatement] = tsSeq[K](tsString[K]("break"), tsChoice[K](tsSymbol[K](goIdentifier), tsBlank[K]()))
+                                                           rules[goImplicitLengthArrayType] = tsSeq[K](tsString[K]("["), tsString[K]("..."), tsString[K]("]"), tsSymbol[K](goHidType))
+                                                           rules[goRangeClause] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](goExpressionList), tsChoice[K](tsString[K]("="), tsString[K](":="))), tsBlank[K]()), tsString[K]("range"), tsSymbol[K](goHidExpression))
+                                                           rules[goTypeAssertionExpression] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("."), tsString[K]("("), tsSymbol[K](goHidType), tsString[K](")"))
+                                                           rules[goInterpretedStringLiteral] = tsSeq[K](tsString[K]("\""), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\"\\n\\\\]+"), tsSymbol[K](goEscapeSequence))), tsString[K]("\""))
+                                                           rules[goSelectorExpression] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("."), tsSymbol[K](goHidFieldIdentifier))
+                                                           rules[goVariadicArgument] = tsSeq[K](tsSymbol[K](goHidExpression), tsString[K]("..."))
+                                                           rules[goArgumentList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goVariadicArgument)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goVariadicArgument)))), tsChoice[K](tsString[K](","), tsBlank[K]())), tsBlank[K]()), tsString[K](")"))
+                                                           rules[goHidSimpleStatement] = tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goSendStatement), tsSymbol[K](goIncStatement), tsSymbol[K](goDecStatement), tsSymbol[K](goAssignmentStatement), tsSymbol[K](goShortVarDeclaration))
+                                                           rules[goExpressionList] = tsSeq[K](tsSymbol[K](goHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](goHidExpression))))
+                                                           rules[goContinueStatement] = tsSeq[K](tsString[K]("continue"), tsChoice[K](tsSymbol[K](goIdentifier), tsBlank[K]()))
+                                                           rules[goIfStatement] = tsSeq[K](tsString[K]("if"), tsChoice[K](tsSeq[K](tsSymbol[K](goHidSimpleStatement), tsString[K](";")), tsBlank[K]()), tsSymbol[K](goHidExpression), tsSymbol[K](goBlock), tsChoice[K](tsSeq[K](tsString[K]("else"), tsChoice[K](tsSymbol[K](goBlock), tsSymbol[K](goIfStatement))), tsBlank[K]()))
+                                                           rules[goEscapeSequence] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsRegex[K]("[^xuU]"), tsRegex[K]("\\d{2,3}"), tsRegex[K]("x[0-9a-fA-F]{2,}"), tsRegex[K]("u[0-9a-fA-F]{4}"), tsRegex[K]("U[0-9a-fA-F]{8}")))
+                                                           rules[goFloatLiteral] = tsChoice[K](tsChoice[K](tsSeq[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsString[K]("."), tsChoice[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]())), tsSeq[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))))), tsSeq[K](tsString[K]("."), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("e"), tsString[K]("E")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]"))))), tsBlank[K]()))), tsSeq[K](tsString[K]("0"), tsChoice[K](tsString[K]("x"), tsString[K]("X")), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))), tsString[K]("."), tsChoice[K](tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))), tsBlank[K]())), tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]"))))), tsSeq[K](tsString[K]("."), tsSeq[K](tsRegex[K]("[0-9a-fA-F]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9a-fA-F]")))))), tsSeq[K](tsChoice[K](tsString[K]("p"), tsString[K]("P")), tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsSeq[K](tsRegex[K]("[0-9]"), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K]("_"), tsBlank[K]()), tsRegex[K]("[0-9]")))))))
+                                                           rules[goRawStringLiteral] = tsSeq[K](tsString[K]("`"), tsRepeat[K](tsRegex[K]("[^`]")), tsString[K]("`"))
+                                                           rules[goDeferStatement] = tsSeq[K](tsString[K]("defer"), tsSymbol[K](goHidExpression))
+                                                           rules[goPackageClause] = tsSeq[K](tsString[K]("package"), tsSymbol[K](goHidPackageIdentifier))
+                                                           rules[goAssignmentStatement] = tsSeq[K](tsSymbol[K](goExpressionList), tsChoice[K](tsString[K]("*="), tsString[K]("/="), tsString[K]("%="), tsString[K]("<<="), tsString[K](">>="), tsString[K]("&="), tsString[K]("&^="), tsString[K]("+="), tsString[K]("-="), tsString[K]("|="), tsString[K]("^="), tsString[K]("=")), tsSymbol[K](goExpressionList))
+                                                           rules[goExpressionCase] = tsSeq[K](tsString[K]("case"), tsSymbol[K](goExpressionList), tsString[K](":"), tsChoice[K](tsSymbol[K](goHidStatementList), tsBlank[K]()))
+                                                           rules[goImportDeclaration] = tsSeq[K](tsString[K]("import"), tsChoice[K](tsSymbol[K](goImportSpec), tsSymbol[K](goImportSpecList)))
+                                                           rules[goRuneLiteral] = tsSeq[K](tsString[K]("\'"), tsChoice[K](tsRegex[K]("[^\'\\\\]"), tsSeq[K](tsString[K]("\\"), tsChoice[K](tsSeq[K](tsString[K]("x"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]")), tsSeq[K](tsRegex[K]("[0-7]"), tsRegex[K]("[0-7]"), tsRegex[K]("[0-7]")), tsSeq[K](tsString[K]("u"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]")), tsSeq[K](tsString[K]("U"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]")), tsSeq[K](tsChoice[K](tsString[K]("a"), tsString[K]("b"), tsString[K]("f"), tsString[K]("n"), tsString[K]("r"), tsString[K]("t"), tsString[K]("v"), tsString[K]("\\"), tsString[K]("\'"), tsString[K]("\"")))))), tsString[K]("\'"))
+                                                           rules[goDot] = tsString[K](".")
+                                                           rules[goEmptyStatement] = tsString[K](";")
+                                                           rules[goTypeConversionExpression] = tsSeq[K](tsSymbol[K](goHidType), tsString[K]("("), tsSymbol[K](goHidExpression), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K](")"))
+                                                           rules[goElement] = tsChoice[K](tsSymbol[K](goHidExpression), tsSymbol[K](goLiteralValue))
+                                                           rules[goInterfaceType] = tsSeq[K](tsString[K]("interface"), tsSymbol[K](goMethodSpecList))
+                                                           rules[goHidTopLevelDeclaration] = tsChoice[K](tsSymbol[K](goPackageClause), tsSymbol[K](goFunctionDeclaration), tsSymbol[K](goMethodDeclaration), tsSymbol[K](goImportDeclaration))
+                                                           rules[goCompositeLiteral] = tsSeq[K](tsChoice[K](tsSymbol[K](goMapType), tsSymbol[K](goSliceType), tsSymbol[K](goArrayType), tsSymbol[K](goImplicitLengthArrayType), tsSymbol[K](goStructType), tsSymbol[K](goHidTypeIdentifier), tsSymbol[K](goQualifiedType)), tsSymbol[K](goLiteralValue))
+                                                           rules[goLiteralValue] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](goElement), tsSymbol[K](goKeyedElement)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](goElement), tsSymbol[K](goKeyedElement)))), tsChoice[K](tsString[K](","), tsBlank[K]())), tsBlank[K]()), tsString[K]("}"))
+                                                           rules[goTypeAlias] = tsSeq[K](tsSymbol[K](goHidTypeIdentifier), tsString[K]("="), tsSymbol[K](goHidType))
+                                                           rules
 

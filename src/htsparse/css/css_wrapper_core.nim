@@ -1,7 +1,6 @@
 import
   hmisc / wrappers/treesitter_core
 export treesitter_core
-
 type
   CssNodeKind* = enum
     cssAdjacentSiblingSelector ## adjacent_sibling_selector
@@ -94,8 +93,16 @@ type
     cssRCurlyTok               ## }
     cssTildeTok                ## ~
     cssTildeEqualTok           ## ~=
+    cssHidQuery                ## _query
+    cssHidSelector             ## _selector
+    cssHidValue                ## _value
+    cssHidTopLevelItem         ## _top_level_item
+    cssIdentifier              ## identifier
+    cssHidBlockItem            ## _block_item
+    cssHidDescendantOperator   ## _descendant_operator
+    cssPseudoClassArguments    ## pseudo_class_arguments
+    cssLastDeclaration         ## last_declaration
     cssSyntaxError             ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: CssNodeKind): string =
   case kind:
@@ -189,21 +196,26 @@ proc strRepr*(kind: CssNodeKind): string =
     of cssRCurlyTok:               "}"
     of cssTildeTok:                "~"
     of cssTildeEqualTok:           "~="
+    of cssHidQuery:                "_query"
+    of cssHidSelector:             "_selector"
+    of cssHidValue:                "_value"
+    of cssHidTopLevelItem:         "_top_level_item"
+    of cssIdentifier:              "identifier"
+    of cssHidBlockItem:            "_block_item"
+    of cssHidDescendantOperator:   "_descendant_operator"
+    of cssPseudoClassArguments:    "pseudo_class_arguments"
+    of cssLastDeclaration:         "last_declaration"
     of cssSyntaxError:             "ERROR"
-
 
 type
   CssExternalTok* = enum
     cssExtern_descendant_operator ## _descendant_operator
 
-
 type
   TsCssNode* = distinct TSNode
 
-
 type
   CssParser* = distinct PtsParser
-
 
 const cssAllowedSubnodes*: array[CssNodeKind, set[CssNodeKind]] = block:
                                                                     var tmp: array[CssNodeKind, set[CssNodeKind]]
@@ -574,9 +586,18 @@ const cssTokenKinds*: set[CssNodeKind] = {
                                            cssTildeTok,
                                            cssTildeEqualTok
                                          }
-
+const cssHiddenKinds*: set[CssNodeKind] = {
+                                            cssHidQuery,
+                                            cssHidSelector,
+                                            cssHidValue,
+                                            cssHidTopLevelItem,
+                                            cssIdentifier,
+                                            cssHidBlockItem,
+                                            cssHidDescendantOperator,
+                                            cssPseudoClassArguments,
+                                            cssLastDeclaration
+                                          }
 proc tsNodeType*(node: TsCssNode): string
-
 
 
 proc kind*(node: TsCssNode): CssNodeKind {.noSideEffect.} =
@@ -676,7 +697,6 @@ proc kind*(node: TsCssNode): CssNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsCssNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -734,4 +754,67 @@ proc treeRepr*(node: TsCssNode, str: string): string =
 
   aux(node, 0)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let cssGrammar*: array[CssNodeKind, HtsRule[CssNodeKind]] = block:
+                                                              var rules: array[CssNodeKind, HtsRule[CssNodeKind]]
+                                                              type
+                                                                K = CssNodeKind
+
+
+                                                              rules[cssParenthesizedValue] = tsSeq[K](tsString[K]("("), tsSymbol[K](cssHidValue), tsString[K](")"))
+                                                              rules[cssHidQuery] = tsChoice[K](tsSymbol[K](cssIdentifier), tsSymbol[K](cssFeatureQuery), tsSymbol[K](cssBinaryQuery), tsSymbol[K](cssUnaryQuery), tsSymbol[K](cssSelectorQuery), tsSymbol[K](cssParenthesizedQuery))
+                                                              rules[cssBinaryQuery] = tsSeq[K](tsSymbol[K](cssHidQuery), tsChoice[K](tsString[K]("and"), tsString[K]("or")), tsSymbol[K](cssHidQuery))
+                                                              rules[cssImportant] = tsString[K]("!important")
+                                                              rules[cssNestingSelector] = tsString[K]("&")
+                                                              rules[cssMediaStatement] = tsSeq[K](tsString[K]("@media"), tsSeq[K](tsSymbol[K](cssHidQuery), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cssHidQuery)))), tsSymbol[K](cssBlock))
+                                                              rules[cssSelectors] = tsSeq[K](tsSymbol[K](cssHidSelector), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cssHidSelector))))
+                                                              rules[cssAdjacentSiblingSelector] = tsSeq[K](tsSymbol[K](cssHidSelector), tsString[K]("+"), tsSymbol[K](cssHidSelector))
+                                                              rules[cssAtKeyword] = tsRegex[K]("@[a-zA-Z-_]+")
+                                                              rules[cssUniversalSelector] = tsString[K]("*")
+                                                              rules[cssFrom] = tsString[K]("from")
+                                                              rules[cssUnit] = tsRegex[K]("[a-zA-Z%]+")
+                                                              rules[cssColorValue] = tsSeq[K](tsString[K]("#"), tsRegex[K]("[0-9a-fA-F]{3,8}"))
+                                                              rules[cssCallExpression] = tsSeq[K](tsSymbol[K](cssIdentifier), tsSymbol[K](cssArguments))
+                                                              rules[cssRuleSet] = tsSeq[K](tsSymbol[K](cssSelectors), tsSymbol[K](cssBlock))
+                                                              rules[cssFeatureQuery] = tsSeq[K](tsString[K]("("), tsSymbol[K](cssIdentifier), tsString[K](":"), tsRepeat1[K](tsSymbol[K](cssHidValue)), tsString[K](")"))
+                                                              rules[cssAttributeSelector] = tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsBlank[K]()), tsString[K]("["), tsSymbol[K](cssIdentifier), tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("="), tsString[K]("~="), tsString[K]("^="), tsString[K]("|="), tsString[K]("*="), tsString[K]("$=")), tsSymbol[K](cssHidValue)), tsBlank[K]()), tsString[K]("]"))
+                                                              rules[cssUnaryQuery] = tsSeq[K](tsChoice[K](tsString[K]("not"), tsString[K]("only")), tsSymbol[K](cssHidQuery))
+                                                              rules[cssFloatValue] = tsSeq[K](tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsRegex[K]("\\d*"), tsChoice[K](tsSeq[K](tsString[K]("."), tsRegex[K]("\\d+")), tsSeq[K](tsRegex[K]("[eE]"), tsChoice[K](tsString[K]("-"), tsBlank[K]()), tsRegex[K]("\\d+")), tsSeq[K](tsString[K]("."), tsRegex[K]("\\d+"), tsRegex[K]("[eE]"), tsChoice[K](tsString[K]("-"), tsBlank[K]()), tsRegex[K]("\\d+")))), tsChoice[K](tsSymbol[K](cssUnit), tsBlank[K]()))
+                                                              rules[cssBinaryExpression] = tsSeq[K](tsSymbol[K](cssHidValue), tsChoice[K](tsString[K]("+"), tsString[K]("-"), tsString[K]("*"), tsString[K]("/")), tsSymbol[K](cssHidValue))
+                                                              rules[cssHidSelector] = tsChoice[K](tsSymbol[K](cssUniversalSelector), tsSymbol[K](cssIdentifier), tsSymbol[K](cssClassSelector), tsSymbol[K](cssNestingSelector), tsSymbol[K](cssPseudoClassSelector), tsSymbol[K](cssPseudoElementSelector), tsSymbol[K](cssIdSelector), tsSymbol[K](cssAttributeSelector), tsSymbol[K](cssStringValue), tsSymbol[K](cssChildSelector), tsSymbol[K](cssDescendantSelector), tsSymbol[K](cssSiblingSelector), tsSymbol[K](cssAdjacentSiblingSelector))
+                                                              rules[cssDeclaration] = tsSeq[K](tsSymbol[K](cssIdentifier), tsString[K](":"), tsSymbol[K](cssHidValue), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K](","), tsBlank[K]()), tsSymbol[K](cssHidValue))), tsChoice[K](tsSymbol[K](cssImportant), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cssBlock] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](cssHidBlockItem)), tsChoice[K](tsSymbol[K](cssLastDeclaration), tsBlank[K]()), tsString[K]("}"))
+                                                              rules[cssHidValue] = tsChoice[K](tsSymbol[K](cssIdentifier), tsSymbol[K](cssPlainValue), tsSymbol[K](cssColorValue), tsSymbol[K](cssIntegerValue), tsSymbol[K](cssFloatValue), tsSymbol[K](cssStringValue), tsSymbol[K](cssBinaryExpression), tsSymbol[K](cssParenthesizedValue), tsSymbol[K](cssCallExpression))
+                                                              rules[cssSelectorQuery] = tsSeq[K](tsString[K]("selector"), tsString[K]("("), tsSymbol[K](cssHidSelector), tsString[K](")"))
+                                                              rules[cssHidTopLevelItem] = tsChoice[K](tsSymbol[K](cssDeclaration), tsSymbol[K](cssRuleSet), tsSymbol[K](cssImportStatement), tsSymbol[K](cssMediaStatement), tsSymbol[K](cssCharsetStatement), tsSymbol[K](cssNamespaceStatement), tsSymbol[K](cssKeyframesStatement), tsSymbol[K](cssSupportsStatement), tsSymbol[K](cssAtRule))
+                                                              rules[cssPseudoClassSelector] = tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsBlank[K]()), tsString[K](":"), tsSymbol[K](cssIdentifier), tsChoice[K](tsSymbol[K](cssPseudoClassArguments), tsBlank[K]()))
+                                                              rules[cssIdSelector] = tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsBlank[K]()), tsString[K]("#"), tsSymbol[K](cssIdentifier))
+                                                              rules[cssAtRule] = tsSeq[K](tsSymbol[K](cssAtKeyword), tsChoice[K](tsSeq[K](tsSymbol[K](cssHidQuery), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cssHidQuery)))), tsBlank[K]()), tsChoice[K](tsString[K](";"), tsSymbol[K](cssBlock)))
+                                                              rules[cssComment] = tsSeq[K](tsString[K]("/*"), tsRegex[K]("[^*]*\\*+([^/*][^*]*\\*+)*"), tsString[K]("/"))
+                                                              rules[cssImportStatement] = tsSeq[K](tsString[K]("@import"), tsSymbol[K](cssHidValue), tsChoice[K](tsSeq[K](tsSymbol[K](cssHidQuery), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cssHidQuery)))), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cssParenthesizedQuery] = tsSeq[K](tsString[K]("("), tsSymbol[K](cssHidQuery), tsString[K](")"))
+                                                              rules[cssKeyframeBlockList] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](cssKeyframeBlock)), tsString[K]("}"))
+                                                              rules[cssKeyframeBlock] = tsSeq[K](tsChoice[K](tsSymbol[K](cssFrom), tsSymbol[K](cssTo), tsSymbol[K](cssIntegerValue)), tsSymbol[K](cssBlock))
+                                                              rules[cssDescendantSelector] = tsSeq[K](tsSymbol[K](cssHidSelector), tsSymbol[K](cssHidDescendantOperator), tsSymbol[K](cssHidSelector))
+                                                              rules[cssClassSelector] = tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsBlank[K]()), tsString[K]("."), tsSymbol[K](cssIdentifier))
+                                                              rules[cssIdentifier] = tsRegex[K]("[a-zA-Z-_][a-zA-Z0-9-_]*")
+                                                              rules[cssArguments] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsRepeat1[K](tsSymbol[K](cssHidValue)), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K](","), tsString[K](";")), tsRepeat1[K](tsSymbol[K](cssHidValue))))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cssTo] = tsString[K]("to")
+                                                              rules[cssPseudoElementSelector] = tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsBlank[K]()), tsString[K]("::"), tsSymbol[K](cssIdentifier))
+                                                              rules[cssKeyframesStatement] = tsSeq[K](tsChoice[K](tsString[K]("@keyframes"), tsRegex[K]("@[-a-z]+keyframes")), tsSymbol[K](cssIdentifier), tsSymbol[K](cssKeyframeBlockList))
+                                                              rules[cssCharsetStatement] = tsSeq[K](tsString[K]("@charset"), tsSymbol[K](cssHidValue), tsString[K](";"))
+                                                              rules[cssNamespaceStatement] = tsSeq[K](tsString[K]("@namespace"), tsChoice[K](tsSymbol[K](cssIdentifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cssStringValue), tsSymbol[K](cssCallExpression)), tsString[K](";"))
+                                                              rules[cssStylesheet] = tsRepeat[K](tsSymbol[K](cssHidTopLevelItem))
+                                                              rules[cssHidBlockItem] = tsChoice[K](tsSymbol[K](cssDeclaration), tsSymbol[K](cssRuleSet), tsSymbol[K](cssImportStatement), tsSymbol[K](cssMediaStatement), tsSymbol[K](cssCharsetStatement), tsSymbol[K](cssNamespaceStatement), tsSymbol[K](cssKeyframesStatement), tsSymbol[K](cssSupportsStatement), tsSymbol[K](cssAtRule))
+                                                              rules[cssSiblingSelector] = tsSeq[K](tsSymbol[K](cssHidSelector), tsString[K]("~"), tsSymbol[K](cssHidSelector))
+                                                              rules[cssChildSelector] = tsSeq[K](tsSymbol[K](cssHidSelector), tsString[K](">"), tsSymbol[K](cssHidSelector))
+                                                              rules[cssStringValue] = tsChoice[K](tsSeq[K](tsString[K]("\'"), tsRegex[K]("([^\'\\n]|\\\\(.|\\n))*"), tsString[K]("\'")), tsSeq[K](tsString[K]("\""), tsRegex[K]("([^\"\\n]|\\\\(.|\\n))*"), tsString[K]("\"")))
+                                                              rules[cssPlainValue] = tsSeq[K](tsRepeat[K](tsChoice[K](tsRegex[K]("[-_]"), tsRegex[K]("\\/[^\\*\\s,;!{}()\\[\\]]"))), tsRegex[K]("[a-zA-Z]"), tsRepeat[K](tsChoice[K](tsRegex[K]("[^/\\s,;!{}()\\[\\]]"), tsRegex[K]("\\/[^\\*\\s,;!{}()\\[\\]]"))))
+                                                              rules[cssPseudoClassArguments] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cssHidSelector), tsRepeat1[K](tsSymbol[K](cssHidValue))), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cssHidSelector), tsRepeat1[K](tsSymbol[K](cssHidValue)))))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cssSupportsStatement] = tsSeq[K](tsString[K]("@supports"), tsSymbol[K](cssHidQuery), tsSymbol[K](cssBlock))
+                                                              rules[cssLastDeclaration] = tsSeq[K](tsSymbol[K](cssIdentifier), tsString[K](":"), tsSymbol[K](cssHidValue), tsRepeat[K](tsSeq[K](tsChoice[K](tsString[K](","), tsBlank[K]()), tsSymbol[K](cssHidValue))), tsChoice[K](tsSymbol[K](cssImportant), tsBlank[K]()))
+                                                              rules[cssIntegerValue] = tsSeq[K](tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("+"), tsString[K]("-")), tsBlank[K]()), tsRegex[K]("\\d+")), tsChoice[K](tsSymbol[K](cssUnit), tsBlank[K]()))
+                                                              rules
 

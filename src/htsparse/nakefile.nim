@@ -651,15 +651,20 @@ when isMainModule:
   startHax()
   let root = cwd()
 
+  for err in [
+    "julia", "nix", "scala", "dart", "vhdl"
+  ]:
+    cd root
+    main(@[err])
 
-  cd root
-  main(@["regex"])
+  # cd root
+  # main(@["regex"])
 
-  cd root
-  main(@["make"])
+  # cd root
+  # main(@["make"])
 
-  cd root
-  main(@["elisp"])
+  # cd root
+  # main(@["elisp"])
 
   # main(@["kotlin"])
   # main(@["verilog"])

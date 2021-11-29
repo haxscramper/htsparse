@@ -4,7 +4,6 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   ClojureNodeKind* = enum
     clojureAnonFnLit           ## anon_fn_lit
@@ -58,8 +57,15 @@ type
     clojureRCurlyTok           ## }
     clojureTildeTok            ## ~
     clojureTildeAtTok          ## ~@
+    clojureHidGap              ## _gap
+    clojureHidBareMapLit       ## _bare_map_lit
+    clojureHidBareVecLit       ## _bare_vec_lit
+    clojureHidWs               ## _ws
+    clojureHidBareListLit      ## _bare_list_lit
+    clojureHidForm             ## _form
+    clojureHidBareSetLit       ## _bare_set_lit
+    clojureHidMetadataLit      ## _metadata_lit
     clojureSyntaxError         ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: ClojureNodeKind): string =
   case kind:
@@ -114,16 +120,21 @@ proc strRepr*(kind: ClojureNodeKind): string =
     of clojureRCurlyTok:           "}"
     of clojureTildeTok:            "~"
     of clojureTildeAtTok:          "~@"
+    of clojureHidGap:              "_gap"
+    of clojureHidBareMapLit:       "_bare_map_lit"
+    of clojureHidBareVecLit:       "_bare_vec_lit"
+    of clojureHidWs:               "_ws"
+    of clojureHidBareListLit:      "_bare_list_lit"
+    of clojureHidForm:             "_form"
+    of clojureHidBareSetLit:       "_bare_set_lit"
+    of clojureHidMetadataLit:      "_metadata_lit"
     of clojureSyntaxError:         "ERROR"
-
 
 type
   TsClojureNode* = distinct TSNode
 
-
 type
   ClojureParser* = distinct PtsParser
-
 
 const clojureAllowedSubnodes*: array[ClojureNodeKind, set[ClojureNodeKind]] = block:
                                                                                 var tmp: array[ClojureNodeKind, set[ClojureNodeKind]]
@@ -200,9 +211,17 @@ const clojureTokenKinds*: set[ClojureNodeKind] = {
                                                    clojureTildeTok,
                                                    clojureTildeAtTok
                                                  }
-
+const clojureHiddenKinds*: set[ClojureNodeKind] = {
+                                                    clojureHidGap,
+                                                    clojureHidBareMapLit,
+                                                    clojureHidBareVecLit,
+                                                    clojureHidWs,
+                                                    clojureHidBareListLit,
+                                                    clojureHidForm,
+                                                    clojureHidBareSetLit,
+                                                    clojureHidMetadataLit
+                                                  }
 proc tsNodeType*(node: TsClojureNode): string
-
 
 
 proc kind*(node: TsClojureNode): ClojureNodeKind {.noSideEffect.} =
@@ -262,7 +281,6 @@ proc kind*(node: TsClojureNode): ClojureNodeKind {.noSideEffect.} =
       of "ERROR":                  clojureSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
-
 
 func isNil*(node: TsClojureNode): bool =
   ts_node_is_null(TSNode(node))
@@ -336,4 +354,53 @@ proc parseClojureString*(str: string, unnamed: bool = false): ClojureNode =
   let parser = newTsClojureParser()
   return toHtsTree[TsClojureNode, ClojureNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let clojureGrammar*: array[ClojureNodeKind, HtsRule[ClojureNodeKind]] = block:
+                                                                          var rules: array[ClojureNodeKind, HtsRule[ClojureNodeKind]]
+                                                                          type
+                                                                            K = ClojureNodeKind
+
+
+                                                                          rules[clojureSetLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsSymbol[K](clojureHidBareSetLit))
+                                                                          rules[clojureHidGap] = tsChoice[K](tsSymbol[K](clojureHidWs), tsSymbol[K](clojureComment), tsSymbol[K](clojureDisExpr))
+                                                                          rules[clojureDisExpr] = tsSeq[K](tsString[K]("#_"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureHidForm] = tsChoice[K](tsSymbol[K](clojureNumLit), tsSymbol[K](clojureKwdLit), tsSymbol[K](clojureStrLit), tsSymbol[K](clojureCharLit), tsSymbol[K](clojureNilLit), tsSymbol[K](clojureBoolLit), tsSymbol[K](clojureSymLit), tsSymbol[K](clojureListLit), tsSymbol[K](clojureMapLit), tsSymbol[K](clojureVecLit), tsSymbol[K](clojureSetLit), tsSymbol[K](clojureAnonFnLit), tsSymbol[K](clojureRegexLit), tsSymbol[K](clojureReadCondLit), tsSymbol[K](clojureSplicingReadCondLit), tsSymbol[K](clojureNsMapLit), tsSymbol[K](clojureVarQuotingLit), tsSymbol[K](clojureSymValLit), tsSymbol[K](clojureEvalingLit), tsSymbol[K](clojureTaggedOrCtorLit), tsSymbol[K](clojureDerefingLit), tsSymbol[K](clojureQuotingLit), tsSymbol[K](clojureSynQuotingLit), tsSymbol[K](clojureUnquoteSplicingLit), tsSymbol[K](clojureUnquotingLit))
+                                                                          rules[clojureHidBareSetLit] = tsSeq[K](tsString[K]("#"), tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](clojureHidForm), tsSymbol[K](clojureHidGap))), tsString[K]("}"))
+                                                                          rules[clojureReadCondLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#?"), tsRepeat[K](tsSymbol[K](clojureHidWs)), tsSymbol[K](clojureHidBareListLit))
+                                                                          rules[clojureListLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsSymbol[K](clojureHidBareListLit))
+                                                                          rules[clojureNsMapLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#"), tsChoice[K](tsSymbol[K](clojureAutoResMark), tsSymbol[K](clojureKwdLit)), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidBareMapLit))
+                                                                          rules[clojureHidBareMapLit] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsChoice[K](tsSymbol[K](clojureHidForm), tsSymbol[K](clojureHidGap))), tsString[K]("}"))
+                                                                          rules[clojureBoolLit] = tsChoice[K](tsString[K]("false"), tsString[K]("true"))
+                                                                          rules[clojureMapLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsSymbol[K](clojureHidBareMapLit))
+                                                                          rules[clojureNilLit] = tsString[K]("nil")
+                                                                          rules[clojureComment] = tsRegex[K]("(;|#!).*\\n?")
+                                                                          rules[clojureCharLit] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsSeq[K](tsString[K]("o"), tsChoice[K](tsSeq[K](tsRegex[K]("[0-9]"), tsRegex[K]("[0-9]"), tsRegex[K]("[0-9]")), tsSeq[K](tsRegex[K]("[0-9]"), tsRegex[K]("[0-9]")), tsSeq[K](tsRegex[K]("[0-9]")))), tsChoice[K](tsString[K]("backspace"), tsString[K]("formfeed"), tsString[K]("newline"), tsString[K]("return"), tsString[K]("space"), tsString[K]("tab")), tsSeq[K](tsString[K]("u"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]"), tsRegex[K]("[0-9a-fA-F]")), tsRegex[K](".|\\n")))
+                                                                          rules[clojureHidMetadataLit] = tsSeq[K](tsChoice[K](tsSymbol[K](clojureMetaLit), tsSymbol[K](clojureOldMetaLit)), tsChoice[K](tsRepeat[K](tsSymbol[K](clojureHidGap)), tsBlank[K]()))
+                                                                          rules[clojureMetaLit] = tsSeq[K](tsString[K]("^"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsChoice[K](tsSymbol[K](clojureReadCondLit), tsSymbol[K](clojureMapLit), tsSymbol[K](clojureStrLit), tsSymbol[K](clojureKwdLit), tsSymbol[K](clojureSymLit)))
+                                                                          rules[clojureSymLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsSeq[K](tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:#\'0-9\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:#\'0-9\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"), tsRegex[K]("[:#\'0-9]")))))
+                                                                          rules[clojureHidBareVecLit] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsChoice[K](tsSymbol[K](clojureHidForm), tsSymbol[K](clojureHidGap))), tsString[K]("]"))
+                                                                          rules[clojureAutoResMark] = tsString[K]("::")
+                                                                          rules[clojureVarQuotingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#\'"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureUnquoteSplicingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("~@"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureVecLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsSymbol[K](clojureHidBareVecLit))
+                                                                          rules[clojureHidWs] = tsRepeat1[K](tsRegex[K]("[\\f\\n\\r\\t, \\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"))
+                                                                          rules[clojureTaggedOrCtorLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureSymLit), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureAnonFnLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#"), tsSymbol[K](clojureHidBareListLit))
+                                                                          rules[clojureSplicingReadCondLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#?@"), tsRepeat[K](tsSymbol[K](clojureHidWs)), tsSymbol[K](clojureHidBareListLit))
+                                                                          rules[clojureRegexLit] = tsSeq[K](tsString[K]("#"), tsSeq[K](tsString[K]("\""), tsRepeat[K](tsRegex[K]("[^\"\\\\]")), tsRepeat[K](tsSeq[K](tsString[K]("\\"), tsRegex[K]("."), tsRepeat[K](tsRegex[K]("[^\"\\\\]")))), tsString[K]("\"")))
+                                                                          rules[clojureHidBareListLit] = tsSeq[K](tsString[K]("("), tsRepeat[K](tsChoice[K](tsSymbol[K](clojureHidForm), tsSymbol[K](clojureHidGap))), tsString[K](")"))
+                                                                          rules[clojureStrLit] = tsSeq[K](tsString[K]("\""), tsRepeat[K](tsRegex[K]("[^\"\\\\]")), tsRepeat[K](tsSeq[K](tsString[K]("\\"), tsRegex[K]("."), tsRepeat[K](tsRegex[K]("[^\"\\\\]")))), tsString[K]("\""))
+                                                                          rules[clojureSource] = tsRepeat[K](tsChoice[K](tsSymbol[K](clojureHidForm), tsSymbol[K](clojureHidGap)))
+                                                                          rules[clojureSymValLit] = tsSeq[K](tsString[K]("##"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureSymLit))
+                                                                          rules[clojureQuotingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("\'"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureEvalingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("#="), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsChoice[K](tsSymbol[K](clojureListLit), tsSymbol[K](clojureReadCondLit), tsSymbol[K](clojureSymLit)))
+                                                                          rules[clojureDerefingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("@"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureUnquotingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("~"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureNumLit] = tsSeq[K](tsChoice[K](tsRegex[K]("[+-]"), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("0"), tsRegex[K]("[xX]"), tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]")), tsChoice[K](tsString[K]("N"), tsBlank[K]())), tsSeq[K](tsString[K]("0"), tsRepeat1[K](tsRegex[K]("[0-7]")), tsChoice[K](tsString[K]("N"), tsBlank[K]())), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsRegex[K]("[rR]"), tsRepeat1[K](tsRegex[K]("[0-9a-zA-Z]"))), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsString[K]("/"), tsRepeat1[K](tsRegex[K]("[0-9]"))), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsChoice[K](tsSeq[K](tsString[K]("."), tsRepeat[K](tsRegex[K]("[0-9]"))), tsBlank[K]()), tsChoice[K](tsSeq[K](tsRegex[K]("[eE]"), tsChoice[K](tsRegex[K]("[+-]"), tsBlank[K]()), tsRepeat1[K](tsRegex[K]("[0-9]"))), tsBlank[K]()), tsChoice[K](tsString[K]("M"), tsBlank[K]())), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsChoice[K](tsRegex[K]("[MN]"), tsBlank[K]()))))
+                                                                          rules[clojureOldMetaLit] = tsSeq[K](tsString[K]("#^"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsChoice[K](tsSymbol[K](clojureReadCondLit), tsSymbol[K](clojureMapLit), tsSymbol[K](clojureStrLit), tsSymbol[K](clojureKwdLit), tsSymbol[K](clojureSymLit)))
+                                                                          rules[clojureSynQuotingLit] = tsSeq[K](tsRepeat[K](tsSymbol[K](clojureHidMetadataLit)), tsString[K]("`"), tsRepeat[K](tsSymbol[K](clojureHidGap)), tsSymbol[K](clojureHidForm))
+                                                                          rules[clojureKwdLit] = tsChoice[K](tsSeq[K](tsString[K](":"), tsChoice[K](tsString[K]("/"), tsSeq[K](tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:/\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"), tsRepeat[K](tsChoice[K](tsRegex[K]("[:\'/]"), tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:/\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]")))))), tsSeq[K](tsString[K]("::"), tsSeq[K](tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:/\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"), tsRepeat[K](tsChoice[K](tsRegex[K]("[:\'/]"), tsRegex[K]("[^\\f\\n\\r\\t ()\\[\\]{}\"@~^;`\\\\,:/\\u000B\\u001C\\u001D\\u001E\\u001F\\u2028\\u2029\\u1680\\u2000\\u2001\\u2002\\u2003\\u2004\\u2005\\u2006\\u2008\\u2009\\u200a\\u205f\\u3000]"))))))
+                                                                          rules
 

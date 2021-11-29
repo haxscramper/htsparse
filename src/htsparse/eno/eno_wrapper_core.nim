@@ -33,12 +33,12 @@ type
     enoHidElementOrFieldsetOrList      ## _elementOrFieldsetOrList
     enoMultilineFieldValue             ## multilineFieldValue
     enoHidEscapedOrUnescapedKey        ## _escapedOrUnescapedKey
-    enoToken                           ## token
     enoHidEscapedOrUnescapedSectionKey ## _escapedOrUnescapedSectionKey
+    enoToken                           ## token
     enoSectionKey                      ## sectionKey
     enoHidEmptyLine                    ## _emptyLine
-    enoHidMultilineFieldLine           ## _multilineFieldLine
     enoMultilineField                  ## multilineField
+    enoHidMultilineFieldLine           ## _multilineFieldLine
     enoHidSectionAscend                ## _sectionAscend
     enoEscapedKey                      ## escapedKey
     enoHidInstruction                  ## _instruction
@@ -79,12 +79,12 @@ proc strRepr*(kind: EnoNodeKind): string =
     of enoHidElementOrFieldsetOrList:      "_elementOrFieldsetOrList"
     of enoMultilineFieldValue:             "multilineFieldValue"
     of enoHidEscapedOrUnescapedKey:        "_escapedOrUnescapedKey"
-    of enoToken:                           "token"
     of enoHidEscapedOrUnescapedSectionKey: "_escapedOrUnescapedSectionKey"
+    of enoToken:                           "token"
     of enoSectionKey:                      "sectionKey"
     of enoHidEmptyLine:                    "_emptyLine"
-    of enoHidMultilineFieldLine:           "_multilineFieldLine"
     of enoMultilineField:                  "multilineField"
+    of enoHidMultilineFieldLine:           "_multilineFieldLine"
     of enoHidSectionAscend:                "_sectionAscend"
     of enoEscapedKey:                      "escapedKey"
     of enoHidInstruction:                  "_instruction"
@@ -178,12 +178,12 @@ const enoHiddenKinds*: set[EnoNodeKind] = {
                                             enoHidElementOrFieldsetOrList,
                                             enoMultilineFieldValue,
                                             enoHidEscapedOrUnescapedKey,
-                                            enoToken,
                                             enoHidEscapedOrUnescapedSectionKey,
+                                            enoToken,
                                             enoSectionKey,
                                             enoHidEmptyLine,
-                                            enoHidMultilineFieldLine,
                                             enoMultilineField,
+                                            enoHidMultilineFieldLine,
                                             enoHidSectionAscend,
                                             enoEscapedKey,
                                             enoHidInstruction,

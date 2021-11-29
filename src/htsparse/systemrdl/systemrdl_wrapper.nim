@@ -4,7 +4,6 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   SystemrdlNodeKind* = enum
     systemrdlAccesstypeLiteral               ## accesstype_literal
@@ -213,7 +212,6 @@ type
     systemrdlTildeAccentTok                  ## ~^
     systemrdlTildePipeTok                    ## ~|
     systemrdlSyntaxError                     ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: SystemrdlNodeKind): string =
   case kind:
@@ -424,14 +422,11 @@ proc strRepr*(kind: SystemrdlNodeKind): string =
     of systemrdlTildePipeTok:                    "~|"
     of systemrdlSyntaxError:                     "ERROR"
 
-
 type
   TsSystemrdlNode* = distinct TSNode
 
-
 type
   SystemrdlParser* = distinct PtsParser
-
 
 const systemrdlAllowedSubnodes*: array[SystemrdlNodeKind, set[SystemrdlNodeKind]] = block:
                                                                                       var tmp: array[SystemrdlNodeKind, set[SystemrdlNodeKind]]
@@ -647,9 +642,8 @@ const systemrdlTokenKinds*: set[SystemrdlNodeKind] = {
                                                        systemrdlTildeAccentTok,
                                                        systemrdlTildePipeTok
                                                      }
-
+const systemrdlHiddenKinds*: set[SystemrdlNodeKind] = {}
 proc tsNodeType*(node: TsSystemrdlNode): string
-
 
 
 proc kind*(node: TsSystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
@@ -863,7 +857,6 @@ proc kind*(node: TsSystemrdlNode): SystemrdlNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsSystemrdlNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -939,4 +932,112 @@ proc parseSystemrdlString*(str: string, unnamed: bool = false): SystemrdlNode =
   let parser = newTsSystemrdlParser()
   return toHtsTree[TsSystemrdlNode, SystemrdlNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let systemrdlGrammar*: array[SystemrdlNodeKind, HtsRule[SystemrdlNodeKind]] = block:
+                                                                                var rules: array[SystemrdlNodeKind, HtsRule[SystemrdlNodeKind]]
+                                                                                type
+                                                                                  K = SystemrdlNodeKind
+
+
+                                                                                rules[systemrdlComponentPrimaryType] = tsChoice[K](tsString[K]("addrmap"), tsString[K]("regfile"), tsString[K]("reg"), tsString[K]("field"), tsString[K]("mem"))
+                                                                                rules[systemrdlArrayLiteral] = tsSeq[K](tsString[K]("\'{"), tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlConstantExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlConstantExpression)))), tsBlank[K]()), tsString[K]("}"))
+                                                                                rules[systemrdlConstraintDefExp] = tsSeq[K](tsSymbol[K](systemrdlId), tsSymbol[K](systemrdlConstraintBody), tsChoice[K](tsSymbol[K](systemrdlConstraintInsts), tsBlank[K]()))
+                                                                                rules[systemrdlComponentAnonDef] = tsSeq[K](tsSymbol[K](systemrdlComponentType), tsSymbol[K](systemrdlComponentBody))
+                                                                                rules[systemrdlPropertyConstraint] = tsSeq[K](tsString[K]("constraint"), tsString[K]("="), tsSymbol[K](systemrdlPropertyConstraintType), tsString[K](";"))
+                                                                                rules[systemrdlStructBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](systemrdlStructElem)), tsString[K]("}"))
+                                                                                rules[systemrdlParamInst] = tsSeq[K](tsString[K]("#"), tsString[K]("("), tsSeq[K](tsSymbol[K](systemrdlParamElem), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlParamElem)))), tsString[K](")"))
+                                                                                rules[systemrdlStructLiteral] = tsSeq[K](tsSymbol[K](systemrdlId), tsString[K]("\'{"), tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlStructLiteralElem), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlStructLiteralElem)))), tsBlank[K]()), tsString[K]("}"))
+                                                                                rules[systemrdlEnumeratorLiteral] = tsSeq[K](tsSymbol[K](systemrdlId), tsString[K]("::"), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlStructType] = tsChoice[K](tsSymbol[K](systemrdlDataType), tsSymbol[K](systemrdlComponentType))
+                                                                                rules[systemrdlPropertyType] = tsSeq[K](tsString[K]("type"), tsString[K]("="), tsSymbol[K](systemrdlPropertyDataType), tsChoice[K](tsSymbol[K](systemrdlArrayType), tsBlank[K]()), tsString[K](";"))
+                                                                                rules[systemrdlPropertyDefault] = tsSeq[K](tsString[K]("default"), tsString[K]("="), tsSymbol[K](systemrdlConstantExpression), tsString[K](";"))
+                                                                                rules[systemrdlPropAssignmentLhs] = tsChoice[K](tsSymbol[K](systemrdlPropKeyword), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlBooleanLiteral] = tsChoice[K](tsString[K]("true"), tsString[K]("false"))
+                                                                                rules[systemrdlPropertyAttribute] = tsChoice[K](tsSymbol[K](systemrdlPropertyType), tsSymbol[K](systemrdlPropertyUsage), tsSymbol[K](systemrdlPropertyDefault), tsSymbol[K](systemrdlPropertyConstraint))
+                                                                                rules[systemrdlComponentBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](systemrdlComponentBodyElem)), tsString[K]("}"))
+                                                                                rules[systemrdlStructLiteralElem] = tsSeq[K](tsSymbol[K](systemrdlId), tsString[K](":"), tsSymbol[K](systemrdlConstantExpression))
+                                                                                rules[systemrdlExplicitPropAssignment] = tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlPropAssignmentLhs), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](systemrdlPropAssignmentRhs)), tsBlank[K]())), tsSymbol[K](systemrdlExplicitEncodeAssignment))
+                                                                                rules[systemrdlPropertyBody] = tsRepeat1[K](tsSymbol[K](systemrdlPropertyAttribute))
+                                                                                rules[systemrdlConstraintInsts] = tsSeq[K](tsSymbol[K](systemrdlId), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlId))))
+                                                                                rules[systemrdlPropRef] = tsSeq[K](tsSymbol[K](systemrdlInstanceRef), tsString[K]("->"), tsChoice[K](tsSymbol[K](systemrdlPropKeyword), tsSymbol[K](systemrdlId)))
+                                                                                rules[systemrdlBasicDataType] = tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlSimpleType), tsChoice[K](tsSymbol[K](systemrdlSigning), tsBlank[K]())), tsString[K]("string"), tsString[K]("boolean"), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlPostEncodeAssignment] = tsSeq[K](tsSymbol[K](systemrdlInstanceRef), tsString[K]("->"), tsString[K]("encode"), tsString[K]("="), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlDataType] = tsChoice[K](tsSymbol[K](systemrdlBasicDataType), tsString[K]("accesstype"), tsString[K]("addressingtype"), tsString[K]("onreadtype"), tsString[K]("onwritetype"))
+                                                                                rules[systemrdlConstraintElem] = tsChoice[K](tsSymbol[K](systemrdlConstantExpression), tsSymbol[K](systemrdlConstraintPropAssignment), tsSeq[K](tsSymbol[K](systemrdlConstraintLhs), tsString[K]("inside"), tsString[K]("{"), tsSymbol[K](systemrdlConstraintValues), tsString[K]("}")), tsSeq[K](tsSymbol[K](systemrdlConstraintLhs), tsString[K]("inside"), tsSymbol[K](systemrdlId)))
+                                                                                rules[systemrdlExplicitPropModifier] = tsSeq[K](tsSymbol[K](systemrdlPropMod), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlComponentInstArrayOrRange] = tsChoice[K](tsRepeat1[K](tsSymbol[K](systemrdlArray)), tsSymbol[K](systemrdlRange))
+                                                                                rules[systemrdlEnumPropertyAssignment] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSeq[K](tsSymbol[K](systemrdlExplicitPropAssignment), tsString[K](";"))), tsString[K]("}"))
+                                                                                rules[systemrdlSourceFile] = tsRepeat[K](tsSymbol[K](systemrdlDescription))
+                                                                                rules[systemrdlParamElem] = tsSeq[K](tsString[K]("."), tsSymbol[K](systemrdlId), tsString[K]("("), tsSymbol[K](systemrdlParamValue), tsString[K](")"))
+                                                                                rules[systemrdlArrayType] = tsSeq[K](tsString[K]("["), tsString[K]("]"))
+                                                                                rules[systemrdlComment] = tsChoice[K](tsSeq[K](tsString[K]("//"), tsRegex[K](".*")), tsSeq[K](tsString[K]("/*"), tsRegex[K]("[^*]*\\*+([^/*][^*]*\\*+)*"), tsString[K]("/")))
+                                                                                rules[systemrdlPropertyDataType] = tsChoice[K](tsSymbol[K](systemrdlComponentPrimaryType), tsString[K]("ref"), tsString[K]("number"), tsSymbol[K](systemrdlBasicDataType))
+                                                                                rules[systemrdlSigning] = tsString[K]("unsigned")
+                                                                                rules[systemrdlConstraintDef] = tsChoice[K](tsSeq[K](tsString[K]("constraint"), tsSymbol[K](systemrdlConstraintDefExp), tsString[K](";")), tsSeq[K](tsString[K]("constraint"), tsSymbol[K](systemrdlConstraintDefAnon), tsString[K](";")))
+                                                                                rules[systemrdlPropertyDefinition] = tsSeq[K](tsString[K]("property"), tsSymbol[K](systemrdlId), tsString[K]("{"), tsSymbol[K](systemrdlPropertyBody), tsString[K]("}"), tsString[K](";"))
+                                                                                rules[systemrdlComponentInst] = tsSeq[K](tsSymbol[K](systemrdlId), tsChoice[K](tsSymbol[K](systemrdlComponentInstArrayOrRange), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("@"), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("+="), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("%="), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()))
+                                                                                rules[systemrdlStructElem] = tsSeq[K](tsSymbol[K](systemrdlStructType), tsSymbol[K](systemrdlId), tsChoice[K](tsSymbol[K](systemrdlArrayType), tsBlank[K]()), tsString[K](";"))
+                                                                                rules[systemrdlConstantExpression] = tsChoice[K](tsSymbol[K](systemrdlConstantPrimary), tsSeq[K](tsSymbol[K](systemrdlUnaryOperator), tsSymbol[K](systemrdlConstantPrimary)), tsSeq[K](tsSymbol[K](systemrdlConstantExpression), tsSymbol[K](systemrdlBinaryOperator), tsSymbol[K](systemrdlConstantExpression)), tsSeq[K](tsSymbol[K](systemrdlConstantExpression), tsString[K]("?"), tsSymbol[K](systemrdlConstantExpression), tsString[K](":"), tsSymbol[K](systemrdlConstantExpression)))
+                                                                                rules[systemrdlExplicitEncodeAssignment] = tsSeq[K](tsString[K]("encode"), tsString[K]("="), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlDescription] = tsChoice[K](tsSymbol[K](systemrdlComponentDef), tsSymbol[K](systemrdlEnumDef), tsSymbol[K](systemrdlPropertyDefinition), tsSymbol[K](systemrdlStructDef), tsSymbol[K](systemrdlConstraintDef), tsSymbol[K](systemrdlExplicitComponentInst), tsSymbol[K](systemrdlPropertyAssignment))
+                                                                                rules[systemrdlPropMod] = tsChoice[K](tsString[K]("posedge"), tsString[K]("negedge"), tsString[K]("bothedge"), tsString[K]("level"), tsString[K]("nonsticky"))
+                                                                                rules[systemrdlInstanceRefElement] = tsSeq[K](tsSymbol[K](systemrdlId), tsRepeat[K](tsSymbol[K](systemrdlArray)))
+                                                                                rules[systemrdlComponentInstType] = tsChoice[K](tsString[K]("external"), tsString[K]("internal"))
+                                                                                rules[systemrdlBinaryOperator] = tsChoice[K](tsString[K]("&&"), tsString[K]("||"), tsString[K]("<"), tsString[K](">"), tsString[K]("<="), tsString[K](">="), tsString[K]("=="), tsString[K]("!="), tsString[K](">>"), tsString[K]("<<"), tsString[K]("&"), tsString[K]("|"), tsString[K]("^"), tsString[K]("~^"), tsString[K]("^~"), tsString[K]("*"), tsString[K]("/"), tsString[K]("%"), tsString[K]("+"), tsString[K]("-"), tsString[K]("**"))
+                                                                                rules[systemrdlComponentDef] = tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlComponentNamedDef), tsSymbol[K](systemrdlComponentInstType), tsSymbol[K](systemrdlComponentInsts), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlComponentAnonDef), tsSymbol[K](systemrdlComponentInstType), tsSymbol[K](systemrdlComponentInsts), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlComponentNamedDef), tsChoice[K](tsSymbol[K](systemrdlComponentInsts), tsBlank[K]()), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlComponentAnonDef), tsSymbol[K](systemrdlComponentInsts), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlComponentInstType), tsSymbol[K](systemrdlComponentNamedDef), tsSymbol[K](systemrdlComponentInsts), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlComponentInstType), tsSymbol[K](systemrdlComponentAnonDef), tsSymbol[K](systemrdlComponentInsts), tsString[K](";")))
+                                                                                rules[systemrdlPropertyCompType] = tsChoice[K](tsSymbol[K](systemrdlComponentType), tsString[K]("constraint"), tsString[K]("all"))
+                                                                                rules[systemrdlEnumEntry] = tsSeq[K](tsSymbol[K](systemrdlId), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()), tsChoice[K](tsSymbol[K](systemrdlEnumPropertyAssignment), tsBlank[K]()), tsString[K](";"))
+                                                                                rules[systemrdlParamDefElem] = tsSeq[K](tsSymbol[K](systemrdlDataType), tsSymbol[K](systemrdlId), tsChoice[K](tsSymbol[K](systemrdlArrayType), tsBlank[K]()), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](systemrdlConstantExpression)), tsBlank[K]()))
+                                                                                rules[systemrdlInstanceOrPropRef] = tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlInstanceRef), tsString[K]("->"), tsSymbol[K](systemrdlPropKeyword)), tsSeq[K](tsSymbol[K](systemrdlInstanceRef), tsString[K]("->"), tsSymbol[K](systemrdlId)), tsSymbol[K](systemrdlInstanceRef))
+                                                                                rules[systemrdlPropertyUsage] = tsSeq[K](tsString[K]("component"), tsString[K]("="), tsSymbol[K](systemrdlPropertyCompTypes), tsString[K](";"))
+                                                                                rules[systemrdlOnreadtypeLiteral] = tsChoice[K](tsString[K]("clr"), tsString[K]("rset"), tsString[K]("ruser"))
+                                                                                rules[systemrdlConstraintPropAssignment] = tsSeq[K](tsSymbol[K](systemrdlId), tsString[K]("="), tsSymbol[K](systemrdlConstantExpression))
+                                                                                rules[systemrdlPrimaryLiteral] = tsChoice[K](tsSymbol[K](systemrdlNumber), tsSymbol[K](systemrdlStringLiteral), tsSymbol[K](systemrdlBooleanLiteral), tsSymbol[K](systemrdlAccesstypeLiteral), tsSymbol[K](systemrdlOnreadtypeLiteral), tsSymbol[K](systemrdlOnwritetypeLiteral), tsSymbol[K](systemrdlAddressingtypeLiteral), tsSymbol[K](systemrdlEnumeratorLiteral), tsString[K]("this"))
+                                                                                rules[systemrdlAccesstypeLiteral] = tsChoice[K](tsString[K]("na"), tsString[K]("rw"), tsString[K]("wr"), tsString[K]("r"), tsString[K]("w"), tsString[K]("rw1"), tsString[K]("w1"))
+                                                                                rules[systemrdlConstraintValue] = tsChoice[K](tsSymbol[K](systemrdlConstantExpression), tsSeq[K](tsString[K]("["), tsSymbol[K](systemrdlConstantExpression), tsString[K](":"), tsSymbol[K](systemrdlConstantExpression), tsString[K]("]")))
+                                                                                rules[systemrdlRange] = tsSeq[K](tsString[K]("["), tsSymbol[K](systemrdlConstantExpression), tsString[K](":"), tsSymbol[K](systemrdlConstantExpression), tsString[K]("]"))
+                                                                                rules[systemrdlStringLiteral] = tsSeq[K](tsString[K]("\""), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\\\\\"]+"), tsSeq[K](tsString[K]("\\"), tsRegex[K](".")))), tsString[K]("\""))
+                                                                                rules[systemrdlExplicitOrDefaultPropAssignment] = tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("default"), tsBlank[K]()), tsSymbol[K](systemrdlExplicitPropModifier), tsString[K](";")), tsSeq[K](tsChoice[K](tsString[K]("default"), tsBlank[K]()), tsSymbol[K](systemrdlExplicitPropAssignment), tsString[K](";")))
+                                                                                rules[systemrdlSimpleType] = tsSymbol[K](systemrdlIntegerType)
+                                                                                rules[systemrdlTemplate] = tsSeq[K](tsString[K]("<%"), tsRegex[K]("[^%]+"), tsString[K]("%>"))
+                                                                                rules[systemrdlComponentInstAlias] = tsSeq[K](tsString[K]("alias"), tsSymbol[K](systemrdlId))
+                                                                                rules[systemrdlExplicitComponentInst] = tsSeq[K](tsChoice[K](tsSymbol[K](systemrdlComponentInstType), tsBlank[K]()), tsChoice[K](tsSymbol[K](systemrdlComponentInstAlias), tsBlank[K]()), tsSymbol[K](systemrdlId), tsSymbol[K](systemrdlComponentInsts), tsString[K](";"))
+                                                                                rules[systemrdlPropAssignmentRhs] = tsChoice[K](tsSymbol[K](systemrdlConstantExpression), tsSymbol[K](systemrdlPrecedencetypeLiteral))
+                                                                                rules[systemrdlConstraintBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSeq[K](tsSymbol[K](systemrdlConstraintElem), tsString[K](";"))), tsString[K]("}"))
+                                                                                rules[systemrdlConstraintLhs] = tsChoice[K](tsString[K]("this"), tsSymbol[K](systemrdlInstanceRef))
+                                                                                rules[systemrdlIntegerType] = tsChoice[K](tsSymbol[K](systemrdlIntegerVectorType), tsSymbol[K](systemrdlIntegerAtomType))
+                                                                                rules[systemrdlPropertyConstraintType] = tsString[K]("componentwidth")
+                                                                                rules[systemrdlInstanceRef] = tsSeq[K](tsSymbol[K](systemrdlInstanceRefElement), tsRepeat[K](tsSeq[K](tsString[K]("."), tsSymbol[K](systemrdlInstanceRefElement))))
+                                                                                rules[systemrdlParamValue] = tsSymbol[K](systemrdlConstantExpression)
+                                                                                rules[systemrdlParamDef] = tsSeq[K](tsString[K]("#"), tsString[K]("("), tsSeq[K](tsSymbol[K](systemrdlParamDefElem), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlParamDefElem)))), tsString[K](")"))
+                                                                                rules[systemrdlPrecedencetypeLiteral] = tsChoice[K](tsString[K]("hw"), tsString[K]("sw"))
+                                                                                rules[systemrdlComponentType] = tsChoice[K](tsSymbol[K](systemrdlComponentPrimaryType), tsString[K]("signal"))
+                                                                                rules[systemrdlEnumBody] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](systemrdlEnumEntry)), tsString[K]("}"))
+                                                                                rules[systemrdlComponentInsts] = tsSeq[K](tsChoice[K](tsSymbol[K](systemrdlParamInst), tsBlank[K]()), tsSeq[K](tsSymbol[K](systemrdlComponentInst), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlComponentInst)))))
+                                                                                rules[systemrdlConstraintDefAnon] = tsSeq[K](tsSymbol[K](systemrdlConstraintBody), tsSymbol[K](systemrdlConstraintInsts))
+                                                                                rules[systemrdlComponentNamedDef] = tsSeq[K](tsSymbol[K](systemrdlComponentType), tsSymbol[K](systemrdlId), tsChoice[K](tsSymbol[K](systemrdlParamDef), tsBlank[K]()), tsSymbol[K](systemrdlComponentBody))
+                                                                                rules[systemrdlAddressingtypeLiteral] = tsChoice[K](tsString[K]("compact"), tsString[K]("regalign"), tsString[K]("fullalign"))
+                                                                                rules[systemrdlConstantCast] = tsSeq[K](tsSymbol[K](systemrdlCastingType), tsString[K]("\'"), tsString[K]("("), tsSymbol[K](systemrdlConstantExpression), tsString[K](")"))
+                                                                                rules[systemrdlConstantPrimary] = tsChoice[K](tsSymbol[K](systemrdlPrimaryLiteral), tsSymbol[K](systemrdlConstantConcatenation), tsSymbol[K](systemrdlConstantMultipleConcatenation), tsSeq[K](tsString[K]("("), tsSymbol[K](systemrdlConstantExpression), tsString[K](")")), tsSymbol[K](systemrdlConstantCast), tsSymbol[K](systemrdlInstanceOrPropRef), tsSymbol[K](systemrdlStructLiteral), tsSymbol[K](systemrdlArrayLiteral))
+                                                                                rules[systemrdlPropertyCompTypes] = tsSeq[K](tsSymbol[K](systemrdlPropertyCompType), tsRepeat[K](tsSeq[K](tsString[K]("|"), tsSymbol[K](systemrdlPropertyCompType))))
+                                                                                rules[systemrdlEnumDef] = tsSeq[K](tsString[K]("enum"), tsSymbol[K](systemrdlId), tsSymbol[K](systemrdlEnumBody), tsString[K](";"))
+                                                                                rules[systemrdlIntegerAtomType] = tsString[K]("longint")
+                                                                                rules[systemrdlPostPropAssignment] = tsChoice[K](tsSeq[K](tsSymbol[K](systemrdlPropRef), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](systemrdlPropAssignmentRhs)), tsBlank[K]()), tsString[K](";")), tsSeq[K](tsSymbol[K](systemrdlPostEncodeAssignment), tsString[K](";")))
+                                                                                rules[systemrdlUnaryOperator] = tsChoice[K](tsString[K]("!"), tsString[K]("+"), tsString[K]("-"), tsString[K]("~"), tsString[K]("&"), tsString[K]("~&"), tsString[K]("|"), tsString[K]("~|"), tsString[K]("^"), tsString[K]("~^"), tsString[K]("^~"))
+                                                                                rules[systemrdlNumber] = tsChoice[K](tsRegex[K]("\\d+"), tsRegex[K]("0[xX][0-9a-fA-f]+"), tsRegex[K]("[0-9]+\'[bB][01_]+"), tsRegex[K]("[0-9]+\'[dD][0-9_]+"), tsRegex[K]("[0-9]+\'[hH][0-9a-fA-f_]+"))
+                                                                                rules[systemrdlOnwritetypeLiteral] = tsChoice[K](tsString[K]("woset"), tsString[K]("woclr"), tsString[K]("wot"), tsString[K]("wzs"), tsString[K]("wzc"), tsString[K]("wzt"), tsString[K]("wclr"), tsString[K]("wset"), tsString[K]("wuser"))
+                                                                                rules[systemrdlCastingType] = tsChoice[K](tsSymbol[K](systemrdlSimpleType), tsSymbol[K](systemrdlConstantPrimary), tsString[K]("boolean"))
+                                                                                rules[systemrdlConstantConcatenation] = tsSeq[K](tsString[K]("{"), tsSeq[K](tsSymbol[K](systemrdlConstantExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlConstantExpression)))), tsString[K]("}"))
+                                                                                rules[systemrdlId] = tsRegex[K]("[a-zA-Z_]\\w*")
+                                                                                rules[systemrdlStructDef] = tsSeq[K](tsChoice[K](tsString[K]("abstract"), tsBlank[K]()), tsString[K]("struct"), tsSymbol[K](systemrdlId), tsChoice[K](tsSeq[K](tsString[K](":"), tsSymbol[K](systemrdlId)), tsBlank[K]()), tsSymbol[K](systemrdlStructBody), tsString[K](";"))
+                                                                                rules[systemrdlConstraintValues] = tsSeq[K](tsSymbol[K](systemrdlConstraintValue), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](systemrdlConstraintValue))))
+                                                                                rules[systemrdlComponentBodyElem] = tsChoice[K](tsSymbol[K](systemrdlComponentDef), tsSymbol[K](systemrdlEnumDef), tsSymbol[K](systemrdlStructDef), tsSymbol[K](systemrdlConstraintDef), tsSymbol[K](systemrdlExplicitComponentInst), tsSymbol[K](systemrdlPropertyAssignment))
+                                                                                rules[systemrdlArray] = tsSeq[K](tsString[K]("["), tsSymbol[K](systemrdlConstantExpression), tsString[K]("]"))
+                                                                                rules[systemrdlConstantMultipleConcatenation] = tsSeq[K](tsString[K]("{"), tsSymbol[K](systemrdlConstantExpression), tsSymbol[K](systemrdlConstantConcatenation), tsString[K]("}"))
+                                                                                rules[systemrdlIntegerVectorType] = tsString[K]("bit")
+                                                                                rules[systemrdlPropertyAssignment] = tsChoice[K](tsSymbol[K](systemrdlExplicitOrDefaultPropAssignment), tsSymbol[K](systemrdlPostPropAssignment))
+                                                                                rules[systemrdlPropKeyword] = tsChoice[K](tsString[K]("sw"), tsString[K]("hw"), tsString[K]("rclr"), tsString[K]("rset"), tsString[K]("woclr"), tsString[K]("woset"))
+                                                                                rules
 

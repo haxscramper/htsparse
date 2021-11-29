@@ -4,16 +4,15 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   CppNodeKind* = enum
-    cppUsAbstractDeclarator                 ## _abstract_declarator
-    cppUsDeclarator                         ## _declarator
-    cppUsExpression                         ## _expression
-    cppUsFieldDeclarator                    ## _field_declarator
-    cppUsStatement                          ## _statement
-    cppUsTypeDeclarator                     ## _type_declarator
-    cppUsTypeSpecifier                      ## _type_specifier
+    cppHidAbstractDeclarator                ## _abstract_declarator
+    cppHidDeclarator                        ## _declarator
+    cppHidExpression                        ## _expression
+    cppHidFieldDeclarator                   ## _field_declarator
+    cppHidStatement                         ## _statement
+    cppHidTypeDeclarator                    ## _type_declarator
+    cppHidTypeSpecifier                     ## _type_specifier
     cppAbstractArrayDeclarator              ## abstract_array_declarator
     cppAbstractFunctionDeclarator           ## abstract_function_declarator
     cppAbstractParenthesizedDeclarator      ## abstract_parenthesized_declarator
@@ -224,18 +223,17 @@ type
     cppDoubleRBrackTok                      ## ]]
     cppAccentTok                            ## ^
     cppAccentEqualTok                       ## ^=
-    cppUsAtomicTok                          ## _Atomic
-    cppUsUsAttributeTok                     ## __attribute__
-    cppUsUsBasedTok                         ## __based
-    cppUsUsCdeclTok                         ## __cdecl
-    cppUsUsClrcallTok                       ## __clrcall
-    cppUsUsDeclspecTok                      ## __declspec
-    cppUsUsFastcallTok                      ## __fastcall
-    cppUsUsStdcallTok                       ## __stdcall
-    cppUsUsThiscallTok                      ## __thiscall
-    cppUsUsUnalignedTok                     ## __unaligned
-    cppUsUsVectorcallTok                    ## __vectorcall
-    cppUsUnalignedTok                       ## _unaligned
+    cppHidAtomicTok                         ## _Atomic
+    cppHidAttributeTok                      ## __attribute__
+    cppHidBasedTok                          ## __based
+    cppHidCdeclTok                          ## __cdecl
+    cppHidClrcallTok                        ## __clrcall
+    cppHidDeclspecTok                       ## __declspec
+    cppHidFastcallTok                       ## __fastcall
+    cppHidStdcallTok                        ## __stdcall
+    cppHidThiscallTok                       ## __thiscall
+    cppHidUnalignedTok                      ## __unaligned
+    cppHidVectorcallTok                     ## __vectorcall
     cppAuto                                 ## auto
     cppBreakTok                             ## break
     cppCaseTok                              ## case
@@ -326,18 +324,70 @@ type
     cppDoublePipeTok                        ## ||
     cppRCurlyTok                            ## }
     cppTildeTok                             ## ~
+    cppFunctionTypeDeclarator               ## function_type_declarator
+    cppVariadicReferenceDeclarator          ## variadic_reference_declarator
+    cppPreprocArgumentList                  ## preproc_argument_list
+    cppReferenceFieldDeclarator             ## reference_field_declarator
+    cppPreprocElseInFieldDeclarationList    ## preproc_else_in_field_declaration_list
+    cppAttributedFieldDeclarator            ## attributed_field_declarator
+    cppOperatorCastDeclaration              ## operator_cast_declaration
+    cppAttributedNonCaseStatement           ## attributed_non_case_statement
+    cppHidClassName                         ## _class_name
+    cppQualifiedTypeIdentifier              ## qualified_type_identifier
+    cppQualifiedOperatorCastIdentifier      ## qualified_operator_cast_identifier
+    cppArrayTypeDeclarator                  ## array_type_declarator
+    cppPreprocUnaryExpression               ## preproc_unary_expression
+    cppPointerFieldDeclarator               ## pointer_field_declarator
+    cppPreprocElifInFieldDeclarationList    ## preproc_elif_in_field_declaration_list
+    cppHidFieldIdentifier                   ## _field_identifier
+    cppPreprocParenthesizedExpression       ## preproc_parenthesized_expression
+    cppParenthesizedTypeDeclarator          ## parenthesized_type_declarator
+    cppConstructorOrDestructorDefinition    ## constructor_or_destructor_definition
+    cppHidDeclarationSpecifiers             ## _declaration_specifiers
+    cppQualifiedFieldIdentifier             ## qualified_field_identifier
+    cppPreprocBinaryExpression              ## preproc_binary_expression
+    cppConditionDeclaration                 ## condition_declaration
+    cppPreprocIfdefInFieldDeclarationList   ## preproc_ifdef_in_field_declaration_list
+    cppHidEnumBaseClause                    ## _enum_base_clause
+    cppDependentFieldIdentifier             ## dependent_field_identifier
+    cppHidTopLevelItem                      ## _top_level_item
+    cppDependentIdentifier                  ## dependent_identifier
+    cppPointerTypeDeclarator                ## pointer_type_declarator
+    cppMacroTypeSpecifier                   ## macro_type_specifier
+    cppHidTypeIdentifier                    ## _type_identifier
+    cppPreprocIfInFieldDeclarationList      ## preproc_if_in_field_declaration_list
+    cppPreprocCallExpression                ## preproc_call_expression
+    cppVariadicParameter                    ## variadic_parameter
+    cppDependentTypeIdentifier              ## dependent_type_identifier
+    cppInlineMethodDefinition               ## inline_method_definition
+    cppOperatorCastDefinition               ## operator_cast_definition
+    cppHidFieldDeclarationListItem          ## _field_declaration_list_item
+    cppHidDeclarationModifiers              ## _declaration_modifiers
+    cppHidConstructorSpecifiers             ## _constructor_specifiers
+    cppConstructorOrDestructorDeclaration   ## constructor_or_destructor_declaration
+    cppHidScopeResolution                   ## _scope_resolution
+    cppAttributedTypeDeclarator             ## attributed_type_declarator
+    cppHidNamespaceIdentifier               ## _namespace_identifier
+    cppHidStatementIdentifier               ## _statement_identifier
+    cppArrayFieldDeclarator                 ## array_field_declarator
+    cppHidAssignmentLeftExpression          ## _assignment_left_expression
+    cppParenthesizedFieldDeclarator         ## parenthesized_field_declarator
+    cppHidPreprocExpression                 ## _preproc_expression
+    cppHidNonCaseStatement                  ## _non_case_statement
+    cppTypeParameterPackExpansion           ## type_parameter_pack_expansion
+    cppHidEmptyDeclaration                  ## _empty_declaration
+    cppFunctionFieldDeclarator              ## function_field_declarator
     cppSyntaxError                          ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: CppNodeKind): string =
   case kind:
-    of cppUsAbstractDeclarator:                 "_abstract_declarator"
-    of cppUsDeclarator:                         "_declarator"
-    of cppUsExpression:                         "_expression"
-    of cppUsFieldDeclarator:                    "_field_declarator"
-    of cppUsStatement:                          "_statement"
-    of cppUsTypeDeclarator:                     "_type_declarator"
-    of cppUsTypeSpecifier:                      "_type_specifier"
+    of cppHidAbstractDeclarator:                "_abstract_declarator"
+    of cppHidDeclarator:                        "_declarator"
+    of cppHidExpression:                        "_expression"
+    of cppHidFieldDeclarator:                   "_field_declarator"
+    of cppHidStatement:                         "_statement"
+    of cppHidTypeDeclarator:                    "_type_declarator"
+    of cppHidTypeSpecifier:                     "_type_specifier"
     of cppAbstractArrayDeclarator:              "abstract_array_declarator"
     of cppAbstractFunctionDeclarator:           "abstract_function_declarator"
     of cppAbstractParenthesizedDeclarator:      "abstract_parenthesized_declarator"
@@ -547,18 +597,17 @@ proc strRepr*(kind: CppNodeKind): string =
     of cppDoubleRBrackTok:                      "]]"
     of cppAccentTok:                            "^"
     of cppAccentEqualTok:                       "^="
-    of cppUsAtomicTok:                          "_Atomic"
-    of cppUsUsAttributeTok:                     "__attribute__"
-    of cppUsUsBasedTok:                         "__based"
-    of cppUsUsCdeclTok:                         "__cdecl"
-    of cppUsUsClrcallTok:                       "__clrcall"
-    of cppUsUsDeclspecTok:                      "__declspec"
-    of cppUsUsFastcallTok:                      "__fastcall"
-    of cppUsUsStdcallTok:                       "__stdcall"
-    of cppUsUsThiscallTok:                      "__thiscall"
-    of cppUsUsUnalignedTok:                     "__unaligned"
-    of cppUsUsVectorcallTok:                    "__vectorcall"
-    of cppUsUnalignedTok:                       "_unaligned"
+    of cppHidAtomicTok:                         "_Atomic"
+    of cppHidAttributeTok:                      "__attribute__"
+    of cppHidBasedTok:                          "__based"
+    of cppHidCdeclTok:                          "__cdecl"
+    of cppHidClrcallTok:                        "__clrcall"
+    of cppHidDeclspecTok:                       "__declspec"
+    of cppHidFastcallTok:                       "__fastcall"
+    of cppHidStdcallTok:                        "__stdcall"
+    of cppHidThiscallTok:                       "__thiscall"
+    of cppHidUnalignedTok:                      "__unaligned"
+    of cppHidVectorcallTok:                     "__vectorcall"
     of cppAuto:                                 "auto"
     of cppBreakTok:                             "break"
     of cppCaseTok:                              "case"
@@ -649,38 +698,87 @@ proc strRepr*(kind: CppNodeKind): string =
     of cppDoublePipeTok:                        "||"
     of cppRCurlyTok:                            "}"
     of cppTildeTok:                             "~"
+    of cppFunctionTypeDeclarator:               "function_type_declarator"
+    of cppVariadicReferenceDeclarator:          "variadic_reference_declarator"
+    of cppPreprocArgumentList:                  "preproc_argument_list"
+    of cppReferenceFieldDeclarator:             "reference_field_declarator"
+    of cppPreprocElseInFieldDeclarationList:    "preproc_else_in_field_declaration_list"
+    of cppAttributedFieldDeclarator:            "attributed_field_declarator"
+    of cppOperatorCastDeclaration:              "operator_cast_declaration"
+    of cppAttributedNonCaseStatement:           "attributed_non_case_statement"
+    of cppHidClassName:                         "_class_name"
+    of cppQualifiedTypeIdentifier:              "qualified_type_identifier"
+    of cppQualifiedOperatorCastIdentifier:      "qualified_operator_cast_identifier"
+    of cppArrayTypeDeclarator:                  "array_type_declarator"
+    of cppPreprocUnaryExpression:               "preproc_unary_expression"
+    of cppPointerFieldDeclarator:               "pointer_field_declarator"
+    of cppPreprocElifInFieldDeclarationList:    "preproc_elif_in_field_declaration_list"
+    of cppHidFieldIdentifier:                   "_field_identifier"
+    of cppPreprocParenthesizedExpression:       "preproc_parenthesized_expression"
+    of cppParenthesizedTypeDeclarator:          "parenthesized_type_declarator"
+    of cppConstructorOrDestructorDefinition:    "constructor_or_destructor_definition"
+    of cppHidDeclarationSpecifiers:             "_declaration_specifiers"
+    of cppQualifiedFieldIdentifier:             "qualified_field_identifier"
+    of cppPreprocBinaryExpression:              "preproc_binary_expression"
+    of cppConditionDeclaration:                 "condition_declaration"
+    of cppPreprocIfdefInFieldDeclarationList:   "preproc_ifdef_in_field_declaration_list"
+    of cppHidEnumBaseClause:                    "_enum_base_clause"
+    of cppDependentFieldIdentifier:             "dependent_field_identifier"
+    of cppHidTopLevelItem:                      "_top_level_item"
+    of cppDependentIdentifier:                  "dependent_identifier"
+    of cppPointerTypeDeclarator:                "pointer_type_declarator"
+    of cppMacroTypeSpecifier:                   "macro_type_specifier"
+    of cppHidTypeIdentifier:                    "_type_identifier"
+    of cppPreprocIfInFieldDeclarationList:      "preproc_if_in_field_declaration_list"
+    of cppPreprocCallExpression:                "preproc_call_expression"
+    of cppVariadicParameter:                    "variadic_parameter"
+    of cppDependentTypeIdentifier:              "dependent_type_identifier"
+    of cppInlineMethodDefinition:               "inline_method_definition"
+    of cppOperatorCastDefinition:               "operator_cast_definition"
+    of cppHidFieldDeclarationListItem:          "_field_declaration_list_item"
+    of cppHidDeclarationModifiers:              "_declaration_modifiers"
+    of cppHidConstructorSpecifiers:             "_constructor_specifiers"
+    of cppConstructorOrDestructorDeclaration:   "constructor_or_destructor_declaration"
+    of cppHidScopeResolution:                   "_scope_resolution"
+    of cppAttributedTypeDeclarator:             "attributed_type_declarator"
+    of cppHidNamespaceIdentifier:               "_namespace_identifier"
+    of cppHidStatementIdentifier:               "_statement_identifier"
+    of cppArrayFieldDeclarator:                 "array_field_declarator"
+    of cppHidAssignmentLeftExpression:          "_assignment_left_expression"
+    of cppParenthesizedFieldDeclarator:         "parenthesized_field_declarator"
+    of cppHidPreprocExpression:                 "_preproc_expression"
+    of cppHidNonCaseStatement:                  "_non_case_statement"
+    of cppTypeParameterPackExpansion:           "type_parameter_pack_expansion"
+    of cppHidEmptyDeclaration:                  "_empty_declaration"
+    of cppFunctionFieldDeclarator:              "function_field_declarator"
     of cppSyntaxError:                          "ERROR"
-
 
 type
   CppExternalTok* = enum
     cppExternRaw_string_literal ## raw_string_literal
 
-
 type
   TsCppNode* = distinct TSNode
 
-
 type
   CppParser* = distinct PtsParser
-
 
 const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                     var tmp: array[CppNodeKind, set[CppNodeKind]]
                                                                     tmp[cppAbstractArrayDeclarator] = {cppTypeQualifier}
                                                                     tmp[cppAbstractFunctionDeclarator] = {cppNoexcept, cppRefQualifier, cppThrowSpecifier, cppTrailingReturnType, cppTypeQualifier}
-                                                                    tmp[cppAbstractParenthesizedDeclarator] = {cppUsAbstractDeclarator}
+                                                                    tmp[cppAbstractParenthesizedDeclarator] = {cppHidAbstractDeclarator}
                                                                     tmp[cppAbstractPointerDeclarator] = {cppTypeQualifier}
-                                                                    tmp[cppAbstractReferenceDeclarator] = {cppUsAbstractDeclarator}
-                                                                    tmp[cppArgumentList] = {cppUsExpression, cppInitializerList, cppPreprocDefined}
+                                                                    tmp[cppAbstractReferenceDeclarator] = {cppHidAbstractDeclarator}
+                                                                    tmp[cppArgumentList] = {cppHidExpression, cppInitializerList, cppPreprocDefined}
                                                                     tmp[cppArrayDeclarator] = {cppTypeQualifier}
                                                                     tmp[cppAttribute] = {cppArgumentList}
                                                                     tmp[cppAttributeDeclaration] = {cppAttribute}
                                                                     tmp[cppAttributeSpecifier] = {cppArgumentList}
-                                                                    tmp[cppAttributedDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppUsTypeDeclarator, cppAttributeDeclaration}
-                                                                    tmp[cppAttributedStatement] = {cppUsStatement, cppAttributeDeclaration}
+                                                                    tmp[cppAttributedDeclarator] = {cppHidDeclarator, cppHidFieldDeclarator, cppHidTypeDeclarator, cppAttributeDeclaration}
+                                                                    tmp[cppAttributedStatement] = {cppHidStatement, cppAttributeDeclaration}
                                                                     tmp[cppBaseClassClause] = {cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
-                                                                    tmp[cppBitfieldClause] = {cppUsExpression}
+                                                                    tmp[cppBitfieldClause] = {cppHidExpression}
                                                                     tmp[cppCaseStatement] = {
                                                                                               cppAttributedStatement,
                                                                                               cppBreakStatement,
@@ -705,11 +803,11 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             }
                                                                     tmp[cppCharLiteral] = {cppEscapeSequence}
                                                                     tmp[cppClassSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
-                                                                    tmp[cppCoReturnStatement] = {cppUsExpression}
-                                                                    tmp[cppCoYieldStatement] = {cppUsExpression}
+                                                                    tmp[cppCoReturnStatement] = {cppHidExpression}
+                                                                    tmp[cppCoYieldStatement] = {cppHidExpression}
                                                                     tmp[cppCompoundStatement] = {
-                                                                                                  cppUsStatement,
-                                                                                                  cppUsTypeSpecifier,
+                                                                                                  cppHidStatement,
+                                                                                                  cppHidTypeSpecifier,
                                                                                                   cppAliasDeclaration,
                                                                                                   cppAttributedStatement,
                                                                                                   cppDeclaration,
@@ -740,8 +838,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppVirtualFunctionSpecifier
                                                                                           }
                                                                     tmp[cppDeclarationList] = {
-                                                                                                cppUsStatement,
-                                                                                                cppUsTypeSpecifier,
+                                                                                                cppHidStatement,
+                                                                                                cppHidTypeSpecifier,
                                                                                                 cppAliasDeclaration,
                                                                                                 cppAttributedStatement,
                                                                                                 cppDeclaration,
@@ -761,14 +859,14 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                 cppTypeDefinition,
                                                                                                 cppUsingDeclaration
                                                                                               }
-                                                                    tmp[cppDecltype] = {cppUsExpression}
-                                                                    tmp[cppDeleteExpression] = {cppUsExpression}
+                                                                    tmp[cppDecltype] = {cppHidExpression}
+                                                                    tmp[cppDeleteExpression] = {cppHidExpression}
                                                                     tmp[cppDependentName] = {cppTemplateFunction, cppTemplateMethod, cppTemplateType}
-                                                                    tmp[cppDependentType] = {cppUsTypeSpecifier}
+                                                                    tmp[cppDependentType] = {cppHidTypeSpecifier}
                                                                     tmp[cppDestructorName] = {cppIdentifier}
                                                                     tmp[cppEnumeratorList] = {cppEnumerator}
-                                                                    tmp[cppExplicitFunctionSpecifier] = {cppUsExpression}
-                                                                    tmp[cppExpressionStatement] = {cppUsExpression, cppCommaExpression}
+                                                                    tmp[cppExplicitFunctionSpecifier] = {cppHidExpression}
+                                                                    tmp[cppExpressionStatement] = {cppHidExpression, cppCommaExpression}
                                                                     tmp[cppFieldDeclaration] = {
                                                                                                  cppAttributeDeclaration,
                                                                                                  cppAttributeSpecifier,
@@ -800,7 +898,7 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                     tmp[cppFieldInitializer] = {cppArgumentList, cppFieldIdentifier, cppInitializerList, cppQualifiedIdentifier, cppTemplateMethod}
                                                                     tmp[cppFieldInitializerList] = {cppFieldInitializer}
                                                                     tmp[cppForRangeLoop] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
-                                                                    tmp[cppForStatement] = {cppUsStatement}
+                                                                    tmp[cppForStatement] = {cppHidStatement}
                                                                     tmp[cppFriendDeclaration] = {cppDeclaration, cppFunctionDefinition, cppQualifiedIdentifier, cppTemplateType, cppTypeIdentifier}
                                                                     tmp[cppFunctionDeclarator] = {
                                                                                                    cppAttributeSpecifier,
@@ -824,28 +922,28 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                    cppTypeQualifier,
                                                                                                    cppVirtualFunctionSpecifier
                                                                                                  }
-                                                                    tmp[cppInitializerList] = {cppUsExpression, cppInitializerList, cppInitializerPair}
-                                                                    tmp[cppLabeledStatement] = {cppUsStatement}
-                                                                    tmp[cppLambdaCaptureSpecifier] = {cppUsExpression, cppLambdaDefaultCapture}
+                                                                    tmp[cppInitializerList] = {cppHidExpression, cppInitializerList, cppInitializerPair}
+                                                                    tmp[cppLabeledStatement] = {cppHidStatement}
+                                                                    tmp[cppLambdaCaptureSpecifier] = {cppHidExpression, cppLambdaDefaultCapture}
                                                                     tmp[cppMsBasedModifier] = {cppArgumentList}
                                                                     tmp[cppMsDeclspecModifier] = {cppIdentifier}
                                                                     tmp[cppMsPointerModifier] = {cppMsRestrictModifier, cppMsSignedPtrModifier, cppMsUnalignedPtrModifier, cppMsUnsignedPtrModifier}
                                                                     tmp[cppNamespaceAliasDefinition] = {cppIdentifier, cppQualifiedIdentifier}
                                                                     tmp[cppNamespaceDefinitionName] = {cppIdentifier, cppNamespaceDefinitionName}
                                                                     tmp[cppNewDeclarator] = {cppNewDeclarator}
-                                                                    tmp[cppNoexcept] = {cppUsExpression}
+                                                                    tmp[cppNoexcept] = {cppHidExpression}
                                                                     tmp[cppOperatorCast] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppOperatorName] = {cppIdentifier}
                                                                     tmp[cppOptionalParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppParameterDeclaration] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppParameterList] = {cppOptionalParameterDeclaration, cppParameterDeclaration, cppVariadicParameterDeclaration}
-                                                                    tmp[cppParenthesizedDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppUsTypeDeclarator}
-                                                                    tmp[cppParenthesizedExpression] = {cppUsExpression, cppCommaExpression, cppPreprocDefined}
+                                                                    tmp[cppParenthesizedDeclarator] = {cppHidDeclarator, cppHidFieldDeclarator, cppHidTypeDeclarator}
+                                                                    tmp[cppParenthesizedExpression] = {cppHidExpression, cppCommaExpression, cppPreprocDefined}
                                                                     tmp[cppPointerDeclarator] = {cppMsBasedModifier, cppMsPointerModifier, cppTypeQualifier}
                                                                     tmp[cppPreprocDefined] = {cppIdentifier}
                                                                     tmp[cppPreprocElif] = {
-                                                                                            cppUsStatement,
-                                                                                            cppUsTypeSpecifier,
+                                                                                            cppHidStatement,
+                                                                                            cppHidTypeSpecifier,
                                                                                             cppAccessSpecifier,
                                                                                             cppAliasDeclaration,
                                                                                             cppAttributedStatement,
@@ -870,8 +968,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppUsingDeclaration
                                                                                           }
                                                                     tmp[cppPreprocElse] = {
-                                                                                            cppUsStatement,
-                                                                                            cppUsTypeSpecifier,
+                                                                                            cppHidStatement,
+                                                                                            cppHidTypeSpecifier,
                                                                                             cppAccessSpecifier,
                                                                                             cppAliasDeclaration,
                                                                                             cppAttributedStatement,
@@ -896,8 +994,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                             cppUsingDeclaration
                                                                                           }
                                                                     tmp[cppPreprocIf] = {
-                                                                                          cppUsStatement,
-                                                                                          cppUsTypeSpecifier,
+                                                                                          cppHidStatement,
+                                                                                          cppHidTypeSpecifier,
                                                                                           cppAccessSpecifier,
                                                                                           cppAliasDeclaration,
                                                                                           cppAttributedStatement,
@@ -922,8 +1020,8 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                           cppUsingDeclaration
                                                                                         }
                                                                     tmp[cppPreprocIfdef] = {
-                                                                                             cppUsStatement,
-                                                                                             cppUsTypeSpecifier,
+                                                                                             cppHidStatement,
+                                                                                             cppHidTypeSpecifier,
                                                                                              cppAccessSpecifier,
                                                                                              cppAliasDeclaration,
                                                                                              cppAttributedStatement,
@@ -949,14 +1047,14 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                            }
                                                                     tmp[cppPreprocParams] = {cppIdentifier}
                                                                     tmp[cppQpropertyDeclaration] = {cppTypeIdentifier}
-                                                                    tmp[cppReferenceDeclarator] = {cppUsDeclarator, cppUsFieldDeclarator, cppVariadicDeclarator}
-                                                                    tmp[cppReturnStatement] = {cppUsExpression, cppCommaExpression, cppInitializerList}
+                                                                    tmp[cppReferenceDeclarator] = {cppHidDeclarator, cppHidFieldDeclarator, cppVariadicDeclarator}
+                                                                    tmp[cppReturnStatement] = {cppHidExpression, cppCommaExpression, cppInitializerList}
                                                                     tmp[cppStringLiteral] = {cppEscapeSequence}
                                                                     tmp[cppStructSpecifier] = {cppAttributeDeclaration, cppBaseClassClause, cppMsDeclspecModifier, cppVirtualSpecifier}
                                                                     tmp[cppStructuredBindingDeclarator] = {cppIdentifier}
-                                                                    tmp[cppSubscriptDesignator] = {cppUsExpression}
-                                                                    tmp[cppTemplateArgumentList] = {cppUsExpression, cppTypeDescriptor}
-                                                                    tmp[cppTemplateDeclaration] = {cppUsTypeSpecifier, cppAliasDeclaration, cppDeclaration, cppFunctionDefinition, cppTemplateDeclaration}
+                                                                    tmp[cppSubscriptDesignator] = {cppHidExpression}
+                                                                    tmp[cppTemplateArgumentList] = {cppHidExpression, cppTypeDescriptor}
+                                                                    tmp[cppTemplateDeclaration] = {cppHidTypeSpecifier, cppAliasDeclaration, cppDeclaration, cppFunctionDefinition, cppTemplateDeclaration}
                                                                     tmp[cppTemplateInstantiation] = {cppAttributeDeclaration, cppAttributeSpecifier, cppMsDeclspecModifier, cppStorageClassSpecifier, cppTypeQualifier, cppVirtualFunctionSpecifier}
                                                                     tmp[cppTemplateParameterList] = {
                                                                                                       cppOptionalParameterDeclaration,
@@ -969,11 +1067,11 @@ const cppAllowedSubnodes*: array[CppNodeKind, set[CppNodeKind]] = block:
                                                                                                     }
                                                                     tmp[cppTemplateTemplateParameterDeclaration] = {cppOptionalTypeParameterDeclaration, cppTypeParameterDeclaration, cppVariadicTypeParameterDeclaration}
                                                                     tmp[cppThrowSpecifier] = {cppTypeDescriptor}
-                                                                    tmp[cppThrowStatement] = {cppUsExpression}
-                                                                    tmp[cppTrailingReturnType] = {cppUsAbstractDeclarator, cppUsTypeSpecifier, cppTypeQualifier}
+                                                                    tmp[cppThrowStatement] = {cppHidExpression}
+                                                                    tmp[cppTrailingReturnType] = {cppHidAbstractDeclarator, cppHidTypeSpecifier, cppTypeQualifier}
                                                                     tmp[cppTranslationUnit] = {
-                                                                                                cppUsStatement,
-                                                                                                cppUsTypeSpecifier,
+                                                                                                cppHidStatement,
+                                                                                                cppHidTypeSpecifier,
                                                                                                 cppAliasDeclaration,
                                                                                                 cppAttributedStatement,
                                                                                                 cppDeclaration,
@@ -1068,18 +1166,18 @@ const cppTokenKinds*: set[CppNodeKind] = {
                                            cppDoubleRBrackTok,
                                            cppAccentTok,
                                            cppAccentEqualTok,
-                                           cppUsAtomicTok,
-                                           cppUsUsAttributeTok,
-                                           cppUsUsBasedTok,
-                                           cppUsUsCdeclTok,
-                                           cppUsUsClrcallTok,
-                                           cppUsUsDeclspecTok,
-                                           cppUsUsFastcallTok,
-                                           cppUsUsStdcallTok,
-                                           cppUsUsThiscallTok,
-                                           cppUsUsUnalignedTok,
-                                           cppUsUsVectorcallTok,
-                                           cppUsUnalignedTok,
+                                           cppHidAtomicTok,
+                                           cppHidAttributeTok,
+                                           cppHidBasedTok,
+                                           cppHidCdeclTok,
+                                           cppHidClrcallTok,
+                                           cppHidDeclspecTok,
+                                           cppHidFastcallTok,
+                                           cppHidStdcallTok,
+                                           cppHidThiscallTok,
+                                           cppHidUnalignedTok,
+                                           cppHidVectorcallTok,
+                                           cppHidUnalignedTok,
                                            cppBreakTok,
                                            cppCaseTok,
                                            cppCatchTok,
@@ -1150,21 +1248,81 @@ const cppTokenKinds*: set[CppNodeKind] = {
                                            cppRCurlyTok,
                                            cppTildeTok
                                          }
-
+const cppHiddenKinds*: set[CppNodeKind] = {
+                                            cppFunctionTypeDeclarator,
+                                            cppVariadicReferenceDeclarator,
+                                            cppPreprocArgumentList,
+                                            cppReferenceFieldDeclarator,
+                                            cppHidAbstractDeclarator,
+                                            cppPreprocElseInFieldDeclarationList,
+                                            cppAttributedFieldDeclarator,
+                                            cppOperatorCastDeclaration,
+                                            cppAttributedNonCaseStatement,
+                                            cppHidClassName,
+                                            cppHidExpression,
+                                            cppQualifiedTypeIdentifier,
+                                            cppQualifiedOperatorCastIdentifier,
+                                            cppArrayTypeDeclarator,
+                                            cppPreprocUnaryExpression,
+                                            cppPointerFieldDeclarator,
+                                            cppPreprocElifInFieldDeclarationList,
+                                            cppHidFieldIdentifier,
+                                            cppHidTypeSpecifier,
+                                            cppHidTypeDeclarator,
+                                            cppPreprocParenthesizedExpression,
+                                            cppParenthesizedTypeDeclarator,
+                                            cppConstructorOrDestructorDefinition,
+                                            cppHidDeclarationSpecifiers,
+                                            cppHidDeclarator,
+                                            cppQualifiedFieldIdentifier,
+                                            cppPreprocBinaryExpression,
+                                            cppConditionDeclaration,
+                                            cppPreprocIfdefInFieldDeclarationList,
+                                            cppHidEnumBaseClause,
+                                            cppDependentFieldIdentifier,
+                                            cppHidTopLevelItem,
+                                            cppDependentIdentifier,
+                                            cppPointerTypeDeclarator,
+                                            cppMacroTypeSpecifier,
+                                            cppHidTypeIdentifier,
+                                            cppPreprocIfInFieldDeclarationList,
+                                            cppPreprocCallExpression,
+                                            cppVariadicParameter,
+                                            cppHidStatement,
+                                            cppDependentTypeIdentifier,
+                                            cppInlineMethodDefinition,
+                                            cppOperatorCastDefinition,
+                                            cppHidFieldDeclarationListItem,
+                                            cppHidDeclarationModifiers,
+                                            cppHidConstructorSpecifiers,
+                                            cppConstructorOrDestructorDeclaration,
+                                            cppHidScopeResolution,
+                                            cppAttributedTypeDeclarator,
+                                            cppHidFieldDeclarator,
+                                            cppHidNamespaceIdentifier,
+                                            cppHidStatementIdentifier,
+                                            cppArrayFieldDeclarator,
+                                            cppHidAssignmentLeftExpression,
+                                            cppParenthesizedFieldDeclarator,
+                                            cppHidPreprocExpression,
+                                            cppHidNonCaseStatement,
+                                            cppTypeParameterPackExpansion,
+                                            cppHidEmptyDeclaration,
+                                            cppFunctionFieldDeclarator
+                                          }
 proc tsNodeType*(node: TsCppNode): string
-
 
 
 proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_abstract_declarator":                    cppUsAbstractDeclarator
-      of "_declarator":                             cppUsDeclarator
-      of "_expression":                             cppUsExpression
-      of "_field_declarator":                       cppUsFieldDeclarator
-      of "_statement":                              cppUsStatement
-      of "_type_declarator":                        cppUsTypeDeclarator
-      of "_type_specifier":                         cppUsTypeSpecifier
+      of "_abstract_declarator":                    cppHidAbstractDeclarator
+      of "_declarator":                             cppHidDeclarator
+      of "_expression":                             cppHidExpression
+      of "_field_declarator":                       cppHidFieldDeclarator
+      of "_statement":                              cppHidStatement
+      of "_type_declarator":                        cppHidTypeDeclarator
+      of "_type_specifier":                         cppHidTypeSpecifier
       of "abstract_array_declarator":               cppAbstractArrayDeclarator
       of "abstract_function_declarator":            cppAbstractFunctionDeclarator
       of "abstract_parenthesized_declarator":       cppAbstractParenthesizedDeclarator
@@ -1374,18 +1532,18 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       of "]]":                                      cppDoubleRBrackTok
       of "^":                                       cppAccentTok
       of "^=":                                      cppAccentEqualTok
-      of "_Atomic":                                 cppUsAtomicTok
-      of "__attribute__":                           cppUsUsAttributeTok
-      of "__based":                                 cppUsUsBasedTok
-      of "__cdecl":                                 cppUsUsCdeclTok
-      of "__clrcall":                               cppUsUsClrcallTok
-      of "__declspec":                              cppUsUsDeclspecTok
-      of "__fastcall":                              cppUsUsFastcallTok
-      of "__stdcall":                               cppUsUsStdcallTok
-      of "__thiscall":                              cppUsUsThiscallTok
-      of "__unaligned":                             cppUsUsUnalignedTok
-      of "__vectorcall":                            cppUsUsVectorcallTok
-      of "_unaligned":                              cppUsUnalignedTok
+      of "_Atomic":                                 cppHidAtomicTok
+      of "__attribute__":                           cppHidAttributeTok
+      of "__based":                                 cppHidBasedTok
+      of "__cdecl":                                 cppHidCdeclTok
+      of "__clrcall":                               cppHidClrcallTok
+      of "__declspec":                              cppHidDeclspecTok
+      of "__fastcall":                              cppHidFastcallTok
+      of "__stdcall":                               cppHidStdcallTok
+      of "__thiscall":                              cppHidThiscallTok
+      of "__unaligned":                             cppHidUnalignedTok
+      of "__vectorcall":                            cppHidVectorcallTok
+      of "_unaligned":                              cppHidUnalignedTok
       of "auto":                                    cppAuto
       of "break":                                   cppBreakTok
       of "case":                                    cppCaseTok
@@ -1480,7 +1638,6 @@ proc kind*(node: TsCppNode): CppNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsCppNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -1553,4 +1710,237 @@ proc parseCppString*(str: string, unnamed: bool = false): CppNode =
   let parser = newTsCppParser()
   return toHtsTree[TsCppNode, CppNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let cppGrammar*: array[CppNodeKind, HtsRule[CppNodeKind]] = block:
+                                                              var rules: array[CppNodeKind, HtsRule[CppNodeKind]]
+                                                              type
+                                                                K = CppNodeKind
+
+
+                                                              rules[cppFunctionTypeDeclarator] = tsSeq[K](tsSymbol[K](cppHidTypeDeclarator), tsSymbol[K](cppParameterList))
+                                                              rules[cppPreprocElse] = tsSeq[K](tsRegex[K]("#[ \x09]*else"), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)))
+                                                              rules[cppTemplateArgumentList] = tsSeq[K](tsString[K]("<"), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppTypeDescriptor), tsSymbol[K](cppTypeParameterPackExpansion), tsSymbol[K](cppHidExpression)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppTypeDescriptor), tsSymbol[K](cppTypeParameterPackExpansion), tsSymbol[K](cppHidExpression))))), tsBlank[K]()), tsString[K](">"))
+                                                              rules[cppCompoundLiteralExpression] = tsChoice[K](tsSeq[K](tsString[K]("("), tsSymbol[K](cppTypeDescriptor), tsString[K](")"), tsSymbol[K](cppInitializerList)), tsSeq[K](tsSymbol[K](cppHidClassName), tsSymbol[K](cppInitializerList)))
+                                                              rules[cppLambdaDefaultCapture] = tsChoice[K](tsString[K]("="), tsString[K]("&"))
+                                                              rules[cppTypeDefinition] = tsSeq[K](tsString[K]("typedef"), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsSymbol[K](cppHidTypeSpecifier), tsSeq[K](tsSymbol[K](cppHidTypeDeclarator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppHidTypeDeclarator)))), tsString[K](";"))
+                                                              rules[cppStructSpecifier] = tsSeq[K](tsString[K]("struct"), tsChoice[K](tsSymbol[K](cppMsDeclspecModifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppAttributeDeclaration), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppHidClassName), tsSeq[K](tsChoice[K](tsSymbol[K](cppHidClassName), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppVirtualSpecifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppBaseClassClause), tsBlank[K]()), tsSymbol[K](cppFieldDeclarationList))))
+                                                              rules[cppHidAbstractDeclarator] = tsChoice[K](tsChoice[K](tsSymbol[K](cppAbstractPointerDeclarator), tsSymbol[K](cppAbstractFunctionDeclarator), tsSymbol[K](cppAbstractArrayDeclarator), tsSymbol[K](cppAbstractParenthesizedDeclarator)), tsSymbol[K](cppAbstractReferenceDeclarator))
+                                                              rules[cppPreprocElseInFieldDeclarationList] = tsSeq[K](tsRegex[K]("#[ \x09]*else"), tsRepeat[K](tsSymbol[K](cppHidFieldDeclarationListItem)))
+                                                              rules[cppStaticAssertDeclaration] = tsSeq[K](tsString[K]("static_assert"), tsString[K]("("), tsSymbol[K](cppHidExpression), tsChoice[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppStringLiteral), tsSymbol[K](cppRawStringLiteral), tsSymbol[K](cppConcatenatedString))), tsBlank[K]()), tsString[K](")"), tsString[K](";"))
+                                                              rules[cppExplicitFunctionSpecifier] = tsChoice[K](tsString[K]("explicit"), tsSeq[K](tsString[K]("explicit"), tsString[K]("("), tsSymbol[K](cppHidExpression), tsString[K](")")))
+                                                              rules[cppPreprocDefined] = tsChoice[K](tsSeq[K](tsString[K]("defined"), tsString[K]("("), tsSymbol[K](cppIdentifier), tsString[K](")")), tsSeq[K](tsString[K]("defined"), tsSymbol[K](cppIdentifier)))
+                                                              rules[cppFalse] = tsChoice[K](tsString[K]("FALSE"), tsString[K]("false"))
+                                                              rules[cppGotoStatement] = tsSeq[K](tsString[K]("goto"), tsSymbol[K](cppHidStatementIdentifier), tsString[K](";"))
+                                                              rules[cppLambdaExpression] = tsSeq[K](tsSymbol[K](cppLambdaCaptureSpecifier), tsChoice[K](tsSymbol[K](cppAbstractFunctionDeclarator), tsBlank[K]()), tsSymbol[K](cppCompoundStatement))
+                                                              rules[cppHidClassName] = tsChoice[K](tsSymbol[K](cppHidTypeIdentifier), tsSymbol[K](cppTemplateType), tsSymbol[K](cppQualifiedTypeIdentifier))
+                                                              rules[cppAttributeDeclaration] = tsSeq[K](tsString[K]("[["), tsSeq[K](tsSymbol[K](cppAttribute), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppAttribute)))), tsString[K]("]]"))
+                                                              rules[cppForStatement] = tsSeq[K](tsString[K]("for"), tsString[K]("("), tsChoice[K](tsSymbol[K](cppDeclaration), tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)), tsBlank[K]()), tsString[K](";"))), tsChoice[K](tsSymbol[K](cppHidExpression), tsBlank[K]()), tsString[K](";"), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)), tsBlank[K]()), tsString[K](")"), tsSymbol[K](cppHidStatement))
+                                                              rules[cppQualifiedOperatorCastIdentifier] = tsSeq[K](tsSymbol[K](cppHidScopeResolution), tsChoice[K](tsSymbol[K](cppQualifiedOperatorCastIdentifier), tsSymbol[K](cppOperatorCast)))
+                                                              rules[cppPreprocUnaryExpression] = tsSeq[K](tsChoice[K](tsString[K]("!"), tsString[K]("~"), tsString[K]("-"), tsString[K]("+")), tsSymbol[K](cppHidPreprocExpression))
+                                                              rules[cppOptionalTypeParameterDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("typename"), tsString[K]("class")), tsChoice[K](tsSymbol[K](cppHidTypeIdentifier), tsBlank[K]()), tsString[K]("="), tsSymbol[K](cppHidTypeSpecifier))
+                                                              rules[cppPreprocElifInFieldDeclarationList] = tsSeq[K](tsRegex[K]("#[ \x09]*elif"), tsSymbol[K](cppHidPreprocExpression), tsString[K]("\x0A"), tsRepeat[K](tsSymbol[K](cppHidFieldDeclarationListItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElseInFieldDeclarationList), tsSymbol[K](cppPreprocElifInFieldDeclarationList)), tsBlank[K]()))
+                                                              rules[cppNewDeclarator] = tsSeq[K](tsString[K]("["), tsSymbol[K](cppHidExpression), tsString[K]("]"), tsChoice[K](tsSymbol[K](cppNewDeclarator), tsBlank[K]()))
+                                                              rules[cppUserDefinedLiteral] = tsSeq[K](tsChoice[K](tsSymbol[K](cppNumberLiteral), tsSymbol[K](cppCharLiteral), tsSymbol[K](cppStringLiteral), tsSymbol[K](cppRawStringLiteral), tsSymbol[K](cppConcatenatedString)), tsSymbol[K](cppLiteralSuffix))
+                                                              rules[cppBitfieldClause] = tsSeq[K](tsString[K](":"), tsSymbol[K](cppHidExpression))
+                                                              rules[cppPreprocParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppHidPreprocExpression), tsString[K](")"))
+                                                              rules[cppHidTypeDeclarator] = tsChoice[K](tsSymbol[K](cppAttributedTypeDeclarator), tsSymbol[K](cppPointerTypeDeclarator), tsSymbol[K](cppFunctionTypeDeclarator), tsSymbol[K](cppArrayTypeDeclarator), tsSymbol[K](cppParenthesizedTypeDeclarator), tsSymbol[K](cppHidTypeIdentifier))
+                                                              rules[cppPreprocDirective] = tsRegex[K]("#[ \\t]*[a-zA-Z]\\w*")
+                                                              rules[cppThrowStatement] = tsSeq[K](tsString[K]("throw"), tsChoice[K](tsSymbol[K](cppHidExpression), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cppHidDeclarator] = tsChoice[K](tsChoice[K](tsSymbol[K](cppAttributedDeclarator), tsSymbol[K](cppPointerDeclarator), tsSymbol[K](cppFunctionDeclarator), tsSymbol[K](cppArrayDeclarator), tsSymbol[K](cppParenthesizedDeclarator), tsSymbol[K](cppIdentifier)), tsSymbol[K](cppReferenceDeclarator), tsSymbol[K](cppQualifiedIdentifier), tsSymbol[K](cppTemplateFunction), tsSymbol[K](cppOperatorName), tsSymbol[K](cppDestructorName), tsSymbol[K](cppStructuredBindingDeclarator))
+                                                              rules[cppArrayDeclarator] = tsSeq[K](tsSymbol[K](cppHidDeclarator), tsString[K]("["), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsString[K]("*")), tsBlank[K]()), tsString[K]("]"))
+                                                              rules[cppClassSpecifier] = tsSeq[K](tsString[K]("class"), tsChoice[K](tsSymbol[K](cppMsDeclspecModifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppAttributeDeclaration), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppHidClassName), tsSeq[K](tsChoice[K](tsSymbol[K](cppHidClassName), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppVirtualSpecifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppBaseClassClause), tsBlank[K]()), tsSymbol[K](cppFieldDeclarationList))))
+                                                              rules[cppForRangeLoop] = tsSeq[K](tsString[K]("for"), tsString[K]("("), tsSymbol[K](cppHidDeclarationSpecifiers), tsSymbol[K](cppHidDeclarator), tsString[K](":"), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)), tsString[K](")"), tsSymbol[K](cppHidStatement))
+                                                              rules[cppDependentIdentifier] = tsSeq[K](tsString[K]("template"), tsSymbol[K](cppTemplateFunction))
+                                                              rules[cppTemplateType] = tsSeq[K](tsSymbol[K](cppHidTypeIdentifier), tsSymbol[K](cppTemplateArgumentList))
+                                                              rules[cppOperatorName] = tsSeq[K](tsString[K]("operator"), tsChoice[K](tsString[K]("co_await"), tsString[K]("+"), tsString[K]("-"), tsString[K]("*"), tsString[K]("/"), tsString[K]("%"), tsString[K]("^"), tsString[K]("&"), tsString[K]("|"), tsString[K]("~"), tsString[K]("!"), tsString[K]("="), tsString[K]("<"), tsString[K](">"), tsString[K]("+="), tsString[K]("-="), tsString[K]("*="), tsString[K]("/="), tsString[K]("%="), tsString[K]("^="), tsString[K]("&="), tsString[K]("|="), tsString[K]("<<"), tsString[K](">>"), tsString[K](">>="), tsString[K]("<<="), tsString[K]("=="), tsString[K]("!="), tsString[K]("<="), tsString[K](">="), tsString[K]("&&"), tsString[K]("||"), tsString[K]("++"), tsString[K]("--"), tsString[K](","), tsString[K]("->*"), tsString[K]("->"), tsString[K]("()"), tsString[K]("[]"), tsSeq[K](tsChoice[K](tsString[K]("new"), tsString[K]("delete")), tsChoice[K](tsString[K]("[]"), tsBlank[K]())), tsSeq[K](tsString[K]("\"\""), tsSymbol[K](cppIdentifier))))
+                                                              rules[cppNamespaceAliasDefinition] = tsSeq[K](tsString[K]("namespace"), tsSymbol[K](cppIdentifier), tsString[K]("="), tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppQualifiedIdentifier)), tsString[K](";"))
+                                                              rules[cppHidTypeIdentifier] = tsSymbol[K](cppIdentifier)
+                                                              rules[cppComment] = tsChoice[K](tsSeq[K](tsString[K]("//"), tsRegex[K]("(\\\\(.|\\r?\\n)|[^\\\\\\n])*")), tsSeq[K](tsString[K]("/*"), tsRegex[K]("[^*]*\\*+([^/*][^*]*\\*+)*"), tsString[K]("/")))
+                                                              rules[cppThis] = tsString[K]("this")
+                                                              rules[cppPreprocCallExpression] = tsSeq[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppPreprocArgumentList))
+                                                              rules[cppEnumSpecifier] = tsSeq[K](tsString[K]("enum"), tsChoice[K](tsChoice[K](tsString[K]("class"), tsString[K]("struct")), tsBlank[K]()), tsChoice[K](tsSeq[K](tsSymbol[K](cppHidClassName), tsChoice[K](tsSymbol[K](cppHidEnumBaseClause), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppEnumeratorList), tsBlank[K]())), tsSymbol[K](cppEnumeratorList)))
+                                                              rules[cppVariadicParameter] = tsSeq[K](tsString[K]("..."))
+                                                              rules[cppPreprocDef] = tsSeq[K](tsRegex[K]("#[ \x09]*define"), tsSymbol[K](cppIdentifier), tsChoice[K](tsSymbol[K](cppPreprocArg), tsBlank[K]()), tsString[K]("\x0A"))
+                                                              rules[cppInlineMethodDefinition] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsSymbol[K](cppHidFieldDeclarator), tsChoice[K](tsSymbol[K](cppCompoundStatement), tsSymbol[K](cppDefaultMethodClause), tsSymbol[K](cppDeleteMethodClause)))
+                                                              rules[cppAbstractPointerDeclarator] = tsSeq[K](tsString[K]("*"), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()))
+                                                              rules[cppAbstractArrayDeclarator] = tsSeq[K](tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()), tsString[K]("["), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsString[K]("*")), tsBlank[K]()), tsString[K]("]"))
+                                                              rules[cppSubscriptExpression] = tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("["), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)), tsString[K]("]"))
+                                                              rules[cppPreprocFunctionDef] = tsSeq[K](tsRegex[K]("#[ \x09]*define"), tsSymbol[K](cppIdentifier), tsSymbol[K](cppPreprocParams), tsChoice[K](tsSymbol[K](cppPreprocArg), tsBlank[K]()), tsString[K]("\x0A"))
+                                                              rules[cppArrayFieldDeclarator] = tsSeq[K](tsSymbol[K](cppHidFieldDeclarator), tsString[K]("["), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsString[K]("*")), tsBlank[K]()), tsString[K]("]"))
+                                                              rules[cppPointerExpression] = tsSeq[K](tsChoice[K](tsString[K]("*"), tsString[K]("&")), tsSymbol[K](cppHidExpression))
+                                                              rules[cppPreprocCall] = tsSeq[K](tsSymbol[K](cppPreprocDirective), tsChoice[K](tsSymbol[K](cppPreprocArg), tsBlank[K]()), tsString[K]("\x0A"))
+                                                              rules[cppTemplateTemplateParameterDeclaration] = tsSeq[K](tsString[K]("template"), tsSymbol[K](cppTemplateParameterList), tsChoice[K](tsSymbol[K](cppTypeParameterDeclaration), tsSymbol[K](cppVariadicTypeParameterDeclaration), tsSymbol[K](cppOptionalTypeParameterDeclaration)))
+                                                              rules[cppSubscriptDesignator] = tsSeq[K](tsString[K]("["), tsSymbol[K](cppHidExpression), tsString[K]("]"))
+                                                              rules[cppFieldDeclarationList] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](cppHidFieldDeclarationListItem)), tsString[K]("}"))
+                                                              rules[cppParenthesizedFieldDeclarator] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppHidFieldDeclarator), tsString[K](")"))
+                                                              rules[cppParameterDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidDeclarator), tsSymbol[K](cppHidAbstractDeclarator)), tsBlank[K]()))
+                                                              rules[cppMsCallModifier] = tsChoice[K](tsString[K]("__cdecl"), tsString[K]("__clrcall"), tsString[K]("__stdcall"), tsString[K]("__fastcall"), tsString[K]("__thiscall"), tsString[K]("__vectorcall"))
+                                                              rules[cppAttributedStatement] = tsSeq[K](tsRepeat1[K](tsSymbol[K](cppAttributeDeclaration)), tsSymbol[K](cppHidStatement))
+                                                              rules[cppVariadicReferenceDeclarator] = tsSeq[K](tsChoice[K](tsString[K]("&&"), tsString[K]("&")), tsSymbol[K](cppVariadicDeclarator))
+                                                              rules[cppAliasDeclaration] = tsSeq[K](tsString[K]("using"), tsSymbol[K](cppHidTypeIdentifier), tsString[K]("="), tsSymbol[K](cppTypeDescriptor), tsString[K](";"))
+                                                              rules[cppCoAwaitExpression] = tsSeq[K](tsString[K]("co_await"), tsSymbol[K](cppHidExpression))
+                                                              rules[cppTranslationUnit] = tsRepeat[K](tsSymbol[K](cppHidTopLevelItem))
+                                                              rules[cppPreprocArgumentList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppHidPreprocExpression)))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cppAttributedFieldDeclarator] = tsSeq[K](tsSymbol[K](cppHidFieldDeclarator), tsRepeat1[K](tsSymbol[K](cppAttributeDeclaration)))
+                                                              rules[cppSizedTypeSpecifier] = tsSeq[K](tsRepeat1[K](tsChoice[K](tsString[K]("signed"), tsString[K]("unsigned"), tsString[K]("long"), tsString[K]("short"))), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidTypeIdentifier), tsSymbol[K](cppPrimitiveType)), tsBlank[K]()))
+                                                              rules[cppStringLiteral] = tsSeq[K](tsChoice[K](tsString[K]("L\""), tsString[K]("u\""), tsString[K]("U\""), tsString[K]("u8\""), tsString[K]("\"")), tsRepeat[K](tsChoice[K](tsRegex[K]("[^\\\\\"\\n]+"), tsSymbol[K](cppEscapeSequence))), tsString[K]("\""))
+                                                              rules[cppPreprocElif] = tsSeq[K](tsRegex[K]("#[ \x09]*elif"), tsSymbol[K](cppHidPreprocExpression), tsString[K]("\x0A"), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElse), tsSymbol[K](cppPreprocElif)), tsBlank[K]()))
+                                                              rules[cppMsRestrictModifier] = tsString[K]("__restrict")
+                                                              rules[cppPreprocArg] = tsRepeat1[K](tsRegex[K](".|\\\\\\r?\\n"))
+                                                              rules[cppDefaultMethodClause] = tsSeq[K](tsString[K]("="), tsString[K]("default"), tsString[K](";"))
+                                                              rules[cppPointerFieldDeclarator] = tsSeq[K](tsChoice[K](tsSymbol[K](cppMsBasedModifier), tsBlank[K]()), tsString[K]("*"), tsRepeat[K](tsSymbol[K](cppMsPointerModifier)), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsSymbol[K](cppHidFieldDeclarator))
+                                                              rules[cppTypeDescriptor] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsSymbol[K](cppHidTypeSpecifier), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()))
+                                                              rules[cppBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("+"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("-"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("*"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("/"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("%"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("||"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("&&"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("|"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("^"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("&"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("=="), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("!="), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K](">"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K](">="), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("<="), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("<"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("<<"), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K](">>"), tsSymbol[K](cppHidExpression)))
+                                                              rules[cppTemplateInstantiation] = tsSeq[K](tsString[K]("template"), tsChoice[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsBlank[K]()), tsSymbol[K](cppHidDeclarator), tsString[K](";"))
+                                                              rules[cppCompoundStatement] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)), tsString[K]("}"))
+                                                              rules[cppAttributedDeclarator] = tsSeq[K](tsSymbol[K](cppHidDeclarator), tsRepeat1[K](tsSymbol[K](cppAttributeDeclaration)))
+                                                              rules[cppInitDeclarator] = tsChoice[K](tsSeq[K](tsSymbol[K](cppHidDeclarator), tsString[K]("="), tsChoice[K](tsSymbol[K](cppInitializerList), tsSymbol[K](cppHidExpression))), tsSeq[K](tsSymbol[K](cppHidDeclarator), tsChoice[K](tsSymbol[K](cppArgumentList), tsSymbol[K](cppInitializerList))))
+                                                              rules[cppHidTypeSpecifier] = tsChoice[K](tsSymbol[K](cppStructSpecifier), tsSymbol[K](cppUnionSpecifier), tsSymbol[K](cppEnumSpecifier), tsSymbol[K](cppClassSpecifier), tsSymbol[K](cppSizedTypeSpecifier), tsSymbol[K](cppPrimitiveType), tsSymbol[K](cppTemplateType), tsSymbol[K](cppAuto), tsSymbol[K](cppDependentType), tsSymbol[K](cppDecltype), tsChoice[K](tsSymbol[K](cppQualifiedTypeIdentifier), tsSymbol[K](cppHidTypeIdentifier)))
+                                                              rules[cppDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsSeq[K](tsChoice[K](tsSymbol[K](cppHidDeclarator), tsSymbol[K](cppInitDeclarator)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppHidDeclarator), tsSymbol[K](cppInitDeclarator))))), tsString[K](";"))
+                                                              rules[cppFriendDeclaration] = tsSeq[K](tsString[K]("friend"), tsChoice[K](tsSymbol[K](cppDeclaration), tsSymbol[K](cppFunctionDefinition), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("class"), tsString[K]("struct"), tsString[K]("union")), tsBlank[K]()), tsSymbol[K](cppHidClassName), tsString[K](";"))))
+                                                              rules[cppHidDeclarationSpecifiers] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppHidDeclarationModifiers)), tsSymbol[K](cppHidTypeSpecifier), tsRepeat[K](tsSymbol[K](cppHidDeclarationModifiers)))
+                                                              rules[cppStructuredBindingDeclarator] = tsSeq[K](tsString[K]("["), tsSeq[K](tsSymbol[K](cppIdentifier), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppIdentifier)))), tsString[K]("]"))
+                                                              rules[cppCastExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppTypeDescriptor), tsString[K](")"), tsSymbol[K](cppHidExpression))
+                                                              rules[cppEscapeSequence] = tsSeq[K](tsString[K]("\\"), tsChoice[K](tsRegex[K]("[^xuU]"), tsRegex[K]("\\d{2,3}"), tsRegex[K]("x[0-9a-fA-F]{2,}"), tsRegex[K]("u[0-9a-fA-F]{4}"), tsRegex[K]("U[0-9a-fA-F]{8}")))
+                                                              rules[cppDeclarationList] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)), tsString[K]("}"))
+                                                              rules[cppVariadicTypeParameterDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("typename"), tsString[K]("class")), tsString[K]("..."), tsChoice[K](tsSymbol[K](cppHidTypeIdentifier), tsBlank[K]()))
+                                                              rules[cppFunctionDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](cppMsCallModifier), tsBlank[K]()), tsSymbol[K](cppHidDeclarationSpecifiers), tsSymbol[K](cppHidDeclarator), tsSymbol[K](cppCompoundStatement))
+                                                              rules[cppPointerTypeDeclarator] = tsSeq[K](tsChoice[K](tsSymbol[K](cppMsBasedModifier), tsBlank[K]()), tsString[K]("*"), tsRepeat[K](tsSymbol[K](cppMsPointerModifier)), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsSymbol[K](cppHidTypeDeclarator))
+                                                              rules[cppUpdateExpression] = tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("--"), tsString[K]("++")), tsSymbol[K](cppHidExpression)), tsSeq[K](tsSymbol[K](cppHidExpression), tsChoice[K](tsString[K]("--"), tsString[K]("++"))))
+                                                              rules[cppAttribute] = tsSeq[K](tsChoice[K](tsSeq[K](tsSymbol[K](cppIdentifier), tsString[K]("::")), tsBlank[K]()), tsSymbol[K](cppIdentifier), tsChoice[K](tsSymbol[K](cppArgumentList), tsBlank[K]()))
+                                                              rules[cppNoexcept] = tsSeq[K](tsString[K]("noexcept"), tsChoice[K](tsSeq[K](tsString[K]("("), tsChoice[K](tsSymbol[K](cppHidExpression), tsBlank[K]()), tsString[K](")")), tsBlank[K]()))
+                                                              rules[cppEnumerator] = tsSeq[K](tsSymbol[K](cppIdentifier), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](cppHidExpression)), tsBlank[K]()))
+                                                              rules[cppCatchClause] = tsSeq[K](tsString[K]("catch"), tsSymbol[K](cppParameterList), tsSymbol[K](cppCompoundStatement))
+                                                              rules[cppNamespaceDefinitionName] = tsSeq[K](tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppNamespaceDefinitionName)), tsString[K]("::"), tsChoice[K](tsString[K]("inline"), tsBlank[K]()), tsSymbol[K](cppIdentifier))
+                                                              rules[cppOperatorCastDefinition] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppHidConstructorSpecifiers)), tsChoice[K](tsSymbol[K](cppOperatorCast), tsSymbol[K](cppQualifiedOperatorCastIdentifier)), tsSymbol[K](cppCompoundStatement))
+                                                              rules[cppTemplateDeclaration] = tsSeq[K](tsString[K]("template"), tsSymbol[K](cppTemplateParameterList), tsChoice[K](tsSymbol[K](cppHidEmptyDeclaration), tsSymbol[K](cppAliasDeclaration), tsSymbol[K](cppDeclaration), tsSymbol[K](cppTemplateDeclaration), tsSymbol[K](cppFunctionDefinition), tsSymbol[K](cppConstructorOrDestructorDeclaration), tsSymbol[K](cppConstructorOrDestructorDefinition), tsSymbol[K](cppOperatorCastDeclaration), tsSymbol[K](cppOperatorCastDefinition)))
+                                                              rules[cppInitializerPair] = tsSeq[K](tsRepeat1[K](tsChoice[K](tsSymbol[K](cppSubscriptDesignator), tsSymbol[K](cppFieldDesignator))), tsString[K]("="), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)))
+                                                              rules[cppCoYieldStatement] = tsSeq[K](tsString[K]("co_yield"), tsSymbol[K](cppHidExpression), tsString[K](";"))
+                                                              rules[cppAttributedTypeDeclarator] = tsSeq[K](tsSymbol[K](cppHidTypeDeclarator), tsRepeat1[K](tsSymbol[K](cppAttributeDeclaration)))
+                                                              rules[cppAssignmentExpression] = tsSeq[K](tsSymbol[K](cppHidAssignmentLeftExpression), tsChoice[K](tsString[K]("="), tsString[K]("*="), tsString[K]("/="), tsString[K]("%="), tsString[K]("+="), tsString[K]("-="), tsString[K]("<<="), tsString[K](">>="), tsString[K]("&="), tsString[K]("^="), tsString[K]("|=")), tsSymbol[K](cppHidExpression))
+                                                              rules[cppHidScopeResolution] = tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](cppHidNamespaceIdentifier), tsSymbol[K](cppTemplateType), tsSymbol[K](cppDependentTypeIdentifier)), tsBlank[K]()), tsString[K]("::"))
+                                                              rules[cppHidNamespaceIdentifier] = tsSymbol[K](cppIdentifier)
+                                                              rules[cppDoStatement] = tsSeq[K](tsString[K]("do"), tsSymbol[K](cppHidStatement), tsString[K]("while"), tsSymbol[K](cppParenthesizedExpression), tsString[K](";"))
+                                                              rules[cppPreprocIf] = tsSeq[K](tsRegex[K]("#[ \x09]*if"), tsSymbol[K](cppHidPreprocExpression), tsString[K]("\x0A"), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElse), tsSymbol[K](cppPreprocElif)), tsBlank[K]()), tsRegex[K]("#[ \x09]*endif"))
+                                                              rules[cppHidPreprocExpression] = tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppPreprocCallExpression), tsSymbol[K](cppNumberLiteral), tsSymbol[K](cppCharLiteral), tsSymbol[K](cppPreprocDefined), tsSymbol[K](cppPreprocUnaryExpression), tsSymbol[K](cppPreprocBinaryExpression), tsSymbol[K](cppPreprocParenthesizedExpression))
+                                                              rules[cppHidNonCaseStatement] = tsChoice[K](tsChoice[K](tsSymbol[K](cppLabeledStatement), tsSymbol[K](cppCompoundStatement), tsSymbol[K](cppExpressionStatement), tsSymbol[K](cppIfStatement), tsSymbol[K](cppSwitchStatement), tsSymbol[K](cppDoStatement), tsSymbol[K](cppWhileStatement), tsSymbol[K](cppForStatement), tsSymbol[K](cppReturnStatement), tsSymbol[K](cppBreakStatement), tsSymbol[K](cppContinueStatement), tsSymbol[K](cppGotoStatement)), tsSymbol[K](cppCoReturnStatement), tsSymbol[K](cppCoYieldStatement), tsSymbol[K](cppForRangeLoop), tsSymbol[K](cppTryStatement), tsSymbol[K](cppThrowStatement))
+                                                              rules[cppDependentType] = tsSeq[K](tsString[K]("typename"), tsSymbol[K](cppHidTypeSpecifier))
+                                                              rules[cppOptionalParameterDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsChoice[K](tsSymbol[K](cppHidDeclarator), tsBlank[K]()), tsString[K]("="), tsSymbol[K](cppHidExpression))
+                                                              rules[cppTypeParameterPackExpansion] = tsSeq[K](tsSymbol[K](cppTypeDescriptor), tsString[K]("..."))
+                                                              rules[cppRefQualifier] = tsChoice[K](tsString[K]("&"), tsString[K]("&&"))
+                                                              rules[cppPointerDeclarator] = tsSeq[K](tsChoice[K](tsSymbol[K](cppMsBasedModifier), tsBlank[K]()), tsString[K]("*"), tsRepeat[K](tsSymbol[K](cppMsPointerModifier)), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsSymbol[K](cppHidDeclarator))
+                                                              rules[cppLambdaCaptureSpecifier] = tsSeq[K](tsString[K]("["), tsChoice[K](tsSymbol[K](cppLambdaDefaultCapture), tsChoice[K](tsSeq[K](tsSymbol[K](cppHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppHidExpression)))), tsBlank[K]()), tsSeq[K](tsSymbol[K](cppLambdaDefaultCapture), tsString[K](","), tsSeq[K](tsSymbol[K](cppHidExpression), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppHidExpression)))))), tsString[K]("]"))
+                                                              rules[cppReferenceFieldDeclarator] = tsSeq[K](tsChoice[K](tsString[K]("&"), tsString[K]("&&")), tsSymbol[K](cppHidFieldDeclarator))
+                                                              rules[cppOperatorCastDeclaration] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppHidConstructorSpecifiers)), tsChoice[K](tsSymbol[K](cppOperatorCast), tsSymbol[K](cppQualifiedOperatorCastIdentifier)), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](cppHidExpression)), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cppReturnStatement] = tsSeq[K](tsChoice[K](tsSeq[K](tsString[K]("return"), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)), tsBlank[K]()), tsString[K](";")), tsSeq[K](tsString[K]("return"), tsSymbol[K](cppInitializerList), tsString[K](";"))))
+                                                              rules[cppConditionClause] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](cppDeclaration), tsSymbol[K](cppExpressionStatement)), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression))), tsSymbol[K](cppConditionDeclaration)), tsString[K](")"))
+                                                              rules[cppAttributedNonCaseStatement] = tsSeq[K](tsRepeat1[K](tsSymbol[K](cppAttributeDeclaration)), tsSymbol[K](cppHidNonCaseStatement))
+                                                              rules[cppCharLiteral] = tsSeq[K](tsChoice[K](tsString[K]("L\'"), tsString[K]("u\'"), tsString[K]("U\'"), tsString[K]("u8\'"), tsString[K]("\'")), tsChoice[K](tsSymbol[K](cppEscapeSequence), tsRegex[K]("[^\\n\']")), tsString[K]("\'"))
+                                                              rules[cppArrayTypeDeclarator] = tsSeq[K](tsSymbol[K](cppHidTypeDeclarator), tsString[K]("["), tsRepeat[K](tsSymbol[K](cppTypeQualifier)), tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsString[K]("*")), tsBlank[K]()), tsString[K]("]"))
+                                                              rules[cppMsPointerModifier] = tsChoice[K](tsSymbol[K](cppMsUnalignedPtrModifier), tsSymbol[K](cppMsRestrictModifier), tsSymbol[K](cppMsUnsignedPtrModifier), tsSymbol[K](cppMsSignedPtrModifier))
+                                                              rules[cppHidExpression] = tsChoice[K](tsChoice[K](tsSymbol[K](cppConditionalExpression), tsSymbol[K](cppAssignmentExpression), tsSymbol[K](cppBinaryExpression), tsSymbol[K](cppUnaryExpression), tsSymbol[K](cppUpdateExpression), tsSymbol[K](cppCastExpression), tsSymbol[K](cppPointerExpression), tsSymbol[K](cppSizeofExpression), tsSymbol[K](cppSubscriptExpression), tsSymbol[K](cppCallExpression), tsSymbol[K](cppFieldExpression), tsSymbol[K](cppCompoundLiteralExpression), tsSymbol[K](cppIdentifier), tsSymbol[K](cppNumberLiteral), tsSymbol[K](cppStringLiteral), tsSymbol[K](cppTrue), tsSymbol[K](cppFalse), tsSymbol[K](cppNull), tsSymbol[K](cppConcatenatedString), tsSymbol[K](cppCharLiteral), tsSymbol[K](cppParenthesizedExpression)), tsSymbol[K](cppCoAwaitExpression), tsSymbol[K](cppTemplateFunction), tsSymbol[K](cppQualifiedIdentifier), tsSymbol[K](cppNewExpression), tsSymbol[K](cppDeleteExpression), tsSymbol[K](cppLambdaExpression), tsSymbol[K](cppParameterPackExpansion), tsSymbol[K](cppNullptr), tsSymbol[K](cppThis), tsSymbol[K](cppRawStringLiteral), tsSymbol[K](cppUserDefinedLiteral))
+                                                              rules[cppSystemLibString] = tsSeq[K](tsString[K]("<"), tsRepeat[K](tsChoice[K](tsRegex[K]("[^>\\n]"), tsString[K]("\\>"))), tsString[K](">"))
+                                                              rules[cppUsingDeclaration] = tsSeq[K](tsString[K]("using"), tsChoice[K](tsString[K]("namespace"), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppQualifiedIdentifier)), tsString[K](";"))
+                                                              rules[cppQualifiedTypeIdentifier] = tsSeq[K](tsSymbol[K](cppHidScopeResolution), tsChoice[K](tsSymbol[K](cppDependentTypeIdentifier), tsSymbol[K](cppQualifiedTypeIdentifier), tsSymbol[K](cppTemplateType), tsSymbol[K](cppHidTypeIdentifier)))
+                                                              rules[cppSwitchStatement] = tsSeq[K](tsString[K]("switch"), tsSymbol[K](cppConditionClause), tsSymbol[K](cppCompoundStatement))
+                                                              rules[cppCaseStatement] = tsSeq[K](tsChoice[K](tsSeq[K](tsString[K]("case"), tsSymbol[K](cppHidExpression)), tsString[K]("default")), tsString[K](":"), tsRepeat[K](tsChoice[K](tsSymbol[K](cppAttributedNonCaseStatement), tsSymbol[K](cppHidNonCaseStatement), tsSymbol[K](cppDeclaration), tsSymbol[K](cppTypeDefinition))))
+                                                              rules[cppNewExpression] = tsSeq[K](tsChoice[K](tsString[K]("::"), tsBlank[K]()), tsString[K]("new"), tsChoice[K](tsSymbol[K](cppArgumentList), tsBlank[K]()), tsSymbol[K](cppHidTypeSpecifier), tsChoice[K](tsSymbol[K](cppNewDeclarator), tsBlank[K]()), tsChoice[K](tsChoice[K](tsSymbol[K](cppArgumentList), tsSymbol[K](cppInitializerList)), tsBlank[K]()))
+                                                              rules[cppHidFieldIdentifier] = tsSymbol[K](cppIdentifier)
+                                                              rules[cppVirtualFunctionSpecifier] = tsChoice[K](tsString[K]("virtual"))
+                                                              rules[cppMsUnsignedPtrModifier] = tsString[K]("__uptr")
+                                                              rules[cppFunctionDeclarator] = tsSeq[K](tsSeq[K](tsSymbol[K](cppHidDeclarator), tsSymbol[K](cppParameterList), tsRepeat[K](tsSymbol[K](cppAttributeSpecifier))), tsRepeat[K](tsChoice[K](tsSymbol[K](cppTypeQualifier), tsSymbol[K](cppRefQualifier), tsSymbol[K](cppVirtualSpecifier), tsSymbol[K](cppNoexcept), tsSymbol[K](cppThrowSpecifier), tsSymbol[K](cppTrailingReturnType))))
+                                                              rules[cppAbstractReferenceDeclarator] = tsSeq[K](tsChoice[K](tsString[K]("&"), tsString[K]("&&")), tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()))
+                                                              rules[cppPreprocIfdefInFieldDeclarationList] = tsSeq[K](tsChoice[K](tsRegex[K]("#[ \x09]*ifdef"), tsRegex[K]("#[ \x09]*ifndef")), tsSymbol[K](cppIdentifier), tsRepeat[K](tsSymbol[K](cppHidFieldDeclarationListItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElseInFieldDeclarationList), tsSymbol[K](cppPreprocElifInFieldDeclarationList)), tsBlank[K]()), tsRegex[K]("#[ \x09]*endif"))
+                                                              rules[cppStorageClassSpecifier] = tsChoice[K](tsString[K]("extern"), tsString[K]("static"), tsString[K]("register"), tsString[K]("inline"), tsString[K]("thread_local"))
+                                                              rules[cppHidEnumBaseClause] = tsSeq[K](tsString[K](":"), tsChoice[K](tsSymbol[K](cppQualifiedTypeIdentifier), tsSymbol[K](cppHidTypeIdentifier), tsSymbol[K](cppSizedTypeSpecifier)))
+                                                              rules[cppVariadicParameterDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsChoice[K](tsSymbol[K](cppVariadicDeclarator), tsSymbol[K](cppVariadicReferenceDeclarator)))
+                                                              rules[cppParenthesizedDeclarator] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppHidDeclarator), tsString[K](")"))
+                                                              rules[cppEnumeratorList] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsSymbol[K](cppEnumerator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppEnumerator)))), tsBlank[K]()), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K]("}"))
+                                                              rules[cppUnaryExpression] = tsSeq[K](tsChoice[K](tsString[K]("!"), tsString[K]("~"), tsString[K]("-"), tsString[K]("+")), tsSymbol[K](cppHidExpression))
+                                                              rules[cppMacroTypeSpecifier] = tsSeq[K](tsSymbol[K](cppIdentifier), tsString[K]("("), tsSymbol[K](cppTypeDescriptor), tsString[K](")"))
+                                                              rules[cppFieldExpression] = tsChoice[K](tsSeq[K](tsSeq[K](tsSymbol[K](cppHidExpression), tsChoice[K](tsString[K]("."), tsString[K]("->"))), tsSymbol[K](cppHidFieldIdentifier)), tsSeq[K](tsSeq[K](tsSymbol[K](cppHidExpression), tsChoice[K](tsString[K]("."), tsString[K]("->"))), tsChoice[K](tsSymbol[K](cppDestructorName), tsSymbol[K](cppTemplateMethod), tsSymbol[K](cppDependentFieldIdentifier))))
+                                                              rules[cppPreprocIfdef] = tsSeq[K](tsChoice[K](tsRegex[K]("#[ \x09]*ifdef"), tsRegex[K]("#[ \x09]*ifndef")), tsSymbol[K](cppIdentifier), tsRepeat[K](tsSymbol[K](cppHidTopLevelItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElse), tsSymbol[K](cppPreprocElif)), tsBlank[K]()), tsRegex[K]("#[ \x09]*endif"))
+                                                              rules[cppQualifiedIdentifier] = tsSeq[K](tsSymbol[K](cppHidScopeResolution), tsChoice[K](tsSymbol[K](cppDependentIdentifier), tsSymbol[K](cppQualifiedIdentifier), tsSymbol[K](cppTemplateFunction), tsSymbol[K](cppIdentifier), tsSymbol[K](cppOperatorName), tsSymbol[K](cppDestructorName)))
+                                                              rules[cppPreprocIfInFieldDeclarationList] = tsSeq[K](tsRegex[K]("#[ \x09]*if"), tsSymbol[K](cppHidPreprocExpression), tsString[K]("\x0A"), tsRepeat[K](tsSymbol[K](cppHidFieldDeclarationListItem)), tsChoice[K](tsChoice[K](tsSymbol[K](cppPreprocElseInFieldDeclarationList), tsSymbol[K](cppPreprocElifInFieldDeclarationList)), tsBlank[K]()), tsRegex[K]("#[ \x09]*endif"))
+                                                              rules[cppTypeQualifier] = tsChoice[K](tsChoice[K](tsString[K]("const"), tsString[K]("volatile"), tsString[K]("restrict"), tsString[K]("_Atomic")), tsString[K]("mutable"), tsString[K]("constexpr"))
+                                                              rules[cppHidStatement] = tsChoice[K](tsSymbol[K](cppCaseStatement), tsSymbol[K](cppHidNonCaseStatement))
+                                                              rules[cppIdentifier] = tsRegex[K]("[a-zA-Z_]\\w*")
+                                                              rules[cppHidFieldDeclarationListItem] = tsChoice[K](tsChoice[K](tsSymbol[K](cppFieldDeclaration), tsSymbol[K](cppPreprocDef), tsSymbol[K](cppPreprocFunctionDef), tsSymbol[K](cppPreprocCall), tsSymbol[K](cppPreprocIfInFieldDeclarationList), tsSymbol[K](cppPreprocIfdefInFieldDeclarationList)), tsSymbol[K](cppTemplateDeclaration), tsSymbol[K](cppInlineMethodDefinition), tsSymbol[K](cppConstructorOrDestructorDefinition), tsSymbol[K](cppConstructorOrDestructorDeclaration), tsSymbol[K](cppOperatorCastDefinition), tsSymbol[K](cppOperatorCastDeclaration), tsSymbol[K](cppFriendDeclaration), tsSymbol[K](cppAccessSpecifier), tsSymbol[K](cppAliasDeclaration), tsSymbol[K](cppUsingDeclaration), tsSymbol[K](cppTypeDefinition), tsSymbol[K](cppStaticAssertDeclaration), tsSymbol[K](cppQpropertyDeclaration))
+                                                              rules[cppHidDeclarationModifiers] = tsChoice[K](tsChoice[K](tsSymbol[K](cppStorageClassSpecifier), tsSymbol[K](cppTypeQualifier), tsSymbol[K](cppAttributeSpecifier), tsSymbol[K](cppAttributeDeclaration), tsSymbol[K](cppMsDeclspecModifier)), tsSymbol[K](cppVirtualFunctionSpecifier))
+                                                              rules[cppAuto] = tsString[K]("auto")
+                                                              rules[cppNullptr] = tsString[K]("nullptr")
+                                                              rules[cppFieldDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsChoice[K](tsSeq[K](tsSymbol[K](cppHidFieldDeclarator), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppHidFieldDeclarator)))), tsBlank[K]()), tsChoice[K](tsChoice[K](tsSymbol[K](cppBitfieldClause), tsSymbol[K](cppInitializerList), tsSeq[K](tsString[K]("="), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)))), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cppReferenceDeclarator] = tsSeq[K](tsChoice[K](tsString[K]("&"), tsString[K]("&&")), tsSymbol[K](cppHidDeclarator))
+                                                              rules[cppParameterList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppParameterDeclaration), tsSymbol[K](cppOptionalParameterDeclaration), tsSymbol[K](cppVariadicParameterDeclaration), tsString[K]("...")), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppParameterDeclaration), tsSymbol[K](cppOptionalParameterDeclaration), tsSymbol[K](cppVariadicParameterDeclaration), tsString[K]("..."))))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cppHidStatementIdentifier] = tsSymbol[K](cppIdentifier)
+                                                              rules[cppOperatorCast] = tsSeq[K](tsString[K]("operator"), tsSymbol[K](cppHidDeclarationSpecifiers), tsSymbol[K](cppHidAbstractDeclarator))
+                                                              rules[cppMsSignedPtrModifier] = tsString[K]("__sptr")
+                                                              rules[cppTrue] = tsChoice[K](tsString[K]("TRUE"), tsString[K]("true"))
+                                                              rules[cppCommaExpression] = tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K](","), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)))
+                                                              rules[cppAttributeSpecifier] = tsSeq[K](tsString[K]("__attribute__"), tsString[K]("("), tsSymbol[K](cppArgumentList), tsString[K](")"))
+                                                              rules[cppHidAssignmentLeftExpression] = tsChoice[K](tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppCallExpression), tsSymbol[K](cppFieldExpression), tsSymbol[K](cppPointerExpression), tsSymbol[K](cppSubscriptExpression), tsSymbol[K](cppParenthesizedExpression)), tsSymbol[K](cppQualifiedIdentifier))
+                                                              rules[cppLabeledStatement] = tsSeq[K](tsSymbol[K](cppHidStatementIdentifier), tsString[K](":"), tsSymbol[K](cppHidStatement))
+                                                              rules[cppInitializerList] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppInitializerPair), tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppInitializerPair), tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList))))), tsBlank[K]()), tsChoice[K](tsString[K](","), tsBlank[K]()), tsString[K]("}"))
+                                                              rules[cppTemplateParameterList] = tsSeq[K](tsString[K]("<"), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppParameterDeclaration), tsSymbol[K](cppOptionalParameterDeclaration), tsSymbol[K](cppTypeParameterDeclaration), tsSymbol[K](cppVariadicParameterDeclaration), tsSymbol[K](cppVariadicTypeParameterDeclaration), tsSymbol[K](cppOptionalTypeParameterDeclaration), tsSymbol[K](cppTemplateTemplateParameterDeclaration)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppParameterDeclaration), tsSymbol[K](cppOptionalParameterDeclaration), tsSymbol[K](cppTypeParameterDeclaration), tsSymbol[K](cppVariadicParameterDeclaration), tsSymbol[K](cppVariadicTypeParameterDeclaration), tsSymbol[K](cppOptionalTypeParameterDeclaration), tsSymbol[K](cppTemplateTemplateParameterDeclaration))))), tsBlank[K]()), tsString[K](">"))
+                                                              rules[cppParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)), tsString[K](")"))
+                                                              rules[cppHidEmptyDeclaration] = tsSeq[K](tsSymbol[K](cppHidTypeSpecifier), tsString[K](";"))
+                                                              rules[cppAbstractFunctionDeclarator] = tsSeq[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()), tsSymbol[K](cppParameterList)), tsRepeat[K](tsChoice[K](tsSymbol[K](cppTypeQualifier), tsSymbol[K](cppRefQualifier), tsSymbol[K](cppNoexcept), tsSymbol[K](cppThrowSpecifier))), tsChoice[K](tsSymbol[K](cppTrailingReturnType), tsBlank[K]()))
+                                                              rules[cppUnionSpecifier] = tsSeq[K](tsString[K]("union"), tsChoice[K](tsSymbol[K](cppMsDeclspecModifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppAttributeDeclaration), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppHidClassName), tsSeq[K](tsChoice[K](tsSymbol[K](cppHidClassName), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppVirtualSpecifier), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppBaseClassClause), tsBlank[K]()), tsSymbol[K](cppFieldDeclarationList))))
+                                                              rules[cppWhileStatement] = tsSeq[K](tsString[K]("while"), tsSymbol[K](cppConditionClause), tsSymbol[K](cppHidStatement))
+                                                              rules[cppNamespaceDefinition] = tsSeq[K](tsString[K]("namespace"), tsChoice[K](tsChoice[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppNamespaceDefinitionName)), tsBlank[K]()), tsSymbol[K](cppDeclarationList))
+                                                              rules[cppMsUnalignedPtrModifier] = tsChoice[K](tsString[K]("_unaligned"), tsString[K]("__unaligned"))
+                                                              rules[cppNull] = tsString[K]("NULL")
+                                                              rules[cppLiteralSuffix] = tsRegex[K]("[a-zA-Z_]\\w*")
+                                                              rules[cppVariadicDeclarator] = tsSeq[K](tsString[K]("..."), tsChoice[K](tsSymbol[K](cppIdentifier), tsBlank[K]()))
+                                                              rules[cppTemplateMethod] = tsSeq[K](tsSymbol[K](cppHidFieldIdentifier), tsSymbol[K](cppTemplateArgumentList))
+                                                              rules[cppCallExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppArgumentList)), tsSeq[K](tsSymbol[K](cppPrimitiveType), tsSymbol[K](cppArgumentList)))
+                                                              rules[cppVirtualSpecifier] = tsChoice[K](tsString[K]("final"), tsString[K]("override"))
+                                                              rules[cppFieldInitializerList] = tsSeq[K](tsString[K](":"), tsSeq[K](tsSymbol[K](cppFieldInitializer), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppFieldInitializer)))))
+                                                              rules[cppDeleteExpression] = tsSeq[K](tsChoice[K](tsString[K]("::"), tsBlank[K]()), tsString[K]("delete"), tsChoice[K](tsSeq[K](tsString[K]("["), tsString[K]("]")), tsBlank[K]()), tsSymbol[K](cppHidExpression))
+                                                              rules[cppAbstractParenthesizedDeclarator] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppHidAbstractDeclarator), tsString[K](")"))
+                                                              rules[cppTryStatement] = tsSeq[K](tsString[K]("try"), tsSymbol[K](cppCompoundStatement), tsRepeat1[K](tsSymbol[K](cppCatchClause)))
+                                                              rules[cppThrowSpecifier] = tsSeq[K](tsString[K]("throw"), tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsSymbol[K](cppTypeDescriptor), tsRepeat[K](tsSeq[K](tsString[K](","), tsSymbol[K](cppTypeDescriptor)))), tsBlank[K]()), tsString[K](")")))
+                                                              rules[cppParameterPackExpansion] = tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("..."))
+                                                              rules[cppDestructorName] = tsSeq[K](tsString[K]("~"), tsSymbol[K](cppIdentifier))
+                                                              rules[cppConditionalExpression] = tsSeq[K](tsSymbol[K](cppHidExpression), tsString[K]("?"), tsSymbol[K](cppHidExpression), tsString[K](":"), tsSymbol[K](cppHidExpression))
+                                                              rules[cppParenthesizedTypeDeclarator] = tsSeq[K](tsString[K]("("), tsSymbol[K](cppHidTypeDeclarator), tsString[K](")"))
+                                                              rules[cppSizeofExpression] = tsChoice[K](tsSeq[K](tsString[K]("sizeof"), tsChoice[K](tsSymbol[K](cppHidExpression), tsSeq[K](tsString[K]("("), tsSymbol[K](cppTypeDescriptor), tsString[K](")")))), tsSeq[K](tsString[K]("sizeof"), tsString[K]("..."), tsString[K]("("), tsSymbol[K](cppIdentifier), tsString[K](")")))
+                                                              rules[cppNumberLiteral] = tsSeq[K](tsChoice[K](tsRegex[K]("[-\\+]"), tsBlank[K]()), tsChoice[K](tsChoice[K](tsString[K]("0x"), tsString[K]("0b")), tsBlank[K]()), tsChoice[K](tsSeq[K](tsChoice[K](tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9]"))))), tsSeq[K](tsString[K]("0b"), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9]")))))), tsSeq[K](tsString[K]("0x"), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]"))))))), tsChoice[K](tsSeq[K](tsString[K]("."), tsChoice[K](tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]"))))), tsBlank[K]())), tsBlank[K]())), tsSeq[K](tsString[K]("."), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9]"))))))), tsChoice[K](tsSeq[K](tsRegex[K]("[eEpP]"), tsChoice[K](tsSeq[K](tsChoice[K](tsRegex[K]("[-\\+]"), tsBlank[K]()), tsSeq[K](tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]")), tsRepeat[K](tsSeq[K](tsString[K]("\'"), tsRepeat1[K](tsRegex[K]("[0-9a-fA-F]")))))), tsBlank[K]())), tsBlank[K]()), tsRepeat[K](tsChoice[K](tsString[K]("u"), tsString[K]("l"), tsString[K]("U"), tsString[K]("L"), tsString[K]("f"), tsString[K]("F"))))
+                                                              rules[cppLinkageSpecification] = tsSeq[K](tsString[K]("extern"), tsSymbol[K](cppStringLiteral), tsChoice[K](tsSymbol[K](cppFunctionDefinition), tsSymbol[K](cppDeclaration), tsSymbol[K](cppDeclarationList)))
+                                                              rules[cppPrimitiveType] = tsChoice[K](tsString[K]("bool"), tsString[K]("char"), tsString[K]("int"), tsString[K]("float"), tsString[K]("double"), tsString[K]("void"), tsString[K]("size_t"), tsString[K]("ssize_t"), tsString[K]("intptr_t"), tsString[K]("uintptr_t"), tsString[K]("charptr_t"), tsString[K]("int8_t"), tsString[K]("int16_t"), tsString[K]("int32_t"), tsString[K]("int64_t"), tsString[K]("uint8_t"), tsString[K]("uint16_t"), tsString[K]("uint32_t"), tsString[K]("uint64_t"), tsString[K]("char8_t"), tsString[K]("char16_t"), tsString[K]("char32_t"), tsString[K]("char64_t"))
+                                                              rules[cppBreakStatement] = tsSeq[K](tsString[K]("break"), tsString[K](";"))
+                                                              rules[cppConstructorOrDestructorDefinition] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppHidConstructorSpecifiers)), tsSymbol[K](cppFunctionDeclarator), tsChoice[K](tsSymbol[K](cppFieldInitializerList), tsBlank[K]()), tsChoice[K](tsSymbol[K](cppCompoundStatement), tsSymbol[K](cppDefaultMethodClause), tsSymbol[K](cppDeleteMethodClause)))
+                                                              rules[cppQualifiedFieldIdentifier] = tsSeq[K](tsSymbol[K](cppHidScopeResolution), tsChoice[K](tsSymbol[K](cppDependentFieldIdentifier), tsSymbol[K](cppQualifiedFieldIdentifier), tsSymbol[K](cppTemplateMethod), tsSymbol[K](cppHidFieldIdentifier)))
+                                                              rules[cppPreprocBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("+"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("-"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("*"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("/"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("%"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("||"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("&&"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("|"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("^"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("&"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("=="), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("!="), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K](">"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K](">="), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("<="), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("<"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K]("<<"), tsSymbol[K](cppHidPreprocExpression)), tsSeq[K](tsSymbol[K](cppHidPreprocExpression), tsString[K](">>"), tsSymbol[K](cppHidPreprocExpression)))
+                                                              rules[cppFieldDesignator] = tsSeq[K](tsString[K]("."), tsSymbol[K](cppHidFieldIdentifier))
+                                                              rules[cppDeleteMethodClause] = tsSeq[K](tsString[K]("="), tsString[K]("delete"), tsString[K](";"))
+                                                              rules[cppConditionDeclaration] = tsSeq[K](tsSymbol[K](cppHidDeclarationSpecifiers), tsSymbol[K](cppHidDeclarator), tsChoice[K](tsSeq[K](tsString[K]("="), tsSymbol[K](cppHidExpression)), tsSymbol[K](cppInitializerList)))
+                                                              rules[cppDependentFieldIdentifier] = tsSeq[K](tsString[K]("template"), tsSymbol[K](cppTemplateMethod))
+                                                              rules[cppArgumentList] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList)), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppInitializerList))))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cppHidTopLevelItem] = tsChoice[K](tsChoice[K](tsSymbol[K](cppFunctionDefinition), tsSymbol[K](cppLinkageSpecification), tsSymbol[K](cppDeclaration), tsSymbol[K](cppHidStatement), tsSymbol[K](cppAttributedStatement), tsSymbol[K](cppTypeDefinition), tsSymbol[K](cppHidEmptyDeclaration), tsSymbol[K](cppPreprocIf), tsSymbol[K](cppPreprocIfdef), tsSymbol[K](cppPreprocInclude), tsSymbol[K](cppPreprocDef), tsSymbol[K](cppPreprocFunctionDef), tsSymbol[K](cppPreprocCall)), tsSymbol[K](cppNamespaceDefinition), tsSymbol[K](cppNamespaceAliasDefinition), tsSymbol[K](cppUsingDeclaration), tsSymbol[K](cppAliasDeclaration), tsSymbol[K](cppStaticAssertDeclaration), tsSymbol[K](cppTemplateDeclaration), tsSymbol[K](cppTemplateInstantiation), tsSymbol[K](cppConstructorOrDestructorDefinition), tsSymbol[K](cppOperatorCastDefinition), tsSymbol[K](cppOperatorCastDeclaration))
+                                                              rules[cppIfStatement] = tsSeq[K](tsString[K]("if"), tsChoice[K](tsString[K]("constexpr"), tsBlank[K]()), tsSymbol[K](cppConditionClause), tsSymbol[K](cppHidStatement), tsChoice[K](tsSeq[K](tsString[K]("else"), tsSymbol[K](cppHidStatement)), tsBlank[K]()))
+                                                              rules[cppContinueStatement] = tsSeq[K](tsString[K]("continue"), tsString[K](";"))
+                                                              rules[cppMsDeclspecModifier] = tsSeq[K](tsString[K]("__declspec"), tsString[K]("("), tsSymbol[K](cppIdentifier), tsString[K](")"))
+                                                              rules[cppMsBasedModifier] = tsSeq[K](tsString[K]("__based"), tsSymbol[K](cppArgumentList))
+                                                              rules[cppQpropertyDeclaration] = tsSeq[K](tsString[K]("Q_PROPERTY"), tsString[K]("("), tsRepeat[K](tsSymbol[K](cppHidTypeIdentifier)), tsString[K](")"))
+                                                              rules[cppExpressionStatement] = tsSeq[K](tsChoice[K](tsChoice[K](tsSymbol[K](cppHidExpression), tsSymbol[K](cppCommaExpression)), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cppPreprocParams] = tsSeq[K](tsString[K]("("), tsChoice[K](tsSeq[K](tsChoice[K](tsSymbol[K](cppIdentifier), tsString[K]("...")), tsRepeat[K](tsSeq[K](tsString[K](","), tsChoice[K](tsSymbol[K](cppIdentifier), tsString[K]("..."))))), tsBlank[K]()), tsString[K](")"))
+                                                              rules[cppTrailingReturnType] = tsSeq[K](tsString[K]("->"), tsChoice[K](tsSymbol[K](cppTypeQualifier), tsBlank[K]()), tsSymbol[K](cppHidTypeSpecifier), tsChoice[K](tsSymbol[K](cppHidAbstractDeclarator), tsBlank[K]()))
+                                                              rules[cppBaseClassClause] = tsSeq[K](tsString[K](":"), tsSeq[K](tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("public"), tsString[K]("private"), tsString[K]("protected")), tsBlank[K]()), tsSymbol[K](cppHidClassName), tsChoice[K](tsString[K]("..."), tsBlank[K]())), tsRepeat[K](tsSeq[K](tsString[K](","), tsSeq[K](tsChoice[K](tsChoice[K](tsString[K]("public"), tsString[K]("private"), tsString[K]("protected")), tsBlank[K]()), tsSymbol[K](cppHidClassName), tsChoice[K](tsString[K]("..."), tsBlank[K]()))))))
+                                                              rules[cppFieldInitializer] = tsSeq[K](tsChoice[K](tsSymbol[K](cppHidFieldIdentifier), tsSymbol[K](cppTemplateMethod), tsSymbol[K](cppQualifiedFieldIdentifier)), tsChoice[K](tsSymbol[K](cppInitializerList), tsSymbol[K](cppArgumentList)), tsChoice[K](tsString[K]("..."), tsBlank[K]()))
+                                                              rules[cppCoReturnStatement] = tsSeq[K](tsString[K]("co_return"), tsChoice[K](tsSymbol[K](cppHidExpression), tsBlank[K]()), tsString[K](";"))
+                                                              rules[cppDependentTypeIdentifier] = tsSeq[K](tsString[K]("template"), tsSymbol[K](cppTemplateType))
+                                                              rules[cppPreprocInclude] = tsSeq[K](tsRegex[K]("#[ \x09]*include"), tsChoice[K](tsSymbol[K](cppStringLiteral), tsSymbol[K](cppSystemLibString), tsSymbol[K](cppIdentifier), tsSymbol[K](cppPreprocCallExpression)), tsString[K]("\x0A"))
+                                                              rules[cppConstructorOrDestructorDeclaration] = tsSeq[K](tsRepeat[K](tsSymbol[K](cppHidConstructorSpecifiers)), tsSymbol[K](cppFunctionDeclarator), tsString[K](";"))
+                                                              rules[cppHidConstructorSpecifiers] = tsChoice[K](tsSymbol[K](cppHidDeclarationModifiers), tsSymbol[K](cppExplicitFunctionSpecifier))
+                                                              rules[cppDecltype] = tsSeq[K](tsString[K]("decltype"), tsString[K]("("), tsSymbol[K](cppHidExpression), tsString[K](")"))
+                                                              rules[cppHidFieldDeclarator] = tsChoice[K](tsChoice[K](tsSymbol[K](cppAttributedFieldDeclarator), tsSymbol[K](cppPointerFieldDeclarator), tsSymbol[K](cppFunctionFieldDeclarator), tsSymbol[K](cppArrayFieldDeclarator), tsSymbol[K](cppParenthesizedFieldDeclarator), tsSymbol[K](cppHidFieldIdentifier)), tsSymbol[K](cppReferenceFieldDeclarator), tsSymbol[K](cppTemplateMethod), tsSymbol[K](cppOperatorName))
+                                                              rules[cppAccessSpecifier] = tsSeq[K](tsChoice[K](tsString[K]("public"), tsString[K]("private"), tsString[K]("protected"), tsString[K]("slots"), tsString[K]("signals"), tsSeq[K](tsString[K]("public"), tsString[K]("slots")), tsSeq[K](tsString[K]("public"), tsString[K]("signals")), tsSeq[K](tsString[K]("private"), tsString[K]("slots")), tsSeq[K](tsString[K]("private"), tsString[K]("signals")), tsSeq[K](tsString[K]("protected"), tsString[K]("slots")), tsSeq[K](tsString[K]("protected"), tsString[K]("signals"))), tsString[K](":"))
+                                                              rules[cppTypeParameterDeclaration] = tsSeq[K](tsChoice[K](tsString[K]("typename"), tsString[K]("class")), tsChoice[K](tsSymbol[K](cppHidTypeIdentifier), tsBlank[K]()))
+                                                              rules[cppTemplateFunction] = tsSeq[K](tsSymbol[K](cppIdentifier), tsSymbol[K](cppTemplateArgumentList))
+                                                              rules[cppFunctionFieldDeclarator] = tsSeq[K](tsSeq[K](tsSymbol[K](cppHidFieldDeclarator), tsSymbol[K](cppParameterList)), tsRepeat[K](tsChoice[K](tsSymbol[K](cppTypeQualifier), tsSymbol[K](cppRefQualifier), tsSymbol[K](cppVirtualSpecifier), tsSymbol[K](cppNoexcept), tsSymbol[K](cppThrowSpecifier), tsSymbol[K](cppTrailingReturnType))))
+                                                              rules[cppConcatenatedString] = tsSeq[K](tsChoice[K](tsSymbol[K](cppRawStringLiteral), tsSymbol[K](cppStringLiteral)), tsRepeat1[K](tsChoice[K](tsSymbol[K](cppRawStringLiteral), tsSymbol[K](cppStringLiteral))))
+                                                              rules
 

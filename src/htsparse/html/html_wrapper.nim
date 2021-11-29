@@ -4,7 +4,6 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   HtmlNodeKind* = enum
     htmlAttribute              ## attribute
@@ -34,8 +33,16 @@ type
     htmlRawText                ## raw_text
     htmlTagName                ## tag_name
     htmlText                   ## text
+    htmlHidEndTagName          ## _end_tag_name
+    htmlHidNode                ## _node
+    htmlHidDoctype             ## _doctype
+    htmlHidScriptStartTagName  ## _script_start_tag_name
+    htmlHidStyleStartTagName   ## _style_start_tag_name
+    htmlHidImplicitEndTag      ## _implicit_end_tag
+    htmlStyleStartTag          ## style_start_tag
+    htmlScriptStartTag         ## script_start_tag
+    htmlHidStartTagName        ## _start_tag_name
     htmlSyntaxError            ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: HtmlNodeKind): string =
   case kind:
@@ -66,8 +73,16 @@ proc strRepr*(kind: HtmlNodeKind): string =
     of htmlRawText:                "raw_text"
     of htmlTagName:                "tag_name"
     of htmlText:                   "text"
+    of htmlHidEndTagName:          "_end_tag_name"
+    of htmlHidNode:                "_node"
+    of htmlHidDoctype:             "_doctype"
+    of htmlHidScriptStartTagName:  "_script_start_tag_name"
+    of htmlHidStyleStartTagName:   "_style_start_tag_name"
+    of htmlHidImplicitEndTag:      "_implicit_end_tag"
+    of htmlStyleStartTag:          "style_start_tag"
+    of htmlScriptStartTag:         "script_start_tag"
+    of htmlHidStartTagName:        "_start_tag_name"
     of htmlSyntaxError:            "ERROR"
-
 
 type
   HtmlExternalTok* = enum
@@ -80,14 +95,11 @@ type
     htmlExternRaw_text               ## raw_text
     htmlExternComment                ## comment
 
-
 type
   TsHtmlNode* = distinct TSNode
 
-
 type
   HtmlParser* = distinct PtsParser
-
 
 const htmlAllowedSubnodes*: array[HtmlNodeKind, set[HtmlNodeKind]] = block:
                                                                        var tmp: array[HtmlNodeKind, set[HtmlNodeKind]]
@@ -123,9 +135,18 @@ const htmlTokenKinds*: set[HtmlNodeKind] = {
                                              htmlGreaterThanTok,
                                              htmlDoctypeTok
                                            }
-
+const htmlHiddenKinds*: set[HtmlNodeKind] = {
+                                              htmlHidEndTagName,
+                                              htmlHidNode,
+                                              htmlHidDoctype,
+                                              htmlHidScriptStartTagName,
+                                              htmlHidStyleStartTagName,
+                                              htmlHidImplicitEndTag,
+                                              htmlStyleStartTag,
+                                              htmlScriptStartTag,
+                                              htmlHidStartTagName
+                                            }
 proc tsNodeType*(node: TsHtmlNode): string
-
 
 
 proc kind*(node: TsHtmlNode): HtmlNodeKind {.noSideEffect.} =
@@ -160,7 +181,6 @@ proc kind*(node: TsHtmlNode): HtmlNodeKind {.noSideEffect.} =
       of "ERROR":                  htmlSyntaxError
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
-
 
 func isNil*(node: TsHtmlNode): bool =
   ts_node_is_null(TSNode(node))
@@ -234,4 +254,32 @@ proc parseHtmlString*(str: string, unnamed: bool = false): HtmlNode =
   let parser = newTsHtmlParser()
   return toHtsTree[TsHtmlNode, HtmlNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let htmlGrammar*: array[HtmlNodeKind, HtsRule[HtmlNodeKind]] = block:
+                                                                 var rules: array[HtmlNodeKind, HtsRule[HtmlNodeKind]]
+                                                                 type
+                                                                   K = HtmlNodeKind
+
+
+                                                                 rules[htmlHidDoctype] = tsRegex[K]("[Dd][Oo][Cc][Tt][Yy][Pp][Ee]")
+                                                                 rules[htmlEndTag] = tsSeq[K](tsString[K]("</"), tsSymbol[K](htmlHidEndTagName), tsString[K](">"))
+                                                                 rules[htmlQuotedAttributeValue] = tsChoice[K](tsSeq[K](tsString[K]("\'"), tsChoice[K](tsRegex[K]("[^\']+"), tsBlank[K]()), tsString[K]("\'")), tsSeq[K](tsString[K]("\""), tsChoice[K](tsRegex[K]("[^\"]+"), tsBlank[K]()), tsString[K]("\"")))
+                                                                 rules[htmlStyleElement] = tsSeq[K](tsSymbol[K](htmlStyleStartTag), tsChoice[K](tsSymbol[K](htmlRawText), tsBlank[K]()), tsSymbol[K](htmlEndTag))
+                                                                 rules[htmlAttribute] = tsSeq[K](tsSymbol[K](htmlAttributeName), tsChoice[K](tsSeq[K](tsString[K]("="), tsChoice[K](tsSymbol[K](htmlAttributeValue), tsSymbol[K](htmlQuotedAttributeValue))), tsBlank[K]()))
+                                                                 rules[htmlScriptElement] = tsSeq[K](tsSymbol[K](htmlScriptStartTag), tsChoice[K](tsSymbol[K](htmlRawText), tsBlank[K]()), tsSymbol[K](htmlEndTag))
+                                                                 rules[htmlDoctype] = tsSeq[K](tsString[K]("<!"), tsSymbol[K](htmlHidDoctype), tsRegex[K]("[^>]+"), tsString[K](">"))
+                                                                 rules[htmlFragment] = tsRepeat[K](tsSymbol[K](htmlHidNode))
+                                                                 rules[htmlStyleStartTag] = tsSeq[K](tsString[K]("<"), tsSymbol[K](htmlHidStyleStartTagName), tsRepeat[K](tsSymbol[K](htmlAttribute)), tsString[K](">"))
+                                                                 rules[htmlSelfClosingTag] = tsSeq[K](tsString[K]("<"), tsSymbol[K](htmlHidStartTagName), tsRepeat[K](tsSymbol[K](htmlAttribute)), tsString[K]("/>"))
+                                                                 rules[htmlErroneousEndTag] = tsSeq[K](tsString[K]("</"), tsSymbol[K](htmlErroneousEndTagName), tsString[K](">"))
+                                                                 rules[htmlText] = tsRegex[K]("[^<>\\s]([^<>]*[^<>\\s])?")
+                                                                 rules[htmlElement] = tsChoice[K](tsSeq[K](tsSymbol[K](htmlStartTag), tsRepeat[K](tsSymbol[K](htmlHidNode)), tsChoice[K](tsSymbol[K](htmlEndTag), tsSymbol[K](htmlHidImplicitEndTag))), tsSymbol[K](htmlSelfClosingTag))
+                                                                 rules[htmlAttributeValue] = tsRegex[K]("[^<>\"\'=\\s]+")
+                                                                 rules[htmlHidNode] = tsChoice[K](tsSymbol[K](htmlDoctype), tsSymbol[K](htmlText), tsSymbol[K](htmlElement), tsSymbol[K](htmlScriptElement), tsSymbol[K](htmlStyleElement), tsSymbol[K](htmlErroneousEndTag))
+                                                                 rules[htmlStartTag] = tsSeq[K](tsString[K]("<"), tsSymbol[K](htmlHidStartTagName), tsRepeat[K](tsSymbol[K](htmlAttribute)), tsString[K](">"))
+                                                                 rules[htmlScriptStartTag] = tsSeq[K](tsString[K]("<"), tsSymbol[K](htmlHidScriptStartTagName), tsRepeat[K](tsSymbol[K](htmlAttribute)), tsString[K](">"))
+                                                                 rules[htmlAttributeName] = tsRegex[K]("[^<>\"\'/=\\s]+")
+                                                                 rules
 

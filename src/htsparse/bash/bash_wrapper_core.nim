@@ -1,12 +1,11 @@
 import
   hmisc / wrappers/treesitter_core
 export treesitter_core
-
 type
   BashNodeKind* = enum
-    bashUsExpression                  ## _expression
-    bashUsPrimaryExpression           ## _primary_expression
-    bashUsStatement                   ## _statement
+    bashHidExpression                 ## _expression
+    bashHidPrimaryExpression          ## _primary_expression
+    bashHidStatement                  ## _statement
     bashArray                         ## array
     bashBinaryExpression              ## binary_expression
     bashCStyleForStatement            ## c_style_for_statement
@@ -137,14 +136,29 @@ type
     bashPipeAmpersandTok              ## |&
     bashDoublePipeTok                 ## ||
     bashRCurlyTok                     ## }
+    bashHidSimpleVariableName         ## _simple_variable_name
+    bashHidLiteral                    ## _literal
+    bashHidSpecialCharacter           ## _special_character
+    bashHidEmptyValue                 ## _empty_value
+    bashHidHeredocBodyBeginning       ## _heredoc_body_beginning
+    bashHidHeredocBodyMiddle          ## _heredoc_body_middle
+    bashHidStringContent              ## _string_content
+    bashLastCaseItem                  ## last_case_item
+    bashHidStatements2                ## _statements2
+    bashHidStatements                 ## _statements
+    bashHidTerminator                 ## _terminator
+    bashHidSpecialVariableName        ## _special_variable_name
+    bashHidConcat                     ## _concat
+    bashHidSimpleHeredocBody          ## _simple_heredoc_body
+    bashHidHeredocBodyEnd             ## _heredoc_body_end
+    bashHidTerminatedStatement        ## _terminated_statement
     bashSyntaxError                   ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: BashNodeKind): string =
   case kind:
-    of bashUsExpression:                  "_expression"
-    of bashUsPrimaryExpression:           "_primary_expression"
-    of bashUsStatement:                   "_statement"
+    of bashHidExpression:                 "_expression"
+    of bashHidPrimaryExpression:          "_primary_expression"
+    of bashHidStatement:                  "_statement"
     of bashArray:                         "array"
     of bashBinaryExpression:              "binary_expression"
     of bashCStyleForStatement:            "c_style_for_statement"
@@ -274,8 +288,23 @@ proc strRepr*(kind: BashNodeKind): string =
     of bashPipeAmpersandTok:              "|&"
     of bashDoublePipeTok:                 "||"
     of bashRCurlyTok:                     "}"
+    of bashHidSimpleVariableName:         "_simple_variable_name"
+    of bashHidLiteral:                    "_literal"
+    of bashHidSpecialCharacter:           "_special_character"
+    of bashHidEmptyValue:                 "_empty_value"
+    of bashHidHeredocBodyBeginning:       "_heredoc_body_beginning"
+    of bashHidHeredocBodyMiddle:          "_heredoc_body_middle"
+    of bashHidStringContent:              "_string_content"
+    of bashLastCaseItem:                  "last_case_item"
+    of bashHidStatements2:                "_statements2"
+    of bashHidStatements:                 "_statements"
+    of bashHidTerminator:                 "_terminator"
+    of bashHidSpecialVariableName:        "_special_variable_name"
+    of bashHidConcat:                     "_concat"
+    of bashHidSimpleHeredocBody:          "_simple_heredoc_body"
+    of bashHidHeredocBodyEnd:             "_heredoc_body_end"
+    of bashHidTerminatedStatement:        "_terminated_statement"
     of bashSyntaxError:                   "ERROR"
-
 
 type
   BashExternalTok* = enum
@@ -290,48 +319,45 @@ type
     bashExternVariable_name           ## variable_name
     bashExternRegex                   ## regex
 
-
 type
   TsBashNode* = distinct TSNode
-
 
 type
   BashParser* = distinct PtsParser
 
-
 const bashAllowedSubnodes*: array[BashNodeKind, set[BashNodeKind]] = block:
                                                                        var tmp: array[BashNodeKind, set[BashNodeKind]]
-                                                                       tmp[bashArray] = {bashUsPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashCaseItem] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashArray] = {bashHidPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCaseItem] = {bashHidStatement, bashHeredocBody}
                                                                        tmp[bashCaseStatement] = {bashCaseItem}
                                                                        tmp[bashCommand] = {bashFileRedirect, bashVariableAssignment}
-                                                                       tmp[bashCommandName] = {bashUsPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashCommandSubstitution] = {bashUsStatement, bashFileRedirect, bashHeredocBody}
-                                                                       tmp[bashCompoundStatement] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashConcatenation] = {bashUsPrimaryExpression}
-                                                                       tmp[bashDeclarationCommand] = {bashUsPrimaryExpression, bashConcatenation, bashVariableAssignment, bashVariableName}
-                                                                       tmp[bashDoGroup] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashElifClause] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashElseClause] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashExpansion] = {bashUsPrimaryExpression, bashConcatenation, bashRegex, bashSpecialVariableName, bashSubscript, bashVariableName}
+                                                                       tmp[bashCommandName] = {bashHidPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashCommandSubstitution] = {bashHidStatement, bashFileRedirect, bashHeredocBody}
+                                                                       tmp[bashCompoundStatement] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashConcatenation] = {bashHidPrimaryExpression}
+                                                                       tmp[bashDeclarationCommand] = {bashHidPrimaryExpression, bashConcatenation, bashVariableAssignment, bashVariableName}
+                                                                       tmp[bashDoGroup] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashElifClause] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashElseClause] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashExpansion] = {bashHidPrimaryExpression, bashConcatenation, bashRegex, bashSpecialVariableName, bashSubscript, bashVariableName}
                                                                        tmp[bashHeredocBody] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
                                                                        tmp[bashHeredocRedirect] = {bashHeredocStart}
-                                                                       tmp[bashHerestringRedirect] = {bashUsPrimaryExpression, bashConcatenation}
-                                                                       tmp[bashIfStatement] = {bashUsStatement, bashElifClause, bashElseClause, bashHeredocBody}
-                                                                       tmp[bashList] = {bashUsStatement}
+                                                                       tmp[bashHerestringRedirect] = {bashHidPrimaryExpression, bashConcatenation}
+                                                                       tmp[bashIfStatement] = {bashHidStatement, bashElifClause, bashElseClause, bashHeredocBody}
+                                                                       tmp[bashList] = {bashHidStatement}
                                                                        tmp[bashNegatedCommand] = {bashCommand, bashSubshell, bashTestCommand}
-                                                                       tmp[bashParenthesizedExpression] = {bashUsExpression}
-                                                                       tmp[bashPipeline] = {bashUsStatement}
-                                                                       tmp[bashPostfixExpression] = {bashUsExpression}
-                                                                       tmp[bashProcessSubstitution] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashProgram] = {bashUsStatement, bashHeredocBody}
+                                                                       tmp[bashParenthesizedExpression] = {bashHidExpression}
+                                                                       tmp[bashPipeline] = {bashHidStatement}
+                                                                       tmp[bashPostfixExpression] = {bashHidExpression}
+                                                                       tmp[bashProcessSubstitution] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashProgram] = {bashHidStatement, bashHeredocBody}
                                                                        tmp[bashSimpleExpansion] = {bashSpecialVariableName, bashVariableName}
                                                                        tmp[bashString] = {bashCommandSubstitution, bashExpansion, bashSimpleExpansion}
                                                                        tmp[bashStringExpansion] = {bashRawString, bashString}
-                                                                       tmp[bashSubshell] = {bashUsStatement, bashHeredocBody}
-                                                                       tmp[bashTestCommand] = {bashUsExpression}
-                                                                       tmp[bashUnaryExpression] = {bashUsExpression, bashTestOperator}
-                                                                       tmp[bashUnsetCommand] = {bashUsPrimaryExpression, bashConcatenation, bashVariableName}
+                                                                       tmp[bashSubshell] = {bashHidStatement, bashHeredocBody}
+                                                                       tmp[bashTestCommand] = {bashHidExpression}
+                                                                       tmp[bashUnaryExpression] = {bashHidExpression, bashTestOperator}
+                                                                       tmp[bashUnsetCommand] = {bashHidPrimaryExpression, bashConcatenation, bashVariableName}
                                                                        tmp
 const bashTokenKinds*: set[BashNodeKind] = {
                                              bashNewlineTok,
@@ -413,17 +439,36 @@ const bashTokenKinds*: set[BashNodeKind] = {
                                              bashDoublePipeTok,
                                              bashRCurlyTok
                                            }
-
+const bashHiddenKinds*: set[BashNodeKind] = {
+                                              bashHidSimpleVariableName,
+                                              bashHidLiteral,
+                                              bashHidSpecialCharacter,
+                                              bashHidEmptyValue,
+                                              bashHidExpression,
+                                              bashHidPrimaryExpression,
+                                              bashHidHeredocBodyBeginning,
+                                              bashHidHeredocBodyMiddle,
+                                              bashHidStringContent,
+                                              bashLastCaseItem,
+                                              bashHidStatements2,
+                                              bashHidStatements,
+                                              bashHidStatement,
+                                              bashHidTerminator,
+                                              bashHidSpecialVariableName,
+                                              bashHidConcat,
+                                              bashHidSimpleHeredocBody,
+                                              bashHidHeredocBodyEnd,
+                                              bashHidTerminatedStatement
+                                            }
 proc tsNodeType*(node: TsBashNode): string
-
 
 
 proc kind*(node: TsBashNode): BashNodeKind {.noSideEffect.} =
   {.cast(noSideEffect).}:
     case node.tsNodeType:
-      of "_expression":              bashUsExpression
-      of "_primary_expression":      bashUsPrimaryExpression
-      of "_statement":               bashUsStatement
+      of "_expression":              bashHidExpression
+      of "_primary_expression":      bashHidPrimaryExpression
+      of "_statement":               bashHidStatement
       of "array":                    bashArray
       of "binary_expression":        bashBinaryExpression
       of "c_style_for_statement":    bashCStyleForStatement
@@ -557,7 +602,6 @@ proc kind*(node: TsBashNode): BashNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsBashNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -615,4 +659,73 @@ proc treeRepr*(node: TsBashNode, str: string): string =
 
   aux(node, 0)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let bashGrammar*: array[BashNodeKind, HtsRule[BashNodeKind]] = block:
+                                                                 var rules: array[BashNodeKind, HtsRule[BashNodeKind]]
+                                                                 type
+                                                                   K = BashNodeKind
+
+
+                                                                 rules[bashHidSimpleVariableName] = tsRegex[K]("\\w+")
+                                                                 rules[bashConcatenation] = tsSeq[K](tsChoice[K](tsSymbol[K](bashHidPrimaryExpression), tsSymbol[K](bashHidSpecialCharacter)), tsRepeat1[K](tsSeq[K](tsSymbol[K](bashHidConcat), tsChoice[K](tsSymbol[K](bashHidPrimaryExpression), tsSymbol[K](bashHidSpecialCharacter)))), tsChoice[K](tsSeq[K](tsSymbol[K](bashHidConcat), tsString[K]("$")), tsBlank[K]()))
+                                                                 rules[bashHidLiteral] = tsChoice[K](tsSymbol[K](bashConcatenation), tsSymbol[K](bashHidPrimaryExpression), tsRepeat1[K](tsSymbol[K](bashHidSpecialCharacter)))
+                                                                 rules[bashWhileStatement] = tsSeq[K](tsString[K]("while"), tsSymbol[K](bashHidTerminatedStatement), tsSymbol[K](bashDoGroup))
+                                                                 rules[bashCaseItem] = tsSeq[K](tsSymbol[K](bashHidLiteral), tsRepeat[K](tsSeq[K](tsString[K]("|"), tsSymbol[K](bashHidLiteral))), tsString[K](")"), tsChoice[K](tsSymbol[K](bashHidStatements), tsBlank[K]()), tsChoice[K](tsString[K](";;"), tsChoice[K](tsString[K](";&"), tsString[K](";;&"))))
+                                                                 rules[bashCommand] = tsSeq[K](tsRepeat[K](tsChoice[K](tsSymbol[K](bashVariableAssignment), tsSymbol[K](bashFileRedirect))), tsSymbol[K](bashCommandName), tsRepeat[K](tsChoice[K](tsSymbol[K](bashHidLiteral), tsSeq[K](tsChoice[K](tsString[K]("=~"), tsString[K]("==")), tsChoice[K](tsSymbol[K](bashHidLiteral), tsSymbol[K](bashRegex))))))
+                                                                 rules[bashVariableAssignment] = tsSeq[K](tsChoice[K](tsSymbol[K](bashVariableName), tsSymbol[K](bashSubscript)), tsChoice[K](tsString[K]("="), tsString[K]("+=")), tsChoice[K](tsSymbol[K](bashHidLiteral), tsSymbol[K](bashArray), tsSymbol[K](bashHidEmptyValue)))
+                                                                 rules[bashPipeline] = tsSeq[K](tsSymbol[K](bashHidStatement), tsChoice[K](tsString[K]("|"), tsString[K]("|&")), tsSymbol[K](bashHidStatement))
+                                                                 rules[bashStringExpansion] = tsSeq[K](tsString[K]("$"), tsChoice[K](tsSymbol[K](bashString), tsSymbol[K](bashRawString)))
+                                                                 rules[bashProcessSubstitution] = tsSeq[K](tsChoice[K](tsString[K]("<("), tsString[K](">(")), tsSymbol[K](bashHidStatements), tsString[K](")"))
+                                                                 rules[bashHeredocRedirect] = tsSeq[K](tsChoice[K](tsString[K]("<<"), tsString[K]("<<-")), tsSymbol[K](bashHeredocStart))
+                                                                 rules[bashHidSpecialCharacter] = tsChoice[K](tsString[K]("{"), tsString[K]("}"), tsString[K]("["), tsString[K]("]"))
+                                                                 rules[bashSimpleExpansion] = tsSeq[K](tsString[K]("$"), tsChoice[K](tsSymbol[K](bashHidSimpleVariableName), tsSymbol[K](bashHidSpecialVariableName), tsString[K]("!"), tsString[K]("#")))
+                                                                 rules[bashHidExpression] = tsChoice[K](tsSymbol[K](bashHidLiteral), tsSymbol[K](bashUnaryExpression), tsSymbol[K](bashTernaryExpression), tsSymbol[K](bashBinaryExpression), tsSymbol[K](bashPostfixExpression), tsSymbol[K](bashParenthesizedExpression))
+                                                                 rules[bashForStatement] = tsSeq[K](tsString[K]("for"), tsSymbol[K](bashHidSimpleVariableName), tsChoice[K](tsSeq[K](tsString[K]("in"), tsRepeat1[K](tsSymbol[K](bashHidLiteral))), tsBlank[K]()), tsSymbol[K](bashHidTerminator), tsSymbol[K](bashDoGroup))
+                                                                 rules[bashTestOperator] = tsSeq[K](tsString[K]("-"), tsRegex[K]("[a-zA-Z]+"))
+                                                                 rules[bashWord] = tsRepeat1[K](tsChoice[K](tsRegex[K]("[^\'\"<>{}\\[\\]()`$|&;\\\\\\s#]"), tsSeq[K](tsString[K]("\\"), tsRegex[K]("[^\\s]"))))
+                                                                 rules[bashNegatedCommand] = tsSeq[K](tsString[K]("!"), tsChoice[K](tsSymbol[K](bashCommand), tsSymbol[K](bashTestCommand), tsSymbol[K](bashSubshell)))
+                                                                 rules[bashCaseStatement] = tsSeq[K](tsString[K]("case"), tsSymbol[K](bashHidLiteral), tsChoice[K](tsSymbol[K](bashHidTerminator), tsBlank[K]()), tsString[K]("in"), tsSymbol[K](bashHidTerminator), tsChoice[K](tsSeq[K](tsRepeat[K](tsSymbol[K](bashCaseItem)), tsSymbol[K](bashLastCaseItem)), tsBlank[K]()), tsString[K]("esac"))
+                                                                 rules[bashElifClause] = tsSeq[K](tsString[K]("elif"), tsSymbol[K](bashHidTerminatedStatement), tsString[K]("then"), tsChoice[K](tsSymbol[K](bashHidStatements2), tsBlank[K]()))
+                                                                 rules[bashDoGroup] = tsSeq[K](tsString[K]("do"), tsChoice[K](tsSymbol[K](bashHidStatements2), tsBlank[K]()), tsString[K]("done"))
+                                                                 rules[bashBinaryExpression] = tsChoice[K](tsSeq[K](tsSymbol[K](bashHidExpression), tsChoice[K](tsString[K]("="), tsString[K]("=="), tsString[K]("=~"), tsString[K]("!="), tsString[K]("+"), tsString[K]("-"), tsString[K]("+="), tsString[K]("-="), tsString[K]("<"), tsString[K](">"), tsString[K]("<="), tsString[K](">="), tsString[K]("||"), tsString[K]("&&"), tsSymbol[K](bashTestOperator)), tsSymbol[K](bashHidExpression)), tsSeq[K](tsSymbol[K](bashHidExpression), tsChoice[K](tsString[K]("=="), tsString[K]("=~")), tsSymbol[K](bashRegex)))
+                                                                 rules[bashCompoundStatement] = tsSeq[K](tsString[K]("{"), tsChoice[K](tsSymbol[K](bashHidStatements2), tsBlank[K]()), tsString[K]("}"))
+                                                                 rules[bashString] = tsSeq[K](tsString[K]("\""), tsRepeat[K](tsSeq[K](tsChoice[K](tsSeq[K](tsChoice[K](tsString[K]("$"), tsBlank[K]()), tsSymbol[K](bashHidStringContent)), tsSymbol[K](bashExpansion), tsSymbol[K](bashSimpleExpansion), tsSymbol[K](bashCommandSubstitution)), tsChoice[K](tsSymbol[K](bashHidConcat), tsBlank[K]()))), tsChoice[K](tsString[K]("$"), tsBlank[K]()), tsString[K]("\""))
+                                                                 rules[bashHidPrimaryExpression] = tsChoice[K](tsSymbol[K](bashWord), tsSymbol[K](bashString), tsSymbol[K](bashRawString), tsSymbol[K](bashAnsiiCString), tsSymbol[K](bashExpansion), tsSymbol[K](bashSimpleExpansion), tsSymbol[K](bashStringExpansion), tsSymbol[K](bashCommandSubstitution), tsSymbol[K](bashProcessSubstitution))
+                                                                 rules[bashFileRedirect] = tsSeq[K](tsChoice[K](tsSymbol[K](bashFileDescriptor), tsBlank[K]()), tsChoice[K](tsString[K]("<"), tsString[K](">"), tsString[K](">>"), tsString[K]("&>"), tsString[K]("&>>"), tsString[K]("<&"), tsString[K](">&"), tsString[K](">|")), tsSymbol[K](bashHidLiteral))
+                                                                 rules[bashUnsetCommand] = tsSeq[K](tsChoice[K](tsString[K]("unset"), tsString[K]("unsetenv")), tsRepeat[K](tsChoice[K](tsSymbol[K](bashHidLiteral), tsSymbol[K](bashHidSimpleVariableName))))
+                                                                 rules[bashIfStatement] = tsSeq[K](tsString[K]("if"), tsSymbol[K](bashHidTerminatedStatement), tsString[K]("then"), tsChoice[K](tsSymbol[K](bashHidStatements2), tsBlank[K]()), tsRepeat[K](tsSymbol[K](bashElifClause)), tsChoice[K](tsSymbol[K](bashElseClause), tsBlank[K]()), tsString[K]("fi"))
+                                                                 rules[bashHidStringContent] = tsRegex[K]("([^\"`$\\\\]|\\\\(.|\\n))+")
+                                                                 rules[bashFunctionDefinition] = tsSeq[K](tsChoice[K](tsSeq[K](tsString[K]("function"), tsSymbol[K](bashWord), tsChoice[K](tsSeq[K](tsString[K]("("), tsString[K](")")), tsBlank[K]())), tsSeq[K](tsSymbol[K](bashWord), tsString[K]("("), tsString[K](")"))), tsChoice[K](tsSymbol[K](bashCompoundStatement), tsSymbol[K](bashSubshell), tsSymbol[K](bashTestCommand)))
+                                                                 rules[bashRawString] = tsRegex[K]("\'[^\']*\'")
+                                                                 rules[bashSubshell] = tsSeq[K](tsString[K]("("), tsSymbol[K](bashHidStatements), tsString[K](")"))
+                                                                 rules[bashUnaryExpression] = tsSeq[K](tsChoice[K](tsString[K]("!"), tsSymbol[K](bashTestOperator)), tsSymbol[K](bashHidExpression))
+                                                                 rules[bashHeredocBody] = tsChoice[K](tsSymbol[K](bashHidSimpleHeredocBody), tsSeq[K](tsSymbol[K](bashHidHeredocBodyBeginning), tsRepeat[K](tsChoice[K](tsSymbol[K](bashExpansion), tsSymbol[K](bashSimpleExpansion), tsSymbol[K](bashCommandSubstitution), tsSymbol[K](bashHidHeredocBodyMiddle))), tsSymbol[K](bashHidHeredocBodyEnd)))
+                                                                 rules[bashLastCaseItem] = tsSeq[K](tsSymbol[K](bashHidLiteral), tsRepeat[K](tsSeq[K](tsString[K]("|"), tsSymbol[K](bashHidLiteral))), tsString[K](")"), tsChoice[K](tsSymbol[K](bashHidStatements), tsBlank[K]()), tsChoice[K](tsString[K](";;"), tsBlank[K]()))
+                                                                 rules[bashHidStatements2] = tsRepeat1[K](tsSeq[K](tsSymbol[K](bashHidStatement), tsChoice[K](tsSeq[K](tsString[K]("\x0A"), tsSymbol[K](bashHeredocBody)), tsBlank[K]()), tsSymbol[K](bashHidTerminator)))
+                                                                 rules[bashExpansion] = tsSeq[K](tsString[K]("${"), tsChoice[K](tsChoice[K](tsString[K]("#"), tsString[K]("!")), tsBlank[K]()), tsChoice[K](tsChoice[K](tsSeq[K](tsSymbol[K](bashVariableName), tsString[K]("="), tsChoice[K](tsSymbol[K](bashHidLiteral), tsBlank[K]())), tsSeq[K](tsChoice[K](tsSymbol[K](bashSubscript), tsSymbol[K](bashHidSimpleVariableName), tsSymbol[K](bashHidSpecialVariableName)), tsChoice[K](tsSeq[K](tsString[K]("/"), tsChoice[K](tsSymbol[K](bashRegex), tsBlank[K]())), tsBlank[K]()), tsRepeat[K](tsChoice[K](tsSymbol[K](bashHidLiteral), tsString[K](":"), tsString[K](":?"), tsString[K]("="), tsString[K](":-"), tsString[K]("%"), tsString[K]("-"), tsString[K]("#"))))), tsBlank[K]()), tsString[K]("}"))
+                                                                 rules[bashComment] = tsRegex[K]("#.*")
+                                                                 rules[bashHidStatements] = tsSeq[K](tsRepeat[K](tsSeq[K](tsSymbol[K](bashHidStatement), tsChoice[K](tsSeq[K](tsString[K]("\x0A"), tsSymbol[K](bashHeredocBody)), tsBlank[K]()), tsSymbol[K](bashHidTerminator))), tsSymbol[K](bashHidStatement), tsChoice[K](tsSeq[K](tsString[K]("\x0A"), tsSymbol[K](bashHeredocBody)), tsBlank[K]()), tsChoice[K](tsSymbol[K](bashHidTerminator), tsBlank[K]()))
+                                                                 rules[bashElseClause] = tsSeq[K](tsString[K]("else"), tsChoice[K](tsSymbol[K](bashHidStatements2), tsBlank[K]()))
+                                                                 rules[bashCommandSubstitution] = tsChoice[K](tsSeq[K](tsString[K]("$("), tsSymbol[K](bashHidStatements), tsString[K](")")), tsSeq[K](tsString[K]("$("), tsSymbol[K](bashFileRedirect), tsString[K](")")), tsSeq[K](tsString[K]("`"), tsSymbol[K](bashHidStatements), tsString[K]("`")))
+                                                                 rules[bashAnsiiCString] = tsRegex[K]("\\$\'([^\']|\\\\\')*\'")
+                                                                 rules[bashHidStatement] = tsChoice[K](tsSymbol[K](bashRedirectedStatement), tsSymbol[K](bashVariableAssignment), tsSymbol[K](bashCommand), tsSymbol[K](bashDeclarationCommand), tsSymbol[K](bashUnsetCommand), tsSymbol[K](bashTestCommand), tsSymbol[K](bashNegatedCommand), tsSymbol[K](bashForStatement), tsSymbol[K](bashCStyleForStatement), tsSymbol[K](bashWhileStatement), tsSymbol[K](bashIfStatement), tsSymbol[K](bashCaseStatement), tsSymbol[K](bashPipeline), tsSymbol[K](bashList), tsSymbol[K](bashSubshell), tsSymbol[K](bashCompoundStatement), tsSymbol[K](bashFunctionDefinition))
+                                                                 rules[bashRedirectedStatement] = tsSeq[K](tsSymbol[K](bashHidStatement), tsRepeat1[K](tsChoice[K](tsSymbol[K](bashFileRedirect), tsSymbol[K](bashHeredocRedirect), tsSymbol[K](bashHerestringRedirect))))
+                                                                 rules[bashHidTerminator] = tsChoice[K](tsString[K](";"), tsString[K](";;"), tsString[K]("\x0A"), tsString[K]("&"))
+                                                                 rules[bashHidSpecialVariableName] = tsChoice[K](tsString[K]("*"), tsString[K]("@"), tsString[K]("?"), tsString[K]("-"), tsString[K]("$"), tsString[K]("0"), tsString[K]("_"))
+                                                                 rules[bashTernaryExpression] = tsSeq[K](tsSymbol[K](bashHidExpression), tsString[K]("?"), tsSymbol[K](bashHidExpression), tsString[K](":"), tsSymbol[K](bashHidExpression))
+                                                                 rules[bashCommandName] = tsSymbol[K](bashHidLiteral)
+                                                                 rules[bashProgram] = tsChoice[K](tsSymbol[K](bashHidStatements), tsBlank[K]())
+                                                                 rules[bashSubscript] = tsSeq[K](tsSymbol[K](bashVariableName), tsString[K]("["), tsSymbol[K](bashHidLiteral), tsChoice[K](tsSymbol[K](bashHidConcat), tsBlank[K]()), tsString[K]("]"), tsChoice[K](tsSymbol[K](bashHidConcat), tsBlank[K]()))
+                                                                 rules[bashArray] = tsSeq[K](tsString[K]("("), tsRepeat[K](tsSymbol[K](bashHidLiteral)), tsString[K](")"))
+                                                                 rules[bashCStyleForStatement] = tsSeq[K](tsString[K]("for"), tsString[K]("(("), tsChoice[K](tsSymbol[K](bashHidExpression), tsBlank[K]()), tsSymbol[K](bashHidTerminator), tsChoice[K](tsSymbol[K](bashHidExpression), tsBlank[K]()), tsSymbol[K](bashHidTerminator), tsChoice[K](tsSymbol[K](bashHidExpression), tsBlank[K]()), tsString[K]("))"), tsChoice[K](tsString[K](";"), tsBlank[K]()), tsChoice[K](tsSymbol[K](bashDoGroup), tsSymbol[K](bashCompoundStatement)))
+                                                                 rules[bashHerestringRedirect] = tsSeq[K](tsString[K]("<<<"), tsSymbol[K](bashHidLiteral))
+                                                                 rules[bashPostfixExpression] = tsSeq[K](tsSymbol[K](bashHidExpression), tsChoice[K](tsString[K]("++"), tsString[K]("--")))
+                                                                 rules[bashDeclarationCommand] = tsSeq[K](tsChoice[K](tsString[K]("declare"), tsString[K]("typeset"), tsString[K]("export"), tsString[K]("readonly"), tsString[K]("local")), tsRepeat[K](tsChoice[K](tsSymbol[K](bashHidLiteral), tsSymbol[K](bashHidSimpleVariableName), tsSymbol[K](bashVariableAssignment))))
+                                                                 rules[bashList] = tsSeq[K](tsSymbol[K](bashHidStatement), tsChoice[K](tsString[K]("&&"), tsString[K]("||")), tsSymbol[K](bashHidStatement))
+                                                                 rules[bashTestCommand] = tsSeq[K](tsChoice[K](tsSeq[K](tsString[K]("["), tsSymbol[K](bashHidExpression), tsString[K]("]")), tsSeq[K](tsString[K]("[["), tsSymbol[K](bashHidExpression), tsString[K]("]]")), tsSeq[K](tsString[K]("(("), tsSymbol[K](bashHidExpression), tsString[K]("))"))))
+                                                                 rules[bashHidTerminatedStatement] = tsSeq[K](tsSymbol[K](bashHidStatement), tsSymbol[K](bashHidTerminator))
+                                                                 rules[bashParenthesizedExpression] = tsSeq[K](tsString[K]("("), tsSymbol[K](bashHidExpression), tsString[K](")"))
+                                                                 rules
 

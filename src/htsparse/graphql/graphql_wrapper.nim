@@ -4,7 +4,6 @@ import
   hmisc / types/colorstring,
   std/strutils
 export treesitter
-
 type
   GraphqlNodeKind* = enum
     graphqlAlias                       ## alias
@@ -135,7 +134,6 @@ type
     graphqlPipeTok                     ## |
     graphqlRCurlyTok                   ## }
     graphqlSyntaxError                 ## Tree-sitter parser syntax error
-
 
 proc strRepr*(kind: GraphqlNodeKind): string =
   case kind:
@@ -268,14 +266,11 @@ proc strRepr*(kind: GraphqlNodeKind): string =
     of graphqlRCurlyTok:                   "}"
     of graphqlSyntaxError:                 "ERROR"
 
-
 type
   TsGraphqlNode* = distinct TSNode
 
-
 type
   GraphqlParser* = distinct PtsParser
-
 
 const graphqlAllowedSubnodes*: array[GraphqlNodeKind, set[GraphqlNodeKind]] = block:
                                                                                 var tmp: array[GraphqlNodeKind, set[GraphqlNodeKind]]
@@ -408,9 +403,8 @@ const graphqlTokenKinds*: set[GraphqlNodeKind] = {
                                                    graphqlPipeTok,
                                                    graphqlRCurlyTok
                                                  }
-
+const graphqlHiddenKinds*: set[GraphqlNodeKind] = {}
 proc tsNodeType*(node: TsGraphqlNode): string
-
 
 
 proc kind*(node: TsGraphqlNode): GraphqlNodeKind {.noSideEffect.} =
@@ -545,7 +539,6 @@ proc kind*(node: TsGraphqlNode): GraphqlNodeKind {.noSideEffect.} =
       else:
         raiseAssert("Invalid element name \'" & node.tsNodeType & "\'")
 
-
 func isNil*(node: TsGraphqlNode): bool =
   ts_node_is_null(TSNode(node))
 
@@ -618,4 +611,88 @@ proc parseGraphqlString*(str: string, unnamed: bool = false): GraphqlNode =
   let parser = newTsGraphqlParser()
   return toHtsTree[TsGraphqlNode, GraphqlNodeKind](parseString(parser, str), unsafeAddr str, storePtr = false)
 
+
+import
+  hmisc / wrappers/treesitter_core
+let graphqlGrammar*: array[GraphqlNodeKind, HtsRule[GraphqlNodeKind]] = block:
+                                                                          var rules: array[GraphqlNodeKind, HtsRule[GraphqlNodeKind]]
+                                                                          type
+                                                                            K = GraphqlNodeKind
+
+
+                                                                          rules[graphqlUnionMemberTypes] = tsChoice[K](tsSeq[K](tsSymbol[K](graphqlUnionMemberTypes), tsString[K]("|"), tsSymbol[K](graphqlNamedType)), tsSeq[K](tsString[K]("="), tsChoice[K](tsString[K]("|"), tsBlank[K]()), tsSymbol[K](graphqlNamedType)))
+                                                                          rules[graphqlFragmentSpread] = tsSeq[K](tsString[K]("..."), tsSymbol[K](graphqlFragmentName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()))
+                                                                          rules[graphqlInlineFragment] = tsSeq[K](tsString[K]("..."), tsChoice[K](tsSymbol[K](graphqlTypeCondition), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlSelectionSet))
+                                                                          rules[graphqlExecutableDirectiveLocation] = tsChoice[K](tsString[K]("QUERY"), tsString[K]("MUTATION"), tsString[K]("SUBSCRIPTION"), tsString[K]("FIELD"), tsString[K]("FRAGMENT_DEFINITION"), tsString[K]("FRAGMENT_SPREAD"), tsString[K]("INLINE_FRAGMENT"), tsString[K]("VARIABLE_DEFINITION"))
+                                                                          rules[graphqlObjectTypeExtension] = tsChoice[K](tsSeq[K](tsString[K]("extend"), tsString[K]("type"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlFieldsDefinition)), tsSeq[K](tsString[K]("extend"), tsString[K]("type"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]())))
+                                                                          rules[graphqlName] = tsRegex[K]("[_A-Za-z][_0-9A-Za-z]*")
+                                                                          rules[graphqlUnionTypeExtension] = tsChoice[K](tsSeq[K](tsString[K]("extend"), tsString[K]("union"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlUnionMemberTypes)), tsSeq[K](tsString[K]("extend"), tsString[K]("union"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]())))
+                                                                          rules[graphqlEnumValuesDefinition] = tsSeq[K](tsString[K]("{"), tsRepeat1[K](tsSymbol[K](graphqlEnumValueDefinition)), tsString[K]("}"))
+                                                                          rules[graphqlTypeDefinition] = tsChoice[K](tsSymbol[K](graphqlScalarTypeDefinition), tsSymbol[K](graphqlObjectTypeDefinition), tsSymbol[K](graphqlInterfaceTypeDefinition), tsSymbol[K](graphqlUnionTypeDefinition), tsSymbol[K](graphqlEnumTypeDefinition), tsSymbol[K](graphqlInputObjectTypeDefinition))
+                                                                          rules[graphqlTypeSystemDefinition] = tsChoice[K](tsSymbol[K](graphqlSchemaDefinition), tsSymbol[K](graphqlTypeDefinition), tsSymbol[K](graphqlDirectiveDefinition))
+                                                                          rules[graphqlAlias] = tsSeq[K](tsSymbol[K](graphqlName), tsString[K](":"))
+                                                                          rules[graphqlTypeSystemDirectiveLocation] = tsChoice[K](tsString[K]("SCHEMA"), tsString[K]("SCALAR"), tsString[K]("OBJECT"), tsString[K]("FIELD_DEFINITION"), tsString[K]("ARGUMENT_DEFINITION"), tsString[K]("INTERFACE"), tsString[K]("UNION"), tsString[K]("ENUM"), tsString[K]("ENUM_VALUE"), tsString[K]("INPUT_OBJECT"), tsString[K]("INPUT_FIELD_DEFINITION"))
+                                                                          rules[graphqlScalarTypeExtension] = tsSeq[K](tsString[K]("extend"), tsString[K]("scalar"), tsSymbol[K](graphqlName), tsSymbol[K](graphqlDirectives))
+                                                                          rules[graphqlType] = tsChoice[K](tsSymbol[K](graphqlNamedType), tsSymbol[K](graphqlListType), tsSymbol[K](graphqlNonNullType))
+                                                                          rules[graphqlDirective] = tsSeq[K](tsString[K]("@"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlArguments), tsBlank[K]()))
+                                                                          rules[graphqlVariableDefinitions] = tsSeq[K](tsString[K]("("), tsRepeat1[K](tsSymbol[K](graphqlVariableDefinition)), tsString[K](")"))
+                                                                          rules[graphqlBooleanValue] = tsChoice[K](tsString[K]("true"), tsString[K]("false"))
+                                                                          rules[graphqlObjectValue] = tsSeq[K](tsString[K]("{"), tsRepeat[K](tsSymbol[K](graphqlObjectField)), tsString[K]("}"))
+                                                                          rules[graphqlDirectives] = tsRepeat1[K](tsSymbol[K](graphqlDirective))
+                                                                          rules[graphqlInterfaceTypeExtension] = tsChoice[K](tsSeq[K](tsString[K]("extend"), tsString[K]("interface"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlFieldsDefinition)), tsSeq[K](tsString[K]("extend"), tsString[K]("interface"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]())))
+                                                                          rules[graphqlDefaultValue] = tsSeq[K](tsString[K]("="), tsSymbol[K](graphqlValue))
+                                                                          rules[graphqlListType] = tsSeq[K](tsString[K]("["), tsSymbol[K](graphqlType), tsString[K]("]"))
+                                                                          rules[graphqlFloatValue] = tsSeq[K](tsRegex[K]("-?(0|[1-9][0-9]*)"), tsChoice[K](tsRegex[K]("\\.[0-9]+"), tsRegex[K]("(e|E)(\\+|-)?[0-9]+"), tsSeq[K](tsRegex[K]("\\.[0-9]+"), tsRegex[K]("(e|E)(\\+|-)?[0-9]+"))))
+                                                                          rules[graphqlEnumTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("enum"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlEnumValuesDefinition), tsBlank[K]()))
+                                                                          rules[graphqlTypeCondition] = tsSeq[K](tsString[K]("on"), tsSymbol[K](graphqlNamedType))
+                                                                          rules[graphqlObjectField] = tsSeq[K](tsSymbol[K](graphqlName), tsString[K](":"), tsSymbol[K](graphqlValue), tsChoice[K](tsSymbol[K](graphqlComma), tsBlank[K]()))
+                                                                          rules[graphqlDirectiveLocations] = tsChoice[K](tsSeq[K](tsSymbol[K](graphqlDirectiveLocations), tsString[K]("|"), tsSymbol[K](graphqlDirectiveLocation)), tsSeq[K](tsChoice[K](tsString[K]("|"), tsBlank[K]()), tsSymbol[K](graphqlDirectiveLocation)))
+                                                                          rules[graphqlOperationDefinition] = tsChoice[K](tsSymbol[K](graphqlSelectionSet), tsSeq[K](tsSymbol[K](graphqlOperationType), tsChoice[K](tsSymbol[K](graphqlName), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlVariableDefinitions), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlSelectionSet)))
+                                                                          rules[graphqlDirectiveDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("directive"), tsString[K]("@"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlArgumentsDefinition), tsBlank[K]()), tsChoice[K](tsString[K]("repeatable"), tsBlank[K]()), tsString[K]("on"), tsSymbol[K](graphqlDirectiveLocations))
+                                                                          rules[graphqlSchemaExtension] = tsSeq[K](tsString[K]("extend"), tsString[K]("schema"), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsString[K]("{"), tsSymbol[K](graphqlRootOperationTypeDefinition), tsString[K]("}"))
+                                                                          rules[graphqlDefinition] = tsChoice[K](tsSymbol[K](graphqlExecutableDefinition), tsSymbol[K](graphqlTypeSystemDefinition), tsSymbol[K](graphqlTypeSystemExtension))
+                                                                          rules[graphqlSelection] = tsChoice[K](tsSymbol[K](graphqlField), tsSymbol[K](graphqlInlineFragment), tsSymbol[K](graphqlFragmentSpread))
+                                                                          rules[graphqlFieldDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlArgumentsDefinition), tsBlank[K]()), tsString[K](":"), tsSymbol[K](graphqlType), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()))
+                                                                          rules[graphqlSourceFile] = tsSymbol[K](graphqlDocument)
+                                                                          rules[graphqlSchemaDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("schema"), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsString[K]("{"), tsRepeat1[K](tsSymbol[K](graphqlRootOperationTypeDefinition)), tsString[K]("}"))
+                                                                          rules[graphqlImplementsInterfaces] = tsChoice[K](tsSeq[K](tsSymbol[K](graphqlImplementsInterfaces), tsString[K]("&"), tsSymbol[K](graphqlNamedType)), tsSeq[K](tsString[K]("implements"), tsChoice[K](tsString[K]("&"), tsBlank[K]()), tsSymbol[K](graphqlNamedType)))
+                                                                          rules[graphqlInputValueDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsSymbol[K](graphqlName), tsString[K](":"), tsSymbol[K](graphqlType), tsChoice[K](tsSymbol[K](graphqlDefaultValue), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()))
+                                                                          rules[graphqlDocument] = tsRepeat1[K](tsSymbol[K](graphqlDefinition))
+                                                                          rules[graphqlUnionTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("union"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlUnionMemberTypes), tsBlank[K]()))
+                                                                          rules[graphqlInputObjectTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("input"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlInputFieldsDefinition), tsBlank[K]()))
+                                                                          rules[graphqlSelectionSet] = tsSeq[K](tsString[K]("{"), tsRepeat1[K](tsSymbol[K](graphqlSelection)), tsString[K]("}"))
+                                                                          rules[graphqlField] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlAlias), tsBlank[K]()), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlArguments), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirective), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlSelectionSet), tsBlank[K]()))
+                                                                          rules[graphqlEnumValue] = tsSymbol[K](graphqlName)
+                                                                          rules[graphqlTypeSystemExtension] = tsChoice[K](tsSymbol[K](graphqlSchemaExtension), tsSymbol[K](graphqlTypeExtension))
+                                                                          rules[graphqlInputObjectTypeExtension] = tsChoice[K](tsSeq[K](tsString[K]("extend"), tsString[K]("input"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsRepeat1[K](tsSymbol[K](graphqlInputFieldsDefinition))), tsSeq[K](tsString[K]("extend"), tsString[K]("input"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]())))
+                                                                          rules[graphqlListValue] = tsSeq[K](tsString[K]("["), tsRepeat[K](tsSymbol[K](graphqlValue)), tsString[K]("]"))
+                                                                          rules[graphqlFragmentName] = tsSymbol[K](graphqlName)
+                                                                          rules[graphqlArguments] = tsSeq[K](tsString[K]("("), tsRepeat1[K](tsSymbol[K](graphqlArgument)), tsString[K](")"))
+                                                                          rules[graphqlNamedType] = tsSymbol[K](graphqlName)
+                                                                          rules[graphqlComment] = tsSeq[K](tsString[K]("#"), tsRegex[K](".*"))
+                                                                          rules[graphqlArgument] = tsSeq[K](tsSymbol[K](graphqlName), tsString[K](":"), tsSymbol[K](graphqlValue))
+                                                                          rules[graphqlDirectiveLocation] = tsChoice[K](tsSymbol[K](graphqlExecutableDirectiveLocation), tsSymbol[K](graphqlTypeSystemDirectiveLocation))
+                                                                          rules[graphqlInterfaceTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("interface"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlFieldsDefinition), tsBlank[K]()))
+                                                                          rules[graphqlComma] = tsString[K](",")
+                                                                          rules[graphqlExecutableDefinition] = tsChoice[K](tsSymbol[K](graphqlOperationDefinition), tsSymbol[K](graphqlFragmentDefinition))
+                                                                          rules[graphqlOperationType] = tsChoice[K](tsString[K]("query"), tsString[K]("mutation"), tsString[K]("subscription"))
+                                                                          rules[graphqlDescription] = tsSymbol[K](graphqlStringValue)
+                                                                          rules[graphqlValue] = tsChoice[K](tsSymbol[K](graphqlVariable), tsSymbol[K](graphqlStringValue), tsSymbol[K](graphqlIntValue), tsSymbol[K](graphqlFloatValue), tsSymbol[K](graphqlBooleanValue), tsSymbol[K](graphqlNullValue), tsSymbol[K](graphqlEnumValue), tsSymbol[K](graphqlListValue), tsSymbol[K](graphqlObjectValue))
+                                                                          rules[graphqlInputFieldsDefinition] = tsSeq[K](tsString[K]("{"), tsRepeat1[K](tsSymbol[K](graphqlInputValueDefinition)), tsString[K]("}"))
+                                                                          rules[graphqlRootOperationTypeDefinition] = tsSeq[K](tsSymbol[K](graphqlOperationType), tsString[K](":"), tsSymbol[K](graphqlNamedType))
+                                                                          rules[graphqlArgumentsDefinition] = tsSeq[K](tsString[K]("("), tsRepeat1[K](tsSymbol[K](graphqlInputValueDefinition)), tsString[K](")"))
+                                                                          rules[graphqlScalarTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("scalar"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()))
+                                                                          rules[graphqlFieldsDefinition] = tsSeq[K](tsString[K]("{"), tsRepeat1[K](tsSymbol[K](graphqlFieldDefinition)), tsString[K]("}"))
+                                                                          rules[graphqlStringValue] = tsChoice[K](tsSeq[K](tsString[K]("\"\"\""), tsRegex[K]("([^\"]|\\n|\"\"?[^\"])*"), tsString[K]("\"\"\"")), tsSeq[K](tsString[K]("\""), tsRegex[K]("[^\"\\\\\\n]*"), tsString[K]("\"")))
+                                                                          rules[graphqlIntValue] = tsRegex[K]("-?(0|[1-9][0-9]*)")
+                                                                          rules[graphqlFragmentDefinition] = tsSeq[K](tsString[K]("fragment"), tsSymbol[K](graphqlFragmentName), tsSymbol[K](graphqlTypeCondition), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlSelectionSet))
+                                                                          rules[graphqlNonNullType] = tsChoice[K](tsSeq[K](tsSymbol[K](graphqlNamedType), tsString[K]("!")), tsSeq[K](tsSymbol[K](graphqlListType), tsString[K]("!")))
+                                                                          rules[graphqlEnumTypeExtension] = tsChoice[K](tsSeq[K](tsString[K]("extend"), tsString[K]("enum"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsSymbol[K](graphqlEnumValuesDefinition)), tsSeq[K](tsString[K]("extend"), tsString[K]("enum"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]())))
+                                                                          rules[graphqlObjectTypeDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsString[K]("type"), tsSymbol[K](graphqlName), tsChoice[K](tsSymbol[K](graphqlImplementsInterfaces), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlFieldsDefinition), tsBlank[K]()))
+                                                                          rules[graphqlTypeExtension] = tsChoice[K](tsSymbol[K](graphqlScalarTypeExtension), tsSymbol[K](graphqlObjectTypeExtension), tsSymbol[K](graphqlInterfaceTypeExtension), tsSymbol[K](graphqlUnionTypeExtension), tsSymbol[K](graphqlEnumTypeExtension), tsSymbol[K](graphqlInputObjectTypeExtension))
+                                                                          rules[graphqlVariableDefinition] = tsSeq[K](tsSymbol[K](graphqlVariable), tsString[K](":"), tsSymbol[K](graphqlType), tsChoice[K](tsSymbol[K](graphqlDefaultValue), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()), tsChoice[K](tsSymbol[K](graphqlComma), tsBlank[K]()))
+                                                                          rules[graphqlEnumValueDefinition] = tsSeq[K](tsChoice[K](tsSymbol[K](graphqlDescription), tsBlank[K]()), tsSymbol[K](graphqlEnumValue), tsChoice[K](tsSymbol[K](graphqlDirectives), tsBlank[K]()))
+                                                                          rules[graphqlVariable] = tsSeq[K](tsString[K]("$"), tsSymbol[K](graphqlName))
+                                                                          rules[graphqlNullValue] = tsString[K]("null")
+                                                                          rules
 
