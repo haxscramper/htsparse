@@ -26,6 +26,9 @@ import htsparse/[
   clojure/clojure_core_only,
   fennel/fennel_core_only,
   graphql/graphql_core_only,
+  regex/regex_core_only,
+  elisp/elisp_core_only,
+  make/make_core_only
 ]
 
 suite "Main":
@@ -102,11 +105,15 @@ print(fact(a))
     let node = parseTsLuaString(str)
     let expr = node[0][0]
 
+    func getIdx[N: distinct](node: N, idx: int): N =
+      N(ts_node_child(TSNode(node), uint32(idx)))
+
     # echo expr.treeRepr(str)
 
     doAssert str[expr{0}] == "1"
     doAssert str[expr{1}] == "+"
     doAssert str[expr{2}] == "2"
+
 
 suite "C":
   test "Parse string":
@@ -446,3 +453,30 @@ fragment comparisonFields on Character {
 
     let node = parseTsGraphqlString(str)
     echo node.treeRepr(str)
+
+suite "Regex":
+  test "Regex":
+    let str = r"((([1-9]8)?)|[a-z])"
+    echo parseTsRegexString(str).treeRepr(str)
+
+
+suite "Makefile":
+  test "Makefile":
+    let str = """
+ifeq ($(OS),Windows_NT)
+	LDFLAGS  += -lglfw3 -lopengl32
+else ifeq ($(UNAME),Darwin)
+	LDFLAGS  += -lglfw -framework OpenGL
+endif
+
+
+.PHONY: all
+all: emu $(TARGET) os
+"""
+    echo parseTsMakeString(str).treeRepr(str)
+
+
+suite "Elisp":
+  test "Elisp":
+    let str = "(defun get-alist-keys (alist) (mapcar (lambda (pair) (car pair)) alist))"
+    echo parseTsElispString(str).treeRepr(str)

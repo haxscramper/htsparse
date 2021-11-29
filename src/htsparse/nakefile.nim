@@ -202,6 +202,27 @@ proc clojureCompile*() =
     "clojure",
     Url("https://raw.githubusercontent.com/sogaiu/tree-sitter-clojure/v0.0.8/grammar.js"))
 
+proc elispCompile*() =
+  # https://github.com/Wilfred/tree-sitter-elisp
+  build(
+    "elisp",
+    Url("https://raw.githubusercontent.com/Wilfred/tree-sitter-elisp/4b0e4a3891337514126ec72c7af394c0ff2cf48c/grammar.js")
+  )
+
+proc regexCompile*() =
+  # https://github.com/tree-sitter/tree-sitter-regex
+  build(
+    "regex",
+    Url("https://raw.githubusercontent.com/tree-sitter/tree-sitter-regex/7b97502cfc3ffa7110f6b68bb39fb259c9a0500c/grammar.js")
+  )
+
+proc makeCompile*() =
+  # https://github.com/alemuller/tree-sitter-make
+  build(
+    "make",
+    Url("https://raw.githubusercontent.com/alemuller/tree-sitter-make/716c294283bc3dda263ccbdf55e38ec30aa0edba/grammar.js")
+  )
+
 proc graphqlCompile*() =
   # https://github.com/sogaiu/tree-sitter-clojure
   build(
@@ -526,6 +547,9 @@ type
     lClojure          = "clojure"
     lGraphql          = "graphql"
     lJs               = "js"
+    lElisp            = "elisp"
+    lRegex            = "regex"
+    lMake             = "make"
 
     lKotlin           = "kotlin"
     lSystemVerilog    = "verilog"
@@ -577,6 +601,10 @@ proc compile*(lang: Lang) =
     lClojure: clojureCompile,
     lKotlin: kotlinCompile,
     lGraphql: graphqlCompile,
+
+    lElisp: elispCompile,
+    lMake: makeCompile,
+    lRegex: regexCompile
   }
 
   list[lTotal] = proc() =
@@ -623,14 +651,16 @@ when isMainModule:
   startHax()
   let root = cwd()
 
-  cd root
-  main(@["js"])
 
   cd root
-  main(@["lua"])
+  main(@["regex"])
 
   cd root
-  main(@["eno"])
+  main(@["make"])
+
+  cd root
+  main(@["elisp"])
+
   # main(@["kotlin"])
   # main(@["verilog"])
   # main(paramStrs())

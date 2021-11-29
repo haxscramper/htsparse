@@ -33,6 +33,9 @@ import htsparse/[
   toml/toml,
   vhdl/vhdl,
   zig/zig,
+  regex/regex,
+  elisp/elisp,
+  make/make
 ]
 
 # {.passl: "-ltree-sitter".}
@@ -512,3 +515,30 @@ Málaga: 36.721447, -4.421291
 """
 
     echo parseEnoString(str).treeRepr(str)
+
+suite "Regex":
+  test "Regex":
+    let str = r"((([1-9]8)?)|[a-z])"
+    echo parseRegexString(str).treeRepr(str)
+
+
+suite "Makefile":
+  test "Makefile":
+    let str = """
+ifeq ($(OS),Windows_NT)
+	LDFLAGS  += -lglfw3 -lopengl32
+else ifeq ($(UNAME),Darwin)
+	LDFLAGS  += -lglfw -framework OpenGL
+endif
+
+
+.PHONY: all
+all: emu $(TARGET) os
+"""
+    echo parseMakeString(str).treeRepr(str)
+
+
+suite "Elisp":
+  test "Elisp":
+    let str = "(defun get-alist-keys (alist) (mapcar (lambda (pair) (car pair)) alist))"
+    echo parseElispString(str).treeRepr(str)
