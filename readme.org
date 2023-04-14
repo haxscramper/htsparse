@@ -72,6 +72,7 @@ In addition to the shared features, "full" vesion also includes helpers to
 - graphql
 - html
 - java
+- janet
 - js
 - julia
 - kotlin
