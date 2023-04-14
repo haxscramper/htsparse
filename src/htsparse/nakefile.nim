@@ -196,6 +196,12 @@ proc fennelCompile*() =
     # some Url("https://raw.githubusercontent.com/TravonteD/tree-sitter-fennel/master/src/scanner.c"),
   )
 
+proc janetCompile*() =
+  build("janet",
+    Url("https://raw.githubusercontent.com/GrayJack/tree-sitter-janet/master/grammar.js"),
+    some Url("https://raw.githubusercontent.com/GrayJack/tree-sitter-janet/master/src/scanner.c"),
+  )
+
 proc clojureCompile*() =
   # https://github.com/sogaiu/tree-sitter-clojure
   build(
@@ -550,6 +556,7 @@ type
     lElisp            = "elisp"
     lRegex            = "regex"
     lMake             = "make"
+    lJanet            = "janet"
 
     lKotlin           = "kotlin"
     lSystemVerilog    = "verilog"
@@ -601,6 +608,7 @@ proc compile*(lang: Lang) =
     lClojure: clojureCompile,
     lKotlin: kotlinCompile,
     lGraphql: graphqlCompile,
+    lJanet: janetCompile,
 
     lElisp: elispCompile,
     lMake: makeCompile,
